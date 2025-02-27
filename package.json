@@ -6,7 +6,7 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "get-app":"node getApps.js"
+    "get-app": "node getApps.js"
   },
   "devDependencies": {
     "prettier": "^3.4.2",
@@ -16,5 +16,8 @@
   "packageManager": "pnpm@9.0.0",
   "engines": {
     "node": ">=18"
+  },
+  "dependencies": {
+    "pnpm": "^10.5.2"
   }
 }
