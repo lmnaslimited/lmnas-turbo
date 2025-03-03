@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { ArrowRight } from "lucide-react"
 
-export function HeroSection() {
+export default function Hero() {
   return (
     <section className="relative flex items-center justify-center min-h-screen px-6 sm:px-12 lg:px-20">
       <DynamicWeb />
