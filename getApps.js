@@ -29,8 +29,8 @@ function cloneApp(appRepoUrl, appFolder) {
 
 try {
     cloneApp(appRepoUrl, appFolder);
-    console.log(`\x1b[36mRunning npm install in the current directory...\x1b[0m`);
-    execSync(`npm install`, { stdio: 'inherit' });
+    console.log(`\x1b[36mRunning pnpm install in the current directory...\x1b[0m`);
+    execSync(`pnpm install`, { stdio: 'inherit' });
     console.log(`\x1b[32mSuccessfully installed dependencies in the current directory.\x1b[0m`);
 } catch (error) {
     console.error(`\x1b[31mFailed to clone, update, or install dependencies for ${appName}. Please check the app name or the repository URL.\x1b[0m`);
