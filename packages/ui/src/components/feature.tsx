@@ -2,6 +2,7 @@ import { Button } from "@repo/ui/components/ui/button"
 import Link from "next/link"
 import { cva } from "class-variance-authority"
 import * as LucideIcons from "lucide-react"
+import {Tfeature, Titems} from "@repo/ui/type"
 
 const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
@@ -16,27 +17,6 @@ const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
     position: "header",
   },
 })
-
-type ItemType = {
-  question: string
-  answer: string
-  icon?: keyof typeof LucideIcons
-}
-type Theader={
-    textWithoutColor:string
-    badge?:string
-    text?: string;
-    subtitle?:string
-}
-
-type Tfeature = {
-    header: Theader;
-    button?:{
-        label: string;
-        href?:string;
-    }
-    items:ItemType[]
-}
 
 type IntroductionProps = {
   buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
@@ -96,7 +76,7 @@ export default function Introduction({ buttonPosition = "header", layout = "clas
   )
 }
 
-const FAQItem = ({ question, answer, icon }: ItemType) => {
+const FAQItem = ({ question, answer, icon }: Titems) => {
     const IconComponent = icon && (LucideIcons[icon as keyof typeof LucideIcons] as React.ElementType)
   return (
     <div className= "relative flex gap-4 items-start">

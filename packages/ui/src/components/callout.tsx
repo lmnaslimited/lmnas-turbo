@@ -1,27 +1,7 @@
 import { Button } from "@repo/ui/components/ui/button";
 import clsx from "clsx";
 import Link from "next/link";
-type Theader={
-    textWithoutColor:string
-    badge?:string
-    text?: string;
-    subtitle?:string
-}
-type Tbutton={
-    label: string;
-    href?:string;
-    variant?: "default" | "outline" | "ghost" | "secondary" | "destructive";
-}
-type TcalloutProps = {
-    header: Theader
-    buttons: Tbutton[]
-    points?:{
-      title:string
-      items:string[]
-      actionText:string
-    }
-    variant?:string
-  };
+import { TcalloutProps} from "@repo/ui/type"
 
 export default function Callout({iCallout, layout = "classic"}:{iCallout: TcalloutProps, layout?: "classic" | "simple"}) {
   return (
