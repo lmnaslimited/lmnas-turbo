@@ -4,9 +4,13 @@ import { DynamicWeb } from "@repo/ui/components/animation/dynamicWeb"
 import { MotionWrapper } from "@repo/ui/components/animation/motionWrapper"
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Tbutton, Theader } from "../type.js"
 
-export default function Hero() {
+type TheroProps = {
+  heading: Theader;
+  buttons: Tbutton[]
+}
+export default function Hero({iHero}:{iHero:TheroProps}) {
   return (
     <section className="relative flex items-center justify-center min-h-screen px-6 sm:px-12 lg:px-20">
       <DynamicWeb />
@@ -18,23 +22,25 @@ export default function Hero() {
         <MotionWrapper>
           <div className="text-center lg:text-left">
             <h1 className="text-4xl font-extrabold text-primary sm:text-5xl md:text-6xl">
-              Reimagine Your Business.{" "}
-              <span className="text-primary/70">Achieve the Extraordinary.</span>
+              {iHero.heading.textWithoutColor}{" "}
+              <span className="text-primary/70">{iHero.heading.text}</span>
             </h1>
-            <p className="mt-4 text-lg text-primary/50">
-              From seamless operations to actionable insights, LMNAs empowers businesses to overcome their toughest
-              challenges and unlock growth—no matter the industry.
+            <p className="mt-4 text-xl text-primary/70">
+              {iHero.heading.subtitle}
             </p>
-            <div className="mt-6 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
-              <Button asChild size="lg">
-                <Link href="https://nectar.lmnas.com/book_appointment">
-                  Book Your Free Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="#solutions">Explore Our Solutions</Link>
-              </Button>
+            <div className="mt-6 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4 w-full justify-between">
+             {iHero.buttons.map((btn, index) => (
+                <Button key={`btn-${index}`} variant={btn.variant || "default"} size={btn.size || "default"} className="group font-semibold">
+                  {/* If iconPosition is 'before', render icon first */}
+                  {btn.icon && btn.iconPosition === "before" && <span className="mr-2">{btn.icon}</span>}
+
+                  {/* Button Label */}
+                  {btn.href &&<Link href={btn.href}>{btn.label}</Link>}
+
+                  {/* If iconPosition is 'after', render icon after */}
+                  {btn.icon && btn.iconPosition === "after" && <span className="ml-2">{btn.icon}</span>}
+                </Button>
+              ))}
             </div>
           </div>
         </MotionWrapper>

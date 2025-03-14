@@ -3,7 +3,7 @@
 import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
 import { cn } from "@repo/ui/lib/utils"
-import {TlogoShowcaseProps, Timage} from "@repo/ui/type.js"
+import {TlogoShowcaseProps, Timage} from "@repo/ui/type"
 
 export default function LogoShowcase({
   logos,
@@ -184,8 +184,8 @@ function LogoItem({
   dimensions: { width: number; height: number }
 }) {
   const { width, height } = dimensions
-  const LOGO_WIDTH = logo.width || width
-  const LOGO_HEIGHT = logo.height || height
+  const LOGO_WIDTH =  width
+  const LOGO_HEIGHT =  height
 
   const LOGO_ELEMENT = (
     <div
