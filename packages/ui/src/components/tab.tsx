@@ -6,12 +6,12 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui
 import { ArrowRight } from "lucide-react"
 
 export default function Tab({ data, renderItem }: { data: any[], renderItem: (item: any, index: number) => React.ReactNode }) {
-  const [visibleCount, setVisibleCount] = useState(4)
+  const [VISIBLE_COUNT , fnSetVisibleCount] = useState(4)
 
   const categories = Array.from(new Set(data.map((item) => item.category)))
 
   const showMoreItems = () => {
-    setVisibleCount(data.length)
+    fnSetVisibleCount(data.length)
   }
 
   return (
@@ -29,9 +29,9 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
 
           <TabsContent value="all">
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-4">
-              {data.slice(0, visibleCount).map(renderItem)}
+              {data.slice(0, VISIBLE_COUNT).map(renderItem)}
             </div>
-            {visibleCount < data.length && (
+            {VISIBLE_COUNT < data.length && (
               <div className="mt-8 text-center">
                 <Button onClick={showMoreItems} size="lg" variant="outline">
                   Show More <ArrowRight className="size-5"/>
