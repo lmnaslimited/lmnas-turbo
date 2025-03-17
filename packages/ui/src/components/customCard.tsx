@@ -6,11 +6,8 @@ import { cn } from "@repo/ui/lib/utils";
 import clsx from "clsx";
 import {
   Card,
-  CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@repo/ui/components/ui/card";
 import { Button } from "@repo/ui/components/ui/button";
 import {
@@ -56,7 +53,7 @@ export default function CustomCard({
   // Component to display a user's profile details, including their name, place, and avatar.
   // The layout adjusts based on the `namePosition` prop, allowing the avatar to be positioned
   // on the left, right, top, or bottom relative to the name and place.
-  const PROFILE_DETAILS = nameAndPlace && (
+  const L_E_PROFILE_DETAILS = nameAndPlace && (
     <div
       className={cn(
         "flex items-start gap-2",
@@ -96,14 +93,13 @@ export default function CustomCard({
     <Card
       className={clsx(
         "overflow-hidden transition-all duration-200 hover:shadow-md",
-        // width === "compact" ? "max-w-md" : "w-full",
         layout === "horizontal" ? "md:flex md:flex-row" : "flex flex-col",
         onClick && "cursor-pointer",
         className
       )}
       onClick={onClick}
     >
-      {/* Image Section */}
+      {/* Image / SVG Section */}
       {image && layout === "vertical" && (
         <div
           className={cn(
@@ -173,21 +169,12 @@ export default function CustomCard({
 
         {/* Name and Place - Top Position */}
         {nameAndPlace && namePosition === "top" && (
-          <div className="px-6 pt-6">{PROFILE_DETAILS}</div>
+          <div className="px-6 pt-6">{L_E_PROFILE_DETAILS}</div>
         )}
 
         {/* Card Header */}
         <CardHeader>
-          {/* Name and Place - Left Position
-          {nameAndPlace && namePosition === "left" && PROFILE_DETAILS} */}
-
-          {/* <div className={cn("flex", namePosition === "right" ? "flex-row items-center justify-between" : "flex-col")}> */}
           <h2 className={cn("text-xl mb-3 font-semibold", header.headingClass)}>{header.text}</h2>
-
-          {/* Name and Place - Right Position
-            {nameAndPlace && namePosition === "right" && PROFILE_DETAILS} */}
-          {/* </div> */}
-
           <p className={cn("max-w-[700px] text-muted-foreground", header.descripClass)}>{header.subtitle}</p>
         </CardHeader>
 
@@ -208,48 +195,48 @@ export default function CustomCard({
               buttonPosition
             )}
           >
-            {button?.map((btn, index) => (
+            {button?.map((idBtn, iIndex) => (
               <Button
-                key={`btn-${index}`}
-                variant={btn.variant || "default"}
-                size={btn.size || "default"}
+                key={`btn-${iIndex}`}
+                variant={idBtn.variant || "default"}
+                size={idBtn.size || "default"}
                 className=""
               >
                 {/* If iconPosition is 'before', render icon first */}
-                {btn.icon && btn.iconPosition === "before" && (
-                  <span className="mr-2">{btn.icon}</span>
+                {idBtn.icon && idBtn.iconPosition === "before" && (
+                  <span className="mr-2">{idBtn.icon}</span>
                 )}
 
                 {/* Button Label */}
-               {btn.href && <Link href={btn.href}>{btn.label}</Link>}
+               {idBtn.href && <Link href={idBtn.href}>{idBtn.label}</Link>}
                 {/* If iconPosition is 'after', render icon after */}
-                {btn.icon && btn.iconPosition === "after" && (
-                  <span className="ml-2">{btn.icon}</span>
+                {idBtn.icon && idBtn.iconPosition === "after" && (
+                  <span className="ml-2">{idBtn.icon}</span>
                 )}
               </Button>
             ))}
             {
-              link?.map((lnk, index) => (
+              link?.map((idLnk, iIndex) => (
                 <Button
-                  key={`lnk-${index}`}
+                  key={`lnk-${iIndex}`}
                   variant="link"
                   className="p-0"
                  
                   onClick={(e) => e.stopPropagation()}
                 >
-                  {lnk.icon && lnk.iconPosition === "before" && (
-                    <span className="mr-2">{lnk.icon}</span>
+                  {idLnk.icon && idLnk.iconPosition === "before" && (
+                    <span className="mr-2">{idLnk.icon}</span>
                   )}{" "}
-                  {lnk.href && <Link href={lnk.href}>{lnk.label}</Link>}
-                  {lnk.icon && lnk.iconPosition === "after" && (
-                    <span className="ml-2">{lnk.icon}</span>
+                  {idLnk.href && <Link href={idLnk.href}>{idLnk.label}</Link>}
+                  {idLnk.icon && idLnk.iconPosition === "after" && (
+                    <span className="ml-2">{idLnk.icon}</span>
                   )}
                 </Button>
               ))}
           </div>
 
           {/* Name and Place - Bottom Position */}
-          {nameAndPlace && namePosition === "bottom" && PROFILE_DETAILS}
+          {nameAndPlace && namePosition === "bottom" && L_E_PROFILE_DETAILS}
         </CardFooter>
       </div>
     </Card>

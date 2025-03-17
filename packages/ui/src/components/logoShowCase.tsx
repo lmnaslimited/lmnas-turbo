@@ -54,7 +54,8 @@ export default function LogoShowcase({
     }
   }
 
-  // Render the appropriate variant
+  // Render either grid / marquee(animation) layout
+  //based on prop "variant"
   const fnRenderLogos = () => {
     switch (variant) {
       case "marquee":
@@ -97,14 +98,14 @@ function MarqueeLogos({
   dimensions: { width: number; height: number }
   pauseOnHover: boolean
 }) {
-    const controls = useAnimation() // Controls for animation
-    const duplicatedLogos = [...logos, ...logos]
+    const L_D_CONTROLS = useAnimation() // Controls for animation
+    const L_A_DUPLICATE_LOGO = [...logos, ...logos]
   
     return (
       <div className="relative py-6 w-full overflow-hidden">
         <motion.div
           className={`flex ${spacing} min-w-max`}
-          animate={controls}
+          animate={L_D_CONTROLS}
           initial={{ x: "0%" }}
           transition={{
             x: ["0%", "-100%"],
@@ -113,14 +114,14 @@ function MarqueeLogos({
             ease: "linear",
             duration: speed,
           }}
-          onHoverStart={() => pauseOnHover && controls.stop()} // Stops animation
-          onHoverEnd={() => pauseOnHover && controls.start({
+          onHoverStart={() => pauseOnHover && L_D_CONTROLS.stop()} // Stops animation
+          onHoverEnd={() => pauseOnHover && L_D_CONTROLS.start({
             x: ["0%", "-100%"],
             transition: { repeat: Infinity, ease: "linear", duration: speed }
           })} // Restarts animation
         >
-          {duplicatedLogos.map((logo, index) => (
-            <LogoItem key={`${logo.alt}-${index}`} logo={logo} dimensions={dimensions} />
+          {L_A_DUPLICATE_LOGO.map((idLogo, iIndex) => (
+            <LogoItem key={`${idLogo.alt}-${iIndex}`} logo={idLogo} dimensions={dimensions} />
           ))}
         </motion.div>
       </div>
@@ -140,6 +141,7 @@ function GridLogos({
   logosPerRow: number
 }) {
   // Calculate grid columns based on logosPerRow
+  //this return a grid-cols tailwind class element
   const fnGridCols = () => {
     switch (logosPerRow) {
       case 2:
@@ -159,15 +161,15 @@ function GridLogos({
   return (
     <div className="py-6">
       <div className={cn("grid", fnGridCols(), spacing)}>
-        {logos.map((logo, index) => (
+        {logos.map((idLogo, iIndex) => (
           <motion.div
-            key={`${logo.alt}-${index}`}
+            key={`${idLogo.alt}-${iIndex}`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.05 }}
+            transition={{ duration: 0.3, delay: iIndex * 0.05 }}
             className="flex justify-center"
           >
-            <LogoItem logo={logo} dimensions={dimensions} />
+            <LogoItem logo={idLogo} dimensions={dimensions} />
           </motion.div>
         ))}
       </div>
@@ -184,10 +186,10 @@ function LogoItem({
   dimensions: { width: number; height: number }
 }) {
   const { width, height } = dimensions
-  const LOGO_WIDTH =  width
-  const LOGO_HEIGHT =  height
+  const L_LOGO_WIDTH =  width
+  const L_LOGO_HEIGHT =  height
 
-  const LOGO_ELEMENT = (
+  const L_E_LOGO_ELEMENT = (
     <div
       className={cn(
         "flex items-center justify-center p-4 rounded-lg transition-all duration-200",
@@ -199,7 +201,7 @@ function LogoItem({
       
         <div
           className={cn("flex items-center justify-center")}
-          style={{ width: LOGO_WIDTH, height: LOGO_HEIGHT }}
+          style={{ width: L_LOGO_WIDTH, height: L_LOGO_HEIGHT }}
         >
           {logo.svg}
         </div>
@@ -208,8 +210,8 @@ function LogoItem({
      : <Image
         src={logo.src || "/placeholder.svg"}
         alt={logo.alt}
-        width={LOGO_WIDTH}
-        height={LOGO_HEIGHT}
+        width={L_LOGO_WIDTH}
+        height={L_LOGO_HEIGHT}
         className={cn("object-contain")}
         loading="lazy"
       />
@@ -217,6 +219,6 @@ function LogoItem({
     </div>
   )
 
-  return LOGO_ELEMENT
+  return L_E_LOGO_ELEMENT
 }
 

@@ -90,5 +90,9 @@ export type TfeatureProps = {
 //component
 export type TheroProps = {
     heading: Theader;
+    items?:{
+      icon: React.ReactNode | keyof typeof LucideIcons
+      item: string
+    }[]
     buttons: Tbutton[]
   }

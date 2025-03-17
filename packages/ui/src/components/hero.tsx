@@ -1,71 +1,80 @@
 "use client"
 
-import { DynamicWeb } from "@repo/ui/components/animation/dynamicWeb"
+import Image from "next/image";
 import { MotionWrapper } from "@repo/ui/components/animation/motionWrapper"
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
-import { Tbutton, Theader } from "../type.js"
+import { Zap, Clock, BarChart3, ArrowRight } from "lucide-react";
+import { TheroProps } from "../type.js"
 
-type TheroProps = {
-  heading: Theader;
-  buttons: Tbutton[]
-}
-export default function Hero({iHero}:{iHero:TheroProps}) {
+
+export default function Hero({ iHero }: { iHero: TheroProps }) {
   return (
-    <section className="relative flex items-center justify-center min-h-screen px-6 sm:px-12 lg:px-20">
-      <DynamicWeb />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/60 to-background"></div>
+    <div className="container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center md:py-24 lg:py-32 py-20">
+      <div className="flex flex-col justify-center space-y-8">
+        {/* Badge */}
+        {iHero.heading.badge && (
+          <div className="inline-flex w-fit items-center rounded-full border border-zinc-300 bg-zinc-200/50 px-3 py-1 text-sm text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300">
+            <Zap className="mr-1 h-3.5 w-3.5" />
+            <span>{iHero.heading.badge}</span>
+          </div>
+        )}
 
-      <div className="container relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
-        {/* Left Content */}
-        <MotionWrapper>
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-extrabold text-primary sm:text-5xl md:text-6xl">
-              {iHero.heading.textWithoutColor}{" "}
-              <span className="text-primary/70">{iHero.heading.text}</span>
-            </h1>
-            <p className="mt-4 text-xl text-primary/70">
+        {/* Headline */}
+        <div className="space-y-4">
+          <h1 className={`text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-7xl ${iHero.heading.headingClass}`}>
+            {iHero.heading.textWithoutColor} {" "}
+            <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent dark:from-zinc-300 dark:to-zinc-500">
+              {iHero.heading.text}
+            </span>
+          </h1>
+          {iHero.heading.subtitle && (
+            <p className={`max-w-xl text-xl text-primary/70 md:text-2xl ${iHero.heading.descripClass}`}>
               {iHero.heading.subtitle}
             </p>
-            <div className="mt-6 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4 w-full justify-between">
-             {iHero.buttons.map((btn, index) => (
-                <Button key={`btn-${index}`} variant={btn.variant || "default"} size={btn.size || "default"} className="group font-semibold">
-                  {/* If iconPosition is 'before', render icon first */}
-                  {btn.icon && btn.iconPosition === "before" && <span className="mr-2">{btn.icon}</span>}
+          )}
+        </div>
 
-                  {/* Button Label */}
-                  {btn.href &&<Link href={btn.href}>{btn.label}</Link>}
-
-                  {/* If iconPosition is 'after', render icon after */}
-                  {btn.icon && btn.iconPosition === "after" && <span className="ml-2">{btn.icon}</span>}
-                </Button>
-              ))}
-            </div>
+        {/* Feature highlights */}
+        {iHero.items && (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+            {iHero.items.map((idItem, iIndex) => (
+              <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300" key={iIndex}>
+                {idItem.icon}
+                <span>{idItem.item}</span>
+              </div>
+            ))}
           </div>
-        </MotionWrapper>
+        )}
 
-        {/* Right Image with Motion */}
-        <MotionWrapper>
-          <div className="w-full flex justify-center lg:justify-end">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
-              <rect width="100%" height="100%" fill="#ddd" />
-              <text
-                x="400"
-                y="300"
-                textAnchor="middle"
-                fill="#555"
-                fontSize="48"
-                fontFamily="Arial, sans-serif"
-                fontWeight="bold"
-              >
-                Image
-              </text>
-            </svg>
-          </div>
-        </MotionWrapper>
-        
+        {/* CTA Buttons */}
+        <div className="flex flex-col gap-4 sm:flex-row">
+          {iHero.buttons.map((button, index) => (
+            <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
+              {button.iconPosition === "before" && button.icon}
+              {button.label}
+              {button.iconPosition === "after" && button.icon}
+            </Button>
+          ))}
+        </div>
       </div>
-    </section>
-  )
+
+      {/* Visual */}
+      <div className="flex items-center justify-center">
+        <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg bg-gradient-to-br from-zinc-300/50 to-zinc-100/50 p-1 dark:from-zinc-700/50 dark:to-zinc-900/50">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Image
+              src="/placeholder.svg"
+              alt="AI-powered manufacturing dashboard visualization"
+              className="h-full w-full object-cover opacity-90 grayscale"
+              width={100}
+              height={100}
+              
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-100/80 to-transparent dark:from-zinc-900/80"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

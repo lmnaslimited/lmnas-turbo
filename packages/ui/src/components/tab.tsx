@@ -8,9 +8,9 @@ import { ArrowRight } from "lucide-react"
 export default function Tab({ data, renderItem }: { data: any[], renderItem: (item: any, index: number) => React.ReactNode }) {
   const [VISIBLE_COUNT , fnSetVisibleCount] = useState(4)
 
-  const categories = Array.from(new Set(data.map((item) => item.category)))
+  const L_A_CATEGORIES = Array.from(new Set(data.map((item) => item.category)))
 
-  const showMoreItems = () => {
+  const fnShowMoreItems = () => {
     fnSetVisibleCount(data.length)
   }
 
@@ -20,9 +20,9 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 md:gap-0 gap-4">
             <TabsTrigger value="all">All</TabsTrigger>
-            {categories.map((category) => (
-              <TabsTrigger key={category} value={category}>
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+            {L_A_CATEGORIES.map((iCategory) => (
+              <TabsTrigger key={iCategory} value={iCategory}>
+                {iCategory.charAt(0).toUpperCase() + iCategory.slice(1)}
               </TabsTrigger>
             ))}
           </TabsList>
@@ -33,17 +33,17 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
             </div>
             {VISIBLE_COUNT < data.length && (
               <div className="mt-8 text-center">
-                <Button onClick={showMoreItems} size="lg" variant="outline">
+                <Button onClick={fnShowMoreItems} size="lg" variant="outline">
                   Show More <ArrowRight className="size-5"/>
                 </Button>
               </div>
             )}
           </TabsContent>
 
-          {categories.map((category) => (
-            <TabsContent key={category} value={category}>
+          {L_A_CATEGORIES.map((iCategory) => (
+            <TabsContent key={iCategory} value={iCategory}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
-                {data.filter((item) => item.category === category).map(renderItem)}
+                {data.filter((idItem) => idItem.category === iCategory).map(renderItem)}
               </div>
             </TabsContent>
           ))}
