@@ -1,7 +1,6 @@
 "use client"
 
 import Image from "next/image";
-import { MotionWrapper } from "@repo/ui/components/animation/motionWrapper"
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { Zap, Clock, BarChart3, ArrowRight } from "lucide-react";
@@ -14,7 +13,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
       <div className="flex flex-col justify-center space-y-8">
         {/* Badge */}
         {iHero.heading.badge && (
-          <div className="inline-flex w-fit items-center rounded-full border border-zinc-300 bg-zinc-200/50 px-3 py-1 text-sm text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300">
+          <div className="inline-flex w-fit items-center rounded-full border border-primary/60 bg-slate px-3 py-1 text-sm text-primary/70">
             <Zap className="mr-1 h-3.5 w-3.5" />
             <span>{iHero.heading.badge}</span>
           </div>
@@ -24,7 +23,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
         <div className="space-y-4">
           <h1 className={`text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-7xl ${iHero.heading.headingClass}`}>
             {iHero.heading.textWithoutColor} {" "}
-            <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent dark:from-zinc-300 dark:to-zinc-500">
+            <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">
               {iHero.heading.text}
             </span>
           </h1>
@@ -39,7 +38,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
         {iHero.items && (
           <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
             {iHero.items.map((idItem, iIndex) => (
-              <div className="flex items-center gap-2 text-zinc-700 dark:text-zinc-300" key={iIndex}>
+              <div className="flex items-center gap-2 text-primary/80" key={iIndex}>
                 {idItem.icon}
                 <span>{idItem.item}</span>
               </div>
@@ -52,7 +51,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
           {iHero.buttons.map((button, index) => (
             <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
               {button.iconPosition === "before" && button.icon}
-              {button.label}
+            <Link href={button.href} > {button.label} </Link>
               {button.iconPosition === "after" && button.icon}
             </Button>
           ))}
@@ -61,7 +60,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
 
       {/* Visual */}
       <div className="flex items-center justify-center">
-        <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg bg-gradient-to-br from-zinc-300/50 to-zinc-100/50 p-1 dark:from-zinc-700/50 dark:to-zinc-900/50">
+        <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1">
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
               src="/placeholder.svg"
@@ -71,7 +70,6 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
               height={100}
               
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-zinc-100/80 to-transparent dark:from-zinc-900/80"></div>
           </div>
         </div>
       </div>

@@ -1,6 +1,6 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@repo/ui/components/ui/accordion"
 
-const faqs = [
+const LaFAQs = [
   {
     question: "Can LMNAs work with my existing systems?",
     answer:
@@ -25,15 +25,15 @@ const faqs = [
 
 export default function FAQs() {
   return (
-    <div className="bg-gray-50">
+    <div className="bg-grayBackground">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:py-16 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto divide-y-2 divide-gray-200">
-          <h2 className="text-center text-3xl font-extrabold text-gray-900 sm:text-4xl">
+        <div className="max-w-3xl mx-auto divide-y-2 divide-muted">
+          <h2 className="text-center text-3xl font-extrabold text-primary sm:text-4xl">
             Got Questions? We've Got Answers!
           </h2>
-          <dl className="mt-6 space-y-6 divide-y divide-gray-200">
+          <dl className="mt-6 space-y-6 divide-y divide-muted">
             <Accordion type="single" collapsible className="w-full">
-              {faqs.map((faq, index) => (
+              {LaFAQs.map((faq, index) => (
                 <AccordionItem key={index} value={`item-${index}`}>
                   <AccordionTrigger>{faq.question}</AccordionTrigger>
                   <AccordionContent>{faq.answer}</AccordionContent>
