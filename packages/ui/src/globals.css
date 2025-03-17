@@ -25,7 +25,8 @@
     --ring: 215 20.2% 65.1%;
     --radius: 0.5rem;
     --slate: 210, 40%, 98%;
-    --gray-background: #f9fafb
+    --gray-background: #f9fafb;
+    --always-primary:222.2 47.4% 11.2%;
   }
 
   .dark {
@@ -49,7 +50,8 @@
     --destructive-foreground: 210 40% 98%;
     --ring: 216 34% 17%;
     --slate: 222, 47%, 11%;
-    --gray-background: #1f2937
+    --gray-background: #1f2937;
+    --always-primary:222.2 47.4% 11.2%;
   }
 }
 

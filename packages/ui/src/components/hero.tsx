@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
-import { Zap, Clock, BarChart3, ArrowRight } from "lucide-react";
+import { Zap } from "lucide-react";
 import { TheroProps } from "../type.js"
 
 
@@ -51,14 +51,14 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
           {iHero.buttons.map((button, index) => (
             <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
               {button.iconPosition === "before" && button.icon}
-            <Link href={button.href} > {button.label} </Link>
+            {button.href && (<Link href={button.href} > {button.label} </Link> )}
               {button.iconPosition === "after" && button.icon}
             </Button>
           ))}
         </div>
       </div>
 
-      {/* Visual */}
+      {/* Image part */}
       <div className="flex items-center justify-center">
         <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1">
           <div className="absolute inset-0 flex items-center justify-center">

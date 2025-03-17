@@ -28,6 +28,7 @@ export default {
   			foreground: 'hsl(var(--foreground))',
 			slate: 'hsl(var(--slate))',
 			grayBackground: 'var(--gray-background)',
+			dark: 'hsl(var(--always-primary))',
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
