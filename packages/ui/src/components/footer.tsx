@@ -1,157 +1,155 @@
 import Link from "next/link"
-import { Button } from "@repo/ui/components/ui/button"
-import { Input } from "@repo/ui/components/ui/input"
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, LinkedinIcon as LinkedIn } from "lucide-react"
+
+const navigation = {
+  solutions: [
+    { name: "LENS ERP Suite", href: "#" },
+    { name: "CRM & CPQ", href: "#" },
+    { name: "Analytics Cloud", href: "#" },
+    { name: "HRMS Cloud", href: "#" },
+    { name: "AI-Powered Tools", href: "#" },
+  ],
+  support: [
+    { name: "Pricing", href: "#" },
+    { name: "Documentation", href: "#" },
+    { name: "Guides", href: "#" },
+    { name: "API Status", href: "#" },
+  ],
+  company: [
+    { name: "About", href: "#" },
+    { name: "Blog", href: "#" },
+    { name: "Jobs", href: "#" },
+    { name: "Press", href: "#" },
+    { name: "Partners", href: "#" },
+  ],
+  legal: [
+    { name: "Privacy", href: "#" },
+    { name: "Terms", href: "#" },
+  ],
+  social: [
+    {
+      name: "Facebook",
+      href: "#",
+      icon: Facebook,
+    },
+    {
+      name: "Twitter",
+      href: "#",
+      icon: Twitter,
+    },
+    {
+      name: "LinkedIn",
+      href: "#",
+      icon: LinkedIn,
+    },
+  ],
+}
 
 export default function Footer() {
   return (
-    <footer className="bg-muted/80 pt-16 pb-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-          <div>
-            <Link href="/" className="flex items-center space-x-2 mb-6">
-              <span className="font-bold text-2xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-                LMNAs
-              </span>
-            </Link>
-            <p className="text-muted-foreground mb-6">
-              Empowering businesses to overcome their toughest challenges and unlock growth through innovative AI-driven
-              enterprise solutions.
-            </p>
-            <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Twitter className="h-5 w-5" />
-                <span className="sr-only">Twitter</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Linkedin className="h-5 w-5" />
-                <span className="sr-only">LinkedIn</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
-              </Link>
+    <footer className="bg-gray-800" aria-labelledby="footer-heading">
+      <h2 id="footer-heading" className="sr-only">
+        Footer
+      </h2>
+      <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:py-16 lg:px-8">
+        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
+          <div className="grid grid-cols-2 gap-8 xl:col-span-2">
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Solutions</h3>
+                <ul role="list" className="mt-4 space-y-4">
+                  {navigation.solutions.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-base text-gray-300 hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-12 md:mt-0">
+                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Support</h3>
+                <ul role="list" className="mt-4 space-y-4">
+                  {navigation.support.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-base text-gray-300 hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Solutions</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  LENS ERP Suite
-                </Link>
-              </li>
-              <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  CRM & CPQ
-                </Link>
-              </li>
-              <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  Analytics Cloud
-                </Link>
-              </li>
-              <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  HRMS Cloud
-                </Link>
-              </li>
-              <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  AI-Powered Tools
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Company</h3>
-            <ul className="space-y-3">
-              <li>
-                <Link href="#about" className="text-muted-foreground hover:text-primary transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link href="#case-studies" className="text-muted-foreground hover:text-primary transition-colors">
-                  Case Studies
-                </Link>
-              </li>
-              <li>
-                <Link href="#blog" className="text-muted-foreground hover:text-primary transition-colors">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="#careers" className="text-muted-foreground hover:text-primary transition-colors">
-                  Careers
-                </Link>
-              </li>
-              <li>
-                <Link href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold text-lg mb-4">Contact</h3>
-            <ul className="space-y-3">
-              <li className="flex items-start">
-                <MapPin className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                <span className="text-muted-foreground">123 Enterprise Way, Business District, CA 94105</span>
-              </li>
-              <li className="flex items-center">
-                <Phone className="h-5 w-5 text-primary mr-2" />
-                <Link href="tel:+1234567890" className="text-muted-foreground hover:text-primary transition-colors">
-                  (123) 456-7890
-                </Link>
-              </li>
-              <li className="flex items-center">
-                <Mail className="h-5 w-5 text-primary mr-2" />
-                <Link
-                  href="mailto:info@lmnas.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
-                >
-                  info@lmnas.com
-                </Link>
-              </li>
-            </ul>
-            <div className="mt-6">
-              <h4 className="font-medium mb-2">Subscribe to our newsletter</h4>
-              <div className="flex gap-2">
-                <Input type="email" placeholder="Your email" className="max-w-xs" />
-                <Button type="submit" size="sm">
-                  Subscribe
-                </Button>
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Company</h3>
+                <ul role="list" className="mt-4 space-y-4">
+                  {navigation.company.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-base text-gray-300 hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="mt-12 md:mt-0">
+                <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">Legal</h3>
+                <ul role="list" className="mt-4 space-y-4">
+                  {navigation.legal.map((item) => (
+                    <li key={item.name}>
+                      <Link href={item.href} className="text-base text-gray-300 hover:text-white">
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="border-t border-border pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} LMNAs. All rights reserved.
+          <div className="mt-8 xl:mt-0">
+            <h3 className="text-sm font-semibold text-gray-400 tracking-wider uppercase">
+              Subscribe to our newsletter
+            </h3>
+            <p className="mt-4 text-base text-gray-300">
+              The latest news, articles, and resources, sent to your inbox weekly.
             </p>
-            <div className="flex space-x-6">
-              <Link href="#privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="#terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="#cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                Cookie Policy
-              </Link>
-            </div>
+            <form className="mt-4 sm:flex sm:max-w-md">
+              <label htmlFor="email-address" className="sr-only">
+                Email address
+              </label>
+              <input
+                type="email"
+                name="email-address"
+                id="email-address"
+                autoComplete="email"
+                required
+                className="appearance-none min-w-0 w-full bg-white border border-transparent rounded-md py-2 px-4 text-base text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white focus:border-white focus:placeholder-gray-400"
+                placeholder="Enter your email"
+              />
+              <div className="mt-3 rounded-md sm:mt-0 sm:ml-3 sm:flex-shrink-0">
+                <button
+                  type="submit"
+                  className="w-full bg-muted-foreground border border-transparent rounded-md py-2 px-4 flex items-center justify-center text-base font-medium text-white hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-indigo-500"
+                >
+                  Subscribe
+                </button>
+              </div>
+            </form>
           </div>
+        </div>
+        <div className="mt-8 border-t border-gray-700 pt-8 md:flex md:items-center md:justify-between">
+          <div className="flex space-x-6 md:order-2">
+            {navigation.social.map((item) => (
+              <a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-300">
+                <span className="sr-only">{item.name}</span>
+                <item.icon className="h-6 w-6" aria-hidden="true" />
+              </a>
+            ))}
+          </div>
+          <p className="mt-8 text-base text-gray-400 md:mt-0 md:order-1">
+            &copy; 2023 LMNAs, Inc. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

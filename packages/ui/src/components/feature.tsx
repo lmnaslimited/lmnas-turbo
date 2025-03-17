@@ -2,6 +2,7 @@ import { Button } from "@repo/ui/components/ui/button"
 import Link from "next/link"
 import { cva } from "class-variance-authority"
 import * as LucideIcons from "lucide-react"
+import {Titems, TfeatureProps} from "@repo/ui/type"
 
 const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
@@ -17,35 +18,8 @@ const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   },
 })
 
-type ItemType = {
-  question: string
-  answer: string
-  icon?: keyof typeof LucideIcons
-}
-type Theader={
-    textWithoutColor:string
-    badge?:string
-    text?: string;
-    subtitle?:string
-}
 
-type Tfeature = {
-    header: Theader;
-    button?:{
-        label: string;
-        href?:string;
-    }
-    items:ItemType[]
-}
-
-type IntroductionProps = {
-  buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
-  layout?: "classic" | "centered";
-  iShowButton?: boolean;
-  iFeature:Tfeature
-}
-
-export default function Introduction({ buttonPosition = "header", layout = "classic", iShowButton=true, iFeature }: IntroductionProps) {
+export default function Introduction({ buttonPosition = "header", layout = "classic", iShowButton=true, iFeature }: TfeatureProps) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        {layout === "classic" ? (
@@ -77,7 +51,7 @@ export default function Introduction({ buttonPosition = "header", layout = "clas
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="mt-10">
           <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-            {iFeature.items.map((idItem) => (
+            {iFeature.items?.map((idItem) => (
               <FAQItem key={idItem.question} {...idItem} />
             ))}
           </dl>
@@ -96,7 +70,7 @@ export default function Introduction({ buttonPosition = "header", layout = "clas
   )
 }
 
-const FAQItem = ({ question, answer, icon }: ItemType) => {
+const FAQItem = ({ question, answer, icon }: Titems) => {
     const IconComponent = icon && (LucideIcons[icon as keyof typeof LucideIcons] as React.ElementType)
   return (
     <div className= "relative flex gap-4 items-start">

@@ -38,17 +38,17 @@ export default function Header() {
           <Link href="/" className="font-medium hover:text-primary transition-colors">
             Home
           </Link>
-          <Link href="/blog" className="font-medium hover:text-primary transition-colors">
-            Blog
+          <Link href="/industries" className="font-medium hover:text-primary transition-colors">
+            Industries
           </Link>
-          <Link href="#features" className="font-medium hover:text-primary transition-colors">
-            Features
-          </Link>
-          <Link href="#case-studies" className="font-medium hover:text-primary transition-colors">
-            Case Studies
+          <Link href="/solutions" className="font-medium hover:text-primary transition-colors">
+            Solutions
           </Link>
           <Link href="#contact" className="font-medium hover:text-primary transition-colors">
             Contact
+          </Link>
+          <Link href="/blog" className="font-medium hover:text-primary transition-colors">
+            Blog
           </Link>
           <ThemeToggle />
           <Button size="sm" className="ml-4">
@@ -82,25 +82,18 @@ export default function Header() {
               Home
             </Link>
             <Link
-              href="/blog"
+              href="/industries"
               className="font-medium py-2 hover:text-primary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Blog
+              Industries
             </Link>
             <Link
-              href="#features"
+              href="/solutions"
               className="font-medium py-2 hover:text-primary transition-colors"
               onClick={() => setIsMobileMenuOpen(false)}
             >
-              Features
-            </Link>
-            <Link
-              href="#case-studies"
-              className="font-medium py-2 hover:text-primary transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Case Studies
+              Solutions
             </Link>
             <Link
               href="#contact"
@@ -108,6 +101,13 @@ export default function Header() {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               Contact
+            </Link>
+            <Link
+              href="/blog"
+              className="font-medium py-2 hover:text-primary transition-colors"
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              Blog
             </Link>
             <Button size="sm" className="w-full">
               Get Started
