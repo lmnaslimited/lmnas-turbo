@@ -6,9 +6,9 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui
 import { ArrowRight } from "lucide-react"
 
 export default function Tab({ data, renderItem }: { data: any[], renderItem: (item: any, index: number) => React.ReactNode }) {
-  const [VISIBLE_COUNT , fnSetVisibleCount] = useState(4)
+  const [VisibleCount  , fnSetVisibleCount] = useState(4)
 
-  const L_A_CATEGORIES = Array.from(new Set(data.map((item) => item.category)))
+  const LaCategories = Array.from(new Set(data.map((item) => item.category)))
 
   const fnShowMoreItems = () => {
     fnSetVisibleCount(data.length)
@@ -20,7 +20,7 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 md:gap-0 gap-4">
             <TabsTrigger value="all">All</TabsTrigger>
-            {L_A_CATEGORIES.map((iCategory) => (
+            {LaCategories.map((iCategory) => (
               <TabsTrigger key={iCategory} value={iCategory}>
                 {iCategory.charAt(0).toUpperCase() + iCategory.slice(1)}
               </TabsTrigger>
@@ -29,9 +29,9 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
 
           <TabsContent value="all">
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-4">
-              {data.slice(0, VISIBLE_COUNT).map(renderItem)}
+              {data.slice(0, VisibleCount).map(renderItem)}
             </div>
-            {VISIBLE_COUNT < data.length && (
+            {VisibleCount < data.length && (
               <div className="mt-8 text-center">
                 <Button onClick={fnShowMoreItems} size="lg" variant="outline">
                   Show More <ArrowRight className="size-5"/>
@@ -40,7 +40,7 @@ export default function Tab({ data, renderItem }: { data: any[], renderItem: (it
             )}
           </TabsContent>
 
-          {L_A_CATEGORIES.map((iCategory) => (
+          {LaCategories.map((iCategory) => (
             <TabsContent key={iCategory} value={iCategory}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
                 {data.filter((idItem) => idItem.category === iCategory).map(renderItem)}

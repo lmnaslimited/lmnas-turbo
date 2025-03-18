@@ -53,7 +53,7 @@ export default function CustomCard({
   // Component to display a user's profile details, including their name, place, and avatar.
   // The layout adjusts based on the `namePosition` prop, allowing the avatar to be positioned
   // on the left, right, top, or bottom relative to the name and place.
-  const L_E_PROFILE_DETAILS = nameAndPlace && (
+  const ProfileDetail = nameAndPlace && (
     <div
       className={cn(
         "flex items-start gap-2",
@@ -169,7 +169,7 @@ export default function CustomCard({
 
         {/* Name and Place - Top Position */}
         {nameAndPlace && namePosition === "top" && (
-          <div className="px-6 pt-6">{L_E_PROFILE_DETAILS}</div>
+          <div className="px-6 pt-6">{ProfileDetail}</div>
         )}
 
         {/* Card Header */}
@@ -236,7 +236,7 @@ export default function CustomCard({
           </div>
 
           {/* Name and Place - Bottom Position */}
-          {nameAndPlace && namePosition === "bottom" && L_E_PROFILE_DETAILS}
+          {nameAndPlace && namePosition === "bottom" && ProfileDetail}
         </CardFooter>
       </div>
     </Card>

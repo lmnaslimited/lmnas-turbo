@@ -98,14 +98,14 @@ function MarqueeLogos({
   dimensions: { width: number; height: number }
   pauseOnHover: boolean
 }) {
-    const L_D_CONTROLS = useAnimation() // Controls for animation
-    const L_A_DUPLICATE_LOGO = [...logos, ...logos]
+    const Controls = useAnimation() // Controls for animation
+    const DuplicateLogo = [...logos, ...logos]
   
     return (
       <div className="relative py-6 w-full overflow-hidden">
         <motion.div
           className={`flex ${spacing} min-w-max`}
-          animate={L_D_CONTROLS}
+          animate={Controls}
           initial={{ x: "0%" }}
           transition={{
             x: ["0%", "-100%"],
@@ -114,13 +114,13 @@ function MarqueeLogos({
             ease: "linear",
             duration: speed,
           }}
-          onHoverStart={() => pauseOnHover && L_D_CONTROLS.stop()} // Stops animation
-          onHoverEnd={() => pauseOnHover && L_D_CONTROLS.start({
+          onHoverStart={() => pauseOnHover && Controls.stop()} // Stops animation
+          onHoverEnd={() => pauseOnHover && Controls.start({
             x: ["0%", "-100%"],
             transition: { repeat: Infinity, ease: "linear", duration: speed }
           })} // Restarts animation
         >
-          {L_A_DUPLICATE_LOGO.map((idLogo, iIndex) => (
+          {DuplicateLogo.map((idLogo, iIndex) => (
             <LogoItem key={`${idLogo.alt}-${iIndex}`} logo={idLogo} dimensions={dimensions} />
           ))}
         </motion.div>
@@ -186,10 +186,10 @@ function LogoItem({
   dimensions: { width: number; height: number }
 }) {
   const { width, height } = dimensions
-  const L_LOGO_WIDTH =  width
-  const L_LOGO_HEIGHT =  height
+  const LogoWidth =  width
+  const LogoHeight =  height
 
-  const L_E_LOGO_ELEMENT = (
+  const LogoElement = (
     <div
       className={cn(
         "flex items-center justify-center p-4 rounded-lg transition-all duration-200",
@@ -201,7 +201,7 @@ function LogoItem({
       
         <div
           className={cn("flex items-center justify-center")}
-          style={{ width: L_LOGO_WIDTH, height: L_LOGO_HEIGHT }}
+          style={{ width: LogoWidth, height: LogoHeight }}
         >
           {logo.svg}
         </div>
@@ -210,8 +210,8 @@ function LogoItem({
      : <Image
         src={logo.src || "/placeholder.svg"}
         alt={logo.alt}
-        width={L_LOGO_WIDTH}
-        height={L_LOGO_HEIGHT}
+        width={LogoWidth}
+        height={LogoHeight}
         className={cn("object-contain")}
         loading="lazy"
       />
@@ -219,6 +219,6 @@ function LogoItem({
     </div>
   )
 
-  return L_E_LOGO_ELEMENT
+  return LogoElement
 }
 
