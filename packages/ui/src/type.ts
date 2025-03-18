@@ -95,4 +95,5 @@ export type TheroProps = {
       item: string
     }[]
     buttons: Tbutton[]
+    image:Timage
   }

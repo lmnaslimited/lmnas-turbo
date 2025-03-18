@@ -63,12 +63,11 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
         <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1">
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src="/placeholder.svg"
-              alt="AI-powered manufacturing dashboard visualization"
-              className="h-full w-full object-cover opacity-90 grayscale"
+              src={iHero.image?.src || "/placeholder.svg"}
+              alt={iHero.image.alt}
+              className="h-full w-full object-cover"
               width={100}
               height={100}
-              
             />
           </div>
         </div>
