@@ -1,65 +1,77 @@
 "use client"
 
-import { DynamicWeb } from "@repo/ui/components/animation/dynamicWeb"
-import { MotionWrapper } from "@repo/ui/components/animation/motionWrapper"
+import Image from "next/image";
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Zap } from "lucide-react";
+import { TheroProps } from "../type.js"
 
-export default function Hero() {
+
+export default function Hero({ iHero }: { iHero: TheroProps }) {
   return (
-    <section className="relative flex items-center justify-center min-h-screen px-6 sm:px-12 lg:px-20">
-      <DynamicWeb />
-      <div className="absolute inset-0 bg-gradient-to-b from-background/30 via-background/60 to-background"></div>
+    <div className="container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center md:py-24 lg:py-32 py-20">
+      <div className="flex flex-col justify-center space-y-8">
+        {/* Badge */}
+        {iHero.heading.badge && (
+          <div className="inline-flex w-fit items-center rounded-full border border-primary/60 bg-slate px-3 py-1 text-sm text-primary/70">
+            <Zap className="mr-1 h-3.5 w-3.5" />
+            <span>{iHero.heading.badge}</span>
+          </div>
+        )}
 
-      <div className="container relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
-        {/* Left Content */}
-        <MotionWrapper>
-          <div className="text-center lg:text-left">
-            <h1 className="text-4xl font-extrabold text-primary sm:text-5xl md:text-6xl">
-              Reimagine Your Business.{" "}
-              <span className="text-primary/70">Achieve the Extraordinary.</span>
-            </h1>
-            <p className="mt-4 text-lg text-primary/50">
-              From seamless operations to actionable insights, LMNAs empowers businesses to overcome their toughest
-              challenges and unlock growth—no matter the industry.
+        {/* Headline */}
+        <div className="space-y-4">
+          <h1 className={`text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-7xl ${iHero.heading.headingClass}`}>
+            {iHero.heading.textWithoutColor} {" "}
+            <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">
+              {iHero.heading.text}
+            </span>
+          </h1>
+          {iHero.heading.subtitle && (
+            <p className={`max-w-xl text-xl text-primary/70 md:text-2xl ${iHero.heading.descripClass}`}>
+              {iHero.heading.subtitle}
             </p>
-            <div className="mt-6 flex flex-col sm:flex-row sm:justify-center lg:justify-start gap-4">
-              <Button asChild size="lg">
-                <Link href="https://nectar.lmnas.com/book_appointment">
-                  Book Your Free Consultation
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline" size="lg">
-                <Link href="#solutions">Explore Our Solutions</Link>
-              </Button>
-            </div>
-          </div>
-        </MotionWrapper>
+          )}
+        </div>
 
-        {/* Right Image with Motion */}
-        <MotionWrapper>
-          <div className="w-full flex justify-center lg:justify-end">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" className="w-full max-w-md sm:max-w-lg lg:max-w-xl">
-              <rect width="100%" height="100%" fill="#ddd" />
-              <text
-                x="400"
-                y="300"
-                textAnchor="middle"
-                fill="#555"
-                fontSize="48"
-                fontFamily="Arial, sans-serif"
-                fontWeight="bold"
-              >
-                Image
-              </text>
-            </svg>
+        {/* Feature highlights */}
+        {iHero.items && (
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+            {iHero.items.map((idItem, iIndex) => (
+              <div className="flex items-center gap-2 text-primary/80" key={iIndex}>
+                {idItem.icon}
+                <span>{idItem.item}</span>
+              </div>
+            ))}
           </div>
-        </MotionWrapper>
-        
+        )}
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col gap-4 sm:flex-row">
+          {iHero.buttons.map((button, index) => (
+            <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
+              {button.iconPosition === "before" && button.icon}
+            {button.href && (<Link href={button.href} > {button.label} </Link> )}
+              {button.iconPosition === "after" && button.icon}
+            </Button>
+          ))}
+        </div>
       </div>
-    </section>
-  )
+
+      {/* Image part */}
+      <div className="flex items-center justify-center">
+        <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Image
+              src={iHero.image?.src || "/placeholder.svg"}
+              alt={iHero.image.alt}
+              className="h-full w-full object-cover"
+              width={100}
+              height={100}
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
