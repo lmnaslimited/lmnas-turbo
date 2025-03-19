@@ -1,3 +1,15 @@
+/*
+usage:
+const titleData = {
+    textWithoutColor: "Welcome to ",
+    text: "Multimine Dashboard",
+    subtitle: "Track your mining activities and monitor performance.",
+    className: "custom-container-class", // (Optional) Additional styling for the wrapper div
+    headingClass: "custom-heading-class", // (Optional) Additional styling for the heading
+    descripClass: "custom-description-class" // (Optional) Additional styling for the description
+};
+<TitleSubtitle iTitle={titleData} />
+ */
 import { cn } from "@repo/ui/lib/utils";
 import { Theader } from "@repo/ui/type";
 import clsx from "clsx";

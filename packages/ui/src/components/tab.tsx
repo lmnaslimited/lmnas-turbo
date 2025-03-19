@@ -1,3 +1,31 @@
+/*
+ This component renders a tabbed interface to display categorized data.
+  - Users can switch between tabs to view specific categories.
+  - The "All" tab displays all items with a "Show More" button for additional items.
+  - Each tab dynamically generates content based on provided data.
+Props:
+  - data: An array of objects where each object contains a category and content (ex: json of the card component).
+  - renderItem: A function to render each item (this can be a card).
+usage:
+   <Tab
+    data={cardContent}
+    renderItem={(study, index) => (
+      <CustomCard
+        key={index}
+        header={study.header}
+        className=""
+        image={{
+          src: study.image,
+          alt: study.alt,
+          aspectRatio: "wide",
+        }}
+        button={[...study.button]}
+        tag={study.category}
+      />
+    )}
+  />
+ */
+
 "use client"
 
 import React, { useState } from "react"
