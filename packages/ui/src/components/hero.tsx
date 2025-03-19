@@ -36,7 +36,7 @@ export default function Hero({ iHero }: { iHero: TheroProps }) {
 
         {/* Feature highlights */}
         {iHero.items && (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {iHero.items.map((idItem, iIndex) => (
               <div className="flex items-center gap-2 text-primary/80" key={iIndex}>
                 {idItem.icon}

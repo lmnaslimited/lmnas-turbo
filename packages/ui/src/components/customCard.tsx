@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import clsx from "clsx";
 import {
   Card,
   CardFooter,
@@ -91,7 +90,7 @@ export default function CustomCard({
 
   return (
     <Card
-      className={clsx(
+      className={cn(
         "overflow-hidden transition-all duration-200 hover:shadow-md",
         layout === "horizontal" ? "md:flex md:flex-row" : "flex flex-col",
         onClick && "cursor-pointer",
@@ -187,7 +186,7 @@ export default function CustomCard({
           )}
         >
           <div
-            className={clsx(
+            className={cn(
               "flex w-full gap-8",
               button?.length === 1 || link?.length === 1
                 ? ""
