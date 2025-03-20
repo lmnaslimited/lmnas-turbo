@@ -9,26 +9,12 @@ Props:
 usage:
    <Tab
     data={cardContent}
-    renderItem={(study, index) => (
-      <CustomCard
-        key={index}
-        header={study.header}
-        className=""
-        image={{
-          src: study.image,
-          alt: study.alt,
-          aspectRatio: "wide",
-        }}
-        button={[...study.button]}
-        tag={study.category}
-      />
-    )}
   />
  */
 
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
 import { ArrowRight } from "lucide-react";

@@ -236,7 +236,7 @@ export default function CustomCard({
                   key={`lnk-${iIndex}`}
                   variant="link"
                   className="p-0"
-                 
+                  size={idLnk.size || "default"}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {idLnk.icon && idLnk.iconPosition === "before" && (
