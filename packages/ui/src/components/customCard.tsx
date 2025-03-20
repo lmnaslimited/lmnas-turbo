@@ -22,6 +22,7 @@ export default function CustomCard({
   header,
   button,
   link,
+  list,
   avatar,
   nameAndPlace,
   namePosition = "bottom",
@@ -175,6 +176,21 @@ export default function CustomCard({
         <CardHeader>
           <h2 className={cn("text-xl mb-3 font-semibold", header.headingClass)}>{header.text}</h2>
           <p className={cn("max-w-[700px] text-muted-foreground", header.descripClass)}>{header.subtitle}</p>
+          {list && list.length > 0 && (
+              <ul className="space-y-2">
+              {list.map((item, index) => (
+                <li key={index} className="flex items-start gap-2 py-2">
+                  {item.icon && <span className="text-primary">{item.icon}</span>}
+                  <div>
+                    <span className="font-medium">{item.text}</span>
+                    {item.subtitle && (
+                      <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
+              </ul>
+          )}
         </CardHeader>
 
         {/* Card Footer */}

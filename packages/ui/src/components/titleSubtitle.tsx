@@ -10,6 +10,7 @@ const titleData = {
 };
 <TitleSubtitle iTitle={titleData} />
  */
+"use client"
 import { cn } from "@repo/ui/lib/utils";
 import { Theader } from "@repo/ui/type";
 import { motion } from "framer-motion";
