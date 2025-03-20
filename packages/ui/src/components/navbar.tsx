@@ -61,115 +61,115 @@ const products = [
       </svg>
     ),
   },
-  {
-    title: "CPQ Cloud",
-    href: "/products/cpq-cloud",
-    description: "SaaS solution designed to assist businesses",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M7 21a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v16Z" />
-        <path d="M12 10h.01" />
-      </svg>
-    ),
-  },
-  {
-    title: "CRM Cloud",
-    href: "/products/crm-cloud",
-    description: "Empowering Your Customer Relationship Management",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M14 19a6 6 0 0 0-12 0" />
-        <circle cx="8" cy="9" r="4" />
-        <path d="M22 19a6 6 0 0 0-6-6 4 4 0 1 0 0-8" />
-      </svg>
-    ),
-  },
-  {
-    title: "LUMI",
-    href: "/products/lumi",
-    description: "Our Smart Assistant for Effortless Management",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <circle cx="12" cy="12" r="10" />
-        <path d="M12 16v-4" />
-        <path d="M12 8h.01" />
-      </svg>
-    ),
-  },
-  {
-    title: "HRMS Cloud",
-    href: "/products/hrms-cloud",
-    description: "Transforming Human Resource Management in the Digital Era",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
-  },
-  {
-    title: "Analytical Cloud",
-    href: "/products/analytical-cloud",
-    description: "Streamline Your Business with Analytics Cloud",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M3 3v18h18" />
-        <path d="m19 9-5 5-4-4-3 3" />
-      </svg>
-    ),
-  },
+  // {
+  //   title: "CPQ Cloud",
+  //   href: "/products/cpq-cloud",
+  //   description: "SaaS solution designed to assist businesses",
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       width="24"
+  //       height="24"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="2"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <path d="M7 21a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v16Z" />
+  //       <path d="M12 10h.01" />
+  //     </svg>
+  //   ),
+  // },
+  // {
+  //   title: "CRM Cloud",
+  //   href: "/products/crm-cloud",
+  //   description: "Empowering Your Customer Relationship Management",
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       width="24"
+  //       height="24"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="2"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <path d="M14 19a6 6 0 0 0-12 0" />
+  //       <circle cx="8" cy="9" r="4" />
+  //       <path d="M22 19a6 6 0 0 0-6-6 4 4 0 1 0 0-8" />
+  //     </svg>
+  //   ),
+  // },
+  // {
+  //   title: "LUMI",
+  //   href: "/products/lumi",
+  //   description: "Our Smart Assistant for Effortless Management",
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       width="24"
+  //       height="24"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="2"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <circle cx="12" cy="12" r="10" />
+  //       <path d="M12 16v-4" />
+  //       <path d="M12 8h.01" />
+  //     </svg>
+  //   ),
+  // },
+  // {
+  //   title: "HRMS Cloud",
+  //   href: "/products/hrms-cloud",
+  //   description: "Transforming Human Resource Management in the Digital Era",
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       width="24"
+  //       height="24"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="2"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+  //       <circle cx="9" cy="7" r="4" />
+  //       <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+  //       <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+  //     </svg>
+  //   ),
+  // },
+  // {
+  //   title: "Analytical Cloud",
+  //   href: "/products/analytical-cloud",
+  //   description: "Streamline Your Business with Analytics Cloud",
+  //   icon: (
+  //     <svg
+  //       xmlns="http://www.w3.org/2000/svg"
+  //       width="24"
+  //       height="24"
+  //       viewBox="0 0 24 24"
+  //       fill="none"
+  //       stroke="currentColor"
+  //       strokeWidth="2"
+  //       strokeLinecap="round"
+  //       strokeLinejoin="round"
+  //     >
+  //       <path d="M3 3v18h18" />
+  //       <path d="m19 9-5 5-4-4-3 3" />
+  //     </svg>
+  //   ),
+  // },
 ]
 
 const industries = [
