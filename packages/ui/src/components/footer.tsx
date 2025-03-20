@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin } from "lucide-react"
+import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin, Youtube } from "lucide-react"
 
 export default function Footer() {
   return (
@@ -20,10 +20,6 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Facebook className="h-5 w-5" />
-                <span className="sr-only">Facebook</span>
-              </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
@@ -32,8 +28,8 @@ export default function Footer() {
                 <span className="sr-only">LinkedIn</span>
               </Link>
               <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                <Instagram className="h-5 w-5" />
-                <span className="sr-only">Instagram</span>
+                <Youtube className="h-5 w-5" />
+                <span className="sr-only">YouTube</span>
               </Link>
             </div>
           </div>

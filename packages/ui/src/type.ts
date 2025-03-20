@@ -53,6 +53,11 @@ export type TcardProps = {
     header:Theader
     button?: Tbutton[]
     link?: Tbutton[]
+    list?:{
+      icon?: React.ReactNode | keyof typeof LucideIcons;
+      text: string;
+      subtitle?: string;
+    }[];
     avatar?: Timage
     nameAndPlace?: {
       name: string
