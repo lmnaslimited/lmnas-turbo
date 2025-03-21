@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Globe, MoreHorizontal, X } from "lucide-react"
+import { Globe, MoreHorizontal, Moon, Sun } from "lucide-react"
 
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -16,30 +16,10 @@ import {
   navigationMenuTriggerStyle,
 } from "@repo/ui/components/ui/navigation-menu"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui/components/ui/dropdown-menu"
-import { Switch } from "@repo/ui/components/ui/switch"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/ui/components/ui/tabs"
 import { ThemeToggle } from "@repo/ui/components/theme-toggle"
+import { SVGComponent } from "@repo/ui/svg/svgs"
 
-// Custom hook to detect screen size
-function useMediaQuery(query: string) {
-  const [matches, setMatches] = React.useState(false)
-
-  React.useEffect(() => {
-    const media = window.matchMedia(query)
-    if (media.matches !== matches) {
-      setMatches(media.matches)
-    }
-
-    const listener = () => setMatches(media.matches)
-    media.addEventListener("change", listener)
-
-    return () => media.removeEventListener("change", listener)
-  }, [matches, query])
-
-  return matches
-}
-
-const products = [
+const LaProducts = [
   {
     title: "ERP Suite",
     href: "/products/lens-erp-suite",
@@ -61,7 +41,7 @@ const products = [
       </svg>
     ),
   },
-  // {
+   // {
   //   title: "CPQ Cloud",
   //   href: "/products/cpq-cloud",
   //   description: "SaaS solution designed to assist businesses",
@@ -172,7 +152,7 @@ const products = [
   // },
 ]
 
-const industries = [
+const LaIndustries = [
   {
     title: "Manufacturing",
     href: "/industries/manufacturing",
@@ -193,7 +173,7 @@ const industries = [
       </svg>
     ),
   },
-    {
+  {
     title: "Distribution",
     href: "/industries/distribution",
     description: "Supply chain optimization tools",
@@ -244,7 +224,7 @@ const industries = [
   },
 ]
 
-const more = [
+const LaMore = [
   {
     title: "About Us",
     href: "/about-us",
@@ -263,7 +243,7 @@ const more = [
   },
 ]
 
-const languages = [
+const LaLanguages = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "de", name: "Deutsch", flag: "🇩🇪" },
   { code: "fr", name: "Français", flag: "🇫🇷" },
@@ -271,649 +251,488 @@ const languages = [
   { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ]
 
-export function Navbar() {
-  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false)
-  const [isDarkMode, setIsDarkMode] = React.useState(false)
-  const [language, setLanguage] = React.useState("en")
-  const [moreDropdownOpen, setMoreDropdownOpen] = React.useState(false)
-  const [isScrolled, setIsScrolled] = React.useState(false)
-  const [mobileProductsOpen, setMobileProductsOpen] = React.useState(false)
-  const [mobileIndustriesOpen, setMobileIndustriesOpen] = React.useState(false)
-  const [mobileModeDropdownOpen, setMobileModeDropdownOpen] = React.useState(false)
-  
-  // Check if screen is at least lg breakpoint (1024px)
-  const isLargeScreen = useMediaQuery("(min-width: 1024px)")
-
+export default function Navbar() {
+  const [Language, fnSetLanguage] = React.useState("en")
+  const [MoreDropdownOpen, fnSetMoreDropdownOpen] = React.useState(false)
+  const [IsScrolled, fnSetIsScrolled] = React.useState(false)
+  const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
+  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
+  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
 
   // Handle scroll effect
   React.useEffect(() => {
-    const handleScroll = () => {
+    const fnHandleScroll = () => {
       if (window.scrollY > 10) {
-        setIsScrolled(true)
+        fnSetIsScrolled(true)
       } else {
-        setIsScrolled(false)
+        fnSetIsScrolled(false)
       }
     }
 
-    window.addEventListener("scroll", handleScroll)
+    window.addEventListener("scroll", fnHandleScroll)
     return () => {
-      window.removeEventListener("scroll", handleScroll)
+      window.removeEventListener("scroll", fnHandleScroll)
     }
   }, [])
 
   // Get current language display
-  const getCurrentLanguageDisplay = () => {
-    const currentLang = languages.find((lang) => lang.code === language)
-    return currentLang ? currentLang.code.toUpperCase() : "EN"
-  }
-
-  const toggleMobileSection = (section: "products" | "industries") => {
-    if (section === "products") {
-      setMobileProductsOpen(!mobileProductsOpen)
-      if (mobileIndustriesOpen) setMobileIndustriesOpen(false)
-    } else {
-      setMobileIndustriesOpen(!mobileIndustriesOpen)
-      if (mobileProductsOpen) setMobileProductsOpen(false)
-    }
+  const fnGetCurrentLanguageDisplay = () => {
+    const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language)
+    return CurrentLang ? CurrentLang.code.toUpperCase() : "EN"
   }
 
   return (
-  
+    <>
+      <header
+        className={cn(
+          "sticky top-0 z-50 w-full border-b border-border ",
+          IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent ",
+        )}
+      >
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-6">
+            {/* Logo and Brand */}
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-background rounded-md flex items-center justify-center text-primary-foreground">
+                <SVGComponent />
+              </div>
+              <span className="text-lg font-bold tracking-tight ">LMNAs</span>
+            </Link>
 
-<>
-
-<header
-      className={cn(
-        "sticky top-0 z-50 w-full border-b border-gray-200 dark:border-gray-800",
-        isScrolled ? "bg-white/80 backdrop-blur-md dark:bg-gray-900/80" : "bg-transparent dark:bg-transparent",
-      )}
-    >
-
-
-<div className="container flex h-16 items-center justify-between px-4 md:px-6">
-        <div className="flex items-center gap-6">
-          {/* Logo and Brand */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-10 h-10 bg-primary rounded-md flex items-center justify-center text-primary-foreground">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M12 5v14" />
-                <path d="M5 12h14" />
-              </svg>
-            </div>
-            <span className="text-lg font-bold tracking-tight dark:text-white">LMNAs</span>
-          </Link>
-
-          {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
-          <div className="hidden lg:flex lg:items-center">
-            <NavigationMenu className="md:justify-center">
-              <NavigationMenuList className="flex items-center">
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-md flex items-center h-10 dark:text-white dark:hover:bg-gray-800">
-                    Products
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-md bg-white/80 dark:bg-gray-900/80">
-                    <div className="p-6 w-[500px]">
-                      <div className="grid grid-cols-2 gap-2">
-                        {products.map((product) => (
-                            <Link href={product.href}
-                            key={product.title}>
-                          <div
-                            className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
-                          >
-                            
-                            <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 dark:text-white">
-                              <div className="w-6 h-6 flex items-center justify-center">{product.icon}</div>
-                            </div>
-                            <div>
-                              <span className="font-medium text-md  dark:text-white">
-                                {product.title}
-                              </span>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{product.description}</p>
-                            </div>
-                          </div>
-                          </Link>
-                        ))}
+            {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
+            <div className="hidden lg:flex lg:items-center">
+              <NavigationMenu className="md:justify-center">
+                <NavigationMenuList className="flex items-center">
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-md flex items-center  transition-transform duration-200 hover:scale-105">
+                      Products
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="border border-border  shadow-sm">
+                      <div className="p-5 w-[500px]">
+                        <div className="grid grid-cols-2 gap-2">
+                          {LaProducts.map((idProduct) => (
+                            <Link href={idProduct.href} key={idProduct.title}>
+                              <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
+                                  <div className="w-6 h-6 flex items-center justify-center">{idProduct.icon}</div>
+                                </div>
+                                <div>
+                                  <span className="font-medium text-md  ">{idProduct.title}</span>
+                                  <p className="text-xs text-muted-foreground ">{idProduct.description}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-md flex items-center h-10 dark:text-white dark:hover:bg-gray-800">
-                    Industries
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-md bg-white/80 dark:bg-gray-900/80">
-                    <div className="p-5 w-[500px]">
-                      <div className="grid grid-cols-2 gap-2">
-                        {industries.map((industry) => (
-                             <Link href={industry.href}
-                             key={industry.title}>
-                          <div
-                            key={industry.title}
-                            className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
-                          >
-                            <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 dark:text-white">
-                              <div className="w-6 h-6 flex items-center justify-center">{industry.icon}</div>
-                            </div>
-                            <div>
-                              <span
-                                
-                                className="font-medium text-md  dark:text-white"
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-md flex items-center h-10  transition-transform duration-200 hover:scale-105">
+                      Industries
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="border border-border  shadow-sm">
+                      <div className="p-5 w-[500px]">
+                        <div className="grid grid-cols-2 gap-2">
+                          {LaIndustries.map((idIndustry) => (
+                            <Link href={idIndustry.href} key={idIndustry.title}>
+                              <div
+                                key={idIndustry.title}
+                                className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
                               >
-                                {industry.title}
-                              </span>
-                              <p className="text-xs text-gray-500 dark:text-gray-400">{industry.description}</p>
-                            </div>
-                          </div>
-                          </Link>
-                        ))}
+                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
+                                  <div className="w-6 h-6 flex items-center justify-center">{idIndustry.icon}</div>
+                                </div>
+                                <div>
+                                  <span className="font-medium text-md  ">{idIndustry.title}</span>
+                                  <p className="text-xs text-muted-foreground ">{idIndustry.description}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
 
-                <NavigationMenuItem>
-                  <Link href="/solutions" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "text-md h-10 flex items-center dark:text-white dark:hover:bg-gray-800",
-                      )}
-                    >
-                      Solutions
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem>
-                  <Link href="/pricing" legacyBehavior passHref>
-                    <NavigationMenuLink
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "text-md h-10 flex items-center dark:text-white dark:hover:bg-gray-800",
-                      )}
-                    >
-                      Pricing
-                    </NavigationMenuLink>
-                  </Link>
-                </NavigationMenuItem>
-
-                <NavigationMenuItem className="flex items-center">
-                  <DropdownMenu 
-                    open={isLargeScreen ? moreDropdownOpen : false} 
-                    onOpenChange={(open) => isLargeScreen && setMoreDropdownOpen(open)}
-                  >
-                    <DropdownMenuTrigger
-                      asChild
-                      onMouseEnter={() => isLargeScreen && setMoreDropdownOpen(true)}
-                      onMouseLeave={() => isLargeScreen && setMoreDropdownOpen(false)}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-10 w-10 flex items-center justify-center dark:text-white dark:hover:bg-gray-800"
+                  <NavigationMenuItem>
+                    <Link href="/solutions" legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                        )}
                       >
-                        <MoreHorizontal className="h-6 w-6" />
-                        <span className="sr-only">More options</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      align="end"
-                      className="w-[80px] p-2 border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-md bg-white/80 dark:bg-gray-900/80"
-                      onMouseEnter={() => isLargeScreen && setMoreDropdownOpen(true)}
-                      onMouseLeave={() => isLargeScreen && setMoreDropdownOpen(false)}
-                    >
-                      {more.map((item, index) => (
-                        <DropdownMenuItem
-                          key={item.title}
-                          asChild
-                          className={cn(
-                            "py-2 text-md font-normal text-center dark:text-white dark:hover:bg-gray-800",
-                            index === 1 ? "border-b border-gray-200 dark:border-gray-800 pb-2 mb-1" : "",
-                          )}
+                        Solutions
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <Link href="/pricing" legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                        )}
+                      >
+                        Pricing
+                      </NavigationMenuLink>
+                    </Link>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem className="flex items-center">
+                    <DropdownMenu open={MoreDropdownOpen} onOpenChange={fnSetMoreDropdownOpen}>
+                      <DropdownMenuTrigger
+                        asChild
+                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
+                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 flex items-center justify-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
                         >
-                          <Link href={item.href}>{item.title}</Link>
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
-        </div>
-
-        {/* Right side controls */}
-        <div className="hidden lg:flex lg:items-center lg:gap-4">
-          {/* Theme Switcher */}
-          <div className="flex items-center gap-2">
-            {/* <Sun className="h-4 w-4 dark:text-gray-400" />
-            <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} aria-label="Toggle theme" className="ring-0" />
-            <Moon className="h-4 w-4 text-gray-400 dark:text-white" /> */}
-            <ThemeToggle />
-            
-          </div>
-
-          {/* Language Switcher */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-1 h-10 flex items-center dark:text-white">
-                <Globe className="h-4 w-4" />
-                <span className="text-md">{getCurrentLanguageDisplay()}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[160px] border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-md bg-white/80 dark:bg-gray-900/80"
-            >
-              <div className="grid grid-cols-1 gap-0">
-                {languages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={cn(
-                      "flex items-center py-2 px-2 text-md font-normal text-center dark:text-white",
-                      lang.code === language ? "bg-muted dark:bg-gray-800" : "",
-                    )}
-                  >
-                    <span className="flex items-center justify-center w-6 h-6 text-base">{lang.flag}</span>
-                    <span>{lang.name}</span>
-                    {lang.code === language && (
-                      <svg
-                        className="ml-auto h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
+                          <MoreHorizontal className="h-6 w-6" />
+                          <span className="sr-only">More options</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-[80px] p-2 border border-border  shadow-sm"
+                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
+                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
                       >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <Button className="rounded-lg bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-md ring-0 h-10 flex items-center">
-            Contact Us
-          </Button>
-        </div>
-
-        {/* Mobile menu button - removed hamburger menu */}
-        <div className="flex lg:hidden items-center gap-2">
-          {/* Theme Switcher for Mobile */}
-          <div className="flex items-center">
-            {/* <Switch checked={isDarkMode} onCheckedChange={setIsDarkMode} aria-label="Toggle theme" className="ring-0" />
-            {isDarkMode ? <Moon className="h-4 w-4 ml-1 text-white" /> : <Sun className="h-4 w-4 ml-1" />} */}
-            <ThemeToggle />
-
+                        {LaMore.map((idItem, iIndex) => (
+                          <DropdownMenuItem
+                            key={idItem.title}
+                            asChild
+                            className={cn(
+                              "py-2 text-md font-normal text-center ",
+                              iIndex === 1 ? "border-b border-border  pb-2 mb-1" : "",
+                            )}
+                          >
+                            <Link href={idItem.href}>{idItem.title}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
           </div>
 
-          {/* Language Switcher for Mobile */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="sm" className="gap-1 h-8 flex items-center dark:text-white">
-                <Globe className="h-4 w-4" />
-                <span className="text-xs">{getCurrentLanguageDisplay()}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="end"
-              className="w-[160px] border border-gray-200 dark:border-gray-800 shadow-sm backdrop-blur-md bg-white/80 dark:bg-gray-900/80"
-            >
-              <div className="grid grid-cols-1 gap-0">
-                {languages.map((lang) => (
-                  <DropdownMenuItem
-                    key={lang.code}
-                    onClick={() => setLanguage(lang.code)}
-                    className={cn(
-                      "flex items-center py-2 px-2 text-md font-normal text-center dark:text-white",
-                      lang.code === language ? "bg-muted dark:bg-gray-800" : "",
-                    )}
-                  >
-                    <span className="flex items-center justify-center w-6 h-6 text-base">{lang.flag}</span>
-                    <span>{lang.name}</span>
-                    {lang.code === language && (
-                      <svg
-                        className="ml-auto h-4 w-4"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      >
-                        <polyline points="20 6 9 17 4 12"></polyline>
-                      </svg>
-                    )}
-                  </DropdownMenuItem>
-                ))}
-              </div>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </div>
+          {/* Right side controls */}
+          <div className="hidden lg:flex lg:items-center lg:gap-4">
+            {/* Theme Switcher */}
+            <div className="flex items-center gap-2">
+              
+              <ThemeToggle />
+            </div>
 
-
-
-{/* Mobile menu - replaced with tabs for products/industries */}
-{mobileMenuOpen && (
-  <div className="fixed inset-0 z-50 lg:hidden backdrop-blur-md bg-white/80 dark:bg-gray-900/80 pt-16">
-    <div className="px-4 py-6 overflow-y-auto h-full">
-      <button
-        onClick={() => setMobileMenuOpen(false)}
-        className="absolute top-4 right-4 p-2 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
-      >
-        <X className="h-6 w-6" />
-        <span className="sr-only">Close menu</span>
-      </button>
-
-      <Tabs defaultValue="products" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 mb-4">
-          <TabsTrigger value="products" className="dark:text-white">
-            Products
-          </TabsTrigger>
-          <TabsTrigger value="industries" className="dark:text-white">
-            Industries
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="products" className="mt-0">
-          <div className="grid grid-cols-2 gap-4">
-            {products.map((product) => (
-              <Link
-                key={product.title}
-                href={product.href}
-                className="flex flex-col items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition-transform duration-200 hover:scale-105"
-                onClick={() => setMobileMenuOpen(false)}
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="secondary" size="sm" className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent">
+                  <Globe className="h-4 w-4" />
+                  <span className="text-md">{fnGetCurrentLanguageDisplay()}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-[160px] border border-border  shadow-sm"
               >
-                <div className="mb-2 text-gray-700 dark:text-gray-300">{product.icon}</div>
-                <span className="text-md font-medium text-gray-900 dark:text-white text-center">
-                  {product.title}
-                </span>
-              </Link>
-            ))}
+                <div className="grid grid-cols-1 gap-0">
+                  {LaLanguages.map((idLang) => (
+                    <DropdownMenuItem
+                      key={idLang.code}
+                      onClick={() => fnSetLanguage(idLang.code)}
+                      className={cn(
+                        "flex items-center py-2 px-2 text-md font-normal text-center ",
+                        idLang.code === Language ? "bg-muted " : "",
+                      )}
+                    >
+                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.flag}</span>
+                      <span>{idLang.name}</span>
+                      {idLang.code === Language && (
+                        <svg
+                          className="ml-auto h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button variant="default" className="rounded-lg h-10 flex items-center">
+              Contact Us
+            </Button>
           </div>
-        </TabsContent>
-        <TabsContent value="industries" className="mt-0">
-          <div className="grid grid-cols-2 gap-4">
-            {industries.map((industry) => (
-              <Link
-                key={industry.title}
-                href={industry.href}
-                className="flex flex-col items-center p-3 rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={() => setMobileMenuOpen(false)}
+
+          {/* Mobile menu button - removed hamburger menu */}
+          <div className="flex lg:hidden items-center gap-2">
+            {/* Theme Switcher for Mobile */}
+            <div className="flex items-center">
+              
+              <ThemeToggle />
+            </div>
+
+            {/* Language Switcher for Mobile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="secondary" size="sm" className="gap-1 h-8 flex items-center ">
+                  <Globe className="h-4 w-4" />
+                  <span className="text-xs">{fnGetCurrentLanguageDisplay()}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                className="w-[160px] border border-border shadow-sm"
               >
-                <div className="mb-2 text-gray-700 dark:text-gray-300">{industry.icon}</div>
-                <span className="text-md font-medium text-gray-900 dark:text-white text-center">
-                  {industry.title}
-                </span>
-              </Link>
-            ))}
+                <div className="grid grid-cols-1 gap-0">
+                  {LaLanguages.map((idLang) => (
+                    <DropdownMenuItem
+                      key={idLang.code}
+                      onClick={() => fnSetLanguage(idLang.code)}
+                      className={cn(
+                        "flex items-center py-2 px-2 text-md font-normal text-center ",
+                        idLang.code === Language ? "bg-muted " : "",
+                      )}
+                    >
+                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.flag}</span>
+                      <span>{idLang.name}</span>
+                      {idLang.code === Language && (
+                        <svg
+                          className="ml-auto h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </header>
 
-      <div className="mt-6 space-y-2">
-        <Link
-          href="/solutions"
-          className="block w-full p-3 text-center rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Solutions
-        </Link>
-        <Link
-          href="/pricing"
-          className="block w-full p-3 text-center rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Pricing
-        </Link>
-      </div>
-
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mt-6 mb-3">More</h3>
-      <div className="grid grid-cols-2 gap-4">
-        {more.map((item) => (
-          <Link
-            key={item.title}
-            href={item.href}
-            className="block p-3 text-center rounded-lg bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => setMobileMenuOpen(false)}
-          >
-            {item.title}
-          </Link>
-        ))}
-      </div>
-
-      <div className="mt-8">
-        <Button
-          className="w-full justify-center rounded-lg bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 text-md"
-          onClick={() => setMobileMenuOpen(false)}
-        >
-          Contact Us
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
-
-
-{/* Mobile Bottom Navigation */}
-<div className="fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-t border-gray-200 dark:border-gray-800 lg:hidden">
-  <div className="flex justify-around items-center h-16 px-2">
-    <button
-      onMouseEnter={() => setMobileProductsOpen(true)}
-      onMouseLeave={() => setMobileProductsOpen(false)}
-      className={cn(
-        "flex flex-col items-center justify-center w-1/5 h-full",
-        mobileProductsOpen
-          ? "text-black dark:text-white"
-          : "text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white",
-      )}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="mb-1"
-      >
-        <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-" />
-      </svg>
-      <span className="text-xs">Products</span>
-    </button>
-    <button
-      onMouseEnter={() => setMobileIndustriesOpen(true)}
-      onMouseLeave={() => setMobileIndustriesOpen(false)}
-      className={cn(
-        "flex flex-col items-center justify-center w-1/5 h-full",
-        mobileIndustriesOpen
-          ? "text-black dark:text-white"
-          : "text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white",
-      )}
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="mb-1"
-      >
-        <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-      </svg>
-      <span className="text-xs">Industries</span>
-    </button>
-    <Link
-      href="/solutions"
-      className="flex flex-col items-center justify-center w-1/5 h-full text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="mb-1"
-      >
-        <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-        <path d="M22 12A10 10 0 0 0 12 2v10z" />
-      </svg>
-      <span className="text-xs">Solutions</span>
-    </Link>
-    <Link
-      href="/pricing"
-      className="flex flex-col items-center justify-center w-1/5 h-full text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
-    >
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="20"
-        height="20"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="mb-1"
-      >
-        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-      </svg>
-      <span className="text-xs">Pricing</span>
-    </Link>
-  
-    <DropdownMenu open={mobileModeDropdownOpen} onOpenChange={setMobileModeDropdownOpen}>
-      <DropdownMenuTrigger asChild>
-        <button
-          className="flex flex-col items-center justify-center w-1/5 h-full text-gray-600 dark:text-gray-300 hover:text-black dark:hover:text-white"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mb-1"
-          >
-            <circle cx="12" cy="12" r="1" />
-            <circle cx="12" cy="5" r="1" />
-            <circle cx="12" cy="19" r="1" />
-          </svg>
-          <span className="text-xs">More</span>
-        </button>
-      </DropdownMenuTrigger>
-      
-      <DropdownMenuContent
-        align="start"
-        className="w-[120px] p-2 border border-gray-200 dark:border-gray-800 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 animate-fadeInUp mr-3"
-        onMouseLeave={() => setMobileModeDropdownOpen(false)}
-      >
-        {more.map((item, index) => (
-          <DropdownMenuItem
-            key={item.title}
-            asChild
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background/80  border-t border-border  lg:hidden">
+        <div className="flex justify-around items-center h-16 px-2">
+          <button
+            onMouseEnter={() => fnSetMobileProductsOpen(true)}
+            onMouseLeave={() => fnSetMobileProductsOpen(false)}
             className={cn(
-              "py-2 text-xs font-normal text-center dark:text-white",
-              index === 1 ? "border-b border-gray-200 dark:border-gray-800 pb-2 mb-1" : "",
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileProductsOpen
+                ? "text-primary "
+                : "text-muted-foreground  hover:text-primary ",
             )}
           >
-            <Link href={item.href}>{item.title}</Link>
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  </div>
-</div>
-
-
-{/* Mobile Products Card */}
-{mobileProductsOpen && (
-  <div
-    className="fixed bottom-16 left-5 z-40 max-w-[70%] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg lg:hidden animate-fadeInUp"
-    onMouseEnter={() => setMobileProductsOpen(true)}
-    onMouseLeave={() => setMobileProductsOpen(false)}
-  >
-    <div className="p-3">
-      <div className="grid grid-cols-2 gap-2">
-        {products.slice(0, 6).map((product) => (
-          <Link
-            key={product.title}
-            href={product.href}
-            className="flex items-center gap-2 transition-colors rounded-md"
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mb-1"
+            >
+              <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-" />
+            </svg>
+            <span className="text-xs">Products</span>
+          </button>
+          <button
+            onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
+            onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
+            className={cn(
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileIndustriesOpen
+                ? "text-primary "
+                : "text-muted-foreground  hover:text-primary ",
+            )}
           >
-            {/* SVG Icon on Left */}
-            <div className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 flex-shrink-0">
-              <div className="w-6 h-6 text-gray-700 dark:text-gray-300">{product.icon}</div>
-            </div>
-            {/* Title on Right */}
-            <span className="text-xs font-medium text-gray-900 dark:text-white">{product.title}</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mb-1"
+            >
+              <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
+            </svg>
+            <span className="text-xs">Industries</span>
+          </button>
+          <Link
+            href="/solutions"
+            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mb-1"
+            >
+              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
+              <path d="M22 12A10 10 0 0 0 12 2v10z" />
+            </svg>
+            <span className="text-xs">Solutions</span>
           </Link>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
+          <Link
+            href="/pricing"
+            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mb-1"
+            >
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+            </svg>
+            <span className="text-xs">Pricing</span>
+          </Link>
 
-    {mobileIndustriesOpen && (
+          <DropdownMenu open={MobileModeDropdownOpen} onOpenChange={fnSetMobileModeDropdownOpen}>
+            <DropdownMenuTrigger asChild>
+              <button className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-black  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="mb-1"
+                >
+                  <circle cx="12" cy="12" r="1" />
+                  <circle cx="12" cy="5" r="1" />
+                  <circle cx="12" cy="19" r="1" />
+                </svg>
+                <span className="text-xs">More</span>
+              </button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              align="start"
+              className="w-[120px] p-2 border border-border  backdrop-blur-md bg-background/80  animate-fadeInUp mr-3"
+              onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+            >
+              {LaMore.map((idItem, iIndex) => (
+                <DropdownMenuItem
+                  key={idItem.title}
+                  asChild
+                  className={cn(
+                    "py-2 text-xs font-normal text-center ",
+                    iIndex === 1 ? "border-b border-border pb-2 mb-1" : "",
+                  )}
+                >
+                  <Link href={idItem.href}>{idItem.title}</Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+
+      {/* Mobile Products Card */}
+      {MobileProductsOpen && (
         <div
-          className="fixed bottom-16 left-5 z-40 max-w-[70%] bg-gray-50 dark:bg-gray-900 border border-gray-300 dark:border-gray-700 rounded-lg lg:hidden animate-fadeInUp"
-          onMouseEnter={() => setMobileIndustriesOpen(true)}
-          onMouseLeave={() => setMobileIndustriesOpen(false)}
+          className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileProductsOpen(true)}
+          onMouseLeave={() => fnSetMobileProductsOpen(false)}
         >
           <div className="p-3">
-            <div className="grid grid-cols-1 gap-3">
-              {industries.map((industry) => (
+            <div className="grid grid-cols-2 gap-2">
+              {LaProducts.slice(0, 6).map((idProduct) => (
                 <Link
-                  key={industry.title}
-                  href={industry.href}
-                  className="flex items-center gap-2 transition-colors rounded-md"
+                  key={idProduct.title}
+                  href={idProduct.href}
+                  className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                 >
                   {/* SVG Icon on Left */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-gray-200 dark:border-gray-700 flex-shrink-0">
-                    <div className="w-6 h-6 text-gray-700 dark:text-gray-300">{industry.icon}</div>
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border  flex-shrink-0">
+                    <div className="w-6 h-6 text-primary/70 ">{idProduct.icon}</div>
                   </div>
                   {/* Title on Right */}
-                  <span className="text-xs font-medium text-gray-900 dark:text-white">{industry.title}</span>
+                  <span className="text-xs font-medium text-primary ">{idProduct.title}</span>
                 </Link>
               ))}
             </div>
           </div>
         </div>
-      )}   
-      
-      </header>
-       </>
+      )}
 
-)}
+      {MobileIndustriesOpen && (
+        <div
+          className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
+          onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
+        >
+          <div className="p-3">
+            <div className="grid grid-cols-1 gap-3">
+              {LaIndustries.map((idIndustry) => (
+                <Link
+                  key={idIndustry.title}
+                  href={idIndustry.href}
+                  className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
+                >
+                  {/* SVG Icon on Left */}
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border flex-shrink-0">
+                    <div className="w-6 h-6 text-primary/70 ">{idIndustry.icon}</div>
+                  </div>
+                  {/* Title on Right */}
+                  <span className="text-xs font-medium text-primary ">{idIndustry.title}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
+}

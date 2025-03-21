@@ -178,13 +178,13 @@ export default function CustomCard({
           <p className={cn("max-w-[700px] text-muted-foreground", header.descripClass)}>{header.subtitle}</p>
           {list && list.length > 0 && (
               <ul className="space-y-2">
-              {list.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 py-2">
-                  {item.icon && <span className="text-primary">{item.icon}</span>}
+              {list.map((idItem, iIndex) => (
+                <li key={iIndex} className="flex items-start gap-2 py-2">
+                  {idItem.icon && <span className="text-primary">{idItem.icon}</span>}
                   <div>
-                    <span className="font-medium">{item.text}</span>
-                    {item.subtitle && (
-                      <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                    <span className="font-medium">{idItem.text}</span>
+                    {idItem.subtitle && (
+                      <p className="text-sm text-muted-foreground">{idItem.subtitle}</p>
                     )}
                   </div>
                 </li>

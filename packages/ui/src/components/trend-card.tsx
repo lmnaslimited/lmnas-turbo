@@ -2,21 +2,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Youtube, Linkedin, Twitter } from "lucide-react"
 import Image from "next/image"
+import { TtrendSource, TtrendCardProps } from "../type.js"
 
-type TrendSource = "LinkedIn" | "YouTube" | "Twitter"
-
-interface TrendCardProps {
-  title: string
-  description: string
-  source: TrendSource
-  imageUrl?: string
-  author?: string
-  date: string
-}
-
-export function TrendCard({ title, description, source, imageUrl, author, date }: TrendCardProps) {
-  const getIcon = (source: TrendSource) => {
-    switch (source) {
+export function TrendCard({ title, description, source, imageUrl, author, date }: TtrendCardProps) {
+  const fnGetIcon = (iSource: TtrendSource) => {
+    switch (iSource) {
       case "LinkedIn":
         return <Linkedin className="h-4 w-4" />
       case "YouTube":
@@ -31,7 +21,7 @@ export function TrendCard({ title, description, source, imageUrl, author, date }
       <CardHeader className="p-4">
         <div className="flex items-center justify-between">
           <Badge variant="outline" className="flex items-center gap-1">
-            {getIcon(source)}
+            {fnGetIcon(source)}
             {source}
           </Badge>
           <CardDescription>{date}</CardDescription>
@@ -45,7 +35,7 @@ export function TrendCard({ title, description, source, imageUrl, author, date }
       )}
       <CardContent className="p-4">
         <CardDescription className="line-clamp-3">{description}</CardDescription>
-        {author && <p className="mt-2 text-sm font-medium">By {author}</p>}
+        {author && <p className="mt-2 text-sm font-medium"> {author}</p>}
       </CardContent>
     </Card>
   )

@@ -2,7 +2,7 @@ import * as LucideIcons from "lucide-react"
 export type Titems = {
     question: string
     answer: string
-    icon?: keyof typeof LucideIcons
+    icon?: keyof typeof LucideIcons | React.ReactNode
 }
 export type Theader={
     textWithoutColor?:string
@@ -102,4 +102,16 @@ export type TheroProps = {
     }[]
     buttons: Tbutton[]
     image:Timage
-  }
+}
+
+//component
+export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
+
+export type TtrendCardProps = {
+  title: string
+  description: string
+  source: TtrendSource
+  imageUrl?: string
+  author?: string
+  date: string
+}

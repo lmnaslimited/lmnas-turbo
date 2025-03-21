@@ -21,15 +21,15 @@ import { ArrowRight } from "lucide-react";
 import CustomCard from "@repo/ui/components/customCard";
 import { TcardProps } from "@repo/ui/type";
 
-export default function Tab({ data }: { data: TcardProps[] }) {
+export default function Tab({ data, tab }: { data: TcardProps[], tab:{text:string, label:string} }) {
   const [visibleCount, setVisibleCount] = useState(4);
 
   // Ensure categories are always strings
-  const categories = Array.from(
-    new Set(data.map((item) => item.category ?? "uncategorized"))
+  const Lacategories = Array.from(
+    new Set(data.map((idItem) => idItem.category ?? "uncategorized"))
   );
 
-  const showMoreItems = () => {
+  const fnShowMoreItems = () => {
     setVisibleCount(data.length);
   };
 
@@ -38,36 +38,36 @@ export default function Tab({ data }: { data: TcardProps[] }) {
       <div className="container px-4 md:px-6">
         <Tabs defaultValue="all" className="w-full">
           <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 md:gap-0 gap-4">
-            <TabsTrigger value="all">All</TabsTrigger>
-            {categories.map((category) => (
-              <TabsTrigger key={category} value={category}>
-                {category.charAt(0).toUpperCase() + category.slice(1)}
+            <TabsTrigger value="all">{tab.text}</TabsTrigger>
+            {Lacategories.map((iCategory) => (
+              <TabsTrigger key={iCategory} value={iCategory}>
+                {iCategory.charAt(0).toUpperCase() + iCategory.slice(1)}
               </TabsTrigger>
             ))}
           </TabsList>
 
           <TabsContent value="all">
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-4">
-              {data.slice(0, visibleCount).map((item, index) => (
-                <CustomCard key={index} {...item} />
+              {data.slice(0, visibleCount).map((idItem, iIndex) => (
+                <CustomCard key={iIndex} {...idItem} />
               ))}
             </div>
             {visibleCount < data.length && (
               <div className="mt-8 text-center">
-                <Button onClick={showMoreItems} size="lg" variant="outline">
-                  Show More <ArrowRight className="size-5" />
+                <Button onClick={fnShowMoreItems} size="lg" variant="outline">
+                  {tab.label} <ArrowRight className="size-5" />
                 </Button>
               </div>
             )}
           </TabsContent>
 
-          {categories.map((category) => (
-            <TabsContent key={category} value={category}>
+          {Lacategories.map((iCategory) => (
+            <TabsContent key={iCategory} value={iCategory}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
                 {data
-                  .filter((item) => (item.category ?? "uncategorized") === category)
-                  .map((item, index) => (
-                    <CustomCard key={index} {...item} />
+                  .filter((idItem) => (idItem.category ?? "uncategorized") === iCategory)
+                  .map((idItem, iIndex) => (
+                    <CustomCard key={iIndex} {...idItem} />
                   ))}
               </div>
             </TabsContent>

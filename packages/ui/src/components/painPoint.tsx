@@ -1,17 +1,18 @@
 "use client";
 
 import { useRef, useEffect } from "react";
+import { Titems } from "../type.js";
 
-export default function PainPoints({ industry }: { industry: any }) {
-  const painPointsRef = useRef<HTMLDivElement>(null);
+export default function PainPoints({ items }: { items: Titems[] }) {
+  const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("opacity-100", "translate-y-0");
-            entry.target.classList.remove("opacity-0", "translate-y-4");
+    const Observer = new IntersectionObserver(
+      (laEntries) => {
+        laEntries.forEach((idEntry) => {
+          if (idEntry.isIntersecting) {
+            idEntry.target.classList.add("opacity-100", "translate-y-0");
+            idEntry.target.classList.remove("opacity-0", "translate-y-4");
           }
         });
       },
@@ -22,35 +23,35 @@ export default function PainPoints({ industry }: { industry: any }) {
       }
     );
 
-    const painPoints = document.querySelectorAll(".pain-point");
-    painPoints.forEach((point) => {
-      observer.observe(point);
+    const PainPoints = document.querySelectorAll(".pain-point");
+    PainPoints.forEach((iPoint) => {
+      Observer.observe(iPoint);
     });
 
     return () => {
-      painPoints.forEach((point) => {
-        observer.unobserve(point);
+      PainPoints.forEach((iPoint) => {
+        Observer.unobserve(iPoint);
       });
     };
   }, []);
 
   return (
-    <div ref={painPointsRef} className="space-y-12">
-      {industry?.section2.items.map((point: any, index: number) => (
+    <div ref={PainPointsRef} className="space-y-12">
+      {items.map((idPoint: Titems, index: number) => (
         <div
           key={index}
           className="pain-point opacity-0 translate-y-4 transition-all duration-500 ease-out border-b border-gray-200 pb-8"
         >
           <div className="flex items-start gap-6">
             <div className="bg-muted p-3 rounded-full">
-              {point.icon}
+              {idPoint.icon}
             </div>
             <div>
               <h3 className="text-xl font-semibold text-primary">
-                {point.question}
+                {idPoint.question}
               </h3>
               <p className="mt-2 text-muted-foreground">
-                {point.answer}
+                {idPoint.answer}
               </p>
             </div>
           </div>

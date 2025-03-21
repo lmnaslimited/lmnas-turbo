@@ -10,7 +10,8 @@
     "./tailwind.config": "./tailwind.config.ts",
     "./lib/utils": "./src/lib/utils.ts",
     "./lib/broadcast-channel": "./src/lib/broadcast-channel.ts",
-    "./components/*": "./src/components/*.tsx"
+    "./components/*": "./src/components/*.tsx",
+    "./svg/*": "./src/svg/*.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
