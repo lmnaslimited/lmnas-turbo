@@ -2,7 +2,7 @@ import * as LucideIcons from "lucide-react"
 export type Titems = {
     question: string
     answer: string
-    icon?: keyof typeof LucideIcons
+    icon?: keyof typeof LucideIcons | React.ReactNode
 }
 export type Theader={
     textWithoutColor?:string
@@ -31,11 +31,11 @@ export type Timage ={
     svg?: React.ReactNode
 }
 
-export type Tfeature = {
-    header: Theader;
-    button?:Tbutton
-    items?:Titems[]
-}
+// export type Tfeature = {
+//     header: Theader;
+//     button?:Tbutton
+//     items?:Titems[]
+// }
 //component
 export type TcalloutProps = {
     header: Theader
@@ -71,6 +71,7 @@ export type TcardProps = {
     onClick?: () => void
     className?: string
     buttonPosition?:string
+    category?:string
 }
 //component
 export type TlogoShowcaseProps = {
@@ -78,10 +79,11 @@ export type TlogoShowcaseProps = {
   variant: "marquee" | "grid"
   className?: string
   logoSize?: "small" | "medium" | "large"
-  speed?: "slow" | "medium" | "fast"
-  spacing?: "tight" | "normal" | "loose"
+  speed?: "slow" | "medium" | "fast" | number
+  spacing?: "tight" | "normal" | "loose" | string
   logosPerRow?: number
   pauseOnHover?: boolean
+  dimensions?: { width: number; height: number }
 }
 
 //componnet
@@ -89,7 +91,9 @@ export type TfeatureProps = {
     buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
     layout?: "classic" | "centered";
     iShowButton?: boolean;
-    iFeature:Tfeature
+    header: Theader;
+    button?:Tbutton
+    items?:Titems[]
   }
 
 //component
@@ -101,4 +105,16 @@ export type TheroProps = {
     }[]
     buttons: Tbutton[]
     image:Timage
-  }
+}
+
+//component
+export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
+
+export type TtrendCardProps = {
+  title: string
+  description: string
+  source: TtrendSource
+  imageUrl?: string
+  author?: string
+  date: string
+}
