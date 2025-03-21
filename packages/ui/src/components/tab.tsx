@@ -22,7 +22,7 @@ import CustomCard from "@repo/ui/components/customCard";
 import { TcardProps } from "@repo/ui/type";
 
 export default function Tab({ data, tab }: { data: TcardProps[], tab:{text:string, label:string} }) {
-  const [visibleCount, setVisibleCount] = useState(4);
+  const [VisibleCount, fnSetVisibleCount] = useState(4);
 
   // Ensure categories are always strings
   const Lacategories = Array.from(
@@ -30,7 +30,7 @@ export default function Tab({ data, tab }: { data: TcardProps[], tab:{text:strin
   );
 
   const fnShowMoreItems = () => {
-    setVisibleCount(data.length);
+    fnSetVisibleCount(data.length);
   };
 
   return (
@@ -48,11 +48,11 @@ export default function Tab({ data, tab }: { data: TcardProps[], tab:{text:strin
 
           <TabsContent value="all">
             <div className="grid sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6 mt-4">
-              {data.slice(0, visibleCount).map((idItem, iIndex) => (
+              {data.slice(0, VisibleCount).map((idItem, iIndex) => (
                 <CustomCard key={iIndex} {...idItem} />
               ))}
             </div>
-            {visibleCount < data.length && (
+            {VisibleCount < data.length && (
               <div className="mt-8 text-center">
                 <Button onClick={fnShowMoreItems} size="lg" variant="outline">
                   {tab.label} <ArrowRight className="size-5" />
