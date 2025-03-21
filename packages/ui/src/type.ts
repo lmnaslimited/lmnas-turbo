@@ -31,11 +31,11 @@ export type Timage ={
     svg?: React.ReactNode
 }
 
-export type Tfeature = {
-    header: Theader;
-    button?:Tbutton
-    items?:Titems[]
-}
+// export type Tfeature = {
+//     header: Theader;
+//     button?:Tbutton
+//     items?:Titems[]
+// }
 //component
 export type TcalloutProps = {
     header: Theader
@@ -79,10 +79,11 @@ export type TlogoShowcaseProps = {
   variant: "marquee" | "grid"
   className?: string
   logoSize?: "small" | "medium" | "large"
-  speed?: "slow" | "medium" | "fast"
-  spacing?: "tight" | "normal" | "loose"
+  speed?: "slow" | "medium" | "fast" | number
+  spacing?: "tight" | "normal" | "loose" | string
   logosPerRow?: number
   pauseOnHover?: boolean
+  dimensions?: { width: number; height: number }
 }
 
 //componnet
@@ -90,7 +91,9 @@ export type TfeatureProps = {
     buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
     layout?: "classic" | "centered";
     iShowButton?: boolean;
-    iFeature:Tfeature
+    header: Theader;
+    button?:Tbutton
+    items?:Titems[]
   }
 
 //component

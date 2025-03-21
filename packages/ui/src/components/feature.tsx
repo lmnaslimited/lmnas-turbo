@@ -19,34 +19,35 @@ const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
 })
 
 
-export default function Feature({ buttonPosition = "header", layout = "classic", iShowButton=true, iFeature }: TfeatureProps) {
+export default function Feature({ iFeature }:{iFeature:TfeatureProps}) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-       {layout === "classic" ? (
+       {iFeature.layout === "centered" ? (
+        <div className="lg:text-center">
+        <h2 className="text-base text-primary/70 font-semibold tracking-wide uppercase">{iFeature.header.badge}</h2>
+        <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+            {iFeature.header.textWithoutColor}
+        </p>
+        <p className="mt-4 max-w-2xl text-xl text-muted-foreground lg:mx-auto">
+            {iFeature.header.subtitle}
+        </p>
+    </div>  
+         
+      ) : (
         <div className="mx-auto py-12 px-4 sm:px-6 lg:px-8 lg:flex lg:items-center lg:justify-between">
-          <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
             <span className="block">{iFeature.header.textWithoutColor}</span>
             <span className="block text-primary/70">{iFeature.header.text}</span>
           </h2>
-          {iShowButton && buttonPosition === "header" && (
+          {iFeature.iShowButton && iFeature.buttonPosition === "header" && (
             <div className={buttonContainer({ position: "header" })}>
               <Button asChild size="lg">
               {iFeature.button?.href && (
                 <Link href={iFeature.button?.href}>{iFeature.button?.label}</Link>)}
               </Button>
             </div>
-          )}
+             )}
         </div>
-      ) : (
-        <div className="lg:text-center">
-            <h2 className="text-base text-primary/70 font-semibold tracking-wide uppercase">{iFeature.header.badge}</h2>
-            <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                {iFeature.header.textWithoutColor}
-            </p>
-            <p className="mt-4 max-w-2xl text-xl text-gray-500 lg:mx-auto">
-                {iFeature.header.subtitle}
-            </p>
-        </div>  
       )}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="mt-10">
@@ -57,8 +58,8 @@ export default function Feature({ buttonPosition = "header", layout = "classic",
           </dl>
         </div>
 
-        {iShowButton && buttonPosition !== "header" && (
-          <div className={buttonContainer({ position: buttonPosition })}>
+        {iFeature.iShowButton && iFeature.buttonPosition !== "header" && (
+          <div className={buttonContainer({ position: iFeature.buttonPosition })}>
             <Button asChild size="lg">
                 {iFeature.button?.href && (
               <Link href={iFeature.button?.href}>{iFeature.button?.label}</Link>)}
@@ -75,13 +76,13 @@ const FAQItem = ({ question, answer, icon }: Titems) => {
   return (
     <div className= "relative flex gap-4 items-start">
     {IconComponent && (
-      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-muted text-white shrink-0">
+      <div className="flex items-center justify-center h-12 w-12 rounded-md bg-muted text-background shrink-0">
         <IconComponent className="h-6 w-6 text-primary" />
       </div>
     )}
     <div className={IconComponent ? "ml-2" : ""}>
-      <dt className="text-lg leading-6 font-medium text-gray-900">{question}</dt>
-      <dd className="mt-2 text-base text-gray-500">{answer}</dd>
+      <dt className="text-lg leading-6 font-medium text-primary">{question}</dt>
+      <dd className="mt-2 text-base text-muted-foreground">{answer}</dd>
     </div>
   </div>
   

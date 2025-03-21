@@ -3,7 +3,7 @@
 import { useRef, useEffect } from "react";
 import { Titems } from "../type.js";
 
-export default function PainPoints({ items }: { items: Titems[] }) {
+export default function PainPoints({ idItems }: { idItems: Titems[] }) {
   const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export default function PainPoints({ items }: { items: Titems[] }) {
 
   return (
     <div ref={PainPointsRef} className="space-y-12">
-      {items.map((idPoint: Titems, index: number) => (
+      {idItems.map((idPoint: Titems, index: number) => (
         <div
           key={index}
           className="pain-point opacity-0 translate-y-4 transition-all duration-500 ease-out border-b border-gray-200 pb-8"

@@ -1,12 +1,12 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@repo/ui/components/ui/accordion"
 import { Titems } from "../type.js"
 
-export default function FAQs({iFaq}:{iFaq:Titems[]}) {
+export default function FAQs({idFaq}:{idFaq:Titems[]}) {
   return (
    
     <dl className="mt-6 space-y-6 divide-y divide-muted">
       <Accordion type="single" collapsible className="w-full">
-        {iFaq.map((idFaq, iIndex) => (
+        {idFaq.map((idFaq, iIndex) => (
           <AccordionItem key={iIndex} value={`item-${iIndex}`}>
             <AccordionTrigger>{idFaq.question}</AccordionTrigger>
             <AccordionContent>{idFaq.answer}</AccordionContent>

@@ -235,7 +235,7 @@ const LaMore = [
   },
   {
     title: "Carrers",
-    href: "/carrers",
+    href: "/careers",
   },
   {
     title: "Trending",
