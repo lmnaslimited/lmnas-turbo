@@ -48,11 +48,11 @@ export default function Hero({ idHero }: { idHero: TheroProps }) {
 
         {/* CTA Buttons */}
         <div className="flex flex-col gap-4 sm:flex-row">
-          {idHero.buttons.map((button, index) => (
-            <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
-              {button.iconPosition === "before" && button.icon}
-            {button.href && (<Link href={button.href} > {button.label} </Link> )}
-              {button.iconPosition === "after" && button.icon}
+          {idHero.buttons.map((idButton, index) => (
+            <Button key={index} size={idButton.size || "lg"} variant={idButton.variant || "default"} className={idButton.className}>
+              {idButton.iconPosition === "before" && idButton.icon}
+            {idButton.href && (<Link href={idButton.href} > {idButton.label} </Link> )}
+              {idButton.iconPosition === "after" && idButton.icon}
             </Button>
           ))}
         </div>
