@@ -19,31 +19,31 @@ const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
 })
 
 
-export default function Feature({ iFeature }:{iFeature:TfeatureProps}) {
+export default function Feature({ idFeature }:{idFeature:TfeatureProps}) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-       {iFeature.layout === "centered" ? (
+       {idFeature.layout === "centered" ? (
         <div className="lg:text-center">
-        <h2 className="text-base text-primary/70 font-semibold tracking-wide uppercase">{iFeature.header.badge}</h2>
-        <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-            {iFeature.header.textWithoutColor}
+        <h2 className="text-base text-primary/70 font-semibold tracking-wide uppercase">{idFeature.header.badge}</h2>
+        <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-primary sm:text-4xl">
+            {idFeature.header.textWithoutColor}
         </p>
         <p className="mt-4 max-w-2xl text-xl text-muted-foreground lg:mx-auto">
-            {iFeature.header.subtitle}
+            {idFeature.header.subtitle}
         </p>
     </div>  
          
       ) : (
         <div className="mx-auto py-12 px-4 sm:px-6 lg:px-8 lg:flex lg:items-center lg:justify-between">
           <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
-            <span className="block">{iFeature.header.textWithoutColor}</span>
-            <span className="block text-primary/70">{iFeature.header.text}</span>
+            <span className="block">{idFeature.header.textWithoutColor}</span>
+            <span className="block text-primary/70">{idFeature.header.text}</span>
           </h2>
-          {iFeature.iShowButton && iFeature.buttonPosition === "header" && (
+          {idFeature.iShowButton && idFeature.buttonPosition === "header" && (
             <div className={buttonContainer({ position: "header" })}>
               <Button asChild size="lg">
-              {iFeature.button?.href && (
-                <Link href={iFeature.button?.href}>{iFeature.button?.label}</Link>)}
+              {idFeature.button?.href && (
+                <Link href={idFeature.button?.href}>{idFeature.button?.label}</Link>)}
               </Button>
             </div>
              )}
@@ -52,17 +52,17 @@ export default function Feature({ iFeature }:{iFeature:TfeatureProps}) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="mt-10">
           <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
-            {iFeature.items?.map((idItem) => (
+            {idFeature.items?.map((idItem) => (
               <FAQItem key={idItem.question} {...idItem} />
             ))}
           </dl>
         </div>
 
-        {iFeature.iShowButton && iFeature.buttonPosition !== "header" && (
-          <div className={buttonContainer({ position: iFeature.buttonPosition })}>
+        {idFeature.iShowButton && idFeature.buttonPosition !== "header" && (
+          <div className={buttonContainer({ position: idFeature.buttonPosition })}>
             <Button asChild size="lg">
-                {iFeature.button?.href && (
-              <Link href={iFeature.button?.href}>{iFeature.button?.label}</Link>)}
+                {idFeature.button?.href && (
+              <Link href={idFeature.button?.href}>{idFeature.button?.label}</Link>)}
             </Button>
           </div>
         )}

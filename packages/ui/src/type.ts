@@ -46,6 +46,7 @@ export type TcalloutProps = {
       actionText:string
     }
     variant?:string
+    layout?: "classic" | "simple" | string
 };
 //component
 export type TcardProps = {
