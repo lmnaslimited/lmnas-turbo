@@ -1,7 +1,8 @@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@repo/ui/components/ui/accordion"
 import { Titems } from "../type.js"
+import { ReactElement } from "react"
 
-export default function FAQs({idFaq}:{idFaq:Titems[]}) {
+export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
   return (
    
     <dl className="mt-6 space-y-6 divide-y divide-muted">

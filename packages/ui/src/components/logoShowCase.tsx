@@ -4,12 +4,11 @@ import Image from "next/image"
 import { motion, useAnimation } from "framer-motion"
 import { cn } from "@repo/ui/lib/utils"
 import {TlogoShowcaseProps, Timage} from "@repo/ui/type"
+import { ReactElement } from "react"
 
-export default function LogoShowcase({
- idLogoProps
-}: {idLogoProps:TlogoShowcaseProps}) {
+export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcaseProps}):ReactElement {
   // Calculate logo dimensions based on size prop
-  const fnGetLogoDimensions = () => {
+  const fnGetLogoDimensions = ():{width:number; height:number} => {
     switch (idLogoProps.logoSize) {
       case "small":
         return { width: 100, height: 50 }
@@ -22,7 +21,7 @@ export default function LogoShowcase({
   }
 
   // Calculate spacing based on spacing prop
-  const fnGetSpacing = () => {
+  const fnGetSpacing = ():string => {
     switch (idLogoProps.spacing) {
       case "tight":
         return "gap-8"
@@ -35,7 +34,7 @@ export default function LogoShowcase({
   }
 
   // Calculate speed for marquee animation
-  const fnGetMarqueeSpeed = () => {
+  const fnGetMarqueeSpeed = ():number => {
     switch (idLogoProps.speed) {
       case "slow":
         return 20
@@ -49,30 +48,28 @@ export default function LogoShowcase({
 
   // Render either grid / marquee(animation) layout
   //based on prop "variant"
-  const fnRenderLogos = () => {
+  const fnRenderLogos = ():ReactElement => {
     switch (idLogoProps.variant) {
       case "marquee":
         return (
           <MarqueeLogos
-          idMarquee={{logos:idLogoProps.logos,
-            speed:fnGetMarqueeSpeed(),
-            spacing:fnGetSpacing(),
-            dimensions:fnGetLogoDimensions() || { width: 150, height: 75 },
-            pauseOnHover:idLogoProps.pauseOnHover || true,
-            variant: "marquee"
-          }}
+          logos={idLogoProps?.logos || []}
+          speed={fnGetMarqueeSpeed()}
+          spacing={fnGetSpacing()}
+          dimensions={fnGetLogoDimensions() ?? { width: 150, height: 75 }}
+          pauseOnHover={idLogoProps?.pauseOnHover ?? true}
+          variant="marquee"
           />
         )
       case "grid":
       default:
         return (
           <GridLogos
-          idGridLogo={{logos:idLogoProps.logos,
-            spacing:fnGetSpacing(),
-            dimensions:fnGetLogoDimensions() || { width: 150, height: 75 },
-            logosPerRow:idLogoProps.logosPerRow || 4,
-            variant: "grid"
-          }}
+            logos={idLogoProps.logos}
+            spacing={fnGetSpacing()}
+            dimensions={fnGetLogoDimensions() ?? { width: 150, height: 75 }}
+            logosPerRow={idLogoProps.logosPerRow || 4}
+            variant= "grid"
           />
         )
     }
@@ -82,11 +79,7 @@ export default function LogoShowcase({
 }
 
 // Marquee (Running Ticker) Implementation
-function MarqueeLogos({
- idMarquee
-}: {
-  idMarquee:TlogoShowcaseProps
-}) {
+function MarqueeLogos( idMarquee :TlogoShowcaseProps ):ReactElement {
     const Controls = useAnimation() // Controls for animation
     const DuplicateLogo = [...idMarquee.logos, ...idMarquee.logos]
   
@@ -110,8 +103,7 @@ function MarqueeLogos({
           })} // Restarts animation
         >
           {DuplicateLogo.map((idLogo, iIndex) => (
-            <LogoItem key={`${idLogo.alt}-${iIndex}`} idLogo={{logo: idLogo,  // Ensure the logo is explicitly passed
-              dimensions: idMarquee.dimensions || { width: 150, height: 75 }}} />
+            <LogoItem key={`${idLogo.alt}-${iIndex}`} logo={idLogo} dimensions={idMarquee.dimensions ?? { width: 150, height: 75 }} />
           ))}
         </motion.div>
       </div>
@@ -119,14 +111,10 @@ function MarqueeLogos({
 }
 
 // Grid/Flex Layout Implementation
-function GridLogos({
- idGridLogo
-}: {
-  idGridLogo:TlogoShowcaseProps
-}) {
+function GridLogos( idGridLogo:TlogoShowcaseProps ):ReactElement {
   // Calculate grid columns based on logosPerRow
   //this return a grid-cols tailwind class element
-  const fnGridCols = () => {
+  const fnGridCols = ():string => {
     switch (idGridLogo.logosPerRow) {
       case 2:
         return "grid-cols-2"
@@ -153,8 +141,7 @@ function GridLogos({
             transition={{ duration: 0.3, delay: iIndex * 0.05 }}
             className="flex justify-center"
           >
-            <LogoItem idLogo={{logo: idLogo,  // Ensure the logo is explicitly passed
-  dimensions: idGridLogo.dimensions || { width: 150, height: 75 } }} />
+            <LogoItem logo= {idLogo} dimensions={idGridLogo.dimensions ?? { width: 150, height: 75 } } />
           </motion.div>
         ))}
       </div>
@@ -163,17 +150,9 @@ function GridLogos({
 }
 
 // Shared Logo Item Component
-function LogoItem({
-  idLogo
-}: {idLogo:{
-  logo: Timage
-  dimensions: { width: number; height: number }
-}}) {
+function LogoItem( idLogo:{logo: Timage; dimensions: { width: number; height: number }}):ReactElement {
   const { width, height } = idLogo.dimensions
-  const LogoWidth =  width
-  const LogoHeight =  height
-
-  const LogoElement = (
+  const LogoElement:ReactElement = (
     <div
       className={cn(
         "flex items-center justify-center p-4 rounded-lg transition-all duration-200",
@@ -185,7 +164,7 @@ function LogoItem({
       
         <div
           className={cn("flex items-center justify-center")}
-          style={{ width: LogoWidth, height: LogoHeight }}
+          style={{ width: width, height: height }}
         >
           {idLogo.logo.svg}
         </div>
@@ -194,8 +173,8 @@ function LogoItem({
      : <Image
         src={idLogo.logo.src || "/placeholder.svg"}
         alt={idLogo.logo.alt}
-        width={LogoWidth}
-        height={LogoHeight}
+        width={width}
+        height={height}
         className={cn("object-contain")}
         loading="lazy"
       />

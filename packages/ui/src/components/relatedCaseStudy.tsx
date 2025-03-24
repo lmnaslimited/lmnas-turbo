@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { ReactElement, useState } from "react"
 import Link from "next/link"
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Button } from "@repo/ui/components/ui/button"
@@ -15,7 +15,7 @@ type TcaseStudy = {
   results: { metric: string; value: string }[];
 }[];
 
-export function RelatedCaseStudies({ idCaseStudies }: {idCaseStudies:TcaseStudy}) {
+export function RelatedCaseStudies({ idCaseStudies }: {idCaseStudies:TcaseStudy}):ReactElement {
   const [ActiveIndustry, fnSetActiveIndustry] = useState("all")
 
   // Get unique industries

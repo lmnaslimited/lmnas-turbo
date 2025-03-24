@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, ReactElement } from "react"
 import { motion, useInView } from "framer-motion"
 import { ChevronRight, Download } from "lucide-react"
 import { Button } from "@repo/ui/components/ui/button"
@@ -10,7 +10,7 @@ type TcaseStudy = {
   challenges: string[];
 };
 
-export function ProblemSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}) {
+export function ProblemSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
   const IsInView = useInView(SectionRef, { once: false, amount: 0.3 })
   const [ActiveChallenge, fnSetActiveChallenge] = useState(0)

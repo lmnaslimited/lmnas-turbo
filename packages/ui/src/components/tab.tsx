@@ -1,20 +1,6 @@
-/*
- This component renders a tabbed interface to display categorized data.
-  - Users can switch between tabs to view specific categories.
-  - The "All" tab displays all items with a "Show More" button for additional items.
-  - Each tab dynamically generates content based on provided data.
-Props:
-  - data: An array of objects where each object contains a category and content (ex: json of the card component).
-  - renderItem: A function to render each item (this can be a card).
-usage:
-   <Tab
-    data={cardContent}
-  />
- */
-
 "use client";
 
-import { useState } from "react";
+import { ReactElement, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
 import { ArrowRight } from "lucide-react";
@@ -24,7 +10,7 @@ type TtabProps = {
   data: TcardProps[]
   TabDefault: {text:string, label:string}
 }
-export default function Tab({ idTab }: { idTab:TtabProps }) {
+export default function Tab({ idTab }: { idTab:TtabProps }):ReactElement {
   const [VisibleCount, fnSetVisibleCount] = useState(4);
 
   // Ensure categories are always strings
@@ -32,7 +18,7 @@ export default function Tab({ idTab }: { idTab:TtabProps }) {
     new Set(idTab.data.map((idItem) => idItem.category ?? "uncategorized"))
   );
 
-  const fnShowMoreItems = () => {
+  const fnShowMoreItems = ():void => {
     fnSetVisibleCount(idTab.data.length);
   };
 

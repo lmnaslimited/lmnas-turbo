@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { ReactElement, useRef } from "react"
 import { motion, useInView } from "framer-motion"
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Lightbulb, CheckCircle2, TrendingUp } from "lucide-react"
@@ -25,7 +25,7 @@ type TcaseStudy ={
   }
 }
 
-export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}) {
+export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
  
   const LdItemVariants = {

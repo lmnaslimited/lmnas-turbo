@@ -1,12 +1,12 @@
 "use client";
 
-import { useRef } from "react";
+import { ReactElement, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Download, CheckCircle2, ArrowRight } from "lucide-react";
 
-type SidebarCardType = {
+type TSidebarCardType = {
   title: string;
   content: string;
   button?: {
@@ -22,11 +22,14 @@ type SidebarCardType = {
   };
 };
 
+type Tsolution = {
+  solution: { products: string[] } 
+}
 
-export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: { solution: { products: string[] } } }) {
+export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: Tsolution }):ReactElement {
   const SidebarRef = useRef<HTMLDivElement>(null);
 
-  const sidebarData: SidebarCardType[] = [
+  const sidebarData: TSidebarCardType[] = [
     {
       title: "Ready to Transform Your Business?",
       content: "Let's discuss how LMNAs can help you achieve similar results for your organization.",
@@ -61,22 +64,22 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: { solution: { pro
   return (
     <div ref={SidebarRef} className="relative">
       <div className="sticky" style={{ position: "sticky", top: "2rem" }}>
-        {sidebarData.map((card, index) => (
-          <Card key={index} className="mb-6 overflow-hidden transition-all duration-300">
+        {sidebarData.map((idCard, iIndex) => (
+          <Card key={iIndex} className="mb-6 overflow-hidden transition-all duration-300">
             <CardContent className="p-6">
-              <h3 className="mb-4 text-xl font-semibold">{card.title}</h3>
-              <p className="mb-6 text-muted-foreground">{card.content}</p>
+              <h3 className="mb-4 text-xl font-semibold">{idCard.title}</h3>
+              <p className="mb-6 text-muted-foreground">{idCard.content}</p>
 
               {/* Solutions List */}
-              {card.solutions && (
+              {idCard.solutions && (
                 <ul className="space-y-4">
-                  {card.solutions.map((solution, i) => (
-                    <li key={i} className="flex items-start gap-3">
+                  {idCard.solutions.map((iSolution, iIndex) => (
+                    <li key={iIndex} className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                       <div>
-                        <span className="font-medium">{solution}</span>
+                        <span className="font-medium">{iSolution}</span>
                         <p className="text-sm text-muted-foreground">
-                          {card.solutionsDescription?.[i] || ""}
+                          {idCard.solutionsDescription?.[iIndex] || ""}
                         </p>
                       </div>
                     </li>
@@ -85,22 +88,22 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: { solution: { pro
               )}
 
               {/* Button if exists */}
-              {card.button && (
+              {idCard.button && (
                 <Button className="w-full gap-2">
                   <Download className="h-5 w-5 text-primary" />
-                  {card.button.link ? (
-                    <Link href={card.button.link}>{card.button.label}</Link>
+                  {idCard.button.link ? (
+                    <Link href={idCard.button.link}>{idCard.button.label}</Link>
                   ) : (
-                    card.button.label
+                    idCard.button.label
                   )}
                 </Button>
               )}
 
               {/* Link if exists */}
-              {card.link && (
+              {idCard.link && (
                 <div className="mt-6">
-                  <Link href={card.link.href} className="flex items-center gap-2 text-primary hover:underline">
-                    {card.link.label}
+                  <Link href={idCard.link.href} className="flex items-center gap-2 text-primary hover:underline">
+                    {idCard.link.label}
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>

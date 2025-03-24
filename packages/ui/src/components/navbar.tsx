@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Globe, MoreHorizontal, Moon, Sun } from "lucide-react"
+import { Globe, MoreHorizontal } from "lucide-react"
 
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -251,7 +251,7 @@ const LaLanguages = [
   { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ]
 
-export default function Navbar() {
+export default function Navbar():React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
   const [MoreDropdownOpen, fnSetMoreDropdownOpen] = React.useState(false)
   const [IsScrolled, fnSetIsScrolled] = React.useState(false)
@@ -261,7 +261,7 @@ export default function Navbar() {
 
   // Handle scroll effect
   React.useEffect(() => {
-    const fnHandleScroll = () => {
+    const fnHandleScroll = ():void => { //only update no return
       if (window.scrollY > 10) {
         fnSetIsScrolled(true)
       } else {
@@ -276,7 +276,7 @@ export default function Navbar() {
   }, [])
 
   // Get current language display
-  const fnGetCurrentLanguageDisplay = () => {
+  const fnGetCurrentLanguageDisplay = ():string => {
     const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language)
     return CurrentLang ? CurrentLang.code.toUpperCase() : "EN"
   }

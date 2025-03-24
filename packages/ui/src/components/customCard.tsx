@@ -16,13 +16,12 @@ import {
 } from "@repo/ui/components/ui/avatar";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { TcardProps } from "@repo/ui/type";
+import { ReactElement } from "react";
 
-export default function CustomCard({
-  idCardProps
-}:{ idCardProps:TcardProps}) {
+export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):ReactElement {
   // Returns a CSS class for the image's aspect ratio or
   // an empty string if not set.
-  const fnGetAspectRatioClass = () => {
+  const fnGetAspectRatioClass = ():string => {
     if (!idCardProps.image?.aspectRatio || idCardProps.image.aspectRatio === "auto") return "";
 
     switch (idCardProps.image.aspectRatio) {

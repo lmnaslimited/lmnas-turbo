@@ -2,11 +2,11 @@
 
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-import { useEffect, useState } from "react"
+import { ReactElement, ReactNode, useEffect, useState } from "react"
 
 import { Switch } from "@repo/ui/components/ui/switch"
 
-export function ThemeToggle() {
+export function ThemeToggle():ReactNode {
   const { theme, setTheme } = useTheme() //this variable is from nextjs
   const [Mounted, fnSetMounted] = useState(false)
 
@@ -19,7 +19,7 @@ export function ThemeToggle() {
     return null
   }
 
-  const fnToggleTheme = () => {
+  const fnToggleTheme = ():void => {
     setTheme(theme === "light" ? "dark" : "light")
   }
 

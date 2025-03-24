@@ -1,9 +1,9 @@
 "use client";
 
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, ReactElement } from "react";
 import { Titems } from "../type.js";
 
-export default function PainPoints({ idItems }: { idItems: Titems[] }) {
+export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElement {
   const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function PainPoints({ idItems }: { idItems: Titems[] }) {
       {idItems.map((idPoint: Titems, index: number) => (
         <div
           key={index}
-          className="pain-point opacity-0 translate-y-4 transition-all duration-500 ease-out border-b border-gray-200 pb-8"
+          className="pain-point opacity-0 translate-y-4 transition-all duration-500 ease-out border-b border-border pb-8"
         >
           <div className="flex items-start gap-6">
             <div className="bg-muted p-3 rounded-full">

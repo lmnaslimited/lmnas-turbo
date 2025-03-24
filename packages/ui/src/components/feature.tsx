@@ -3,6 +3,7 @@ import Link from "next/link"
 import { cva } from "class-variance-authority"
 import * as LucideIcons from "lucide-react"
 import {Titems, TfeatureProps} from "@repo/ui/type"
+import { ReactElement } from "react"
 
 const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
@@ -19,7 +20,7 @@ const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
 })
 
 
-export default function Feature({ idFeature }:{idFeature:TfeatureProps}) {
+export default function Feature({ idFeature }:{idFeature:TfeatureProps}):ReactElement {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
        {idFeature.layout === "centered" ? (
@@ -71,8 +72,8 @@ export default function Feature({ idFeature }:{idFeature:TfeatureProps}) {
   )
 }
 
-const FAQItem = ({ question, answer, icon }: Titems) => {
-    const IconComponent = icon && (LucideIcons[icon as keyof typeof LucideIcons] as React.ElementType)
+const FAQItem = (idItems: Titems):ReactElement => {
+    const IconComponent = idItems.icon && (LucideIcons[idItems.icon as keyof typeof LucideIcons] as React.ElementType)
   return (
     <div className= "relative flex gap-4 items-start">
     {IconComponent && (
@@ -81,8 +82,8 @@ const FAQItem = ({ question, answer, icon }: Titems) => {
       </div>
     )}
     <div className={IconComponent ? "ml-2" : ""}>
-      <dt className="text-lg leading-6 font-medium text-primary">{question}</dt>
-      <dd className="mt-2 text-base text-muted-foreground">{answer}</dd>
+      <dt className="text-lg leading-6 font-medium text-primary">{idItems.question}</dt>
+      <dd className="mt-2 text-base text-muted-foreground">{idItems.answer}</dd>
     </div>
   </div>
   
