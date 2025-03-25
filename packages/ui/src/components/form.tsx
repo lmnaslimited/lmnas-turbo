@@ -7,7 +7,6 @@ import { z } from "zod"
 import { format } from "date-fns"
 import { CalendarIcon, CheckCircle, XCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
 import { Calendar } from "@repo/ui/components/ui/calendar"
@@ -17,8 +16,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
-
-// Form modes
 export type FormMode = "booking" | "contact" | "download" | null
 
 // Update the bookingFormSchema to include phone validation
@@ -32,12 +29,9 @@ const bookingFormSchema = z.object({
     timeSlot: z.string({
         required_error: "Please select a time slot.",
     }),
-    name: z
-        .string()
-        .min(2, { message: "Name must be at least 2 characters." })
-        .regex(/^[a-zA-Z\s]+$/, {
-            message: "Name can only contain alphabets and spaces.",
-        }),
+    name: z.string().regex(/^[a-zA-Z\s]+$/, {
+        message: "Name can only contain alphabets and spaces.",
+    }),
     email: z.string().email({ message: "Please enter a valid email address." }),
     phoneNumber: z.string().min(10, { message: "Please enter a valid phone number." }),
     message: z.string().max(500, { message: "Message must not exceed 500 characters." }).optional(),
@@ -147,17 +141,6 @@ export function DynamicForm({
         mode: "onChange", // Enable real-time validation
     })
 
-    // Auto-close server message after 5 seconds
-    useEffect(() => {
-        if (serverMessage) {
-            const timer = setTimeout(() => {
-                closeMessage()
-            }, 5000)
-
-            return () => clearTimeout(timer)
-        }
-    }, [serverMessage])
-
     // Update form mode when initialMode changes
     useEffect(() => {
         if (initialMode !== mode) {
@@ -170,7 +153,13 @@ export function DynamicForm({
     // Scroll to form when mode changes
     useEffect(() => {
         if (mode && formRef.current) {
-            formRef.current.scrollIntoView({ behavior: "smooth" })
+            // Use a smaller timeout for more immediate response
+            setTimeout(() => {
+                formRef.current?.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start", // Align the top of the form with the top of the viewport
+                })
+            }, 10)
         }
     }, [mode])
 
@@ -341,10 +330,7 @@ export function DynamicForm({
                                             <FormControl>
                                                 <Input
                                                     placeholder="Name *"
-                                                    className={cn(
-                                                        "placeholder:text-red-500",
-                                                        bookingForm.formState.errors.name && "border-red-500",
-                                                    )}
+                                                    className={cn(bookingForm.formState.errors.name && "border-red-500")}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -361,10 +347,7 @@ export function DynamicForm({
                                             <FormControl>
                                                 <Input
                                                     placeholder="Phone Number *"
-                                                    className={cn(
-                                                        "placeholder:text-red-500",
-                                                        bookingForm.formState.errors.phoneNumber && "border-red-500",
-                                                    )}
+                                                    className={cn(bookingForm.formState.errors.phoneNumber && "border-red-500")}
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -382,10 +365,7 @@ export function DynamicForm({
                                         <FormControl>
                                             <Input
                                                 placeholder="Email Address *"
-                                                className={cn(
-                                                    "placeholder:text-red-500",
-                                                    bookingForm.formState.errors.email && "border-red-500",
-                                                )}
+                                                className={cn(bookingForm.formState.errors.email && "border-red-500")}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -585,10 +565,7 @@ export function DynamicForm({
                                         <FormControl>
                                             <Input
                                                 placeholder="Enter your full name *"
-                                                className={cn(
-                                                    "placeholder:text-red-500",
-                                                    downloadForm.formState.errors.name && "border-red-500",
-                                                )}
+                                                className={cn(downloadForm.formState.errors.name && "border-red-500")}
                                                 {...field}
                                             />
                                         </FormControl>
@@ -606,10 +583,7 @@ export function DynamicForm({
                                         <FormControl>
                                             <Input
                                                 placeholder="your.email@example.com *"
-                                                className={cn(
-                                                    "placeholder:text-red-500",
-                                                    downloadForm.formState.errors.email && "border-red-500",
-                                                )}
+                                                className={cn(downloadForm.formState.errors.email && "border-red-500")}
                                                 {...field}
                                             />
                                         </FormControl>
