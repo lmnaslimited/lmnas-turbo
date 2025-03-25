@@ -1,15 +1,24 @@
-import { Button } from "@repo/ui/components/ui/button";
-import Link from "next/link";
+"use client"
+
+import Link from "next/link"
 import { TcalloutProps } from "@repo/ui/type";
-import { ReactElement } from "react";
+import { Button } from "@repo/ui/components/ui/button"
+import type { FormMode } from "@repo/ui/components/form"
+import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
 
 export default function Callout({
   idCallout,
+  Layout = "classic",
+  onButtonClick,
 }: {
-  idCallout: TcalloutProps;
-}): ReactElement {
-  const Layout = idCallout.layout || "classic";
+  idCallout?: TcalloutProps
+  Layout?: "classic" | "simple"
+  onButtonClick?: (mode: FormMode) => void
+}): ReactElement | null {
+  // Prevent rendering if idCallout is undefined
+  if (!idCallout) return null
+
   return (
     <div
       className={`${Layout === "classic" ? "max-w-3xl" : "max-w-7xl"} mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8`}
@@ -25,11 +34,9 @@ export default function Callout({
           <span className="block">{idCallout.header.subtitle}</span>
         </h2>
       ) : (
-        <h2 className="text-3xl font-extrabold tracking-tight text-border sm:text-4xl">
-          <span className="block">{idCallout.header.textWithoutColor}</span>
-          <span className="block text-primary/70">
-            {idCallout.header.subtitle}
-          </span>
+        <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
+          <span className="block">{idCallout?.header?.textWithoutColor || ""}</span>
+          <span className="block text-primary/70">{idCallout?.header?.subtitle || ""}</span>
         </h2>
       )}
 
@@ -51,27 +58,43 @@ export default function Callout({
       </p>
       <div className="mt-8 flex justify-center space-x-3">
         {idCallout.buttons.map((idButton, index) => (
-          <Button
-            key={`btn-${index}`}
-            variant={idButton.variant || "default"}
-            size={idButton.size || "default"}
-          >
-            {/* If iconPosition is 'before', render icon first */}
-            {idButton.icon && idButton.iconPosition === "before" && (
-              <span className="mr-2">{idButton.icon}</span>
-            )}
-
-            {/* Button Label */}
-            {idButton.href && (
-              <Link href={idButton.href}>{idButton.label}</Link>
-            )}
-            {/* If iconPosition is 'after', render icon after */}
-            {idButton.icon && idButton.iconPosition === "after" && (
-              <span className="ml-2">{idButton.icon}</span>
-            )}
-          </Button>
+          idButton.href ? (
+            <Link href={idButton.href} key={`btn-${index}`}>
+              <Button
+                variant={idButton.variant || "default"}
+                size={idButton.size || "default"}
+              >
+                {idButton.icon && idButton.iconPosition === "before" && (
+                  <span className="mr-2">{idButton.icon}</span>
+                )}
+                {idButton.label}
+                {idButton.icon && idButton.iconPosition === "after" && (
+                  <span className="ml-2">{idButton.icon}</span>
+                )}
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              key={`btn-${index}`}
+              variant={idButton.variant || "default"}
+              size={idButton.size || "default"}
+              onClick={() => {
+                if (onButtonClick && idButton.formMode) {
+                  onButtonClick(idButton.formMode)
+                }
+              }}
+            >
+              {idButton.icon && idButton.iconPosition === "before" && (
+                <span className="mr-2">{idButton.icon}</span>
+              )}
+              {idButton.label}
+              {idButton.icon && idButton.iconPosition === "after" && (
+                <span className="ml-2">{idButton.icon}</span>
+              )}
+            </Button>
+          )
         ))}
       </div>
     </div>
-  );
+  )
 }
