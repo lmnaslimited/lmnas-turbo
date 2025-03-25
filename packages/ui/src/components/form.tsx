@@ -1,11 +1,11 @@
-"use client"
+"client"
 
 import { useState, useRef, useEffect } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { format } from "date-fns"
-import { CalendarIcon, CheckCircle, XCircle } from "lucide-react"
+import { CalendarIcon, CheckCircle } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -16,44 +16,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
-
-export type FormMode = "booking" | "contact" | "download"
-
-type FieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
-
-interface FormFieldConfig {
-    name: string
-    label?: string
-    placeholder?: string
-    type: FieldType
-    required?: boolean
-    options?: { value: string; label: string }[]
-    className?: string
-    inputClassName?: string
-}
-
-interface FormConfig {
-    title: string
-    description?: string
-    fields: FormFieldConfig[]
-    submitText: string
-    schema: z.ZodObject<any>
-    successMessage: string
-    showTerms?: boolean
-    termsText?: string
-    privacyText?: string
-}
-
-interface DynamicFormProps {
-    config: FormConfig
-    onSuccess: (data: any, message: string) => void
-    onCancel?: () => void
-    className?: string
-    defaultValues?: Record<string, any>
-}
+import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
 
 // Update the placeholders to include asterisks for required fields
-export const bookingFormConfig: FormConfig = {
+export const bookingFormConfig: TformConfig = {
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
@@ -65,7 +31,7 @@ export const bookingFormConfig: FormConfig = {
         date: z.date({ required_error: "Please select a date." }),
         timezone: z.string({ required_error: "Please select a timezone." }),
         timeSlot: z.string({ required_error: "Please select a time slot." }),
-        name: z.string().min(2, "Name must be at least 2 characters"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         phone: z.string().min(10, "Please enter a valid phone number"),
         email: z.string().email("Please enter a valid email"),
         message: z.string().optional(),
@@ -129,17 +95,17 @@ export const bookingFormConfig: FormConfig = {
     ],
 }
 
-export const contactFormConfig: FormConfig = {
+export const contactFormConfig: TformConfig = {
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
     successMessage: "Your message has been sent!",
     showTerms: true,
     schema: z.object({
-        name: z.string().min(2, "Name must be at least 2 characters"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
         message: z.string().min(10, "Message must be at least 10 characters"),
-        agreeTerms: z.boolean().default(true),
+        newsletter: z.boolean().default(true),
     }),
     fields: [
         {
@@ -180,19 +146,16 @@ export const contactFormConfig: FormConfig = {
     ],
 }
 
-export const downloadFormConfig: FormConfig = {
+export const downloadFormConfig: TformConfig = {
     title: "Download Resources",
     description: "Fill out the form to access our content",
     submitText: "Download Now",
     successMessage: "Your download will start shortly!",
     showTerms: true,
     schema: z.object({
-        name: z.string().min(2, "Name must be at least 2 characters"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
-        agreeTerms: z
-            .boolean()
-            .default(true)
-            .refine((val) => val, "You must agree to the terms"),
+        newsletter: z.boolean().default(true),
     }),
     fields: [
         {
@@ -219,23 +182,20 @@ export const downloadFormConfig: FormConfig = {
     ],
 }
 
-export function DynamicForm({ config, onSuccess, onCancel, className = "", defaultValues }: DynamicFormProps) {
+export function DynamicForm({ config, onSuccess, onCancel, className = "", defaultValues }: TdynamicFormProps) {
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [serverMessage, setServerMessage] = useState<{ type: "success" | "error"; message: string } | null>(null)
+    const [showSuccess, setShowSuccess] = useState(false)
     const formRef = useRef<HTMLDivElement>(null)
     const [showTimeSlots, setShowTimeSlots] = useState(false)
 
-    // Set default values for checkboxes to true
-    const initialValues = {
-        ...defaultValues,
-        newsletter: true,
-        agreeTerms: true,
-    }
-
     const form = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
-        defaultValues: initialValues,
-        mode: "onChange", // Add this line to enable validation on change
+        defaultValues: {
+            ...defaultValues,
+            newsletter: true,
+            agreeTerms: true,
+        },
+        mode: "onChange",
     })
 
     // Watch date and timezone to determine if timeslots should be shown
@@ -243,12 +203,10 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
     const selectedTimezone = form.watch("timezone")
 
     useEffect(() => {
-        // Only show time slots when both date and timezone are selected
         if (selectedDate && selectedTimezone) {
             setShowTimeSlots(true)
         } else {
             setShowTimeSlots(false)
-            // Clear timeSlot value if date or timezone changes
             if (form.getValues("timeSlot")) {
                 form.setValue("timeSlot", "")
             }
@@ -260,12 +218,22 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
         try {
             // Simulate API call
             await new Promise((resolve) => setTimeout(resolve, 1000))
-            // Reset the form after successful submission
-            form.reset(initialValues)
-            setServerMessage({ type: "success", message: config.successMessage })
+
+            setShowSuccess(true)
             onSuccess(data, config.successMessage)
+
+            // Reset the form after successful submission
+            form.reset({
+                ...form.formState.defaultValues,
+                newsletter: true,
+                agreeTerms: true,
+            })
+
         } catch (error) {
-            setServerMessage({ type: "error", message: "An error occurred" })
+            form.setError("root", {
+                type: "manual",
+                message: "An error occurred while submitting the form"
+            })
         } finally {
             setIsSubmitting(false)
         }
@@ -280,14 +248,8 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
         "15:00 - 16:00",
     ]
 
-    // Update the renderField function to add red ring for error states
-    // and fix checkbox alignment
-
-    const renderField = (field: FormFieldConfig) => {
-        // Skip rendering timeslot field if date and timezone aren't selected yet
-        if (field.type === "timeslot" && !showTimeSlots) {
-            return null
-        }
+    const renderField = (field: TformFieldConfig) => {
+        if (field.type === "timeslot" && !showTimeSlots) return null
 
         switch (field.type) {
             case "text":
@@ -342,6 +304,7 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                                         ))}
                                     </SelectContent>
                                 </Select>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -379,7 +342,7 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                         key={field.name}
                         control={form.control}
                         name={field.name}
-                        render={({ field: formField, fieldState }) => (
+                        render={({ field: formField }) => (
                             <FormItem className={field.className}>
                                 {field.label && <FormLabel>{field.label}</FormLabel>}
                                 <Popover>
@@ -389,8 +352,7 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                                                 variant="outline"
                                                 className={cn(
                                                     "h-12 w-full text-left font-normal",
-                                                    !formField.value && "text-muted-foreground",
-                                                    fieldState.error && "border-red-400",
+                                                    !formField.value && "text-muted-foreground"
                                                 )}
                                             >
                                                 {formField.value ? format(formField.value, "PPP") : field.placeholder}
@@ -420,12 +382,12 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                         key={field.name}
                         control={form.control}
                         name={field.name}
-                        render={({ field: formField, fieldState }) => (
+                        render={({ field: formField }) => (
                             <FormItem className={field.className}>
                                 {field.label && <FormLabel>{field.label}</FormLabel>}
                                 <Select onValueChange={formField.onChange} defaultValue={formField.value}>
                                     <FormControl>
-                                        <SelectTrigger className={cn("h-12", fieldState.error && "border-red-400")}>
+                                        <SelectTrigger className="h-12">
                                             <SelectValue placeholder={field.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
@@ -455,15 +417,10 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                         key={field.name}
                         control={form.control}
                         name={field.name}
-                        render={({ field: formField, fieldState }) => (
+                        render={({ field: formField }) => (
                             <FormItem className={field.className}>
                                 {field.label && <FormLabel>{field.label}</FormLabel>}
-                                <div
-                                    className={cn(
-                                        "grid grid-cols-3 gap-2",
-                                        fieldState.error && "p-2 border rounded-md border-red-400",
-                                    )}
-                                >
+                                <div className="grid grid-cols-3 gap-2">
                                     {timeSlots.map((slot) => (
                                         <Button
                                             key={slot}
@@ -488,13 +445,13 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                         key={field.name}
                         control={form.control}
                         name={field.name}
-                        render={({ field: formField, fieldState }) => (
+                        render={({ field: formField }) => (
                             <FormItem className={cn(field.className, "flex flex-row items-center justify-start space-x-2")}>
                                 <FormControl>
                                     <Checkbox
                                         checked={formField.value}
                                         onCheckedChange={formField.onChange}
-                                        className={cn("mt-1.5", fieldState.error && "border-red-400")}
+                                        className="mt-1.5"
                                     />
                                 </FormControl>
                                 <FormLabel className="font-normal">{field.placeholder}</FormLabel>
@@ -511,30 +468,28 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
 
     return (
         <div ref={formRef} className={cn("w-full max-w-xl mx-auto bg-white rounded-lg shadow-md", className)}>
-            {serverMessage ? (
+            {showSuccess ? (
                 <AnimatePresence>
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="p-6 text-center">
-                        {serverMessage.type === "success" ? (
-                            <div>
-                                <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
-                                <h3 className="text-xl font-bold mb-2">Success!</h3>
-                                <p className="mb-6">{serverMessage.message}</p>
-                                {onCancel && (
-                                    <Button type="button" variant="outline" onClick={onCancel}>
-                                        Close
-                                    </Button>
-                                )}
-                            </div>
-                        ) : (
-                            <div>
-                                <XCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                                <h3 className="text-xl font-bold mb-2">Error</h3>
-                                <p className="mb-6">{serverMessage.message}</p>
-                                <Button type="button" variant="outline" onClick={onCancel}>
-                                    Close
-                                </Button>
-                            </div>
-                        )}
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="p-6 text-center"
+                    >
+                        <div className="space-y-4">
+                            <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                            <h3 className="text-xl font-bold text-gray-900">Success!</h3>
+                            <p className="text-gray-600 mb-6">{config.successMessage}</p>
+                            <Button
+                                type="button"
+                                variant="default"
+                                onClick={() => {
+                                    setShowSuccess(false)
+                                    onCancel?.()
+                                }}
+                            >
+                                Close
+                            </Button>
+                        </div>
                     </motion.div>
                 </AnimatePresence>
             ) : (
@@ -546,11 +501,31 @@ export function DynamicForm({ config, onSuccess, onCancel, className = "", defau
                     <div className="p-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(handleSubmit)}>
+                                {form.formState.errors.root && (
+                                    <p className="text-red-500 text-sm mb-4">
+                                        {form.formState.errors.root.message}
+                                    </p>
+                                )}
+
                                 <div className="flex flex-wrap -mx-2">{config.fields.map(renderField)}</div>
 
                                 <div className="space-y-4">
-                                    <Button type="submit" className="w-full h-12" disabled={isSubmitting}>
-                                        {isSubmitting ? "Processing..." : config.submitText}
+                                    <Button
+                                        type="submit"
+                                        className="w-full h-12"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? (
+                                            <span className="flex items-center justify-center">
+                                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                </svg>
+                                                Processing...
+                                            </span>
+                                        ) : (
+                                            config.submitText
+                                        )}
                                     </Button>
 
                                     {config.showTerms && (

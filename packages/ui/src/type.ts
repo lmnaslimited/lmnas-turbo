@@ -1,4 +1,6 @@
 import * as LucideIcons from "lucide-react"
+import { z } from "zod"
+
 export type Titems = {
   question: string
   answer: string
@@ -115,4 +117,41 @@ export type TtrendCardProps = {
   imageUrl?: string
   author?: string
   date: string
+}
+
+
+// Form types
+export type TformMode = "booking" | "contact" | "download" | null
+
+export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
+
+export type TformFieldConfig = {
+  name: string
+  label?: string
+  placeholder?: string
+  type: TfieldType
+  required?: boolean
+  options?: { value: string; label: string }[]
+  className?: string
+  inputClassName?: string
+}
+
+export type TformConfig = {
+  title: string
+  description?: string
+  fields: TformFieldConfig[]
+  submitText: string
+  schema: z.ZodObject<any>
+  successMessage: string
+  showTerms?: boolean
+  termsText?: string
+  privacyText?: string
+}
+
+export type TdynamicFormProps = {
+  config: TformConfig
+  onSuccess: (data: any, message: string) => void
+  onCancel?: () => void
+  className?: string
+  defaultValues?: Record<string, any>
 }
