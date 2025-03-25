@@ -19,13 +19,13 @@ export function RelatedCaseStudies({ idCaseStudies }: {idCaseStudies:TcaseStudy}
   const [ActiveIndustry, fnSetActiveIndustry] = useState("all")
 
   // Get unique industries
-  const LaIndustries = ["all", ...new Set(idCaseStudies.map((study) => study.industry.toLowerCase()))]
+  const LaIndustries = ["all", ...new Set(idCaseStudies.map((idStudy) => idStudy.industry.toLowerCase()))]
 
   // Filter case studies by industry
   const LaFilteredCaseStudies =
   ActiveIndustry === "all"
       ? idCaseStudies
-      : idCaseStudies.filter((study) => study.industry.toLowerCase() === ActiveIndustry)
+      : idCaseStudies.filter((idStudy) => idStudy.industry.toLowerCase() === ActiveIndustry)
 
   return (
     <section className="border-t bg-muted/30 py-20">

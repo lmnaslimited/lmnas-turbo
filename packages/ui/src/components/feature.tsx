@@ -5,7 +5,7 @@ import * as LucideIcons from "lucide-react"
 import {Titems, TfeatureProps} from "@repo/ui/type"
 import { ReactElement } from "react"
 
-const buttonContainer = cva("mt-8 flex lg:flex-shrink-0", {
+const fnButtonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
     position: {
       header: "lg:mt-0",
@@ -41,7 +41,7 @@ export default function Feature({ idFeature }:{idFeature:TfeatureProps}):ReactEl
             <span className="block text-primary/70">{idFeature.header.text}</span>
           </h2>
           {idFeature.iShowButton && idFeature.buttonPosition === "header" && (
-            <div className={buttonContainer({ position: "header" })}>
+            <div className={fnButtonContainer({ position: "header" })}>
               <Button asChild size="lg">
               {idFeature.button?.href && (
                 <Link href={idFeature.button?.href}>{idFeature.button?.label}</Link>)}
@@ -60,7 +60,7 @@ export default function Feature({ idFeature }:{idFeature:TfeatureProps}):ReactEl
         </div>
 
         {idFeature.iShowButton && idFeature.buttonPosition !== "header" && (
-          <div className={buttonContainer({ position: idFeature.buttonPosition })}>
+          <div className={fnButtonContainer({ position: idFeature.buttonPosition })}>
             <Button asChild size="lg">
                 {idFeature.button?.href && (
               <Link href={idFeature.button?.href}>{idFeature.button?.label}</Link>)}

@@ -54,31 +54,31 @@ export function ProblemSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):ReactE
         </motion.div>
 
         <motion.div variants={ItemVariants} className="mb-12 space-y-6">
-          {idCaseStudy.challenges.map((challenge: string, index: number) => (
+          {idCaseStudy.challenges.map((iChallenge: string, iIndex: number) => (
             <div
-              key={index}
+              key={iIndex}
               className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${
-                index === ActiveChallenge
+                iIndex === ActiveChallenge
                   ? "border-primary bg-primary/5 shadow-md"
                   : "border-muted bg-card hover:border-muted/80 hover:bg-muted/5"
               }`}
-              onClick={() => fnSetActiveChallenge(index)}
+              onClick={() => fnSetActiveChallenge(iIndex)}
             >
               <div className="flex items-start gap-4">
                 <div
                   className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                    index === ActiveChallenge ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                    iIndex === ActiveChallenge ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
                   }`}
                 >
-                  <span className="font-mono text-sm font-bold">{index + 1}</span>
+                  <span className="font-mono text-sm font-bold">{iIndex + 1}</span>
                 </div>
                 <div>
                   <p
-                    className={`text-lg ${index === ActiveChallenge ? "font-medium text-foreground" : "text-muted-foreground"}`}
+                    className={`text-lg ${iIndex === ActiveChallenge ? "font-medium text-foreground" : "text-muted-foreground"}`}
                   >
-                    {challenge}
+                    {iChallenge}
                   </p>
-                  {index === ActiveChallenge && (
+                  {iIndex === ActiveChallenge && (
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}

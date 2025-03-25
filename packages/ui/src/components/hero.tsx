@@ -22,8 +22,8 @@ export default function Hero({ idHero }: { idHero: TheroProps }): ReactElement {
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {(idHero.items && <FeatureList {...idHero.items}  />)}
-        <CTAButtons {...idHero.buttons} />
+        {(idHero.items && <FeatureList items={idHero.items}  />)}
+        <CTAButtons buttons={idHero.buttons} />
       </div>
       {/* Image part */}
       <div className={cn("flex items-center justify-center")}>
@@ -49,7 +49,7 @@ export default function Hero({ idHero }: { idHero: TheroProps }): ReactElement {
           <p className={cn("max-w-[85%] text-muted-foreground md:text-xl/relaxed mx-auto mb-2")}>
             {idHero.description}
           </p>
-          <CTAButtons {...idHero.buttons}  />
+          <CTAButtons buttons={idHero.buttons}  />
         </motion.div>
       </div>
     </section>
@@ -62,10 +62,11 @@ const Badge = (idBadge: {text: string}):ReactElement => (
     <span>{idBadge.text}</span>
   </div>
 );
-const FeatureList = (iaFeature: TheroProps["items"]):ReactElement =>
+
+const FeatureList = (iaFeature: {items?: TheroProps["items"]}):ReactElement =>
   (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {iaFeature?.map((idItem, iIndex) => (
+      {iaFeature.items?.map((idItem, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
           {idItem?.icon}
           <span>{idItem?.item}</span>
@@ -73,9 +74,10 @@ const FeatureList = (iaFeature: TheroProps["items"]):ReactElement =>
       ))}
     </div>
   );
-const CTAButtons = (iaButton:Tbutton[]):ReactElement => (
+  
+const CTAButtons = (iaButton:{ buttons:TheroProps["buttons"]}):ReactElement => (
   <div className="flex flex-col gap-4 sm:flex-row">
-    {iaButton.map((idButton, index) =>
+    {iaButton.buttons.map((idButton, index) =>
       idButton.href ? (
         <Link href={idButton.href} key={index}>
           <Button size={idButton.size || "lg"} variant={idButton.variant || "default"} className={idButton.className}>

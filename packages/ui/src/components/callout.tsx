@@ -1,10 +1,14 @@
 import { Button } from "@repo/ui/components/ui/button";
-import clsx from "clsx";
 import Link from "next/link";
-import { Tbutton, TcalloutProps } from "@repo/ui/type";
+import { TcalloutProps } from "@repo/ui/type";
 import { ReactElement } from "react";
+import { cn } from "@repo/ui/lib/utils";
 
-export default function Callout({idCallout}:{idCallout: TcalloutProps}):ReactElement {
+export default function Callout({
+  idCallout,
+}: {
+  idCallout: TcalloutProps;
+}): ReactElement {
   const Layout = idCallout.layout || "classic";
   return (
     <div
@@ -12,7 +16,7 @@ export default function Callout({idCallout}:{idCallout: TcalloutProps}):ReactEle
     >
       {Layout === "classic" ? (
         <h2
-          className={clsx(
+          className={cn(
             "text-3xl font-extrabold sm:text-4xl",
             idCallout.variant || "text-secondary"
           )}
@@ -33,37 +37,37 @@ export default function Callout({idCallout}:{idCallout: TcalloutProps}):ReactEle
         {idCallout.points?.title}
       </p>
       <ul className="mt-4 space-y-4">
-        {idCallout.points?.items?.map((point: string, index: number) => (
+        {idCallout.points?.items?.map((point, index) => (
           <li
             key={index}
-            className={clsx("text-lg", idCallout.variant || "text-secondary")}
+            className={cn("text-lg", idCallout.variant || "text-secondary")}
           >
             {point}
           </li>
         ))}
       </ul>
-      <p
-        className={clsx("mt-8 text-xl", idCallout.variant || "text-secondary")}
-      >
+      <p className={cn("mt-8 text-xl", idCallout.variant || "text-secondary")}>
         {idCallout.points?.actionText}
       </p>
       <div className="mt-8 flex justify-center space-x-3">
-        {idCallout.buttons.map((button: Tbutton, index: number) => (
+        {idCallout.buttons.map((idButton, index) => (
           <Button
             key={`btn-${index}`}
-            variant={button.variant || "default"}
-            size={button.size || "default"}
+            variant={idButton.variant || "default"}
+            size={idButton.size || "default"}
           >
             {/* If iconPosition is 'before', render icon first */}
-            {button.icon && button.iconPosition === "before" && (
-              <span className="mr-2">{button.icon}</span>
+            {idButton.icon && idButton.iconPosition === "before" && (
+              <span className="mr-2">{idButton.icon}</span>
             )}
 
             {/* Button Label */}
-            {button.href && <Link href={button.href}>{button.label}</Link>}
+            {idButton.href && (
+              <Link href={idButton.href}>{idButton.label}</Link>
+            )}
             {/* If iconPosition is 'after', render icon after */}
-            {button.icon && button.iconPosition === "after" && (
-              <span className="ml-2">{button.icon}</span>
+            {idButton.icon && idButton.iconPosition === "after" && (
+              <span className="ml-2">{idButton.icon}</span>
             )}
           </Button>
         ))}
