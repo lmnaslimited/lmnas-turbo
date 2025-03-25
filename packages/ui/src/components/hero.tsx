@@ -1,24 +1,22 @@
-"use client";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
 import { Zap } from "lucide-react";
-import { Tbutton, TheroProps } from "../type.js";
+import { TheroProps, TformMode } from "../type.js";
 import { ReactElement } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
-import type { FormMode } from "@repo/ui/components/form";
 
 interface HeroProps {
   idHero: TheroProps;
-  onButtonClick?: (mode: FormMode) => void;
+  onButtonClick?: (mode: TformMode) => void;
 }
 
 export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement {
-  const handleButtonClick = (formMode?: FormMode) => {
-    if (onButtonClick && formMode) {
-      onButtonClick(formMode);
+  const fnHandleButtonClick = (iFormMode?: TformMode) => {
+    if (onButtonClick && iFormMode) {
+      onButtonClick(iFormMode);
     }
   };
 
@@ -61,7 +59,7 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
             size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
             className={idButton.className}
-            onClick={() => handleButtonClick(idButton.formMode)}
+            onClick={() => fnHandleButtonClick(idButton.formMode)}
           >
             {idButton.iconPosition === "before" && idButton.icon}
             {idButton.label}

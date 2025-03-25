@@ -1,22 +1,17 @@
-"use client"
-
 import Link from "next/link"
-import { TcalloutProps } from "@repo/ui/type";
+import { TcalloutProps, TformMode } from "@repo/ui/type";
 import { Button } from "@repo/ui/components/ui/button"
-import type { FormMode } from "@repo/ui/components/form"
 import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
 
 export default function Callout({
   idCallout,
-  Layout = "classic",
   onButtonClick,
 }: {
-  idCallout?: TcalloutProps
-  Layout?: "classic" | "simple"
-  onButtonClick?: (mode: FormMode) => void
-}): ReactElement | null {
-  if (!idCallout) return null;
+  idCallout: TcalloutProps
+  onButtonClick?: (mode: TformMode) => void
+}): ReactElement {
+  const Layout = idCallout.layout || "classic";
 
   return (
     <div
@@ -29,9 +24,11 @@ export default function Callout({
           <span className="block">{idCallout.header.subtitle}</span>
         </h2>
       ) : (
-        <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
-          <span className="block">{idCallout?.header?.textWithoutColor || ""}</span>
-          <span className="block text-primary/70">{idCallout?.header?.subtitle || ""}</span>
+        <h2 className="text-3xl font-extrabold tracking-tight text-border sm:text-4xl">
+          <span className="block">{idCallout.header.textWithoutColor}</span>
+          <span className="block text-primary/70">
+            {idCallout.header.subtitle}
+          </span>
         </h2>
       )}
 
@@ -53,7 +50,7 @@ export default function Callout({
       {/* Fixed button rendering */}
       <div className="mt-8 flex justify-center space-x-3">
         {idCallout.buttons.map((idButton, index) => {
-          const buttonContent = (
+          const ButtonContent = (
             <>
               {idButton.icon && idButton.iconPosition === "before" && (
                 <span className="mr-2">{idButton.icon}</span>
@@ -71,7 +68,7 @@ export default function Callout({
                 variant={idButton.variant || "default"}
                 size={idButton.size || "default"}
               >
-                {buttonContent}
+                {ButtonContent}
               </Button>
             </Link>
           ) : (
@@ -85,7 +82,7 @@ export default function Callout({
                 }
               }}
             >
-              {buttonContent}
+              {ButtonContent}
             </Button>
           );
         })}
