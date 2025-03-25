@@ -31,11 +31,6 @@ export type Timage ={
     svg?: React.ReactNode
 }
 
-// export type Tfeature = {
-//     header: Theader;
-//     button?:Tbutton
-//     items?:Titems[]
-// }
 //component
 export type TcalloutProps = {
     header: Theader
@@ -103,9 +98,10 @@ export type TheroProps = {
     items?:{
       icon: React.ReactNode | keyof typeof LucideIcons
       item: string
-    }[]
-    buttons: Tbutton[]
-    image:Timage
+    }[];
+    description?:string;
+    buttons: Tbutton[];
+    image:Timage;
 }
 
 //component

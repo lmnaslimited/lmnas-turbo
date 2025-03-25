@@ -12,8 +12,8 @@ export default function TitleSubtitle({idTitle}:{idTitle:Theader}):ReactElement 
         viewport={{ once: true }}
         transition={{ duration: 0.5 }} className={cn("w-full flex flex-col space-y-4 mb-10", idTitle.className)}>
             <h2 className={cn("text-3xl font-bold tracking-tighter sm:text-4xl", idTitle.headingClass)}>
-                <span >{idTitle.textWithoutColor}</span>
-                <span className="text-primary">{idTitle.text}</span>
+                <span >{idTitle.textWithoutColor}</span>{" "}
+                <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">{idTitle.text}</span>
             </h2>
             <p className={cn("max-w-[700px] text-muted-foreground md:text-xl", idTitle.descripClass)}>
                 {idTitle.subtitle}
