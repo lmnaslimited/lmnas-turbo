@@ -1,33 +1,18 @@
 "use client"
 
 import { ReactElement, useRef } from "react"
-import { motion, useInView } from "framer-motion"
+import { motion } from "framer-motion"
 import { Badge } from "@repo/ui/components/ui/badge"
-import { Lightbulb, CheckCircle2, TrendingUp } from "lucide-react"
+import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
 import { Button } from "@repo/ui/components/ui/button"
+import { TsolutionSection} from "@repo/ui/type"
+import * as Icons from "lucide-react";
 
 
-type TcaseStudy ={
-  company: string
-  solution: {
-    description: string
-    products: string[]
-    details: string[]
-  }
-  results: {
-    metric: string
-    value: string
-  }[]
-  testimonial?: {
-    author: string
-    title: string
-    quote: string
-  }
-}
-
-export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):ReactElement {
+export function SolutionSection({ idCaseStudy }: {idCaseStudy:TsolutionSection}):ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
  
+  // Animation variants for fade-in effect.
   const LdItemVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
@@ -35,36 +20,31 @@ export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):React
 
   return (
     <section ref={SectionRef} className="mb-24">
-      <div
-       
-      >
         {/* Solution Section */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 p-8">
           <motion.div variants={LdItemVariants} className="mb-8 flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/20">
+            <div className="flex h-10 w-14 items-center justify-center rounded-full bg-primary/20">
               <Lightbulb className="h-5 w-5 text-primary" />
             </div>
             <h2 className="text-2xl font-bold md:text-3xl">
-              The Breakthrough Moment: How We Transformed {idCaseStudy.company}
-            </h2>
+              {idCaseStudy.header.textWithoutColor}
+              </h2>
           </motion.div>
-
           <motion.p variants={LdItemVariants} className="mb-8 text-lg text-muted-foreground">
-            {idCaseStudy.solution.description}
+            {idCaseStudy.header.subtitle}
           </motion.p>
-
           <motion.div variants={LdItemVariants} className="mb-8 flex flex-wrap gap-2">
-            {idCaseStudy.solution.products.map((iProduct: string, index: number) => (
-              <Badge key={index}  className="text-base">
+            {idCaseStudy.products.map((iProduct, iIndex) => (
+              <Badge key={iIndex}  className="text-base">
                 {iProduct}
               </Badge>
             ))}
           </motion.div>
 
           <motion.div variants={LdItemVariants} className="grid gap-6 md:grid-cols-2">
-            {idCaseStudy.solution.details.map((iDetail: string, index: number) => (
+            {idCaseStudy.details.map((iDetail, iIndex) => (
               <div
-                key={index}
+                key={iIndex}
                 className="flex items-start gap-3 rounded-lg border border-primary/10 bg-primary/5 p-6 transition-all hover:border-primary/20 hover:shadow-lg"
               >
                 <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
@@ -80,20 +60,19 @@ export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):React
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted-foreground/20">
               <TrendingUp className="h-5 w-5 text-primary" />
             </div>
-            <h2 className="text-2xl font-bold md:text-3xl">The Results</h2>
+            <h2 className="text-2xl font-bold md:text-3xl">{idCaseStudy.title}</h2>
           </motion.div>
 
           <motion.div variants={LdItemVariants} className="grid gap-6 sm:grid-cols-2">
-            {idCaseStudy.results.map((idResult: {metric:string, value:string}, index: number) => (
+            {idCaseStudy.results.map((idResult, iIndex) => (
               <div
-                key={index}
+                key={iIndex}
                 className="group relative overflow-hidden rounded-lg border bg-card p-6 shadow-sm transition-all hover:shadow-md"
               >
                 {/* Background decoration */}
                 <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
-
-                <h3 className="mb-2 text-lg font-semibold">{idResult.metric}</h3>
-                <p className="text-3xl font-bold text-primary">{idResult.value}</p>
+                <h3 className="mb-2 text-lg font-semibold">{idResult.textWithoutColor}</h3>
+                <p className="text-3xl font-bold text-primary">{idResult.subtitle}</p>
               </div>
             ))}
           </motion.div>
@@ -142,7 +121,7 @@ export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):React
                         </svg>
                       ))}
                     </div>
-                    <span className="text-sm text-muted-foreground">Verified Client</span>
+                    <span className="text-sm text-muted-foreground">{idCaseStudy.testimonial.verify}</span>
                   </div>
                 </blockquote>
               </div>
@@ -153,83 +132,22 @@ export function SolutionSection({ idCaseStudy }: {idCaseStudy:TcaseStudy}):React
               <div>
                 <h3 className="text-lg font-semibold">Share this case study</h3>
                 <div className="mt-2 flex gap-2">
-                  <Button variant="outline" size="icon" className="rounded-full">
-                    <span className="sr-only">Share on LinkedIn</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-linkedin"
-                    >
-                      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-                      <rect width="4" height="12" x="2" y="9" />
-                      <circle cx="4" cy="4" r="2" />
-                    </svg>
+                {idCaseStudy.footer.handles.map((idItem, iIndex) => {
+                const IconComponent = (Icons[idItem.icon as keyof typeof Icons] as LucideIcon) || Icons.Users;
+                return (
+                  <Button variant="outline" size="icon" className="rounded-full" key={iIndex}>
+                    <span className="sr-only">{idItem.label}</span>
+                    <IconComponent className="w-5 h-5" />
                   </Button>
-                  <Button variant="outline" size="icon" className="rounded-full">
-                    <span className="sr-only">Share on Twitter</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-twitter"
-                    >
-                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
-                    </svg>
-                  </Button>
-                  <Button variant="outline" size="icon" className="rounded-full">
-                    <span className="sr-only">Share via Email</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="lucide lucide-mail"
-                    >
-                      <rect width="20" height="16" x="2" y="4" rx="2" />
-                      <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-                    </svg>
-                  </Button>
+                );
+              })}
                 </div>
               </div>
               <Button className="flex items-center gap-2">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="lucide lucide-download"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" x2="12" y1="15" y2="3" />
-                </svg>
-                Download Case Study PDF
+                <Download className="w-5 h-5" />
+               {idCaseStudy.footer.button.label}
               </Button>
             </div>
-      </div>
     </section>
   )
 }

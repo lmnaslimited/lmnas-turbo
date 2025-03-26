@@ -5,6 +5,9 @@ import Image from "next/image";
 import { TtrendCardProps } from "@repo/ui/type";
 import { ReactElement, ReactNode } from "react";
 
+/**
+ * Function to return the appropriate icon based on the source platform.
+ */
 const fnGetIcon = (iSource: string):ReactNode => {
   switch (iSource) {
     case "LinkedIn":

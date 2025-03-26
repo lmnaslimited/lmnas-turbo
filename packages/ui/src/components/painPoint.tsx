@@ -3,13 +3,16 @@
 import { useRef, useEffect, ReactElement } from "react";
 import { Titems } from "../type.js";
 
+// PainPoints Component: Displays a list of pain points with a smooth fade-in animation when they enter the viewport.
 export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElement {
   const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    // Creates an Intersection Observer to track when elements enter the viewport
     const Observer = new IntersectionObserver(
       (laEntries) => {
         laEntries.forEach((idEntry) => {
+            // If the element is visible in the viewport, apply the fade-in effect
           if (idEntry.isIntersecting) {
             idEntry.target.classList.add("opacity-100", "translate-y-0");
             idEntry.target.classList.remove("opacity-0", "translate-y-4");
@@ -17,17 +20,19 @@ export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElem
         });
       },
       {
-        root: null,
-        rootMargin: "0px",
-        threshold: 0.1,
+        root: null, // Uses the viewport as the root
+        rootMargin: "0px", // No additional margins
+        threshold: 0.1, // Element must be at least 10% visible to trigger
       }
     );
 
+    // Select all elements with the class "pain-point" and observe them
     const PainPoints = document.querySelectorAll(".pain-point");
     PainPoints.forEach((iPoint) => {
       Observer.observe(iPoint);
     });
 
+    // Cleanup: Unobserve elements when the component unmounts
     return () => {
       PainPoints.forEach((iPoint) => {
         Observer.unobserve(iPoint);

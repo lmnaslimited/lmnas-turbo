@@ -11,13 +11,15 @@ export default function Callout({
   idCallout: TcalloutProps
   onButtonClick?: (mode: TformMode) => void
 }): ReactElement {
+
+  // Determine the layout type, defaulting to "classic" if not provided
   const Layout = idCallout.layout || "classic";
 
   return (
     <div
       className={`${Layout === "classic" ? "max-w-3xl" : "max-w-7xl"} mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8`}
     >
-      {/* Header content remains the same */}
+      {/* Render callout header with different styling based on layout */}
       {Layout === "classic" ? (
         <h2 className={cn("text-3xl font-extrabold sm:text-4xl", idCallout.variant || "text-secondary")}>
           <span className="block">{idCallout.header.textWithoutColor}</span>
@@ -32,10 +34,12 @@ export default function Callout({
         </h2>
       )}
 
-      {/* Points content remains the same */}
+     {/* Display an optional description text */}
       <p className="mt-4 text-lg leading-6 text-secondary">
         {idCallout.points?.title}
       </p>
+
+      {/* Render a list of bullet points if provided */}
       <ul className="mt-4 space-y-4">
         {idCallout.points?.items?.map((point, index) => (
           <li key={index} className={cn("text-lg", idCallout.variant || "text-secondary")}>
@@ -43,13 +47,16 @@ export default function Callout({
           </li>
         ))}
       </ul>
+
+       {/* Display additional action text if available */}
       <p className={cn("mt-8 text-xl", idCallout.variant || "text-secondary")}>
         {idCallout.points?.actionText}
       </p>
 
-      {/* Fixed button rendering */}
+       {/* Render callout buttons with appropriate behavior for link and Onclick actions */}
       <div className="mt-8 flex justify-center space-x-3">
         {idCallout.buttons.map((idButton, index) => {
+           // Construct button content, including an optional icon
           const ButtonContent = (
             <>
               {idButton.icon && idButton.iconPosition === "before" && (
@@ -63,7 +70,7 @@ export default function Callout({
           );
 
           return idButton.href ? (
-            <Link href={idButton.href} key={`btn-${index}`} passHref legacyBehavior>
+            <Link href={idButton.href} key={`btn-${index}`}>
               <Button
                 variant={idButton.variant || "default"}
                 size={idButton.size || "default"}
@@ -72,6 +79,8 @@ export default function Callout({
               </Button>
             </Link>
           ) : (
+            
+            // Render a standard button with an event handler if no href is provided
             <Button
               key={`btn-${index}`}
               variant={idButton.variant || "default"}

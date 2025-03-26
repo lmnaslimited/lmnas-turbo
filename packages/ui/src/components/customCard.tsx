@@ -3,24 +3,23 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import {
-  Card,
-  CardFooter,
-  CardHeader,
-} from "@repo/ui/components/ui/card";
+import {Card, CardFooter, CardHeader} from "@repo/ui/components/ui/card";
 import { Button } from "@repo/ui/components/ui/button";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/ui/avatar";
+import {Avatar, AvatarFallback, AvatarImage} from "@repo/ui/components/ui/avatar";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { TcardProps } from "@repo/ui/type";
 import { ReactElement } from "react";
 
+/**
+ * CustomCard component renders a flexible and responsive card UI
+ * that can include an image, profile details, header, footer, buttons, and links.
+ */
+
 export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):ReactElement {
-  // Returns a CSS class for the image's aspect ratio or
-  // an empty string if not set.
+  /**
+   * Determines the CSS class for the image's aspect ratio.
+   * Returns an empty string if no valid aspect ratio is set.
+   */
   const fnGetAspectRatioClass = ():string => {
     if (!idCardProps.image?.aspectRatio || idCardProps.image.aspectRatio === "auto") return "";
 
@@ -36,9 +35,10 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
     }
   };
 
-  // Component to display a user's profile details, including their name, place, and avatar.
-  // The layout adjusts based on the `namePosition` prop, allowing the avatar to be positioned
-  // on the left, right, top, or bottom relative to the name and place.
+   /**
+   * Renders profile details including an avatar, name, and location.
+   * Adjusts the layout dynamically based on `namePosition` (left, right, top, or bottom).
+   */
   const ProfileDetail = idCardProps.nameAndPlace && (
     <div
       className={cn(
@@ -85,7 +85,7 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
       )}
       onClick={idCardProps.onClick}
     >
-      {/* Image / SVG Section */}
+       {/* Renders image or SVG if available, with an optional tag badge */}
       {idCardProps.image && (
         <div className={cn("w-full overflow-hidden relative",fnGetAspectRatioClass())}>
           {idCardProps.image?.svg ? (
@@ -113,10 +113,9 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
         </div>
       )}
 
-      <div
-        className={cn("flex flex-col", idCardProps.layout === "horizontal" && "md:flex-1")}
-      >
-        {/* Horizontal Layout Image */}
+      <div className={cn("flex flex-col", idCardProps.layout === "horizontal" && "md:flex-1")}>
+
+        {/* Horizontal layout: Renders image on the side if applicable */}
         {idCardProps.image?.alt && idCardProps.layout === "horizontal" && (
           <div
             className={cn(
@@ -146,15 +145,25 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
           </div>
         )}
 
-        {/* Name and Place - Top Position */}
+        {/* Name and place at the top if specified */}
         {idCardProps.nameAndPlace && idCardProps.namePosition === "top" && (
           <div className="px-6 pt-6">{ProfileDetail}</div>
         )}
 
-        {/* Card Header */}
+        {/* Card Header: Displays title, subtitle, and optional tag if no image is present */}
         <CardHeader>
+        {idCardProps.tag &&  !idCardProps.image &&(
+            <Badge
+              variant="default"
+              className="rounded-full px-2 py-1 w-fit mb-2"
+            >
+              {idCardProps.tag}
+            </Badge>
+          )}
           <h2 className={cn("text-xl mb-3 font-semibold", idCardProps.header.headingClass)}>{idCardProps.header.text}</h2>
           <p className={cn("max-w-[700px] text-muted-foreground", idCardProps.header.descripClass)}>{idCardProps.header.subtitle}</p>
+
+           {/* Renders a list of items if provided */}
           {idCardProps.list && idCardProps.list.length > 0 && (
               <ul className="space-y-2">
               {idCardProps.list.map((idItem, iIndex) => (
@@ -172,7 +181,7 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
           )}
         </CardHeader>
 
-        {/* Card Footer */}
+         {/* Card Footer: Renders buttons, links, and profile details if positioned at the bottom */}
         <CardFooter
           className={cn(
             "flex",
@@ -229,7 +238,7 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
               ))}
           </div>
 
-          {/* Name and Place - Bottom Position */}
+           {/* Name and place positioned at the bottom if specified */}
           {idCardProps.nameAndPlace && idCardProps.namePosition === "bottom" && ProfileDetail}
         </CardFooter>
       </div>

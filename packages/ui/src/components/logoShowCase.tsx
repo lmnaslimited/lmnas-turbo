@@ -6,8 +6,17 @@ import { cn } from "@repo/ui/lib/utils"
 import {TlogoShowcaseProps, Timage} from "@repo/ui/type"
 import { ReactElement } from "react"
 
+/**
+ * LogoShowcase Component
+ * Purpose: Displays a collection of logos in either a grid layout or a marquee (scrolling ticker) layout.
+ * Props:
+ * - idLogoProps: Configuration object containing logo data, layout preferences, animation speed, and spacing.
+ */
 export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcaseProps}):ReactElement {
-  // Calculate logo dimensions based on size prop
+  /**
+   * Determines the dimensions (width & height) of each logo based on the specified size.
+   * Returns an object with width and height properties.
+   */
   const fnGetLogoDimensions = ():{width:number; height:number} => {
     switch (idLogoProps.logoSize) {
       case "small":
@@ -20,7 +29,10 @@ export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcase
     }
   }
 
-  // Calculate spacing based on spacing prop
+ /**
+   * Determines the spacing between logos based on the spacing prop.
+   * Returns a Tailwind CSS class for gap spacing.
+   */
   const fnGetSpacing = ():string => {
     switch (idLogoProps.spacing) {
       case "tight":
@@ -33,7 +45,10 @@ export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcase
     }
   }
 
-  // Calculate speed for marquee animation
+    /**
+   * Determines the animation speed for the marquee (scrolling ticker).
+   * Returns a numerical value representing the animation duration.
+   */
   const fnGetMarqueeSpeed = ():number => {
     switch (idLogoProps.speed) {
       case "slow":
@@ -46,8 +61,10 @@ export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcase
     }
   }
 
-  // Render either grid / marquee(animation) layout
-  //based on prop "variant"
+   /**
+   * Renders the logos either in a grid layout or a marquee (scrolling ticker) layout.
+   * Decides which component to use based on the 'variant' prop.
+   */
   const fnRenderLogos = ():ReactElement => {
     switch (idLogoProps.variant) {
       case "marquee":
@@ -78,7 +95,12 @@ export default function LogoShowcase({ idLogoProps }: {idLogoProps:TlogoShowcase
   return <div className={cn("w-full overflow-hidden", idLogoProps.className,)}>{fnRenderLogos()}</div>
 }
 
-// Marquee (Running Ticker) Implementation
+/**
+ * MarqueeLogos Component
+ * Purpose: Displays logos in a continuous scrolling (ticker) animation.
+ * Props:
+ * - idMarquee: Configuration object containing logos, animation speed, spacing, and hover behavior.
+ */
 function MarqueeLogos( idMarquee :TlogoShowcaseProps ):ReactElement {
     const Controls = useAnimation() // Controls for animation
     const DuplicateLogo = [...idMarquee.logos, ...idMarquee.logos]
@@ -110,10 +132,17 @@ function MarqueeLogos( idMarquee :TlogoShowcaseProps ):ReactElement {
     )
 }
 
-// Grid/Flex Layout Implementation
+/**
+ * GridLogos Component
+ * Purpose: Displays logos in a grid layout with animations.
+ * Props:
+ * - idGridLogo: Configuration object containing logos, grid spacing, dimensions, and logos per row.
+ */
 function GridLogos( idGridLogo:TlogoShowcaseProps ):ReactElement {
-  // Calculate grid columns based on logosPerRow
-  //this return a grid-cols tailwind class element
+  /**
+   * Determines the Tailwind CSS class for the number of columns in the grid.
+   * Returns a grid class based on the 'logosPerRow' prop.
+   */
   const fnGridCols = ():string => {
     switch (idGridLogo.logosPerRow) {
       case 2:
@@ -149,17 +178,17 @@ function GridLogos( idGridLogo:TlogoShowcaseProps ):ReactElement {
   )
 }
 
-// Shared Logo Item Component
+/**
+ * LogoItem Component
+ * Purpose: Renders a single logo, either as an image or an inline SVG.
+ * Props:
+ * - idLogo: Object containing logo details and dimensions.
+ */
 function LogoItem( idLogo:{logo: Timage; dimensions: { width: number; height: number }}):ReactElement {
   const { width, height } = idLogo.dimensions
   const LogoElement:ReactElement = (
     <div
-      className={cn(
-        "flex items-center justify-center p-4 rounded-lg transition-all duration-200",
-       "",
-        "",
-      )}
-    >
+      className="flex items-center justify-center p-4 rounded-lg transition-all duration-200">
    {idLogo.logo.svg ? (
       
         <div
