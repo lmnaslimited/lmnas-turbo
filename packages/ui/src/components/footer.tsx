@@ -2,8 +2,9 @@ import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
 import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin, Youtube } from "lucide-react"
+import { ReactElement } from "react"
 
-export default function Footer() {
+export default function Footer():ReactElement {
   return (
     <footer className="bg-muted/80 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -19,15 +20,15 @@ export default function Footer() {
               enterprise solutions.
             </p>
             <div className="flex space-x-4">
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://twitter.com/lmnaslimited" className="text-muted-foreground hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://in.linkedin.com/company/lmnaslimited" className="text-muted-foreground hover:text-primary transition-colors">
                 <Linkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </Link>
-              <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://www.youtube.com/@lmnascloudsolutions.4549" className="text-muted-foreground hover:text-primary transition-colors">
                 <Youtube className="h-5 w-5" />
                 <span className="sr-only">YouTube</span>
               </Link>
@@ -38,27 +39,32 @@ export default function Footer() {
             <h3 className="font-semibold text-lg mb-4">Solutions</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  LENS ERP Suite
+                <Link href="/products/lens-erp-suite" className="text-muted-foreground hover:text-primary transition-colors">
+                  ERP Suite
                 </Link>
               </li>
               <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
-                  CRM & CPQ
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                 CPQ
                 </Link>
               </li>
               <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  CRM 
+                </Link>
+              </li>
+              <li>
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   Analytics Cloud
                 </Link>
               </li>
               <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products/hrms-cloud" className="text-muted-foreground hover:text-primary transition-colors">
                   HRMS Cloud
                 </Link>
               </li>
               <li>
-                <Link href="#solutions" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   AI-Powered Tools
                 </Link>
               </li>
@@ -69,27 +75,27 @@ export default function Footer() {
             <h3 className="font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#about" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="#case-studies" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/solutions" className="text-muted-foreground hover:text-primary transition-colors">
                   Case Studies
                 </Link>
               </li>
               <li>
-                <Link href="#blog" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="#careers" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/careers" className="text-muted-foreground hover:text-primary transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="#contact" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
                   Contact Us
                 </Link>
               </li>

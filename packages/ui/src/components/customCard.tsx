@@ -16,29 +16,15 @@ import {
 } from "@repo/ui/components/ui/avatar";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { TcardProps } from "@repo/ui/type";
+import { ReactElement } from "react";
 
-export default function CustomCard({
-  image,
-  header,
-  button,
-  link,
-  list,
-  avatar,
-  nameAndPlace,
-  namePosition = "bottom",
-  footerClassName = "",
-  buttonPosition = "",
-  tag,
-  layout = "vertical",
-  onClick,
-  className,
-}: TcardProps) {
+export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):ReactElement {
   // Returns a CSS class for the image's aspect ratio or
   // an empty string if not set.
-  const fnGetAspectRatioClass = () => {
-    if (!image?.aspectRatio || image.aspectRatio === "auto") return "";
+  const fnGetAspectRatioClass = ():string => {
+    if (!idCardProps.image?.aspectRatio || idCardProps.image.aspectRatio === "auto") return "";
 
-    switch (image.aspectRatio) {
+    switch (idCardProps.image.aspectRatio) {
       case "square":
         return "aspect-square";
       case "video":
@@ -53,112 +39,105 @@ export default function CustomCard({
   // Component to display a user's profile details, including their name, place, and avatar.
   // The layout adjusts based on the `namePosition` prop, allowing the avatar to be positioned
   // on the left, right, top, or bottom relative to the name and place.
-  const ProfileDetail = nameAndPlace && (
+  const ProfileDetail = idCardProps.nameAndPlace && (
     <div
       className={cn(
         "flex items-start gap-2",
-        namePosition === "left" || "bottom" || namePosition === "right"
+        idCardProps.namePosition === "left" || "bottom" || idCardProps.namePosition === "right"
           ? "flex-row"
           : "flex-col"
       )}
     >
-      {avatar &&
-        (namePosition === "left" ||
-          namePosition === "right" ||
-          namePosition === "top" ||
-          namePosition === "bottom") && (
+      {idCardProps.avatar &&
+        (idCardProps.namePosition === "left" ||
+          idCardProps.namePosition === "right" ||
+          idCardProps.namePosition === "top" ||
+          idCardProps.namePosition === "bottom") && (
           <Avatar>
-            <AvatarImage src={avatar.src} alt={avatar.alt} />
-            <AvatarFallback>{avatar.alt}</AvatarFallback>
+            <AvatarImage src={idCardProps.avatar.src} alt={idCardProps.avatar.alt} />
+            <AvatarFallback>{idCardProps.avatar.alt}</AvatarFallback>
           </Avatar>
         )}
       <div
         className={cn(
-          namePosition === "left"
+          idCardProps.namePosition === "left"
             ? "text-left"
-            : namePosition === "right"
+            : idCardProps.namePosition === "right"
               ? "text-right"
               : "text-left"
         )}
       >
-        <p className="font-medium">{nameAndPlace.name}</p>
-        {nameAndPlace.place && (
-          <p className="text-sm text-muted-foreground">{nameAndPlace.place}</p>
+        <p className="font-medium">{idCardProps.nameAndPlace.name}</p>
+        {idCardProps.nameAndPlace.place && (
+          <p className="text-sm text-muted-foreground">{idCardProps.nameAndPlace.place}</p>
         )}
       </div>
     </div>
   );
-
+  
   return (
     <Card
       className={cn(
         "overflow-hidden transition-all duration-200 hover:shadow-md",
-        layout === "horizontal" ? "md:flex md:flex-row" : "flex flex-col",
-        onClick && "cursor-pointer",
-        className
+        idCardProps.layout === "horizontal" ? "md:flex md:flex-row" : "flex flex-col",
+        idCardProps.onClick && "cursor-pointer",
+        idCardProps.className
       )}
-      onClick={onClick}
+      onClick={idCardProps.onClick}
     >
       {/* Image / SVG Section */}
-      {image && layout === "vertical" && (
-        <div
-          className={cn(
-            "w-full overflow-hidden relative",
-            fnGetAspectRatioClass()
-          )}
-        >
-          {image.svg ? (
-            <div
-              style={{ width: `${image.width}px`, height: `${image.height}px` }}
-            >
+      {idCardProps.image && (
+        <div className={cn("w-full overflow-hidden relative",fnGetAspectRatioClass())}>
+          {idCardProps.image?.svg ? (
+            <div>
               {" "}
-              {image.svg}{" "}
+              {idCardProps.image?.svg}{" "}
             </div>
           ) : (
             <Image
-              src={image.src || "/placeholder.svg"}
-              alt={image.alt}
+              src={idCardProps.image?.src || "/placeholder.svg"}
+              alt={idCardProps.image.alt}
               width={500}
               height={300}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
             />
           )}
-          {tag && (
+          {idCardProps.tag && (
             <Badge
               variant="default"
               className="absolute top-2 right-2 rounded-full px-2 py-1"
             >
-              {tag}
+              {idCardProps.tag}
             </Badge>
           )}
         </div>
       )}
 
       <div
-        className={cn("flex flex-col", layout === "horizontal" && "md:flex-1")}
+        className={cn("flex flex-col", idCardProps.layout === "horizontal" && "md:flex-1")}
       >
         {/* Horizontal Layout Image */}
-        {image && layout === "horizontal" && (
+        {idCardProps.image?.alt && idCardProps.layout === "horizontal" && (
           <div
             className={cn(
               "md:w-48 overflow-hidden",
               fnGetAspectRatioClass() || "h-full"
             )}
           >
-            {image.svg ? (
+            {idCardProps.image?.svg ? (
               <div
                 style={{
-                  width: `${image.width}px`,
-                  height: `${image.height}px`,
+                  width: `${idCardProps.image.width}px`,
+                  height: `${idCardProps.image.height}px`,
                 }}
               >
                 
-                {image.svg}
+                {idCardProps.image.svg}
               </div>
             ) : (
               <Image
-                src={image.src || "/placeholder.svg"}
-                alt={image.alt}
+                src={idCardProps.image.src || "/placeholder.svg"}
+                alt={idCardProps.image.alt}
                 width={500}
                 height={300}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -168,23 +147,23 @@ export default function CustomCard({
         )}
 
         {/* Name and Place - Top Position */}
-        {nameAndPlace && namePosition === "top" && (
+        {idCardProps.nameAndPlace && idCardProps.namePosition === "top" && (
           <div className="px-6 pt-6">{ProfileDetail}</div>
         )}
 
         {/* Card Header */}
         <CardHeader>
-          <h2 className={cn("text-xl mb-3 font-semibold", header.headingClass)}>{header.text}</h2>
-          <p className={cn("max-w-[700px] text-muted-foreground", header.descripClass)}>{header.subtitle}</p>
-          {list && list.length > 0 && (
+          <h2 className={cn("text-xl mb-3 font-semibold", idCardProps.header.headingClass)}>{idCardProps.header.text}</h2>
+          <p className={cn("max-w-[700px] text-muted-foreground", idCardProps.header.descripClass)}>{idCardProps.header.subtitle}</p>
+          {idCardProps.list && idCardProps.list.length > 0 && (
               <ul className="space-y-2">
-              {list.map((item, index) => (
-                <li key={index} className="flex items-start gap-2 py-2">
-                  {item.icon && <span className="text-primary">{item.icon}</span>}
+              {idCardProps.list.map((idItem, iIndex) => (
+                <li key={iIndex} className="flex items-start gap-2 py-2">
+                  {idItem.icon && <span className="text-primary">{idItem.icon}</span>}
                   <div>
-                    <span className="font-medium">{item.text}</span>
-                    {item.subtitle && (
-                      <p className="text-sm text-muted-foreground">{item.subtitle}</p>
+                    <span className="font-medium">{idItem.text}</span>
+                    {idItem.subtitle && (
+                      <p className="text-sm text-muted-foreground">{idItem.subtitle}</p>
                     )}
                   </div>
                 </li>
@@ -197,20 +176,20 @@ export default function CustomCard({
         <CardFooter
           className={cn(
             "flex",
-            namePosition === "bottom" ? "flex-col" : "flex-row",
-            footerClassName
+            idCardProps.namePosition === "bottom" ? "flex-col" : "flex-row",
+            idCardProps.footerClassName
           )}
         >
           <div
             className={cn(
               "flex w-full gap-8",
-              button?.length === 1 || link?.length === 1
+              idCardProps.button?.length === 1 || idCardProps.link?.length === 1
                 ? ""
                 : "md:justify-center flex-col md:flex-row",
-              buttonPosition
+                idCardProps.buttonPosition
             )}
           >
-            {button?.map((idBtn, iIndex) => (
+            {idCardProps.button?.map((idBtn, iIndex) => (
               <Button
                 key={`btn-${iIndex}`}
                 variant={idBtn.variant || "default"}
@@ -231,12 +210,12 @@ export default function CustomCard({
               </Button>
             ))}
             {
-              link?.map((idLnk, iIndex) => (
+              idCardProps.link?.map((idLnk, iIndex) => (
                 <Button
                   key={`lnk-${iIndex}`}
                   variant="link"
                   className="p-0"
-                 
+                  size={idLnk.size || "default"}
                   onClick={(e) => e.stopPropagation()}
                 >
                   {idLnk.icon && idLnk.iconPosition === "before" && (
@@ -251,7 +230,7 @@ export default function CustomCard({
           </div>
 
           {/* Name and Place - Bottom Position */}
-          {nameAndPlace && namePosition === "bottom" && ProfileDetail}
+          {idCardProps.nameAndPlace && idCardProps.namePosition === "bottom" && ProfileDetail}
         </CardFooter>
       </div>
     </Card>

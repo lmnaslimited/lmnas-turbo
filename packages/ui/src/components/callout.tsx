@@ -1,53 +1,92 @@
-import { Button } from "@repo/ui/components/ui/button";
-import clsx from "clsx";
-import Link from "next/link";
-import { Tbutton, TcalloutProps} from "@repo/ui/type"
+import Link from "next/link"
+import { TcalloutProps, TformMode } from "@repo/ui/type";
+import { Button } from "@repo/ui/components/ui/button"
+import type { ReactElement } from "react"
+import { cn } from "@repo/ui/lib/utils";
 
-export default function Callout({iCallout, layout = "classic"}:{iCallout: TcalloutProps, layout?: "classic" | "simple"}) {
+export default function Callout({
+  idCallout,
+  onButtonClick,
+}: {
+  idCallout: TcalloutProps
+  onButtonClick?: (mode: TformMode) => void
+}): ReactElement {
+  const Layout = idCallout.layout || "classic";
+
   return (
-    <div className={`${layout === "classic" ? "max-w-3xl" : "max-w-7xl"} mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8`}>
-        {layout === "classic" ? (<h2 className={clsx("text-3xl font-extrabold sm:text-4xl", iCallout.variant || "text-secondary")}>
-          <span className="block">{iCallout.header.textWithoutColor}</span>
-          <span className="block">{iCallout.header.subtitle}</span>
-        </h2>):(
-           
-             <h2 className="text-3xl font-extrabold tracking-tight text-primary sm:text-4xl">
-             <span className="block">{iCallout.header.textWithoutColor}</span>
-             <span className="block text-primary/70">
-              {iCallout.header.subtitle}
-             </span>
-           </h2>
-        
-        )}
+    <div
+      className={`${Layout === "classic" ? "max-w-3xl" : "max-w-7xl"} mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8`}
+    >
+      {/* Header content remains the same */}
+      {Layout === "classic" ? (
+        <h2 className={cn("text-3xl font-extrabold sm:text-4xl", idCallout.variant || "text-secondary")}>
+          <span className="block">{idCallout.header.textWithoutColor}</span>
+          <span className="block">{idCallout.header.subtitle}</span>
+        </h2>
+      ) : (
+        <h2 className="text-3xl font-extrabold tracking-tight text-border sm:text-4xl">
+          <span className="block">{idCallout.header.textWithoutColor}</span>
+          <span className="block text-primary/70">
+            {idCallout.header.subtitle}
+          </span>
+        </h2>
+      )}
 
-        <p className="mt-4 text-lg leading-6 text-secondary">{iCallout.points?.title}</p>
-        <ul className="mt-4 space-y-4">
-          {iCallout.points?.items?.map((point:string, index:number) => (
-            <li key={index} className={clsx("text-lg", iCallout.variant || "text-secondary")}>
-              {point}
-            </li>
-          ))}
-        </ul>
-        <p className={clsx("mt-8 text-xl", iCallout.variant || "text-secondary")}>{iCallout.points?.actionText}</p>
-        <div className="mt-8 flex justify-center space-x-3">
-          {iCallout.buttons.map((button:Tbutton, index:number) => (
-            <Button
-                key={`btn-${index}`}
-                variant={button.variant || "default"}
-                size={button.size || "default"}
+      {/* Points content remains the same */}
+      <p className="mt-4 text-lg leading-6 text-secondary">
+        {idCallout.points?.title}
+      </p>
+      <ul className="mt-4 space-y-4">
+        {idCallout.points?.items?.map((point, index) => (
+          <li key={index} className={cn("text-lg", idCallout.variant || "text-secondary")}>
+            {point}
+          </li>
+        ))}
+      </ul>
+      <p className={cn("mt-8 text-xl", idCallout.variant || "text-secondary")}>
+        {idCallout.points?.actionText}
+      </p>
+
+      {/* Fixed button rendering */}
+      <div className="mt-8 flex justify-center space-x-3">
+        {idCallout.buttons.map((idButton, index) => {
+          const ButtonContent = (
+            <>
+              {idButton.icon && idButton.iconPosition === "before" && (
+                <span className="mr-2">{idButton.icon}</span>
+              )}
+              {idButton.label}
+              {idButton.icon && idButton.iconPosition === "after" && (
+                <span className="ml-2">{idButton.icon}</span>
+              )}
+            </>
+          );
+
+          return idButton.href ? (
+            <Link href={idButton.href} key={`btn-${index}`} passHref legacyBehavior>
+              <Button
+                variant={idButton.variant || "default"}
+                size={idButton.size || "default"}
               >
-                {/* If iconPosition is 'before', render icon first */}
-              {button.icon && button.iconPosition === "before" && <span className="mr-2">{button.icon}</span>}
-    
-                {/* Button Label */}
-              { button.href && <Link href={button.href}>
-                {button.label}
-                </Link> }
-              {/* If iconPosition is 'after', render icon after */}
-              {button.icon && button.iconPosition === "after" && <span className="ml-2">{button.icon}</span>}
+                {ButtonContent}
+              </Button>
+            </Link>
+          ) : (
+            <Button
+              key={`btn-${index}`}
+              variant={idButton.variant || "default"}
+              size={idButton.size || "default"}
+              onClick={() => {
+                if (onButtonClick && idButton.formMode) {
+                  onButtonClick(idButton.formMode)
+                }
+              }}
+            >
+              {ButtonContent}
             </Button>
-          ))}
-        </div>
+          );
+        })}
       </div>
-  );
+    </div>
+  )
 }
