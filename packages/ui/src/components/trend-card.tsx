@@ -1,21 +1,24 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card"
-import { Badge } from "@repo/ui/components/ui/badge"
-import { Youtube, Linkedin, Twitter } from "lucide-react"
-import Image from "next/image"
-import { TtrendSource, TtrendCardProps } from "../type.js"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Youtube, Linkedin, Twitter } from "lucide-react";
+import Image from "next/image";
+import { TtrendCardProps } from "@repo/ui/type";
+import { ReactElement, ReactNode } from "react";
 
-export function TrendCard({idTrends}: {idTrends:TtrendCardProps}) {
-  const fnGetIcon = (iSource: TtrendSource) => {
-    switch (iSource) {
-      case "LinkedIn":
-        return <Linkedin className="h-4 w-4" />
-      case "YouTube":
-        return <Youtube className="h-4 w-4" />
-      case "Twitter":
-        return <Twitter className="h-4 w-4" />
-    }
+const fnGetIcon = (iSource: string):ReactNode => {
+  switch (iSource) {
+    case "LinkedIn":
+      return <Linkedin className="h-4 w-4" />;
+    case "YouTube":
+      return <Youtube className="h-4 w-4" />;
+    case "Twitter":
+      return <Twitter className="h-4 w-4" />;
+    default:
+      return null;
   }
+};
 
+export default function TrendCard({ idTrends }: {idTrends:TtrendCardProps}):ReactElement {
   return (
     <Card className="overflow-hidden">
       <CardHeader className="p-4">
@@ -28,16 +31,17 @@ export function TrendCard({idTrends}: {idTrends:TtrendCardProps}) {
         </div>
         <CardTitle className="line-clamp-2">{idTrends.title}</CardTitle>
       </CardHeader>
+
       {idTrends.imageUrl && (
         <div className="relative h-48 w-full">
-          <Image src={idTrends.imageUrl || "/placeholder.svg"} alt={idTrends.title} layout="fill" objectFit="cover" />
+          <Image src={idTrends.imageUrl} alt={idTrends.title} layout="fill" objectFit="cover" />
         </div>
       )}
+
       <CardContent className="p-4">
         <CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>
-        {idTrends.author && <p className="mt-2 text-sm font-medium"> {idTrends.author}</p>}
+        <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
       </CardContent>
     </Card>
-  )
+  );
 }
-

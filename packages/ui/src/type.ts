@@ -111,12 +111,12 @@ export type TheroProps = {
 export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
 export type TtrendCardProps = {
-  title: string
-  description: string
-  source: TtrendSource
-  imageUrl?: string
-  author?: string
-  date: string
+  title: string;
+  description: string;
+  source: string;
+  imageUrl?: string;
+  author: string;
+  date: string;
 }
 
 
