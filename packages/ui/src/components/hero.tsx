@@ -8,12 +8,12 @@ import { motion } from "framer-motion";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 
-interface HeroProps {
+type THeroProps ={
   idHero: TheroProps;
   onButtonClick?: (mode: TformMode) => void;
 }
 
-export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement {
+export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
   /**
    * Handles button clicks by triggering the provided callback function
    * with the selected form mode, if available.
@@ -56,9 +56,9 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
    */
   const CTAButtons = ({ buttons }: { buttons: TheroProps["buttons"] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
-      {buttons.map((idButton, index) =>
+      {buttons.map((idButton, iIndex) =>
         idButton.href ? (
-          <Link href={idButton.href} key={index}>
+          <Link href={idButton.href} key={iIndex}>
             <Button
               size={idButton.size || "lg"}
               variant={idButton.variant || "default"}
@@ -71,7 +71,7 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
           </Link>
         ) : (
           <Button
-            key={index}
+            key={iIndex}
             size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
             className={idButton.className}

@@ -41,9 +41,9 @@ export default function Callout({
 
       {/* Render a list of bullet points if provided */}
       <ul className="mt-4 space-y-4">
-        {idCallout.points?.items?.map((point, index) => (
-          <li key={index} className={cn("text-lg", idCallout.variant || "text-secondary")}>
-            {point}
+        {idCallout.points?.items?.map((iPoint, iIndex) => (
+          <li key={iIndex} className={cn("text-lg", idCallout.variant || "text-secondary")}>
+            {iPoint}
           </li>
         ))}
       </ul>
