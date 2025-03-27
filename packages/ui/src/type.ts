@@ -155,3 +155,51 @@ export type TdynamicFormProps = {
   className?: string
   defaultValues?: Record<string, any>
 }
+
+//solution individual
+
+export type TproblemSection = {
+  header: Theader;
+  button: Tbutton;
+  challenges: string[];
+  footer: {
+    title: string;
+    header: Theader;
+  };
+};
+
+export type TsolutionSection ={
+  header: Theader
+  products: string[]
+  details: string[]
+  results: Theader[]
+  title:string
+  testimonial?: {
+    author: string
+    title: string
+    quote: string
+    verify:string
+  },
+  footer:{
+    title: string
+    handles:{
+      label:string , icon: string
+    }[]
+    button:Tbutton
+  }
+}
+
+export type TSidebarCardType = {
+  title: string;
+  content: string;
+  button?: {
+    label: string;
+    link?: string;
+  };
+  solutions?: string[];
+  solutionsDescription?: string[];
+  link?: {
+    label: string;
+    href: string;
+  };
+};
