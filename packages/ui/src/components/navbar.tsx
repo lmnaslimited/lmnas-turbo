@@ -41,7 +41,7 @@ const LaProducts = [
       </svg>
     ),
   },
-   // {
+  // {
   //   title: "CPQ Cloud",
   //   href: "/products/cpq-cloud",
   //   description: "SaaS solution designed to assist businesses",
@@ -251,7 +251,7 @@ const LaLanguages = [
   { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ]
 
-export default function Navbar():React.ReactElement {
+export default function Navbar(): React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
   const [MoreDropdownOpen, fnSetMoreDropdownOpen] = React.useState(false)
   const [IsScrolled, fnSetIsScrolled] = React.useState(false)
@@ -261,7 +261,7 @@ export default function Navbar():React.ReactElement {
 
   // Handle scroll effect
   React.useEffect(() => {
-    const fnHandleScroll = ():void => { //only update no return
+    const fnHandleScroll = (): void => { //only update no return
       if (window.scrollY > 10) {
         fnSetIsScrolled(true)
       } else {
@@ -276,7 +276,7 @@ export default function Navbar():React.ReactElement {
   }, [])
 
   // Get current language display
-  const fnGetCurrentLanguageDisplay = ():string => {
+  const fnGetCurrentLanguageDisplay = (): string => {
     const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language)
     return CurrentLang ? CurrentLang.code.toUpperCase() : "EN"
   }
@@ -383,16 +383,12 @@ export default function Navbar():React.ReactElement {
                   </NavigationMenuItem>
 
                   <NavigationMenuItem className="flex items-center">
-                    <DropdownMenu open={MoreDropdownOpen} onOpenChange={fnSetMoreDropdownOpen}>
-                      <DropdownMenuTrigger
-                        asChild
-                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
-                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
-                      >
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-10 w-10 flex items-center justify-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
+                          className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
                         >
                           <MoreHorizontal className="h-6 w-6" />
                           <span className="sr-only">More options</span>
@@ -400,9 +396,7 @@ export default function Navbar():React.ReactElement {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-[80px] p-2 border border-border  shadow-sm"
-                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
-                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
+                        className="w-[80px] p-2 border border-border shadow-sm"
                       >
                         {LaMore.map((idItem, iIndex) => (
                           <DropdownMenuItem
@@ -428,7 +422,7 @@ export default function Navbar():React.ReactElement {
           <div className="hidden lg:flex lg:items-center lg:gap-4">
             {/* Theme Switcher */}
             <div className="flex items-center gap-2">
-              
+
               <ThemeToggle />
             </div>
 
@@ -485,7 +479,7 @@ export default function Navbar():React.ReactElement {
           <div className="flex lg:hidden items-center gap-2">
             {/* Theme Switcher for Mobile */}
             <div className="flex items-center">
-              
+
               <ThemeToggle />
             </div>
 
