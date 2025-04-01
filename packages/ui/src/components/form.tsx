@@ -16,7 +16,7 @@ import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
 
-export const LDBookingFormConfig: TformConfig = {
+export const LdBookingFormConfig: TformConfig = {
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
@@ -92,7 +92,7 @@ export const LDBookingFormConfig: TformConfig = {
     ],
 }
 
-export const LDContactFormConfig: TformConfig = {
+export const LdContactFormConfig: TformConfig = {
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
@@ -143,7 +143,7 @@ export const LDContactFormConfig: TformConfig = {
     ],
 }
 
-export const LDDownloadFormConfig: TformConfig = {
+export const LdDownloadFormConfig: TformConfig = {
     title: "Download Resources",
     description: "Fill out the form to access our content",
     submitText: "Download Now",
@@ -179,7 +179,7 @@ export const LDDownloadFormConfig: TformConfig = {
     ],
 }
 
-export function DynamicForm({
+export function fnDynamicForm({
     config,
     onSuccess,
     onCancel,
@@ -190,7 +190,7 @@ export function DynamicForm({
     const LFormRef = useRef<HTMLDivElement>(null)
     const [LShowTimeSlots, fnSetShowTimeSlots] = useState(false)
 
-    const LDInitialValues = {
+    const LdInitialValues = {
         name: "",
         email: "",
         message: "",
@@ -204,7 +204,7 @@ export function DynamicForm({
 
     const LdForm = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
-        defaultValues: LDInitialValues,
+        defaultValues: LdInitialValues,
         mode: "onChange",
     })
 
@@ -226,7 +226,7 @@ export function DynamicForm({
         fnSetIsSubmitting(true)
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000))
-            LdForm.reset(LDInitialValues)
+            LdForm.reset(LdInitialValues)
             onSuccess(idFormData, config.successMessage)
         } catch (error) {
             LdForm.setError("root", {
@@ -238,7 +238,7 @@ export function DynamicForm({
         }
     }
 
-    const LATimeSlots = [
+    const LaTimeSlots = [
         "09:00 - 10:00",
         "10:00 - 11:00",
         "11:00 - 12:00",
@@ -411,7 +411,7 @@ export function DynamicForm({
                             <FormItem className={idField.className}>
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <div className="grid grid-cols-3 gap-2">
-                                    {LATimeSlots.map((iSlot) => (
+                                    {LaTimeSlots.map((iSlot) => (
                                         <Button
                                             key={iSlot}
                                             type="button"
