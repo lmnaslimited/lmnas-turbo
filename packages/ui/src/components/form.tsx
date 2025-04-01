@@ -197,11 +197,11 @@ export function DynamicForm({
     defaultValues,
 }: TdynamicFormProps): ReactElement {
     // Tracks whether the form is currently being submitted to show loading state
-    const [LIsSubmitting, fnSetIsSubmitting] = useState(false)
+    const [IsSubmitting, fnSetIsSubmitting] = useState(false)
     // Reference to the form DOM element for potential scrolling or focus management
-    const LFormRef = useRef<HTMLDivElement>(null)
+    const FormRef = useRef<HTMLDivElement>(null)
     // Controls visibility of time slots based on whether date and timezone are selected
-    const [LShowTimeSlots, fnSetShowTimeSlots] = useState(false)
+    const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false)
 
     // Sets up default values for all possible form fields, overridden by any provided values
     const LdInitialValues = {
@@ -222,15 +222,15 @@ export function DynamicForm({
         mode: "onChange",
     })
     // Watches specific form fields to react to their changes
-    const LSelectedDate = LdForm.watch("date")
-    const LSelectedTimezone = LdForm.watch("timezone")
+    const SelectedDate = LdForm.watch("date")
+    const SelectedTimezone = LdForm.watch("timezone")
     /**
       * This effect shows or hides time slots based on date and timezone selection.
       * Time slots are only shown when both date and timezone have been selected.
       * If either field is cleared, it also resets any selected time slot.
       */
     useEffect(() => {
-        if (LSelectedDate && LSelectedTimezone) {
+        if (SelectedDate && SelectedTimezone) {
             fnSetShowTimeSlots(true)
         } else {
             fnSetShowTimeSlots(false)
@@ -238,7 +238,7 @@ export function DynamicForm({
                 LdForm.setValue("timeSlot", "")
             }
         }
-    }, [LSelectedDate, LSelectedTimezone, LdForm])
+    }, [SelectedDate, SelectedTimezone, LdForm])
 
     /**
      * Handles form submission after validation passes.
@@ -277,7 +277,7 @@ export function DynamicForm({
      * It also applies appropriate styling and validation to each field.
      */
     const fnRenderField = (idField: TformFieldConfig): ReactNode => {
-        if (idField.type === "timeslot" && !LShowTimeSlots) return null
+        if (idField.type === "timeslot" && !ShowTimeSlots) return null
 
         switch (idField.type) {
             case "text":
@@ -482,7 +482,7 @@ export function DynamicForm({
     }
 
     return (
-        <div ref={LFormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
+        <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
             <div className="bg-primary text-background p-6 rounded-t-lg">
                 <h2 className="text-2xl font-bold">{config.title}</h2>
                 {config.description && <p className="mt-2 text-border">{config.description}</p>}
@@ -497,8 +497,8 @@ export function DynamicForm({
                         <div className="flex flex-wrap -mx-2">{config.fields.map(fnRenderField)}</div>
 
                         <div className="space-y-4">
-                            <Button type="submit" className="w-full h-12" disabled={LIsSubmitting}>
-                                {LIsSubmitting ? (
+                            <Button type="submit" className="w-full h-12" disabled={IsSubmitting}>
+                                {IsSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <svg
                                             className="animate-spin -ml-1 mr-3 h-5 w-5 text-background"
