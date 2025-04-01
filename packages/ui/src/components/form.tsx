@@ -179,7 +179,7 @@ export const LdDownloadFormConfig: TformConfig = {
     ],
 }
 
-export function fnDynamicForm({
+export function DynamicForm({
     config,
     onSuccess,
     onCancel,
