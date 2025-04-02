@@ -199,6 +199,7 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
             )}
           >
             {idCardProps.button?.map((idBtn, iIndex) => (
+              idBtn.href ? (
               <Button
                 key={`btn-${iIndex}`}
                 variant={idBtn.variant || "default"}
@@ -210,12 +211,30 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
                 )}
 
                 {/* Button Label */}
-                {idBtn.href ? <Link href={idBtn.href}>{idBtn.label}</Link> : idBtn.label}
+                 <Link href={idBtn.href}>{idBtn.label}</Link>
+                {/* If iconPosition is 'after', render icon after */}
+                {idBtn.icon && idBtn.iconPosition === "after" && (
+                  <span className="ml-2">{idBtn.icon}</span>
+                )}
+              </Button>) :(
+                <Button
+                key={`btn-${iIndex}`}
+                variant={idBtn.variant || "default"}
+                size={idBtn.size || "default"}
+                onClick={() => idCardProps.onButtonClick?.(idBtn.formMode)}
+              >
+                {/* If iconPosition is 'before', render icon first */}
+                {idBtn.icon && idBtn.iconPosition === "before" && (
+                  <span className="mr-2">{idBtn.icon}</span>
+                )}
+               {idBtn.label}
                 {/* If iconPosition is 'after', render icon after */}
                 {idBtn.icon && idBtn.iconPosition === "after" && (
                   <span className="ml-2">{idBtn.icon}</span>
                 )}
               </Button>
+              )
+
             ))}
             {
               idCardProps.link?.map((idLnk, iIndex) => (
