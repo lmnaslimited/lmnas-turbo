@@ -25,7 +25,6 @@ export default function Tab({ idTab }: { idTab:TtabProps }):ReactElement {
 
   return (
     <section className="py-10">
-      <div className="container px-4 md:px-6">
         <Tabs defaultValue="all" className="w-full">
           <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(Lacategories.length + 1, 6)} mb-8 md:gap-0 gap-4`}>
             <TabsTrigger value="all">{idTab.TabDefault.text}</TabsTrigger>
@@ -65,7 +64,6 @@ export default function Tab({ idTab }: { idTab:TtabProps }):ReactElement {
             </TabsContent>
           ))}
         </Tabs>
-      </div>
     </section>
   );
 }

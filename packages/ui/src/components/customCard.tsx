@@ -203,7 +203,6 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
                 key={`btn-${iIndex}`}
                 variant={idBtn.variant || "default"}
                 size={idBtn.size || "default"}
-                className=""
               >
                 {/* If iconPosition is 'before', render icon first */}
                 {idBtn.icon && idBtn.iconPosition === "before" && (
@@ -211,7 +210,7 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
                 )}
 
                 {/* Button Label */}
-               {idBtn.href && <Link href={idBtn.href}>{idBtn.label}</Link>}
+                {idBtn.href ? <Link href={idBtn.href}>{idBtn.label}</Link> : idBtn.label}
                 {/* If iconPosition is 'after', render icon after */}
                 {idBtn.icon && idBtn.iconPosition === "after" && (
                   <span className="ml-2">{idBtn.icon}</span>
@@ -225,14 +224,14 @@ export default function CustomCard({ idCardProps }:{ idCardProps:TcardProps}):Re
                   variant="link"
                   className="p-0"
                   size={idLnk.size || "default"}
-                  onClick={(e) => e.stopPropagation()}
+                  onClick={(event) => event.stopPropagation()}
                 >
                   {idLnk.icon && idLnk.iconPosition === "before" && (
                     <span className="mr-2">{idLnk.icon}</span>
                   )}{" "}
-                  {idLnk.href && <Link href={idLnk.href}>{idLnk.label}</Link>}
+                  {idLnk.href ? <Link href={idLnk.href}>{idLnk.label}</Link> : idLnk.label}
                   {idLnk.icon && idLnk.iconPosition === "after" && (
-                    <span className="ml-2">{idLnk.icon}</span>
+                    <span>{idLnk.icon}</span>
                   )}
                 </Button>
               ))}
