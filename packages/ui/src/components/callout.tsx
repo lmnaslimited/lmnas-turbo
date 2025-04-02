@@ -34,7 +34,7 @@ export default function Callout({
         </h2>
       )}
 
-     {/* Display an optional description text */}
+      {/* Display an optional description text */}
       <p className="mt-4 text-lg leading-6 text-secondary">
         {idCallout.points?.title}
       </p>
@@ -48,15 +48,15 @@ export default function Callout({
         ))}
       </ul>
 
-       {/* Display additional action text if available */}
+      {/* Display additional action text if available */}
       <p className={cn("mt-8 text-xl", idCallout.variant || "text-secondary")}>
         {idCallout.points?.actionText}
       </p>
 
-       {/* Render callout buttons with appropriate behavior for link and Onclick actions */}
-      <div className="mt-8 flex justify-center space-x-3">
+      {/* Render callout buttons with appropriate behavior for link and Onclick actions */}
+      <div className="mt-8 flex flex-col gap-4 sm:flex-row justify-center">
         {idCallout.buttons.map((idButton, index) => {
-           // Construct button content, including an optional icon
+          // Construct button content, including an optional icon
           const ButtonContent = (
             <>
               {idButton.icon && idButton.iconPosition === "before" && (
@@ -79,7 +79,7 @@ export default function Callout({
               </Button>
             </Link>
           ) : (
-            
+
             // Render a standard button with an event handler if no href is provided
             <Button
               key={`btn-${index}`}

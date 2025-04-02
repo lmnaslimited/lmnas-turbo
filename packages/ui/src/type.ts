@@ -121,7 +121,7 @@ export type TtrendCardProps = {
 
 
 // Form types
-export type TformMode = "booking" | "contact" | "download" | null
+export type TformMode = "booking" | "contact" | "download" | undefined | null
 
 export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
 
@@ -168,24 +168,24 @@ export type TproblemSection = {
   };
 };
 
-export type TsolutionSection ={
+export type TsolutionSection = {
   header: Theader
   products: string[]
   details: string[]
   results: Theader[]
-  title:string
+  title: string
   testimonial?: {
     author: string
     title: string
     quote: string
-    verify:string
+    verify: string
   },
-  footer:{
+  footer: {
     title: string
-    handles:{
-      label:string , icon: string
+    handles: {
+      label: string, icon: string
     }[]
-    button:Tbutton
+    button: Tbutton
   }
 }
 
