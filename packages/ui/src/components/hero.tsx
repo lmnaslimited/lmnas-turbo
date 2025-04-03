@@ -112,7 +112,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
     * Hero section variant without an image.
     * This version focuses entirely on the textual content and call-to-action elements.
     */
-    <section className={cn("relative overflow-hidden border-b border-border/40 md:py-24 lg:py-32 py-20")}>
+    <section className={cn("relative overflow-hidden py-16 md:py-24 lg:py-32")}>
       <div className={cn("container relative z-10 mx-auto px-4 md:px-6")}>
         <div
           className={cn("mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center")}
