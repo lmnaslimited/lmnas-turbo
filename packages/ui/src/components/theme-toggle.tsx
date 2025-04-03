@@ -24,9 +24,9 @@ export function ThemeToggle():ReactNode {
   }
 
   return (
-    <div className="flex items-center space-x-2 transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]">
+    <div className="flex items-center space-x-2 transition-all duration-700">
       <Sun
-        className={`h-[1.2rem] w-[1.2rem] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`h-[1.2rem] w-[1.2rem] transition-all duration-700 ${
           theme === "dark" ? "text-muted-foreground scale-75 rotate-12" : "text-foreground scale-100 rotate-0"
         }`}
       />
@@ -37,7 +37,7 @@ export function ThemeToggle():ReactNode {
         className="transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:scale-110"
       />
       <Moon
-        className={`h-[1.2rem] w-[1.2rem] transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)] ${
+        className={`h-[1.2rem] w-[1.2rem] transition-all duration-700  ${
           theme === "light" ? "text-muted-foreground scale-75 rotate-12" : "text-foreground scale-100 rotate-0"
         }`}
       />

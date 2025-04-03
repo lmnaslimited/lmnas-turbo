@@ -71,6 +71,7 @@ export type TcardProps = {
   className?: string
   buttonPosition?: string
   category?: string
+  onButtonClick?: (mode: TformMode) => void
 }
 //component
 export type TlogoShowcaseProps = {

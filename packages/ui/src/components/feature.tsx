@@ -62,11 +62,11 @@ export default function Feature({ idFeature }:{idFeature:TfeatureProps}):ReactEl
       {/* Section to display feature items (FAQ-like list) */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
         <div className="mt-10">
-          <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+          <div className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
             {idFeature.items?.map((idItem) => (
               <FAQItem key={idItem.question} {...idItem} />
             ))}
-          </dl>
+          </div>
         </div>
         
          {/* Conditionally render a button at the bottom if `iShowButton` is true and button position is not `header` */}
@@ -94,8 +94,8 @@ const FAQItem = (idItems: Titems):ReactElement => {
       </div>
     )}
     <div className={IconComponent ? "ml-2" : ""}>
-      <dt className="text-lg leading-6 font-medium text-primary">{idItems.question}</dt>
-      <dd className="mt-2 text-base text-muted-foreground">{idItems.answer}</dd>
+      <div className="text-lg leading-6 font-medium text-primary">{idItems.question}</div>
+      <div className="mt-2 text-base text-muted-foreground">{idItems.answer}</div>
     </div>
   </div>
   

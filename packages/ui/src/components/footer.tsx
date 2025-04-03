@@ -1,7 +1,7 @@
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
-import { Facebook, Twitter, Linkedin, Instagram, Mail, Phone, MapPin, Youtube } from "lucide-react"
+import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
 import { ReactElement } from "react"
 
 export default function Footer():ReactElement {
@@ -15,20 +15,20 @@ export default function Footer():ReactElement {
                 LMNAs
               </span>
             </Link>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-primary/70 mb-6">
               Empowering businesses to overcome their toughest challenges and unlock growth through innovative AI-driven
               enterprise solutions.
             </p>
             <div className="flex space-x-4">
-              <Link href="https://twitter.com/lmnaslimited" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://twitter.com/lmnaslimited" className="text-primary/70 hover:text-primary transition-colors">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
               </Link>
-              <Link href="https://in.linkedin.com/company/lmnaslimited" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://in.linkedin.com/company/lmnaslimited" className="text-primary/70 hover:text-primary transition-colors">
                 <Linkedin className="h-5 w-5" />
                 <span className="sr-only">LinkedIn</span>
               </Link>
-              <Link href="https://www.youtube.com/@lmnascloudsolutions.4549" className="text-muted-foreground hover:text-primary transition-colors">
+              <Link href="https://www.youtube.com/@lmnascloudsolutions.4549" className="text-primary/70 hover:text-primary transition-colors">
                 <Youtube className="h-5 w-5" />
                 <span className="sr-only">YouTube</span>
               </Link>
@@ -39,32 +39,32 @@ export default function Footer():ReactElement {
             <h3 className="font-semibold text-lg mb-4">Solutions</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="/products/lens-erp-suite" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products/lens-erp-suite" className="text-primary/70 hover:text-primary transition-colors">
                   ERP Suite
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                  CPQ
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                   CRM 
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                   Analytics Cloud
                 </Link>
               </li>
               <li>
-                <Link href="/products/hrms-cloud" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/products/hrms-cloud" className="text-primary/70 hover:text-primary transition-colors">
                   HRMS Cloud
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                   AI-Powered Tools
                 </Link>
               </li>
@@ -75,27 +75,27 @@ export default function Footer():ReactElement {
             <h3 className="font-semibold text-lg mb-4">Company</h3>
             <ul className="space-y-3">
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link href="/solutions" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/solutions" className="text-primary/70 hover:text-primary transition-colors">
                   Case Studies
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/blog" className="text-primary/70 hover:text-primary transition-colors">
                   Blog
                 </Link>
               </li>
               <li>
-                <Link href="/careers" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="/careers" className="text-primary/70 hover:text-primary transition-colors">
                   Careers
                 </Link>
               </li>
               <li>
-                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                <Link href="#" className="text-primary/70 hover:text-primary transition-colors">
                   Contact Us
                 </Link>
               </li>
@@ -106,20 +106,20 @@ export default function Footer():ReactElement {
             <h3 className="font-semibold text-lg mb-4">Contact</h3>
             <ul className="space-y-3">
               <li className="flex items-start">
-                <MapPin className="h-5 w-5 text-primary mr-2 mt-0.5" />
-                <span className="text-muted-foreground">123 Enterprise Way, Business District, CA 94105</span>
+                <MapPin className="h-5 w-5 text-primary/70 mr-2 mt-0.5" />
+                <span className="text-primary/70">123 Enterprise Way, Business District, CA 94105</span>
               </li>
               <li className="flex items-center">
-                <Phone className="h-5 w-5 text-primary mr-2" />
-                <Link href="tel:+1234567890" className="text-muted-foreground hover:text-primary transition-colors">
+                <Phone className="h-5 w-5 text-primary/70 mr-2" />
+                <Link href="tel:+1234567890" className="text-primary/70 hover:text-primary transition-colors">
                   (123) 456-7890
                 </Link>
               </li>
               <li className="flex items-center">
-                <Mail className="h-5 w-5 text-primary mr-2" />
+                <Mail className="h-5 w-5 text-primary/70 mr-2" />
                 <Link
                   href="mailto:info@lmnas.com"
-                  className="text-muted-foreground hover:text-primary transition-colors"
+                  className="text-primary/70 hover:text-primary transition-colors"
                 >
                   info@lmnas.com
                 </Link>
@@ -137,19 +137,19 @@ export default function Footer():ReactElement {
           </div>
         </div>
 
-        <div className="border-t border-border pt-8">
+        <div className="border-t border-border pt-8 pb-16 sm:pb-0">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-sm text-muted-foreground mb-4 md:mb-0">
+            <p className="text-sm text-primary/70 mb-4 md:mb-0">
               &copy; {new Date().getFullYear()} LMNAs. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link href="#privacy" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#privacy" className="text-sm text-primary/70 hover:text-primary transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="#terms" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#terms" className="text-sm text-primary/70 hover:text-primary transition-colors">
                 Terms of Service
               </Link>
-              <Link href="#cookies" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="#cookies" className="text-sm text-primary/70 hover:text-primary transition-colors">
                 Cookie Policy
               </Link>
             </div>
