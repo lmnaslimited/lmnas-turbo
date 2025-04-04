@@ -1,9 +1,10 @@
 "use client"
-import { useState, useRef, useEffect, ReactElement, ReactNode } from "react"
+
+import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { format } from 'date-fns/format';
+import { format } from "date-fns/format"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -14,9 +15,43 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
-import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
 
-// These form configuration objects define the structure, validation rules, and fields for different form types.
+// Form field configuration type
+export type TformFieldConfig = {
+    name: string
+    type: string
+    label?: string
+    placeholder?: string
+    required?: boolean
+    className?: string
+    inputClassName?: string
+    options?: { value: string; label: string }[]
+}
+
+// Form configuration type
+export type TformConfig = {
+    title: string
+    description?: string
+    submitText: string
+    successMessage: string
+    showTerms?: boolean
+    termsText?: string
+    privacyText?: string
+    schema: z.ZodType<any, any>
+    fields: TformFieldConfig[]
+}
+
+// Dynamic form props type
+export type TsectionFormProps = {
+    config: TformConfig
+    onSuccess?: (data: any, message: string) => void
+    onCancel?: () => void
+    className?: string
+    defaultValues?: Record<string, any>
+    hideCardHeader?: boolean // New prop to hide the card header
+}
+
+// Configurations for the dynamic form
 export const LdBookingFormConfig: TformConfig = {
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
@@ -182,20 +217,200 @@ export const LdDownloadFormConfig: TformConfig = {
     ],
 }
 
+// Configurations for the BigForm component
+export const LdContactPageFormConfig: TformConfig = {
+    title: "Contact Us",
+    description: "Get in touch with our team",
+    submitText: "Send Message",
+    successMessage: "Your message has been sent successfully!",
+    showTerms: true,
+    termsText: "Terms of Service",
+    privacyText: "Privacy Policy",
+    schema: z.object({
+        name: z
+            .string()
+            .min(1, "Name is required")
+            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+        company: z.string().optional(),
+        phone: z.string().optional(),
+        product: z.string().optional(),
+        enquiryType: z.string().optional(),
+        message: z.string().min(10, "Message must be at least 10 characters"),
+        newsletter: z.boolean().default(true),
+    }),
+    fields: [
+        {
+            name: "name",
+            type: "text",
+            label: "Full Name",
+            placeholder: "Enter your full name",
+            required: true,
+            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        },
+        {
+            name: "email",
+            type: "email",
+            label: "Email Address *",
+            placeholder: "Enter your email",
+            required: true,
+            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        },
+        {
+            name: "company",
+            type: "text",
+            label: "Company Name",
+            placeholder: "Enter your company name",
+            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        },
+        {
+            name: "phone",
+            type: "phone",
+            label: "Phone",
+            placeholder: "Your phone number",
+            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        },
+        {
+            name: "product",
+            type: "select",
+            label: "Select a Product",
+            placeholder: "Select product",
+            className: "w-full md:w-1/2 md:pr-2 mb-3",
+            options: [
+                { value: "LENS ERP", label: "LENS ERP" },
+                { value: "CRM", label: "CRM" },
+                { value: "Analytics", label: "Analytics" },
+            ],
+        },
+        {
+            name: "enquiryType",
+            type: "select",
+            label: "Enquiry Type",
+            placeholder: "Select enquiry type",
+            className: "w-full md:w-1/2 md:pl-2 mb-3",
+            options: [
+                { value: "Free Trial", label: "Free Trial" },
+                { value: "Demo", label: "Demo" },
+                { value: "Pricing", label: "Pricing" },
+                { value: "Support", label: "Support" },
+            ],
+        },
+        {
+            name: "message",
+            type: "textarea",
+            label: "Your Message *",
+            placeholder: "Your message",
+            required: true,
+            className: "w-full mb-3",
+        },
+        {
+            name: "newsletter",
+            type: "checkbox",
+            placeholder: "Subscribe to our newsletter for updates and offers",
+            className: "w-full mb-4",
+        },
+    ],
+}
+
+export const LdBookingPageFormConfig: TformConfig = {
+    title: "Book Appointment",
+    description: "Fill out the form below to schedule a meeting with us.",
+    submitText: "Book Now",
+    successMessage: "Your booking has been confirmed successfully!",
+    showTerms: true,
+    termsText: "Terms of Service",
+    privacyText: "Privacy Policy",
+    schema: z.object({
+        date: z.date({ required_error: "Please select a date." }),
+        timezone: z.string({ required_error: "Please select a timezone." }),
+        timeSlot: z.string({ required_error: "Please select a time slot." }),
+        name: z
+            .string()
+            .min(1, "Name is required")
+            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+        company: z.string().optional(),
+        phone: z.string().optional(),
+        message: z.string().optional(),
+        newsletter: z.boolean().default(true),
+    }),
+    fields: [
+        {
+            name: "date",
+            type: "date",
+            label: "Date",
+            placeholder: "Select date",
+            required: true,
+            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        },
+        {
+            name: "timezone",
+            type: "timezone",
+            label: "Timezone",
+            placeholder: "Select timezone",
+            required: true,
+            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        },
+        {
+            name: "timeSlot",
+            type: "timeslot",
+            label: "Available Time Slots",
+            placeholder: "Select time slot",
+            required: true,
+            className: "w-full mb-3",
+        },
+        {
+            name: "name",
+            type: "text",
+            label: "Full Name *",
+            placeholder: "Enter your full name",
+            required: true,
+            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        },
+        {
+            name: "phone",
+            type: "phone",
+            label: "Phone",
+            placeholder: "Your phone number",
+            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        },
+        {
+            name: "email",
+            type: "email",
+            label: "Email Address *",
+            placeholder: "Enter your email",
+            required: true,
+            className: "w-full mb-3",
+        },
+        {
+            name: "message",
+            type: "textarea",
+            label: "Your Message *",
+            placeholder: "Additional information",
+            className: "w-full mb-3",
+        },
+        {
+            name: "newsletter",
+            type: "checkbox",
+            placeholder: "Subscribe to our newsletter for updates and offers",
+            className: "w-full mb-4",
+        },
+    ],
+}
 
 /**
- * DynamicForm - A flexible form component that renders different form types based on configuration.
+ * SectionForm - A flexible form component that renders different form types based on configuration.
  * This component creates a complete form UI with validation, submission handling, and success/error states.
  * It dynamically renders different field types (text, select, date, etc.) based on the provided configuration.
  */
-
-export function DynamicForm({
+export function SectionForm({
     config,
     onSuccess,
     onCancel,
     className = "",
     defaultValues,
-}: TdynamicFormProps): ReactElement {
+    hideCardHeader = false, // Default to false to maintain backward compatibility
+}: TsectionFormProps): ReactElement {
     // Tracks whether the form is currently being submitted to show loading state
     const [IsSubmitting, fnSetIsSubmitting] = useState(false)
     // Reference to the form DOM element for potential scrolling or focus management
@@ -215,20 +430,23 @@ export function DynamicForm({
         timeSlot: "",
         ...defaultValues,
     }
+
     // Initializes the form with react-hook-form and connects it to the Zod validation schema
     const LdForm = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
         defaultValues: LdInitialValues,
         mode: "onChange",
     })
+
     // Watches specific form fields to react to their changes
     const SelectedDate = LdForm.watch("date")
     const SelectedTimezone = LdForm.watch("timezone")
+
     /**
-      * This effect shows or hides time slots based on date and timezone selection.
-      * Time slots are only shown when both date and timezone have been selected.
-      * If either field is cleared, it also resets any selected time slot.
-      */
+     * This effect shows or hides time slots based on date and timezone selection.
+     * Time slots are only shown when both date and timezone have been selected.
+     * If either field is cleared, it also resets any selected time slot.
+     */
     useEffect(() => {
         if (SelectedDate && SelectedTimezone) {
             fnSetShowTimeSlots(true)
@@ -250,7 +468,9 @@ export function DynamicForm({
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000))
             LdForm.reset(LdInitialValues)
-            onSuccess(idFormData, config.successMessage)
+            if (onSuccess) {
+                onSuccess(idFormData, config.successMessage)
+            }
         } catch (error) {
             LdForm.setError("root", {
                 type: "manual",
@@ -483,10 +703,12 @@ export function DynamicForm({
 
     return (
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
-            <div className="bg-primary text-background p-6 rounded-t-lg">
-                <h2 className="text-2xl font-bold">{config.title}</h2>
-                {config.description && <p className="mt-2 text-border">{config.description}</p>}
-            </div>
+            {!hideCardHeader && (
+                <div className="bg-gradient-to-r from-primary to-secondary text-white p-4">
+                    <h2 className="text-2xl font-bold">{config.title}</h2>
+                    {config.description && <p className="mt-2 text-border">{config.description}</p>}
+                </div>
+            )}
             <div className="p-6">
                 <Form {...LdForm}>
                     <form onSubmit={LdForm.handleSubmit(fnHandleSubmit)}>
@@ -497,7 +719,7 @@ export function DynamicForm({
                         <div className="flex flex-wrap -mx-2">{config.fields.map(fnRenderField)}</div>
 
                         <div className="space-y-4">
-                            <Button type="submit" className="w-full h-12" disabled={IsSubmitting}>
+                            <Button type="submit" className="w-full h-12 rounded-full" disabled={IsSubmitting}>
                                 {IsSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <svg
@@ -546,3 +768,7 @@ export function DynamicForm({
         </div>
     )
 }
+
+// Export the original form as "form" as requested
+export const sectionForm = SectionForm
+
