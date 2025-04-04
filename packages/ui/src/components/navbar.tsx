@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { Globe, MoreHorizontal } from "lucide-react"
+import { Briefcase, ChartPie, DollarSign, EllipsisVertical, Factory, Globe, MoreHorizontal, Store, Truck, Users } from "lucide-react"
 
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -24,24 +24,9 @@ const LaProducts = [
     title: "ERP Suite",
     href: "/products/lens-erp-suite",
     description: "Powering Your Business Operations",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-      </svg>
-    ),
+    icon: <Briefcase />,
   },
-   // {
+  // {
   //   title: "CPQ Cloud",
   //   href: "/products/cpq-cloud",
   //   description: "SaaS solution designed to assist businesses",
@@ -110,24 +95,7 @@ const LaProducts = [
     title: "HRMS Cloud",
     href: "/products/hrms-cloud",
     description: "Transforming Human Resource Management in the Digital Era",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-        <circle cx="9" cy="7" r="4" />
-        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-      </svg>
-    ),
+    icon: <Users />,
   },
   // {
   //   title: "Analytical Cloud",
@@ -157,70 +125,19 @@ const LaIndustries = [
     title: "Manufacturing",
     href: "/industries/manufacturing",
     description: "Industrial solutions for factories",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-      </svg>
-    ),
+    icon: <Factory />
   },
   {
     title: "Distribution",
     href: "/industries/distribution",
     description: "Supply chain optimization tools",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <rect width="16" height="16" x="4" y="4" rx="2" />
-        <rect width="6" height="6" x="9" y="9" rx="1" />
-        <path d="M15 2v2" />
-        <path d="M15 20v2" />
-        <path d="M2 15h2" />
-        <path d="M20 15h2" />
-      </svg>
-    ),
+    icon: <Truck />
   },
   {
     title: "Retail",
     href: "/industries/retail",
     description: "Point of sale and inventory management",
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="m2 7 4.41-4.41A2 2 0 0 1 7.83 2h8.34a2 2 0 0 1 1.42.59L22 7" />
-        <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
-        <path d="M15 22v-4a2 2 0 0 0-2-2h-2a2 2 0 0 0-2 2v4" />
-        <path d="M2 7h20" />
-        <path d="M22 7v3a2 2 0 0 1-2 2v0a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 16 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 12 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 8 12a2.7 2.7 0 0 1-1.59-.63.7.7 0 0 0-.82 0A2.7 2.7 0 0 1 4 12v0a2 2 0 0 1-2-2V7" />
-      </svg>
-    ),
+    icon: <Store/>
   },
 ]
 
@@ -246,14 +163,13 @@ const LaMore = [
 const LaLanguages = [
   { code: "en", name: "English", flag: "🇬🇧" },
   { code: "de", name: "Deutsch", flag: "🇩🇪" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
-  { code: "zh", name: "中文", flag: "🇨🇳" },
-  { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
+  // { code: "fr", name: "Français", flag: "🇫🇷" },
+  // { code: "zh", name: "中文", flag: "🇨🇳" },
+  // { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ]
 
-export default function Navbar():React.ReactElement {
+export default function Navbar(): React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
-  const [MoreDropdownOpen, fnSetMoreDropdownOpen] = React.useState(false)
   const [IsScrolled, fnSetIsScrolled] = React.useState(false)
   const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
   const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
@@ -261,7 +177,7 @@ export default function Navbar():React.ReactElement {
 
   // Handle scroll effect
   React.useEffect(() => {
-    const fnHandleScroll = ():void => { //only update no return
+    const fnHandleScroll = (): void => { //only update no return
       if (window.scrollY > 10) {
         fnSetIsScrolled(true)
       } else {
@@ -276,7 +192,7 @@ export default function Navbar():React.ReactElement {
   }, [])
 
   // Get current language display
-  const fnGetCurrentLanguageDisplay = ():string => {
+  const fnGetCurrentLanguageDisplay = (): string => {
     const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language)
     return CurrentLang ? CurrentLang.code.toUpperCase() : "EN"
   }
@@ -383,16 +299,12 @@ export default function Navbar():React.ReactElement {
                   </NavigationMenuItem>
 
                   <NavigationMenuItem className="flex items-center">
-                    <DropdownMenu open={MoreDropdownOpen} onOpenChange={fnSetMoreDropdownOpen}>
-                      <DropdownMenuTrigger
-                        asChild
-                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
-                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
-                      >
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-10 w-10 flex items-center justify-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
+                          className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
                         >
                           <MoreHorizontal className="h-6 w-6" />
                           <span className="sr-only">More options</span>
@@ -400,9 +312,7 @@ export default function Navbar():React.ReactElement {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-[80px] p-2 border border-border  shadow-sm"
-                        onMouseEnter={() => fnSetMoreDropdownOpen(true)}
-                        onMouseLeave={() => fnSetMoreDropdownOpen(false)}
+                        className="w-[80px] p-2 border border-border shadow-sm"
                       >
                         {LaMore.map((idItem, iIndex) => (
                           <DropdownMenuItem
@@ -428,7 +338,7 @@ export default function Navbar():React.ReactElement {
           <div className="hidden lg:flex lg:items-center lg:gap-4">
             {/* Theme Switcher */}
             <div className="flex items-center gap-2">
-              
+
               <ThemeToggle />
             </div>
 
@@ -485,7 +395,7 @@ export default function Navbar():React.ReactElement {
           <div className="flex lg:hidden items-center gap-2">
             {/* Theme Switcher for Mobile */}
             <div className="flex items-center">
-              
+
               <ThemeToggle />
             </div>
 
@@ -549,21 +459,7 @@ export default function Navbar():React.ReactElement {
                 : "text-muted-foreground  hover:text-primary ",
             )}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mb-1"
-            >
-              <rect width="20" height="14" x="2" y="7" rx="2" ry="2" />
-              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-" />
-            </svg>
+            <Briefcase className="w-5 h-6 mb-1" />
             <span className="text-xs">Products</span>
           </button>
           <button
@@ -576,83 +472,28 @@ export default function Navbar():React.ReactElement {
                 : "text-muted-foreground  hover:text-primary ",
             )}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mb-1"
-            >
-              <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z" />
-            </svg>
+            <Factory className="w-5 h-6 mb-1" />
             <span className="text-xs">Industries</span>
           </button>
           <Link
             href="/solutions"
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mb-1"
-            >
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-              <path d="M22 12A10 10 0 0 0 12 2v10z" />
-            </svg>
+            <ChartPie className="w-5 h-6 mb-1" />
             <span className="text-xs">Solutions</span>
           </Link>
           <Link
             href="/pricing"
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mb-1"
-            >
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
+            <DollarSign className="w-5 h-6 mb-1" />
             <span className="text-xs">Pricing</span>
           </Link>
 
           <DropdownMenu open={MobileModeDropdownOpen} onOpenChange={fnSetMobileModeDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-black  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="mb-1"
-                >
-                  <circle cx="12" cy="12" r="1" />
-                  <circle cx="12" cy="5" r="1" />
-                  <circle cx="12" cy="19" r="1" />
-                </svg>
+                <EllipsisVertical className="w-5 h-6 mb-1" />
                 <span className="text-xs">More</span>
               </button>
             </DropdownMenuTrigger>
@@ -695,7 +536,7 @@ export default function Navbar():React.ReactElement {
                   className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                 >
                   {/* SVG Icon on Left */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border  flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
                     <div className="w-6 h-6 text-primary/70 ">{idProduct.icon}</div>
                   </div>
                   {/* Title on Right */}
@@ -722,7 +563,7 @@ export default function Navbar():React.ReactElement {
                   className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                 >
                   {/* SVG Icon on Left */}
-                  <div className="flex h-10 w-10 items-center justify-center rounded-md border border-border flex-shrink-0">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
                     <div className="w-6 h-6 text-primary/70 ">{idIndustry.icon}</div>
                   </div>
                   {/* Title on Right */}

@@ -31,7 +31,8 @@ export type Timage = {
   aspectRatio?: "square" | "video" | "wide" | "auto"
   width?: string
   height?: string
-  svg?: React.ReactNode
+  svg?: React.ReactNode | keyof typeof LucideIcons 
+  position?: string
 }
 
 //component
@@ -71,6 +72,7 @@ export type TcardProps = {
   className?: string
   buttonPosition?: string
   category?: string
+  onButtonClick?: (mode: TformMode) => void
 }
 //component
 export type TlogoShowcaseProps = {
@@ -121,7 +123,7 @@ export type TtrendCardProps = {
 
 
 // Form types
-export type TformMode = "booking" | "contact" | "download" | null
+export type TformMode = "booking" | "contact" | "download" | undefined | null
 
 export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
 
@@ -168,24 +170,24 @@ export type TproblemSection = {
   };
 };
 
-export type TsolutionSection ={
+export type TsolutionSection = {
   header: Theader
   products: string[]
   details: string[]
   results: Theader[]
-  title:string
+  title: string
   testimonial?: {
     author: string
     title: string
     quote: string
-    verify:string
+    verify: string
   },
-  footer:{
+  footer: {
     title: string
-    handles:{
-      label:string , icon: string
+    handles: {
+      label: string, icon: string
     }[]
-    button:Tbutton
+    button: Tbutton
   }
 }
 
@@ -203,3 +205,117 @@ export type TSidebarCardType = {
     href: string;
   };
 };
+
+//page
+export type Tindustry ={
+  hero:TheroProps
+  problems:{
+    header:Theader
+    items: Titems[]
+    footer:{
+      header:Theader
+      points:{
+        title: string
+      }
+      buttons: Tbutton[]
+    }
+  }
+  features:{
+    header: Theader
+    feature:{
+      header:Theader
+      image:Timage
+      card:TcardProps
+    }[]
+  }
+  allFeature:{
+    header:Theader
+    cards:TcardProps[]
+  }
+  cta:{
+    header:Theader
+    cards:TcardProps[]
+    footer:{
+      title: string
+      button:Tbutton
+    }
+  }
+  successStory:{
+    header:Theader
+    cards:TcardProps[]
+    footer:{
+      title: string
+      button:Tbutton
+    }
+  }
+}
+
+//page
+export type Tproduct = {
+  hero: TheroProps
+  problems:{
+    header: Theader
+    card: TcardProps
+    footer:{
+      header:Theader
+      button: Tbutton[]
+    }
+  }
+  solutions:{
+    header:Theader
+    cards:TcardProps[]
+    footer:{
+      button:Tbutton[]
+    }
+  }
+  guide:{
+    header:Theader
+    features:{
+      icons:{
+        icon: React.ReactNode | keyof typeof LucideIcons
+        text: string
+      }[]
+      header:Theader
+      link: Tbutton
+      img: string | React.ReactNode | keyof typeof LucideIcons
+    }[]
+    footer:{
+      header:Theader
+      button: Tbutton[]
+    }
+  }
+  successStory:{
+    header:Theader
+    cards: TcardProps[]
+    items:{
+      header:Theader
+    }[]
+    footer:{
+      header:Theader
+      button: Tbutton[]
+    }
+  }
+  pricing:{
+    header:Theader
+    items: {
+      header:Theader
+      points:{
+        header:Theader
+      }[]
+    }
+    footer:{
+      header:Theader
+      button:Tbutton[]
+    }
+  }
+  cta:{
+    header:Theader
+    item:{
+      header:Theader
+    }
+    footer:{
+      header:Theader
+      button: Tbutton[]
+    }
+  }
+}

@@ -5,7 +5,7 @@ import { ReactElement } from "react"
 export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
   return (
    
-    <dl className="mt-6 space-y-6 divide-y divide-muted">
+    <div className="mt-6 space-y-6 divide-y divide-muted">
       <Accordion type="single" collapsible className="w-full">
         {idFaq.map((idFaq, iIndex) => (
           <AccordionItem key={iIndex} value={`item-${iIndex}`}>
@@ -14,7 +14,7 @@ export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
           </AccordionItem>
         ))}
       </Accordion>
-    </dl>
+    </div>
       
   )
 }

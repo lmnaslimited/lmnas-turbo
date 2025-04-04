@@ -4,44 +4,33 @@ import { Button } from "@repo/ui/components/ui/button";
 import { Zap } from "lucide-react";
 import { TheroProps, TformMode } from "../type.js";
 import { ReactElement } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 
-interface HeroProps {
+type THeroProps = {
   idHero: TheroProps;
   onButtonClick?: (mode: TformMode) => void;
 }
 
-export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement {
+export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
   /**
-   * Handles button clicks by triggering the provided callback function
-   * with the selected form mode, if available.
-   */
-  const fnHandleButtonClick = (iFormMode?: TformMode) => {
-    if (onButtonClick && iFormMode) {
-      onButtonClick(iFormMode);
-    }
-  };
-
-   /**
-   * Renders a badge with an icon and text.
-   * Typically used for highlighting a special feature or status.
-   */
-  const Badge = ({ text }: { text: string }): ReactElement => (
+  * Renders a badge with an icon and text.
+  * Typically used for highlighting a special feature or status.
+  */
+  const Badge = ({ iText }: { iText: string }): ReactElement => (
     <div className="inline-flex w-fit items-center rounded-full border border-primary/60 bg-slate px-3 py-1 text-sm text-primary/70">
       <Zap className="mr-1 h-3.5 w-3.5" />
-      <span>{text}</span>
+      <span>{iText}</span>
     </div>
   );
 
-   /**
-   * Displays a list of features, each represented by an icon and text.
-   * This section helps in showcasing key benefits or highlights of the hero section.
-   */
-  const FeatureList = ({ items }: { items?: TheroProps["items"] }): ReactElement => (
+  /**
+  * Displays a list of features, each represented by an icon and text.
+  * This section helps in showcasing key benefits or highlights of the hero section.
+  */
+  const FeatureList = ({ iaItems }: { iaItems?: TheroProps["items"] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {items?.map((idItem, iIndex) => (
+      {iaItems?.map((idItem, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
           {idItem?.icon}
           <span>{idItem?.item}</span>
@@ -50,19 +39,19 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
     </div>
   );
 
-   /**
-   * Renders a list of call-to-action (CTA) buttons.
-   * Supports both internal navigation (via Link) and functional actions.
-   */
-  const CTAButtons = ({ buttons }: { buttons: TheroProps["buttons"] }): ReactElement => (
+  /**
+  * Renders a list of call-to-action (CTA) buttons.
+  * Supports both internal navigation (via Link) and functional actions.
+  */
+  const CTAButtons = ({ iaButtons }: { iaButtons: TheroProps["buttons"] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
-      {buttons.map((idButton, index) =>
+      {iaButtons.map((idButton, iIndex) =>
         idButton.href ? (
-          <Link href={idButton.href} key={index}>
+          <Link href={idButton.href} key={iIndex}>
             <Button
               size={idButton.size || "lg"}
               variant={idButton.variant || "default"}
-              className={idButton.className}
+              className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
             >
               {idButton.iconPosition === "before" && idButton.icon}
               {idButton.label}
@@ -71,11 +60,11 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
           </Link>
         ) : (
           <Button
-            key={index}
+            key={iIndex}
             size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
             className={idButton.className}
-            onClick={() => fnHandleButtonClick(idButton.formMode)}
+            onClick={() => onButtonClick?.(idButton.formMode)}
           >
             {idButton.iconPosition === "before" && idButton.icon}
             {idButton.label}
@@ -87,21 +76,21 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
   );
 
   return idHero.image?.src ? (
-     /**
-     * Hero section variant with an image.
-     * Displays content alongside a visual representation for better engagement.
-     */
-    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center md:py-24 lg:py-32 py-20")}>
+    /**
+    * Hero section variant with an image.
+    * Displays content alongside a visual representation for better engagement.
+    */
+    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 md:py-24 lg:py-32")}>
       <div className={cn("flex flex-col justify-center space-y-8")}>
-        {idHero.heading.badge && <Badge text={idHero.heading.badge} />}
+        {idHero.heading.badge && <Badge iText={idHero.heading.badge} />}
         <TitleSubtitle idTitle={{
           ...idHero.heading,
           className: "m-0",
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {idHero.items && <FeatureList items={idHero.items} />}
-        <CTAButtons buttons={idHero.buttons} />
+        {idHero.items && <FeatureList iaItems={idHero.items} />}
+        <CTAButtons iaButtons={idHero.buttons} />
       </div>
       {/* Image part */}
       <div className={cn("flex items-center justify-center")}>
@@ -119,17 +108,13 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
       </div>
     </div>
   ) : (
-     /**
-     * Hero section variant without an image.
-     * This version focuses entirely on the textual content and call-to-action elements.
-     */
+    /**
+    * Hero section variant without an image.
+    * This version focuses entirely on the textual content and call-to-action elements.
+    */
     <section className={cn("relative overflow-hidden border-b border-border/40 md:py-24 lg:py-32 py-20")}>
       <div className={cn("container relative z-10 mx-auto px-4 md:px-6")}>
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
+        <div
           className={cn("mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center")}
         >
           <TitleSubtitle idTitle={{
@@ -141,8 +126,8 @@ export default function Hero({ idHero, onButtonClick }: HeroProps): ReactElement
           <p className={cn("max-w-[85%] text-muted-foreground md:text-xl/relaxed mx-auto mb-2")}>
             {idHero.description}
           </p>
-          <CTAButtons buttons={idHero.buttons} />
-        </motion.div>
+          <CTAButtons iaButtons={idHero.buttons} />
+        </div>
       </div>
     </section>
   );

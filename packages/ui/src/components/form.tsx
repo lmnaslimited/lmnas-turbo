@@ -16,7 +16,8 @@ import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
 
-export const LDBookingFormConfig: TformConfig = {
+// These form configuration objects define the structure, validation rules, and fields for different form types.
+export const LdBookingFormConfig: TformConfig = {
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
@@ -24,6 +25,7 @@ export const LDBookingFormConfig: TformConfig = {
     showTerms: true,
     termsText: "Terms of Service",
     privacyText: "Privacy Policy",
+    // The schema defines validation rules using Zod for each field in the form
     schema: z.object({
         date: z.date({ required_error: "Please select a date." }),
         timezone: z.string({ required_error: "Please select a timezone." }),
@@ -34,6 +36,7 @@ export const LDBookingFormConfig: TformConfig = {
         message: z.string().optional(),
         newsletter: z.boolean().default(true),
     }),
+    // Field configurations define the UI and behavior of each form field
     fields: [
         {
             name: "date",
@@ -92,7 +95,7 @@ export const LDBookingFormConfig: TformConfig = {
     ],
 }
 
-export const LDContactFormConfig: TformConfig = {
+export const LdContactFormConfig: TformConfig = {
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
@@ -143,7 +146,7 @@ export const LDContactFormConfig: TformConfig = {
     ],
 }
 
-export const LDDownloadFormConfig: TformConfig = {
+export const LdDownloadFormConfig: TformConfig = {
     title: "Download Resources",
     description: "Fill out the form to access our content",
     submitText: "Download Now",
@@ -179,6 +182,13 @@ export const LDDownloadFormConfig: TformConfig = {
     ],
 }
 
+
+/**
+ * DynamicForm - A flexible form component that renders different form types based on configuration.
+ * This component creates a complete form UI with validation, submission handling, and success/error states.
+ * It dynamically renders different field types (text, select, date, etc.) based on the provided configuration.
+ */
+
 export function DynamicForm({
     config,
     onSuccess,
@@ -186,11 +196,15 @@ export function DynamicForm({
     className = "",
     defaultValues,
 }: TdynamicFormProps): ReactElement {
-    const [LIsSubmitting, fnSetIsSubmitting] = useState(false)
-    const LFormRef = useRef<HTMLDivElement>(null)
-    const [LShowTimeSlots, fnSetShowTimeSlots] = useState(false)
+    // Tracks whether the form is currently being submitted to show loading state
+    const [IsSubmitting, fnSetIsSubmitting] = useState(false)
+    // Reference to the form DOM element for potential scrolling or focus management
+    const FormRef = useRef<HTMLDivElement>(null)
+    // Controls visibility of time slots based on whether date and timezone are selected
+    const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false)
 
-    const LDInitialValues = {
+    // Sets up default values for all possible form fields, overridden by any provided values
+    const LdInitialValues = {
         name: "",
         email: "",
         message: "",
@@ -201,18 +215,22 @@ export function DynamicForm({
         timeSlot: "",
         ...defaultValues,
     }
-
+    // Initializes the form with react-hook-form and connects it to the Zod validation schema
     const LdForm = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
-        defaultValues: LDInitialValues,
+        defaultValues: LdInitialValues,
         mode: "onChange",
     })
-
-    const LSelectedDate = LdForm.watch("date")
-    const LSelectedTimezone = LdForm.watch("timezone")
-
+    // Watches specific form fields to react to their changes
+    const SelectedDate = LdForm.watch("date")
+    const SelectedTimezone = LdForm.watch("timezone")
+    /**
+      * This effect shows or hides time slots based on date and timezone selection.
+      * Time slots are only shown when both date and timezone have been selected.
+      * If either field is cleared, it also resets any selected time slot.
+      */
     useEffect(() => {
-        if (LSelectedDate && LSelectedTimezone) {
+        if (SelectedDate && SelectedTimezone) {
             fnSetShowTimeSlots(true)
         } else {
             fnSetShowTimeSlots(false)
@@ -220,13 +238,18 @@ export function DynamicForm({
                 LdForm.setValue("timeSlot", "")
             }
         }
-    }, [LSelectedDate, LSelectedTimezone, LdForm])
+    }, [SelectedDate, SelectedTimezone, LdForm])
 
+    /**
+     * Handles form submission after validation passes.
+     * Shows a loading state, simulates an API call, and then either
+     * displays success or error messages based on the result.
+     */
     const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
         fnSetIsSubmitting(true)
         try {
             await new Promise((resolve) => setTimeout(resolve, 1000))
-            LdForm.reset(LDInitialValues)
+            LdForm.reset(LdInitialValues)
             onSuccess(idFormData, config.successMessage)
         } catch (error) {
             LdForm.setError("root", {
@@ -238,7 +261,7 @@ export function DynamicForm({
         }
     }
 
-    const LATimeSlots = [
+    const LaTimeSlots = [
         "09:00 - 10:00",
         "10:00 - 11:00",
         "11:00 - 12:00",
@@ -247,13 +270,19 @@ export function DynamicForm({
         "15:00 - 16:00",
     ]
 
+    /**
+     * Renders a specific form field based on its configuration.
+     * This function handles the rendering logic for all supported field types,
+     * including text inputs, selects, textareas, date pickers, and checkboxes.
+     * It also applies appropriate styling and validation to each field.
+     */
     const fnRenderField = (idField: TformFieldConfig): ReactNode => {
-        if (idField.type === "timeslot" && !LShowTimeSlots) return null
+        if (idField.type === "timeslot" && !ShowTimeSlots) return null
 
         switch (idField.type) {
             case "text":
             case "email":
-            case "phone": // Added phone case here to use normal text input
+            case "phone":
                 return (
                     <FormField
                         key={idField.name}
@@ -411,7 +440,7 @@ export function DynamicForm({
                             <FormItem className={idField.className}>
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <div className="grid grid-cols-3 gap-2">
-                                    {LATimeSlots.map((iSlot) => (
+                                    {LaTimeSlots.map((iSlot) => (
                                         <Button
                                             key={iSlot}
                                             type="button"
@@ -453,7 +482,7 @@ export function DynamicForm({
     }
 
     return (
-        <div ref={LFormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
+        <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
             <div className="bg-primary text-background p-6 rounded-t-lg">
                 <h2 className="text-2xl font-bold">{config.title}</h2>
                 {config.description && <p className="mt-2 text-border">{config.description}</p>}
@@ -468,8 +497,8 @@ export function DynamicForm({
                         <div className="flex flex-wrap -mx-2">{config.fields.map(fnRenderField)}</div>
 
                         <div className="space-y-4">
-                            <Button type="submit" className="w-full h-12" disabled={LIsSubmitting}>
-                                {LIsSubmitting ? (
+                            <Button type="submit" className="w-full h-12" disabled={IsSubmitting}>
+                                {IsSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <svg
                                             className="animate-spin -ml-1 mr-3 h-5 w-5 text-background"
