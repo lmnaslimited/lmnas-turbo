@@ -490,7 +490,7 @@ export default function Navbar(): React.ReactElement {
             <span className="text-xs">Pricing</span>
           </Link>
 
-          <DropdownMenu open={MobileModeDropdownOpen} onOpenChange={fnSetMobileModeDropdownOpen}>
+          {/* <DropdownMenu open={MobileModeDropdownOpen} onOpenChange={fnSetMobileModeDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <button className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-black  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent">
                 <EllipsisVertical className="w-5 h-6 mb-1" />
@@ -506,7 +506,7 @@ export default function Navbar(): React.ReactElement {
               {LaMore.map((idItem, iIndex) => (
                 <DropdownMenuItem
                   key={idItem.title}
-                  asChild
+                  asChildanimate-fadeInUp
                   className={cn(
                     "py-2 text-xs font-normal text-center ",
                     iIndex === 1 ? "border-b border-border pb-2 mb-1" : "",
@@ -516,7 +516,22 @@ export default function Navbar(): React.ReactElement {
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
-          </DropdownMenu>
+          </DropdownMenu> */}
+
+          {/* "More" button */}
+            <button
+              onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
+              onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+              className={cn(
+                "flex flex-col items-center justify-center w-1/5 h-full",
+                MobileModeDropdownOpen
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
+              )}
+            >
+              <EllipsisVertical className="w-5 h-6 mb-1" />
+              <span className="text-xs">More</span>
+            </button>
         </div>
       </div>
 
@@ -555,7 +570,7 @@ export default function Navbar(): React.ReactElement {
           onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
         >
           <div className="p-3">
-            <div className="grid grid-cols-1 gap-3">
+            <div className="grid grid-cols-2 gap-2">
               {LaIndustries.map((idIndustry) => (
                 <Link
                   key={idIndustry.title}
@@ -572,6 +587,29 @@ export default function Navbar(): React.ReactElement {
               ))}
             </div>
           </div>
+        </div>
+      )}
+
+      {/* "More" dropdown content */}
+      {MobileModeDropdownOpen && (
+        <div
+          className="fixed bottom-16 right-3 z-[90] w-[120px] p-2 bg-grayBackground border border-border rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
+          onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+        >
+          {LaMore.map((idItem, iIndex) => (
+            <div
+              key={idItem.title}
+              className={cn(
+                "py-2 text-sm font-normal text-center",
+                iIndex === 1 ? "border-b border-border pb-2 mb-1" : ""
+              )}
+            >
+              <Link href={idItem.href} className="block w-full text-primary">
+                {idItem.title}
+              </Link>
+            </div>
+          ))}
         </div>
       )}
     </>

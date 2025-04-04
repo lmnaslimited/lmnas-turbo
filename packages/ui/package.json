@@ -11,7 +11,8 @@
     "./lib/utils": "./src/lib/utils.ts",
     "./lib/broadcast-channel": "./src/lib/broadcast-channel.ts",
     "./components/*": "./src/components/*.tsx",
-    "./svg/*": "./src/svg/*.tsx"
+    "./svg/*": "./src/svg/*.tsx",
+    "./api/*": "./src/api/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",
