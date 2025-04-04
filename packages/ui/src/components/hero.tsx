@@ -80,7 +80,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
     * Hero section variant with an image.
     * Displays content alongside a visual representation for better engagement.
     */
-    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center md:py-24 lg:py-32 py-20")}>
+    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 md:py-24 lg:py-32")}>
       <div className={cn("flex flex-col justify-center space-y-8")}>
         {idHero.heading.badge && <Badge iText={idHero.heading.badge} />}
         <TitleSubtitle idTitle={{
