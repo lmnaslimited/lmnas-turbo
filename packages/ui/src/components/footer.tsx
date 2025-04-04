@@ -1,10 +1,17 @@
+"use client";
 import Link from "next/link"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
 import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
-import { ReactElement } from "react"
+import { ReactElement, useActionState } from "react"
+import { subscribeNewsletter } from "@repo/ui/api/subscribe";
 
 export default function Footer():ReactElement {
+  const LdInitialState = {
+    message: "",
+  };
+  //Nextjs variable can't done coding standard
+  const [state, formAction, pending] = useActionState(subscribeNewsletter, LdInitialState);
   return (
     <footer className="bg-muted/80 pt-16 pb-8">
       <div className="container mx-auto px-4">
@@ -127,12 +134,21 @@ export default function Footer():ReactElement {
             </ul>
             <div className="mt-6">
               <h4 className="font-medium mb-2">Subscribe to our newsletter</h4>
-              <div className="flex gap-2">
-                <Input type="email" placeholder="Your email" className="max-w-xs" />
-                <Button type="submit" size="sm">
-                  Subscribe
+              <form action={formAction} className="flex gap-2">
+                <Input
+                  type="email"
+                  name="email"
+                  placeholder="Your email"
+                  required
+                  className="max-w-xs"
+                />
+                <Button type="submit" size="sm" disabled={pending}>
+                  {pending ? "Subscribing..." : "Subscribe"}
                 </Button>
-              </div>
+              </form>
+              {state?.message && (
+                <p className="text-sm mt-2 text-primary">{state.message}</p>
+              )}
             </div>
           </div>
         </div>
