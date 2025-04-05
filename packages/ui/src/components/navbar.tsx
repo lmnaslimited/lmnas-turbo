@@ -385,10 +385,11 @@ export default function Navbar(): React.ReactElement {
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-
+            <Link href="/contact">
             <Button variant="default" className="rounded-lg h-10 flex items-center">
               Contact Us
             </Button>
+            </Link>
           </div>
 
           {/* Mobile menu button - removed hamburger menu */}

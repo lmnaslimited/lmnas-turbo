@@ -15,6 +15,10 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
+import { PhoneInput } from 'react-international-phone';
+import 'react-international-phone/style.css';
+
+
 
 // Form field configuration type
 export type TformFieldConfig = {
@@ -502,7 +506,6 @@ export function SectionForm({
         switch (idField.type) {
             case "text":
             case "email":
-            case "phone":
                 return (
                     <FormField
                         key={idField.name}
@@ -518,6 +521,27 @@ export function SectionForm({
                                         className={cn("h-12", idField.inputClassName, iFieldState.error && "border-red-400")}
                                         {...iField}
                                         value={iField.value || ""}
+                                    />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                )
+            case "phone":
+                return (
+                    <FormField
+                        key={idField.name}
+                        control={LdForm.control}
+                        name={idField.name}
+                        render={({ field: iField, fieldState: iFieldState }) => (
+                            <FormItem className={idField.className}>
+                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
+                                <FormControl>
+                                    <PhoneInput
+                                        defaultCountry="ua"
+                                        value={iField.value || ""}
+                                        onChange={iField.onChange}
                                     />
                                 </FormControl>
                                 <FormMessage />
