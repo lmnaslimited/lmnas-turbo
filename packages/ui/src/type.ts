@@ -139,6 +139,7 @@ export type TformFieldConfig = {
 }
 
 export type TformConfig = {
+  id:string
   title: string
   description?: string
   fields: TformFieldConfig[]
@@ -152,10 +153,11 @@ export type TformConfig = {
 
 export type TdynamicFormProps = {
   config: TformConfig
-  onSuccess: (data: any, message: string) => void
+  onSuccess: ( message: string) => void
   onCancel?: () => void
   className?: string
   defaultValues?: Record<string, any>
+  hideCardHeader?: boolean
 }
 
 //solution individual

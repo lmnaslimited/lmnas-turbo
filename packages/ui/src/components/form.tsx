@@ -1,10 +1,10 @@
 "use client"
-
-import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
+import { useState, useRef, useEffect, ReactElement, ReactNode } from "react"
+import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { format } from "date-fns/format"
+import { format } from 'date-fns/format'
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -17,46 +17,17 @@ import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from 'react-international-phone';
 import 'react-international-phone/style.css';
+import { isValidPhoneNumber } from "libphonenumber-js";
+import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
+import {fetchTimezones} from "@repo/ui/api/getTimeZone"
+import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
+import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
+import { subscribeNewsletter } from "@repo/ui/api/subscribe"
+import { sendCommunicationAction } from "@repo/ui/api/communication"
 
-
-
-// Form field configuration type
-export type TformFieldConfig = {
-    name: string
-    type: string
-    label?: string
-    placeholder?: string
-    required?: boolean
-    className?: string
-    inputClassName?: string
-    options?: { value: string; label: string }[]
-}
-
-// Form configuration type
-export type TformConfig = {
-    title: string
-    description?: string
-    submitText: string
-    successMessage: string
-    showTerms?: boolean
-    termsText?: string
-    privacyText?: string
-    schema: z.ZodType<any, any>
-    fields: TformFieldConfig[]
-}
-
-// Dynamic form props type
-export type TsectionFormProps = {
-    config: TformConfig
-    onSuccess?: (data: any, message: string) => void
-    onCancel?: () => void
-    className?: string
-    defaultValues?: Record<string, any>
-    hideCardHeader?: boolean // New prop to hide the card header
-}
-
-// Configurations for the dynamic form
+// These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
+    id:"appointment",
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
@@ -70,7 +41,9 @@ export const LdBookingFormConfig: TformConfig = {
         timezone: z.string({ required_error: "Please select a timezone." }),
         timeSlot: z.string({ required_error: "Please select a time slot." }),
         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        phone: z.string().min(10, "Please enter a valid phone number"),
+        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+            message: "Invalid phone number",
+          }),
         email: z.string().email("Please enter a valid email"),
         message: z.string().optional(),
         newsletter: z.boolean().default(true),
@@ -135,30 +108,30 @@ export const LdBookingFormConfig: TformConfig = {
 }
 
 export const LdContactFormConfig: TformConfig = {
+    id:"contact",
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
     successMessage: "Your message has been sent!",
     showTerms: true,
     schema: z.object({
-        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        enquiryType: z.string().default("Free Trial"),
         email: z.string().email("Please enter a valid email"),
         message: z.string().min(10, "Message must be at least 10 characters"),
         newsletter: z.boolean().default(true),
     }),
     fields: [
         {
-            name: "name",
+            name: "enquiryType",
             type: "select",
             placeholder: "Select an option *",
             required: true,
             className: "w-full mb-3",
             options: [
-                { value: "general", label: "General Inquiry" },
-                { value: "support", label: "Support Request" },
-                { value: "sales", label: "Sales Inquiry" },
-                { value: "feedback", label: "Feedback" },
-                { value: "other", label: "Other" },
+                { value: "Free Trial", label: "Free Trial" },
+                { value: "Demo", label: "Demo" },
+                { value: "Pricing", label: "Pricing" },
+                { value: "Support", label: "Support" },
             ],
         },
         {
@@ -186,6 +159,7 @@ export const LdContactFormConfig: TformConfig = {
 }
 
 export const LdDownloadFormConfig: TformConfig = {
+    id:"download",
     title: "Download Resources",
     description: "Fill out the form to access our content",
     submitText: "Download Now",
@@ -223,6 +197,7 @@ export const LdDownloadFormConfig: TformConfig = {
 
 // Configurations for the BigForm component
 export const LdContactPageFormConfig: TformConfig = {
+    id:"contact",
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
@@ -237,7 +212,9 @@ export const LdContactPageFormConfig: TformConfig = {
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().min(1, "Email is required").email("Please enter a valid email"),
         company: z.string().optional(),
-        phone: z.string().optional(),
+        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+            message: "Invalid phone number",
+          }).optional(),
         product: z.string().optional(),
         enquiryType: z.string().optional(),
         message: z.string().min(10, "Message must be at least 10 characters"),
@@ -317,6 +294,7 @@ export const LdContactPageFormConfig: TformConfig = {
 }
 
 export const LdBookingPageFormConfig: TformConfig = {
+    id: "appointment",
     title: "Book Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
@@ -334,7 +312,9 @@ export const LdBookingPageFormConfig: TformConfig = {
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().min(1, "Email is required").email("Please enter a valid email"),
         company: z.string().optional(),
-        phone: z.string().optional(),
+        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+            message: "Invalid phone number",
+          }).optional(),
         message: z.string().optional(),
         newsletter: z.boolean().default(true),
     }),
@@ -402,19 +382,91 @@ export const LdBookingPageFormConfig: TformConfig = {
     ],
 }
 
+export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken:string) {
+    try {
+    // Construct payload with required types
+    const LDateObj = idFormData.date instanceof Date ? idFormData.date : new Date(idFormData.date)
+    const LFormattedDate = LDateObj.toISOString().split("T")[0]
+    const LdPayload = {
+      date: LFormattedDate as string,
+      time: idFormData.timeSlot as string,
+      timezone: idFormData.timezone as string,
+      contact:{
+        name: idFormData.name,
+        phone: idFormData.phone,
+        email: idFormData.email,
+        notes: idFormData.message || "",
+      },
+      recaptchaToken: iRecaptchaToken
+    }
+  
+      const LdResponse = await bookAppointmentAction(LdPayload)
+
+      if (idFormData.newsletter) {
+        const LdNewFormData = new FormData()
+        LdNewFormData.append('email', idFormData.email)
+        await subscribeNewsletter({message:""}, LdNewFormData)
+      }
+  
+      if (LdResponse.error) {
+        return { error: LdResponse.error }
+      }
+  
+      return {
+        data: LdResponse.data,
+        message: LdResponse.message,
+      }
+    } catch (error) {
+      console.error("Client-side appointment error", error)
+      return { error: "Something went wrong while booking" }
+    }
+  }
+
+export async function fnSubmitContact(idFormData: any, iRecaptchaToken:string) {
+    try {
+        const LdPayload = {
+        email: idFormData.email,
+        notes: idFormData.message || "",
+        option: idFormData.enquiryType || "Free Trial",
+        recaptchaToken: iRecaptchaToken
+        }
+
+        const LdResponse = await sendCommunicationAction(LdPayload)
+
+        if (idFormData.newsletter) {
+        const LdNewFormData = new FormData()
+        LdNewFormData.append("email", idFormData.email)
+        await subscribeNewsletter({ message: "" }, LdNewFormData)
+        }
+
+        if (LdResponse.error) {
+        return { error: LdResponse.error }
+        }
+
+        return {
+        data: LdResponse.data,
+        message: LdResponse.message,
+        }
+    } catch (error) {
+        console.error("Client-side communication error:", error)
+        return { error: "Something went wrong while submitting the contact form." }
+    }
+}
+  
+
 /**
  * SectionForm - A flexible form component that renders different form types based on configuration.
  * This component creates a complete form UI with validation, submission handling, and success/error states.
  * It dynamically renders different field types (text, select, date, etc.) based on the provided configuration.
  */
+
 export function SectionForm({
     config,
     onSuccess,
-    onCancel,
     className = "",
     defaultValues,
     hideCardHeader = false, // Default to false to maintain backward compatibility
-}: TsectionFormProps): ReactElement {
+}: TdynamicFormProps): ReactElement {
     // Tracks whether the form is currently being submitted to show loading state
     const [IsSubmitting, fnSetIsSubmitting] = useState(false)
     // Reference to the form DOM element for potential scrolling or focus management
@@ -434,23 +486,20 @@ export function SectionForm({
         timeSlot: "",
         ...defaultValues,
     }
-
     // Initializes the form with react-hook-form and connects it to the Zod validation schema
     const LdForm = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
         defaultValues: LdInitialValues,
-        mode: "onChange",
+        mode: "onTouched",
     })
-
     // Watches specific form fields to react to their changes
     const SelectedDate = LdForm.watch("date")
     const SelectedTimezone = LdForm.watch("timezone")
-
     /**
-     * This effect shows or hides time slots based on date and timezone selection.
-     * Time slots are only shown when both date and timezone have been selected.
-     * If either field is cleared, it also resets any selected time slot.
-     */
+      * This effect shows or hides time slots based on date and timezone selection.
+      * Time slots are only shown when both date and timezone have been selected.
+      * If either field is cleared, it also resets any selected time slot.
+      */
     useEffect(() => {
         if (SelectedDate && SelectedTimezone) {
             fnSetShowTimeSlots(true)
@@ -467,32 +516,111 @@ export function SectionForm({
      * Shows a loading state, simulates an API call, and then either
      * displays success or error messages based on the result.
      */
-    const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
-        fnSetIsSubmitting(true)
-        try {
-            await new Promise((resolve) => setTimeout(resolve, 1000))
-            LdForm.reset(LdInitialValues)
-            if (onSuccess) {
-                onSuccess(idFormData, config.successMessage)
-            }
-        } catch (error) {
-            LdForm.setError("root", {
-                type: "manual",
-                message: "An error occurred while submitting the form",
-            })
-        } finally {
-            fnSetIsSubmitting(false)
-        }
-    }
 
-    const LaTimeSlots = [
-        "09:00 - 10:00",
-        "10:00 - 11:00",
-        "11:00 - 12:00",
-        "13:00 - 14:00",
-        "14:00 - 15:00",
-        "15:00 - 16:00",
-    ]
+    const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
+        const { executeRecaptcha } = useReCaptcha()
+
+        fnSetIsSubmitting(true)
+        if (!executeRecaptcha) {
+            return;
+        }
+
+        try {
+            const LdRecaptchaToken = await executeRecaptcha("submit");
+          let LdResponse
+      
+          if (config.id === "appointment") {
+            
+            LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
+          }else if (config.id === "contact") {
+            LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
+          } else {
+            throw new Error("Unsupported form type")
+          }
+      
+          if (LdResponse.error) {
+            throw new Error(LdResponse.error)
+          }
+      
+          LdForm.reset(LdInitialValues)
+          onSuccess(config.successMessage || LdResponse.message || "Success!")
+      
+        } catch (error:any) {
+          LdForm.setError("root", {
+            type: "manual",
+            message: error?.message || "Something went wrong",
+          })
+        } finally {
+          fnSetIsSubmitting(false)
+        }
+      }
+      
+    const [Timezones, fnSetTimezones] = useState<string[]>([]);
+    const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true);
+    
+    // Fetch timezones once
+    useEffect(() => {
+      const fnLoadTimezones = async () => {
+        try {
+          const result = await fetchTimezones();
+          if (result?.data) {
+            fnSetTimezones(result.data);
+          }
+        } catch (err) {
+          console.error("Failed to load timezones:", err);
+        } finally {
+            fnSetIsLoadingTimezones(false);
+        }
+      };
+    
+      fnLoadTimezones();
+    }, []);
+    
+    // Set default timezone only once if empty
+    useEffect(() => {
+      const LCurrentTimezone = LdForm.getValues("timezone");
+      if (!LCurrentTimezone && Timezones.length > 0) {
+        const LDefaultTz = Timezones.find((z) => z.includes("CET")) || "UTC";
+        LdForm.setValue("timezone", LDefaultTz);
+      }
+    }, [Timezones]);
+
+
+    type TimeSlot = {
+        time: string
+        availability: boolean
+      }
+
+      // fetch timeslots
+      const [TimeSlots, fnSetTimeSlots] = useState<TimeSlot[]>([])
+      const [IsLoadingSlots, fnSetILoadingSlots] = useState(false)
+      
+      useEffect(() => {
+        const loadTimeSlots = async () => {
+          if (SelectedDate && SelectedTimezone) {
+            fnSetILoadingSlots(true)
+            try {
+              const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd")
+              const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone)
+              if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
+                fnSetTimeSlots(LdSlotResult.data)
+              } else {
+                fnSetTimeSlots([]) // fallback if something wrong
+              }
+            } catch (error) {
+              console.error("Error loading slots:", error)
+              fnSetTimeSlots([])
+            } finally {
+                fnSetILoadingSlots(false)
+            }
+          }
+        }
+      
+        loadTimeSlots()
+      }, [SelectedDate, SelectedTimezone])
+      
+
+
 
     /**
      * Renders a specific form field based on its configuration.
@@ -539,9 +667,10 @@ export function SectionForm({
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <FormControl>
                                     <PhoneInput
-                                        defaultCountry="ua"
+                                        defaultCountry="de"
                                         value={iField.value || ""}
                                         onChange={iField.onChange}
+                                        onBlur={iField.onBlur}
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -648,56 +777,72 @@ export function SectionForm({
                         render={({ field: iField }) => (
                             <FormItem className={idField.className}>
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
-                                <Select onValueChange={iField.onChange} value={iField.value || ""}>
+                                    <Select
+                                        onValueChange={iField.onChange}
+                                        value={iField.value || ""}
+                                        disabled={IsLoadingTimezones}
+                                    >
                                     <FormControl>
                                         <SelectTrigger className="h-12">
-                                            <SelectValue placeholder={idField.placeholder} />
+                                            <SelectValue
+                                            placeholder={IsLoadingTimezones ? "Loading timezones..." : idField.placeholder}
+                                            />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                        {[
-                                            "UTC",
-                                            "UTC+1 (Central European Time)",
-                                            "UTC+2 (Eastern European Time)",
-                                            "UTC-5 (Eastern Standard Time)",
-                                            "UTC-8 (Pacific Standard Time)",
-                                        ].map((iZone) => (
-                                            <SelectItem key={iZone} value={iZone}>
-                                                {iZone}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                                <FormMessage />
-                            </FormItem>
-                        )}
+                            {Timezones.map((iTimeZone) => (
+                                <SelectItem key={iTimeZone} value={iTimeZone}>
+                                {iTimeZone}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                        <FormMessage />
+                        </FormItem>
+                    )}
                     />
                 )
 
             case "timeslot":
+                if (!ShowTimeSlots) return null
                 return (
                     <FormField
                         key={idField.name}
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
-                                <div className="grid grid-cols-3 gap-2">
-                                    {LaTimeSlots.map((iSlot) => (
-                                        <Button
-                                            key={iSlot}
-                                            type="button"
-                                            variant={iField.value === iSlot ? "default" : "outline"}
-                                            className="h-10"
-                                            onClick={() => iField.onChange(iSlot)}
-                                        >
-                                            {iSlot}
-                                        </Button>
-                                    ))}
-                                </div>
-                                <FormMessage />
-                            </FormItem>
+                        <FormItem className={idField.className}>
+                            {idField.label && <FormLabel>{idField.label}</FormLabel>}
+                            <div className="grid grid-cols-3 gap-2">
+                            {IsLoadingSlots ? (
+                                <p className="col-span-3 text-muted-foreground text-sm">Loading slots...</p>
+                            ) : TimeSlots.length === 0 ? (
+                                <p className="col-span-3 text-sm text-red-500">No slots available</p>
+                            ) : (
+                                TimeSlots.map(({ time, availability }) => {
+                                const fromTime = time.slice(11, 16)
+                                const [hourStr = "00", minuteStr = "00"] = fromTime.split(":");
+                                const hour = parseInt(hourStr, 10);
+                                const slotLabel = `${fromTime} - ${(hour + 1) % 24}:${minuteStr}`;
+                                const formattedValue = `${fromTime}:00`
+
+                                return (
+                                    <Button
+                                    key={time}
+                                    type="button"
+                                    variant={availability ? "default" : "outline"}
+                                    className="h-10"
+                                    onClick={() => iField.onChange(formattedValue)}
+                                    disabled={!availability}
+                                    >
+                                    {slotLabel}
+                                    </Button>
+                                )
+                                })
+                            )}
+                            </div>
+                            <FormMessage />
+                        </FormItem>
                         )}
                     />
                 )
@@ -726,9 +871,10 @@ export function SectionForm({
     }
 
     return (
+        <ReCaptchaProvider reCaptchaKey={process.env.RECAPTCHA_SITE_KEY ?? ""}>
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
             {!hideCardHeader && (
-                <div className="bg-gradient-to-r from-primary to-secondary text-white p-4">
+                <div className="bg-primary text-border p-4">
                     <h2 className="text-2xl font-bold">{config.title}</h2>
                     {config.description && <p className="mt-2 text-border">{config.description}</p>}
                 </div>
@@ -790,6 +936,7 @@ export function SectionForm({
                 </Form>
             </div>
         </div>
+        </ReCaptchaProvider>
     )
 }
 
