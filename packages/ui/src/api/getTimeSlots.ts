@@ -40,12 +40,10 @@ export async function fetchTimeSlots(selectedDate: string, timezone: string): Pr
 
     const json = await response.json()
 
-    // ✅ Extracting slots from message
     const slots = json?.message
     if (!Array.isArray(slots)) {
       return { error: "Invalid slot format from API." }
     }
-    console.log(slots)
     return { message: "Slots fetched successfully", data: slots as Slot[] }
   } catch (err) {
     return { error: "Something went wrong while fetching slots." }

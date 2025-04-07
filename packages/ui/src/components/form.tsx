@@ -392,8 +392,7 @@ export const LdBookingPageFormConfig: TformConfig = {
 
 export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string) {
     try {
-        const LDateObj = idFormData.date instanceof Date ? idFormData.date : new Date(idFormData.date);
-        const LFormattedDate = LDateObj.toISOString().split("T")[0];
+        const LFormattedDate = format(new Date(idFormData.date), "yyyy-MM-dd")
 
         const LdPayload = {
             date: LFormattedDate,
@@ -591,7 +590,6 @@ function InnerSectionForm({
 
             if (config.id === "appointment") {
                 LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
-                console.log(LdResponse)
                 config.successMessage = LdResponse.message ? LdResponse.message : LdResponse.data.message
                 config.successTitle = LdResponse.title ? LdResponse.title : LdResponse.data.title
             } else if (config.id === "contact") {

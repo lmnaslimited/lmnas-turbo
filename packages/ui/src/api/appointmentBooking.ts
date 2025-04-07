@@ -59,7 +59,6 @@ export async function bookAppointmentAction(
       tz: timezone,
       contact: JSON.stringify(contact)
     }
-
     const url = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
 
     const response = await fetch(url, {
