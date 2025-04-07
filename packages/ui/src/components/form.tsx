@@ -1,5 +1,7 @@
 "use client"
 import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
+import type React from "react"
+
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -24,7 +26,6 @@ import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
 import { subscribeNewsletter } from "@repo/ui/api/subscribe"
 import { sendCommunicationAction } from "@repo/ui/api/communication"
-import { title } from "process"
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
@@ -390,6 +391,12 @@ export const LdBookingPageFormConfig: TformConfig = {
     ],
 }
 
+/**
+ * Submits appointment booking data to the server
+ * idFormData - Form data containing appointment details
+ * iRecaptchaToken - ReCaptcha token for verification
+ * returns Object containing response data or error
+ */
 export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string) {
     try {
         const LFormattedDate = format(new Date(idFormData.date), "yyyy-MM-dd")
@@ -405,40 +412,45 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
                 notes: idFormData.message || "",
             },
             recaptchaToken: iRecaptchaToken,
-        };
+        }
 
-        const LdResponse = await bookAppointmentAction(LdPayload);
+        const LdResponse = await bookAppointmentAction(LdPayload)
 
         if (idFormData.newsletter) {
-            const LdNewFormData = new FormData();
-            LdNewFormData.append("email", idFormData.email);
-            await subscribeNewsletter({ message: "" }, LdNewFormData);
+            const LdNewFormData = new FormData()
+            LdNewFormData.append("email", idFormData.email)
+            await subscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
         if (LdResponse.error) {
-            return { error: LdResponse.error };
+            return { error: LdResponse.error }
         }
-        const L_STATUS = LdResponse?.data?.message?.status;
+        const L_STATUS = LdResponse?.data?.message?.status
 
-        const lTitle = L_STATUS === "Unverified"
-            ? "Welcome To Our Family!"
-            : "Thank You!";
+        const lTitle = L_STATUS === "Unverified" ? "Welcome To Our Family!" : "Thank You!"
 
-        const lMessage = L_STATUS === "Unverified"
-            ? "Please check your email to confirm the appointment"
-            : "Booking confirmed successfully";
+        const lMessage =
+            L_STATUS === "Unverified"
+                ? "Please check your email to confirm the appointment"
+                : "Booking confirmed successfully"
 
         return {
             data: LdResponse.data,
             title: lTitle,
             message: lMessage,
-        };
+        }
     } catch (error) {
-        console.error("Client-side appointment error", error);
-        return { error: "Something went wrong while booking" };
+        console.error("Client-side appointment error", error)
+        return { error: "Something went wrong while booking" }
     }
 }
 
+/**
+ * Submits contact form data to the server
+ * idFormData - Form data containing contact details
+ * iRecaptchaToken - ReCaptcha token for verification
+ * returns Object containing response data or error
+ */
 export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) {
     try {
         const LdPayload = {
@@ -469,6 +481,15 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
     }
 }
 
+/**
+ * Main form component that renders dynamic form fields based on configuration
+ * config - Form configuration object defining fields and validation
+ * onSuccess - Callback function executed on successful form submission
+ * className - Optional CSS class name for styling
+ * defaultValues - Optional default values for form fields
+ * hideCardHeader - Optional flag to hide the form header
+ * returns React element containing the rendered form
+ */
 function InnerSectionForm({
     config,
     onSuccess,
@@ -510,6 +531,9 @@ function InnerSectionForm({
 
     // Fetch timezones once
     useEffect(() => {
+        /**
+         * Fetches available timezones from the server
+         */
         const fnLoadTimezones = async () => {
             try {
                 const result = await fetchTimezones()
@@ -542,6 +566,9 @@ function InnerSectionForm({
 
     // fetch timeslots
     useEffect(() => {
+        /**
+         * Fetches available time slots based on selected date and timezone
+         */
         const loadTimeSlots = async () => {
             if (SelectedDate && SelectedTimezone) {
                 fnSetILoadingSlots(true)
@@ -577,7 +604,10 @@ function InnerSectionForm({
         }
     }, [SelectedDate, SelectedTimezone, LdForm])
 
-    // Submit Handler
+    /**
+     * Handles form submission, validates with reCAPTCHA, and processes data
+     * idFormData - Validated form data from react-hook-form
+     */
     const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
         fnSetIsSubmitting(true)
         if (!executeRecaptcha) {
@@ -615,6 +645,11 @@ function InnerSectionForm({
         }
     }
 
+    /**
+     * Renders a form field based on its type and configuration
+     * idField - Field configuration object
+     * returns React node containing the rendered form field
+     */
     const fnRenderField = (idField: TformFieldConfig): ReactNode => {
         if (idField.type === "timeslot" && !ShowTimeSlots) return null
 
@@ -660,9 +695,9 @@ function InnerSectionForm({
                                         onBlur={iField.onBlur}
                                         style={
                                             {
-                                                '--react-international-phone-height': '48px',
-                                                '--react-international-phone-flag-height': '48px',
-                                                '--react-international-phone-flag-width': '28px',
+                                                "--react-international-phone-height": "48px",
+                                                "--react-international-phone-flag-height": "48px",
+                                                "--react-international-phone-flag-width": "28px",
                                             } as React.CSSProperties
                                         }
                                     />
@@ -937,7 +972,17 @@ function InnerSectionForm({
     )
 }
 
+/**
+ * Wrapper component that provides ReCaptcha functionality to the form
+ * props - Form props passed to the inner form component
+ * returns React element with ReCaptcha provider and inner form
+ */
 export const SectionForm = (props: TdynamicFormProps): ReactElement => {
+    /**
+     * Inner component that wraps the form with ReCaptcha provider
+     * innerProps - Props passed to the inner form component
+     * returns React element with ReCaptcha provider and inner form
+     */
     const WrappedComponent = (innerProps: TdynamicFormProps) => {
         return (
             <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}>
