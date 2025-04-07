@@ -1,56 +1,73 @@
 
 'use server'
 
+// Zod is a TypeScript-first schema validation library recommended by Next.js
 import { z } from 'zod'
 
-// Zod schema
-const schema = z.object({
+// Define expected structure and constraints for form data
+const LdSchema = z.object({
   email: z.string().email('Please enter a valid email'),
 })
 
-const myHeaders = {
+//headers for API requests
+const LdHeaders = {
   "Authorization": `${process.env.AUTH_BASE_64}`,
   'Content-Type': 'application/json',
   Cookie: 'full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=',
 }
 
-export async function subscribeNewsletter(prevState: any, formData: FormData) {
-  const parsed = schema.safeParse({
+export async function subscribeNewsletter(prevState: { message: string }, formData: FormData):Promise<{ message: string }>
+{
+    console.log("url", process.env.SUBSCRIBE_URL)
+    // Validate form input early to fail fast and give user feedback before hitting the backend
+  const LdParsed = LdSchema.safeParse({
     email: formData.get('email'),
   })
 
-  if (!parsed.success) {
+   // If validation fails, return a user-friendly message without making any API requests
+  if (!LdParsed.success) {
     return {
-      message: parsed.error.flatten().fieldErrors.email?.[0] || 'Invalid input',
+      message: LdParsed.error.flatten().fieldErrors.email?.[0] || 'Invalid input',
     }
   }
 
-  const email = parsed.data.email
+  // At this point, we have a clean, validated email to use in API calls
+  const Email = LdParsed.data.email
+  
+  // Disables TLS verification for local development 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
   try {
-    const checkRes = await fetch(
-      `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${email}","email_group":"Website"}`,
-      { method: 'GET', headers: myHeaders }
+    // First check: is this email already subscribed? Prevents duplicate entries and unnecessary API calls
+    const checkEmailGroup = await fetch(
+      `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${Email}","email_group":"Website"}`,
+      { method: 'GET', headers: LdHeaders }
     )
 
-    const checkData = await checkRes.json()
+    const LdCheckData = await checkEmailGroup.json()
 
-    if (checkData?.data?.length > 0) {
+    // If email exists in the "Website" group, inform the user instead of trying to subscribe again
+    if (LdCheckData?.data?.length > 0) {
       return { message: "You're already subscribed!" }
     }
 
-    const subscribeRes = await fetch(
+     // If the email isn't already subscribed, submit it to the backend via a POST request
+    const Subscribe = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/method/frappe.email.doctype.newsletter.newsletter.subscribe`,
       {
         method: 'POST',
-        headers: myHeaders,
-        body: JSON.stringify({ email }),
+        headers: LdHeaders,
+        body: JSON.stringify({ email: Email }),
       }
     )
 
-    if (!subscribeRes.ok) {
-      throw new Error(await subscribeRes.text())
+    if (Subscribe.status === 429) {
+        return { message: 'Too many requests. Please wait a moment before trying again.' }
+      }
+
+    // If the backend returns a failure response, throw and handle the error for user feedback
+    if (!Subscribe.ok) {
+      throw new Error(await Subscribe.text())
     }
 
     return { message: 'Please check your inbox!' }

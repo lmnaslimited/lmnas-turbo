@@ -25,58 +25,6 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  apps/braccoli-bites:
-    dependencies:
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      next:
-        specifier: 15.1.6
-        version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      react:
-        specifier: ^19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.0.0(react@19.0.0)
-    devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3
-        version: 3.2.0
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@types/node':
-        specifier: ^20
-        version: 20.17.24
-      '@types/react':
-        specifier: ^19
-        version: 19.0.8
-      '@types/react-dom':
-        specifier: ^19
-        version: 19.0.3(@types/react@19.0.8)
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.21(postcss@8.5.1)
-      eslint:
-        specifier: ^9
-        version: 9.19.0(jiti@1.21.7)
-      eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)
-      postcss:
-        specifier: ^8.5.1
-        version: 8.5.1
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.17(ts-node@10.9.2(@types/node@20.17.24)(typescript@5.7.3))
-      typescript:
-        specifier: ^5
-        version: 5.7.3
-
   apps/braccoli-site-2.0:
     dependencies:
       '@repo/ui':
@@ -235,12 +183,18 @@ importers:
       framer-motion:
         specifier: ^12.4.7
         version: 12.4.7(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      libphonenumber-js:
+        specifier: ^1.12.6
+        version: 1.12.6
       lucide-react:
         specifier: ^0.474.0
         version: 0.474.0(react@19.0.0)
       next:
         specifier: 15.1.6
         version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      next-recaptcha-v3:
+        specifier: ^1.5.2
+        version: 1.5.2(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
       next-themes:
         specifier: ^0.4.4
         version: 0.4.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -256,6 +210,9 @@ importers:
       react-hook-form:
         specifier: ^7.54.2
         version: 7.54.2(react@19.0.0)
+      react-international-phone:
+        specifier: ^4.5.0
+        version: 4.5.0(react@19.0.0)
       react-phone-input-2:
         specifier: ^2.15.1
         version: 2.15.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -2465,6 +2422,13 @@ packages:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
     engines: {node: '>= 0.4.0'}
 
+  next-recaptcha-v3@1.5.2:
+    resolution: {integrity: sha512-CTFQvyWWQLrIuI++NhOFeQKdELUFvTDGfCty+bz6hxU8frS59ycl4TInvWhCn+9eKjAqV6LqQZZGHdwla8t8GQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      next: ^13 || ^14 || ^15
+      react: ^18 || ^19
+
   next-themes@0.4.4:
     resolution: {integrity: sha512-LDQ2qIOJF0VnuVrrMSMLrWGjRMkq+0mpgl6e0juCLqdJ+oo8Q84JRWT6Wh11VDQKkMMe+dVzDKLWs5n87T+PkQ==}
     peerDependencies:
@@ -2764,6 +2728,11 @@ packages:
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
+
+  react-international-phone@4.5.0:
+    resolution: {integrity: sha512-wjwHv+VfiwM49B5/6El4Z5vZKmf3ILpUeiOCI9X+b0Dq4g5nL8gROcwCdVcTXywxznbDSoxSassBX3i9tPZX6g==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -5761,6 +5730,11 @@ snapshots:
 
   netmask@2.0.2: {}
 
+  next-recaptcha-v3@1.5.2(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0):
+    dependencies:
+      next: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      react: 19.0.0
+
   next-themes@0.4.4(react-dom@19.0.0(react@19.0.0))(react@19.0.0):
     dependencies:
       react: 19.0.0
@@ -6097,6 +6071,10 @@ snapshots:
       scheduler: 0.25.0
 
   react-hook-form@7.54.2(react@19.0.0):
+    dependencies:
+      react: 19.0.0
+
+  react-international-phone@4.5.0(react@19.0.0):
     dependencies:
       react: 19.0.0
 
