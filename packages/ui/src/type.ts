@@ -31,7 +31,7 @@ export type Timage = {
   aspectRatio?: "square" | "video" | "wide" | "auto"
   width?: string
   height?: string
-  svg?: React.ReactNode | keyof typeof LucideIcons 
+  svg?: React.ReactNode | keyof typeof LucideIcons
   position?: string
 }
 
@@ -139,12 +139,13 @@ export type TformFieldConfig = {
 }
 
 export type TformConfig = {
-  id:string
+  id: string
   title: string
   description?: string
   fields: TformFieldConfig[]
   submitText: string
   schema: z.ZodObject<any>
+  successTitle: string
   successMessage: string
   showTerms?: boolean
   termsText?: string
@@ -153,7 +154,7 @@ export type TformConfig = {
 
 export type TdynamicFormProps = {
   config: TformConfig
-  onSuccess: ( message: string) => void
+  onSuccess: (message: string, title: string) => void
   onCancel?: () => void
   className?: string
   defaultValues?: Record<string, any>
@@ -209,45 +210,45 @@ export type TSidebarCardType = {
 };
 
 //page
-export type Tindustry ={
-  hero:TheroProps
-  problems:{
-    header:Theader
+export type Tindustry = {
+  hero: TheroProps
+  problems: {
+    header: Theader
     items: Titems[]
-    footer:{
-      header:Theader
-      points:{
+    footer: {
+      header: Theader
+      points: {
         title: string
       }
       buttons: Tbutton[]
     }
   }
-  features:{
+  features: {
     header: Theader
-    feature:{
-      header:Theader
-      image:Timage
-      card:TcardProps
+    feature: {
+      header: Theader
+      image: Timage
+      card: TcardProps
     }[]
   }
-  allFeature:{
-    header:Theader
-    cards:TcardProps[]
+  allFeature: {
+    header: Theader
+    cards: TcardProps[]
   }
-  cta:{
-    header:Theader
-    cards:TcardProps[]
-    footer:{
+  cta: {
+    header: Theader
+    cards: TcardProps[]
+    footer: {
       title: string
-      button:Tbutton
+      button: Tbutton
     }
   }
-  successStory:{
-    header:Theader
-    cards:TcardProps[]
-    footer:{
+  successStory: {
+    header: Theader
+    cards: TcardProps[]
+    footer: {
       title: string
-      button:Tbutton
+      button: Tbutton
     }
   }
 }
@@ -255,68 +256,68 @@ export type Tindustry ={
 //page
 export type Tproduct = {
   hero: TheroProps
-  problems:{
+  problems: {
     header: Theader
     card: TcardProps
-    footer:{
-      header:Theader
+    footer: {
+      header: Theader
       button: Tbutton[]
     }
   }
-  solutions:{
-    header:Theader
-    cards:TcardProps[]
-    footer:{
-      button:Tbutton[]
+  solutions: {
+    header: Theader
+    cards: TcardProps[]
+    footer: {
+      button: Tbutton[]
     }
   }
-  guide:{
-    header:Theader
-    features:{
-      icons:{
+  guide: {
+    header: Theader
+    features: {
+      icons: {
         icon: React.ReactNode | keyof typeof LucideIcons
         text: string
       }[]
-      header:Theader
+      header: Theader
       link: Tbutton
       img: string | React.ReactNode | keyof typeof LucideIcons
     }[]
-    footer:{
-      header:Theader
+    footer: {
+      header: Theader
       button: Tbutton[]
     }
   }
-  successStory:{
-    header:Theader
+  successStory: {
+    header: Theader
     cards: TcardProps[]
-    items:{
-      header:Theader
+    items: {
+      header: Theader
     }[]
-    footer:{
-      header:Theader
+    footer: {
+      header: Theader
       button: Tbutton[]
     }
   }
-  pricing:{
-    header:Theader
+  pricing: {
+    header: Theader
     items: {
-      header:Theader
-      points:{
-        header:Theader
+      header: Theader
+      points: {
+        header: Theader
       }[]
     }
-    footer:{
-      header:Theader
-      button:Tbutton[]
+    footer: {
+      header: Theader
+      button: Tbutton[]
     }
   }
-  cta:{
-    header:Theader
-    item:{
-      header:Theader
+  cta: {
+    header: Theader
+    item: {
+      header: Theader
     }
-    footer:{
-      header:Theader
+    footer: {
+      header: Theader
       button: Tbutton[]
     }
   }

@@ -1,10 +1,10 @@
 "use client"
-import { useState, useRef, useEffect, ReactElement, ReactNode } from "react"
+import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-import { format } from 'date-fns/format'
+import { format } from "date-fns/format"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
@@ -15,22 +15,24 @@ import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
-import { PhoneInput } from 'react-international-phone';
-import 'react-international-phone/style.css';
-import { isValidPhoneNumber } from "libphonenumber-js";
-import { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
-import {fetchTimezones} from "@repo/ui/api/getTimeZone"
+import { PhoneInput } from "react-international-phone"
+import "react-international-phone/style.css"
+import { isValidPhoneNumber } from "libphonenumber-js"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
+import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
 import { subscribeNewsletter } from "@repo/ui/api/subscribe"
 import { sendCommunicationAction } from "@repo/ui/api/communication"
+import { title } from "process"
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
-    id:"appointment",
+    id: "appointment",
     title: "Book an Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
+    successTitle: "Thank You!",
     successMessage: "Your booking has been confirmed successfully!",
     showTerms: true,
     termsText: "Terms of Service",
@@ -43,7 +45,7 @@ export const LdBookingFormConfig: TformConfig = {
         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
             message: "Invalid phone number",
-          }),
+        }),
         email: z.string().email("Please enter a valid email"),
         message: z.string().optional(),
         newsletter: z.boolean().default(true),
@@ -74,21 +76,20 @@ export const LdBookingFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            placeholder: "Your name *",
+            placeholder: "Enter your name *",
             required: true,
             className: "w-1/2 pr-2 mb-3",
         },
         {
             name: "phone",
             type: "phone",
-            placeholder: "Phone number",
             required: true,
             className: "w-1/2 pl-2 mb-3",
         },
         {
             name: "email",
             type: "email",
-            placeholder: "Your email *",
+            placeholder: "Enter your email *",
             required: true,
             className: "w-full mb-3",
         },
@@ -108,23 +109,24 @@ export const LdBookingFormConfig: TformConfig = {
 }
 
 export const LdContactFormConfig: TformConfig = {
-    id:"contact",
+    id: "contact",
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
+    successTitle: "Thank You!",
     successMessage: "Your message has been sent!",
     showTerms: true,
     schema: z.object({
         enquiryType: z.string().default("Free Trial"),
         email: z.string().email("Please enter a valid email"),
-        message: z.string().min(10, "Message must be at least 10 characters"),
+        message: z.string().optional(),
         newsletter: z.boolean().default(true),
     }),
     fields: [
         {
             name: "enquiryType",
             type: "select",
-            placeholder: "Select an option *",
+            placeholder: "Select an option",
             required: true,
             className: "w-full mb-3",
             options: [
@@ -137,7 +139,7 @@ export const LdContactFormConfig: TformConfig = {
         {
             name: "email",
             type: "email",
-            placeholder: "Your email *",
+            placeholder: "Enter your email *",
             required: true,
             className: "w-full mb-3",
         },
@@ -159,10 +161,11 @@ export const LdContactFormConfig: TformConfig = {
 }
 
 export const LdDownloadFormConfig: TformConfig = {
-    id:"download",
+    id: "download",
     title: "Download Resources",
     description: "Fill out the form to access our content",
     submitText: "Download Now",
+    successTitle: "Happy Reading!",
     successMessage: "Your download will start shortly!",
     showTerms: true,
     schema: z.object({
@@ -174,14 +177,14 @@ export const LdDownloadFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            placeholder: "Your name *",
+            placeholder: "Enter your name *",
             required: true,
             className: "w-full mb-3",
         },
         {
             name: "email",
             type: "email",
-            placeholder: "Your email *",
+            placeholder: "Enter your email *",
             required: true,
             className: "w-full mb-3",
         },
@@ -195,12 +198,12 @@ export const LdDownloadFormConfig: TformConfig = {
     ],
 }
 
-// Configurations for the BigForm component
 export const LdContactPageFormConfig: TformConfig = {
-    id:"contact",
+    id: "contact",
     title: "Contact Us",
     description: "Get in touch with our team",
     submitText: "Send Message",
+    successTitle: "Thank You!",
     successMessage: "Your message has been sent successfully!",
     showTerms: true,
     termsText: "Terms of Service",
@@ -212,12 +215,15 @@ export const LdContactPageFormConfig: TformConfig = {
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().min(1, "Email is required").email("Please enter a valid email"),
         company: z.string().optional(),
-        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-            message: "Invalid phone number",
-          }).optional(),
+        phone: z
+            .string()
+            .refine((iVal) => isValidPhoneNumber(iVal), {
+                message: "Invalid phone number",
+            })
+            .optional(),
         product: z.string().optional(),
         enquiryType: z.string().optional(),
-        message: z.string().min(10, "Message must be at least 10 characters"),
+        message: z.string().optional(),
         newsletter: z.boolean().default(true),
     }),
     fields: [
@@ -247,8 +253,7 @@ export const LdContactPageFormConfig: TformConfig = {
         {
             name: "phone",
             type: "phone",
-            label: "Phone",
-            placeholder: "Your phone number",
+            label: "Phone Number",
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
         },
         {
@@ -298,6 +303,7 @@ export const LdBookingPageFormConfig: TformConfig = {
     title: "Book Appointment",
     description: "Fill out the form below to schedule a meeting with us.",
     submitText: "Book Now",
+    successTitle: "Thank You!",
     successMessage: "Your booking has been confirmed successfully!",
     showTerms: true,
     termsText: "Terms of Service",
@@ -312,9 +318,12 @@ export const LdBookingPageFormConfig: TformConfig = {
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().min(1, "Email is required").email("Please enter a valid email"),
         company: z.string().optional(),
-        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-            message: "Invalid phone number",
-          }).optional(),
+        phone: z
+            .string()
+            .refine((iVal) => isValidPhoneNumber(iVal), {
+                message: "Invalid phone number",
+            })
+            .optional(),
         message: z.string().optional(),
         newsletter: z.boolean().default(true),
     }),
@@ -354,8 +363,7 @@ export const LdBookingPageFormConfig: TformConfig = {
         {
             name: "phone",
             type: "phone",
-            label: "Phone",
-            placeholder: "Your phone number",
+            label: "Phone Number",
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
         },
         {
@@ -382,97 +390,101 @@ export const LdBookingPageFormConfig: TformConfig = {
     ],
 }
 
-export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken:string) {
+export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string) {
     try {
-    // Construct payload with required types
-    const LDateObj = idFormData.date instanceof Date ? idFormData.date : new Date(idFormData.date)
-    const LFormattedDate = LDateObj.toISOString().split("T")[0]
-    const LdPayload = {
-      date: LFormattedDate as string,
-      time: idFormData.timeSlot as string,
-      timezone: idFormData.timezone as string,
-      contact:{
-        name: idFormData.name,
-        phone: idFormData.phone,
-        email: idFormData.email,
-        notes: idFormData.message || "",
-      },
-      recaptchaToken: iRecaptchaToken
-    }
-  
-      const LdResponse = await bookAppointmentAction(LdPayload)
+        const LDateObj = idFormData.date instanceof Date ? idFormData.date : new Date(idFormData.date);
+        const LFormattedDate = LDateObj.toISOString().split("T")[0];
 
-      if (idFormData.newsletter) {
-        const LdNewFormData = new FormData()
-        LdNewFormData.append('email', idFormData.email)
-        await subscribeNewsletter({message:""}, LdNewFormData)
-      }
-  
-      if (LdResponse.error) {
-        return { error: LdResponse.error }
-      }
-  
-      return {
-        data: LdResponse.data,
-        message: LdResponse.message,
-      }
-    } catch (error) {
-      console.error("Client-side appointment error", error)
-      return { error: "Something went wrong while booking" }
-    }
-  }
-
-export async function fnSubmitContact(idFormData: any, iRecaptchaToken:string) {
-    try {
         const LdPayload = {
-        email: idFormData.email,
-        notes: idFormData.message || "",
-        option: idFormData.enquiryType || "Free Trial",
-        recaptchaToken: iRecaptchaToken
-        }
+            date: LFormattedDate,
+            time: idFormData.timeSlot,
+            timezone: idFormData.timezone,
+            contact: {
+                name: idFormData.name,
+                phone: idFormData.phone,
+                email: idFormData.email,
+                notes: idFormData.message || "",
+            },
+            recaptchaToken: iRecaptchaToken,
+        };
 
-        const LdResponse = await sendCommunicationAction(LdPayload)
+        const LdResponse = await bookAppointmentAction(LdPayload);
 
         if (idFormData.newsletter) {
-        const LdNewFormData = new FormData()
-        LdNewFormData.append("email", idFormData.email)
-        await subscribeNewsletter({ message: "" }, LdNewFormData)
+            const LdNewFormData = new FormData();
+            LdNewFormData.append("email", idFormData.email);
+            await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
 
         if (LdResponse.error) {
-        return { error: LdResponse.error }
+            return { error: LdResponse.error };
+        }
+        const L_STATUS = LdResponse?.data?.message?.status;
+
+        const lTitle = L_STATUS === "Unverified"
+            ? "Welcome To Our Family!"
+            : "Thank You!";
+
+        const lMessage = L_STATUS === "Unverified"
+            ? "Please check your email to confirm the appointment"
+            : "Booking confirmed successfully";
+
+        return {
+            data: LdResponse.data,
+            title: lTitle,
+            message: lMessage,
+        };
+    } catch (error) {
+        console.error("Client-side appointment error", error);
+        return { error: "Something went wrong while booking" };
+    }
+}
+
+export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) {
+    try {
+        const LdPayload = {
+            email: idFormData.email,
+            notes: idFormData.message || "",
+            option: idFormData.enquiryType || "Free Trial",
+            recaptchaToken: iRecaptchaToken,
+        }
+        const LdResponse = await sendCommunicationAction(LdPayload)
+
+        if (idFormData.newsletter) {
+            const LdNewFormData = new FormData()
+            LdNewFormData.append("email", idFormData.email)
+            await subscribeNewsletter({ message: "" }, LdNewFormData)
+        }
+
+        if (LdResponse.error) {
+            return { error: LdResponse.error }
         }
 
         return {
-        data: LdResponse.data,
-        message: LdResponse.message,
+            data: LdResponse.data,
+            message: LdResponse.message,
         }
     } catch (error) {
         console.error("Client-side communication error:", error)
         return { error: "Something went wrong while submitting the contact form." }
     }
 }
-  
 
-/**
- * SectionForm - A flexible form component that renders different form types based on configuration.
- * This component creates a complete form UI with validation, submission handling, and success/error states.
- * It dynamically renders different field types (text, select, date, etc.) based on the provided configuration.
- */
-
-export function SectionForm({
+function InnerSectionForm({
     config,
     onSuccess,
     className = "",
     defaultValues,
-    hideCardHeader = false, // Default to false to maintain backward compatibility
+    hideCardHeader = false,
 }: TdynamicFormProps): ReactElement {
-    // Tracks whether the form is currently being submitted to show loading state
-    const [IsSubmitting, fnSetIsSubmitting] = useState(false)
-    // Reference to the form DOM element for potential scrolling or focus management
-    const FormRef = useRef<HTMLDivElement>(null)
-    // Controls visibility of time slots based on whether date and timezone are selected
+    const [Timezones, fnSetTimezones] = useState<string[]>([])
+    const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
+    const [TimeSlots, fnSetTimeSlots] = useState<TimeSlot[]>([])
+    const [IsLoadingSlots, fnSetILoadingSlots] = useState(false)
     const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false)
+    const [IsSubmitting, fnSetIsSubmitting] = useState(false)
+    const FormRef = useRef<HTMLDivElement>(null)
+    const { executeRecaptcha } = useReCaptcha()
 
     // Sets up default values for all possible form fields, overridden by any provided values
     const LdInitialValues = {
@@ -481,25 +493,80 @@ export function SectionForm({
         message: "",
         phone: "",
         newsletter: true,
-        agreeTerms: true,
         timezone: "",
         timeSlot: "",
         ...defaultValues,
     }
+
     // Initializes the form with react-hook-form and connects it to the Zod validation schema
     const LdForm = useForm<z.infer<typeof config.schema>>({
         resolver: zodResolver(config.schema),
         defaultValues: LdInitialValues,
         mode: "onTouched",
     })
+
     // Watches specific form fields to react to their changes
     const SelectedDate = LdForm.watch("date")
     const SelectedTimezone = LdForm.watch("timezone")
-    /**
-      * This effect shows or hides time slots based on date and timezone selection.
-      * Time slots are only shown when both date and timezone have been selected.
-      * If either field is cleared, it also resets any selected time slot.
-      */
+
+    // Fetch timezones once
+    useEffect(() => {
+        const fnLoadTimezones = async () => {
+            try {
+                const result = await fetchTimezones()
+                if (result?.data) {
+                    fnSetTimezones(result.data)
+                }
+            } catch (err) {
+                console.error("Failed to load timezones:", err)
+            } finally {
+                fnSetIsLoadingTimezones(false)
+            }
+        }
+
+        fnLoadTimezones()
+    }, [])
+
+    // Set default timezone only once if empty
+    useEffect(() => {
+        const LCurrentTimezone = LdForm.getValues("timezone")
+        if (!LCurrentTimezone && Timezones.length > 0) {
+            const LDefaultTz = Timezones.find((z) => z.includes("CET")) || "UTC"
+            LdForm.setValue("timezone", LDefaultTz)
+        }
+    }, [Timezones])
+
+    type TimeSlot = {
+        time: string
+        availability: boolean
+    }
+
+    // fetch timeslots
+    useEffect(() => {
+        const loadTimeSlots = async () => {
+            if (SelectedDate && SelectedTimezone) {
+                fnSetILoadingSlots(true)
+                try {
+                    const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd")
+                    const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone)
+                    if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
+                        fnSetTimeSlots(LdSlotResult.data)
+                    } else {
+                        fnSetTimeSlots([])
+                    }
+                } catch (error) {
+                    console.error("Error loading slots:", error)
+                    fnSetTimeSlots([])
+                } finally {
+                    fnSetILoadingSlots(false)
+                }
+            }
+        }
+
+        loadTimeSlots()
+    }, [SelectedDate, SelectedTimezone])
+
+    // Setting Timeslots
     useEffect(() => {
         if (SelectedDate && SelectedTimezone) {
             fnSetShowTimeSlots(true)
@@ -511,123 +578,45 @@ export function SectionForm({
         }
     }, [SelectedDate, SelectedTimezone, LdForm])
 
-    /**
-     * Handles form submission after validation passes.
-     * Shows a loading state, simulates an API call, and then either
-     * displays success or error messages based on the result.
-     */
-
+    // Submit Handler
     const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
-        const { executeRecaptcha } = useReCaptcha()
-
         fnSetIsSubmitting(true)
         if (!executeRecaptcha) {
-            return;
+            return
         }
 
         try {
-            const LdRecaptchaToken = await executeRecaptcha("submit");
-          let LdResponse
-      
-          if (config.id === "appointment") {
-            
-            LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
-          }else if (config.id === "contact") {
-            LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-          } else {
-            throw new Error("Unsupported form type")
-          }
-      
-          if (LdResponse.error) {
-            throw new Error(LdResponse.error)
-          }
-      
-          LdForm.reset(LdInitialValues)
-          onSuccess(config.successMessage || LdResponse.message || "Success!")
-      
-        } catch (error:any) {
-          LdForm.setError("root", {
-            type: "manual",
-            message: error?.message || "Something went wrong",
-          })
-        } finally {
-          fnSetIsSubmitting(false)
-        }
-      }
-      
-    const [Timezones, fnSetTimezones] = useState<string[]>([]);
-    const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true);
-    
-    // Fetch timezones once
-    useEffect(() => {
-      const fnLoadTimezones = async () => {
-        try {
-          const result = await fetchTimezones();
-          if (result?.data) {
-            fnSetTimezones(result.data);
-          }
-        } catch (err) {
-          console.error("Failed to load timezones:", err);
-        } finally {
-            fnSetIsLoadingTimezones(false);
-        }
-      };
-    
-      fnLoadTimezones();
-    }, []);
-    
-    // Set default timezone only once if empty
-    useEffect(() => {
-      const LCurrentTimezone = LdForm.getValues("timezone");
-      if (!LCurrentTimezone && Timezones.length > 0) {
-        const LDefaultTz = Timezones.find((z) => z.includes("CET")) || "UTC";
-        LdForm.setValue("timezone", LDefaultTz);
-      }
-    }, [Timezones]);
+            const LdRecaptchaToken = await executeRecaptcha("submit")
+            let LdResponse
 
-
-    type TimeSlot = {
-        time: string
-        availability: boolean
-      }
-
-      // fetch timeslots
-      const [TimeSlots, fnSetTimeSlots] = useState<TimeSlot[]>([])
-      const [IsLoadingSlots, fnSetILoadingSlots] = useState(false)
-      
-      useEffect(() => {
-        const loadTimeSlots = async () => {
-          if (SelectedDate && SelectedTimezone) {
-            fnSetILoadingSlots(true)
-            try {
-              const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd")
-              const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone)
-              if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
-                fnSetTimeSlots(LdSlotResult.data)
-              } else {
-                fnSetTimeSlots([]) // fallback if something wrong
-              }
-            } catch (error) {
-              console.error("Error loading slots:", error)
-              fnSetTimeSlots([])
-            } finally {
-                fnSetILoadingSlots(false)
+            if (config.id === "appointment") {
+                LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
+                console.log(LdResponse)
+                config.successMessage = LdResponse.message ? LdResponse.message : LdResponse.data.message
+                config.successTitle = LdResponse.title ? LdResponse.title : LdResponse.data.title
+            } else if (config.id === "contact") {
+                LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
+            } else {
+                throw new Error("Unsupported form type")
             }
-          }
+
+            if (LdResponse.error) {
+                throw new Error(LdResponse.error)
+            }
+
+            LdForm.reset(LdInitialValues)
+            onSuccess(config.successMessage, config.successTitle)
+        } catch (error: any) {
+            LdForm.setError("root", {
+                type: "manual",
+                message: error?.message || "Something went wrong",
+            })
+            console.log(error?.message)
+        } finally {
+            fnSetIsSubmitting(false)
         }
-      
-        loadTimeSlots()
-      }, [SelectedDate, SelectedTimezone])
-      
+    }
 
-
-
-    /**
-     * Renders a specific form field based on its configuration.
-     * This function handles the rendering logic for all supported field types,
-     * including text inputs, selects, textareas, date pickers, and checkboxes.
-     * It also applies appropriate styling and validation to each field.
-     */
     const fnRenderField = (idField: TformFieldConfig): ReactNode => {
         if (idField.type === "timeslot" && !ShowTimeSlots) return null
 
@@ -671,6 +660,13 @@ export function SectionForm({
                                         value={iField.value || ""}
                                         onChange={iField.onChange}
                                         onBlur={iField.onBlur}
+                                        style={
+                                            {
+                                                '--react-international-phone-height': '48px',
+                                                '--react-international-phone-flag-height': '48px',
+                                                '--react-international-phone-flag-width': '28px',
+                                            } as React.CSSProperties
+                                        }
                                     />
                                 </FormControl>
                                 <FormMessage />
@@ -725,7 +721,7 @@ export function SectionForm({
                                         value={iField.value || ""}
                                     />
                                 </FormControl>
-                                <FormMessage />
+                                {idField.name !== "message" && <FormMessage />}
                             </FormItem>
                         )}
                     />
@@ -762,7 +758,7 @@ export function SectionForm({
                                         />
                                     </PopoverContent>
                                 </Popover>
-                                <FormMessage />
+                                {idField.name !== "date" && <FormMessage />}
                             </FormItem>
                         )}
                     />
@@ -777,29 +773,23 @@ export function SectionForm({
                         render={({ field: iField }) => (
                             <FormItem className={idField.className}>
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
-                                    <Select
-                                        onValueChange={iField.onChange}
-                                        value={iField.value || ""}
-                                        disabled={IsLoadingTimezones}
-                                    >
+                                <Select onValueChange={iField.onChange} value={iField.value || ""} disabled={IsLoadingTimezones}>
                                     <FormControl>
                                         <SelectTrigger className="h-12">
-                                            <SelectValue
-                                            placeholder={IsLoadingTimezones ? "Loading timezones..." : idField.placeholder}
-                                            />
+                                            <SelectValue placeholder={IsLoadingTimezones ? "Loading timezones..." : idField.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                            {Timezones.map((iTimeZone) => (
-                                <SelectItem key={iTimeZone} value={iTimeZone}>
-                                {iTimeZone}
-                                </SelectItem>
-                            ))}
-                            </SelectContent>
-                        </Select>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                                        {Timezones.map((iTimeZone) => (
+                                            <SelectItem key={iTimeZone} value={iTimeZone}>
+                                                {iTimeZone}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                                {idField.name !== "timezone" && <FormMessage />}
+                            </FormItem>
+                        )}
                     />
                 )
 
@@ -811,38 +801,43 @@ export function SectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                        <FormItem className={idField.className}>
-                            {idField.label && <FormLabel>{idField.label}</FormLabel>}
-                            <div className="grid grid-cols-3 gap-2">
-                            {IsLoadingSlots ? (
-                                <p className="col-span-3 text-muted-foreground text-sm">Loading slots...</p>
-                            ) : TimeSlots.length === 0 ? (
-                                <p className="col-span-3 text-sm text-red-500">No slots available</p>
-                            ) : (
-                                TimeSlots.map(({ time, availability }) => {
-                                const fromTime = time.slice(11, 16)
-                                const [hourStr = "00", minuteStr = "00"] = fromTime.split(":");
-                                const hour = parseInt(hourStr, 10);
-                                const slotLabel = `${fromTime} - ${(hour + 1) % 24}:${minuteStr}`;
-                                const formattedValue = `${fromTime}:00`
+                            <FormItem className={idField.className}>
+                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
+                                <div className="grid grid-cols-3 gap-2">
+                                    {IsLoadingSlots ? (
+                                        <p className="col-span-3 text-muted-foreground text-sm">Loading slots...</p>
+                                    ) : TimeSlots.length === 0 ? (
+                                        <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">No slots available</p>
+                                    ) : (
+                                        TimeSlots.map(({ time, availability }) => {
+                                            const fromTime = time.slice(11, 16)
+                                            const [hourStr = "00", minuteStr = "00"] = fromTime.split(":")
+                                            const hour = Number.parseInt(hourStr, 10)
+                                            const slotLabel = `${fromTime} - ${(hour + 1) % 24}:${minuteStr}`
+                                            const formattedValue = `${fromTime}:00`
 
-                                return (
-                                    <Button
-                                    key={time}
-                                    type="button"
-                                    variant={availability ? "default" : "outline"}
-                                    className="h-10"
-                                    onClick={() => iField.onChange(formattedValue)}
-                                    disabled={!availability}
-                                    >
-                                    {slotLabel}
-                                    </Button>
-                                )
-                                })
-                            )}
-                            </div>
-                            <FormMessage />
-                        </FormItem>
+                                            return (
+                                                <Button
+                                                    key={time}
+                                                    type="button"
+                                                    variant={availability ? (iField.value === formattedValue ? "default" : "outline") : "outline"}
+                                                    className={`h-10 ${iField.value === formattedValue
+                                                        ? "bg-black text-white hover:bg-black"
+                                                        : !availability
+                                                            ? "bg-gray-50 text-gray-400 hover:bg-gray-50 hover:text-gray-400 cursor-not-allowed"
+                                                            : ""
+                                                        }`}
+                                                    onClick={() => iField.onChange(formattedValue)}
+                                                    disabled={!availability}
+                                                >
+                                                    {slotLabel}
+                                                </Button>
+                                            )
+                                        })
+                                    )}
+                                </div>
+                                <FormMessage />
+                            </FormItem>
                         )}
                     />
                 )
@@ -871,7 +866,6 @@ export function SectionForm({
     }
 
     return (
-        <ReCaptchaProvider reCaptchaKey={process.env.RECAPTCHA_SITE_KEY ?? ""}>
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
             {!hideCardHeader && (
                 <div className="bg-primary text-border p-4">
@@ -889,7 +883,13 @@ export function SectionForm({
                         <div className="flex flex-wrap -mx-2">{config.fields.map(fnRenderField)}</div>
 
                         <div className="space-y-4">
-                            <Button type="submit" className="w-full h-12 rounded-full" disabled={IsSubmitting}>
+                            <Button
+                                type="submit"
+                                className="w-full h-12 rounded-full"
+                                disabled={
+                                    IsSubmitting || !LdForm.formState.isValid || Object.keys(LdForm.formState.dirtyFields).length === 0
+                                }
+                            >
                                 {IsSubmitting ? (
                                     <span className="flex items-center justify-center">
                                         <svg
@@ -936,9 +936,17 @@ export function SectionForm({
                 </Form>
             </div>
         </div>
-        </ReCaptchaProvider>
     )
 }
 
-// Export the original form as "form" as requested
-export const sectionForm = SectionForm
+export const SectionForm = (props: TdynamicFormProps): ReactElement => {
+    const WrappedComponent = (innerProps: TdynamicFormProps) => {
+        return (
+            <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}>
+                <InnerSectionForm {...innerProps} />
+            </ReCaptchaProvider>
+        )
+    }
+    return <WrappedComponent {...props} />
+}
+
