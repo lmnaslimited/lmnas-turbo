@@ -322,3 +322,20 @@ export type Tproduct = {
     }
   }
 }
+
+export type TapiResponse = {
+  message?: string
+  error?: string
+  data?: any
+}
+
+export type Tslot = {
+  time: string
+  availability: boolean
+}
+
+export type TslotResponse = {
+  message?: string
+  data?: Tslot[]
+  error?: string
+}

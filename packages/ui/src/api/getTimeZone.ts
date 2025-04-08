@@ -1,41 +1,36 @@
 'use server'
 
-type IapiResponse = {
-  message?: string
-  data?: any
-  error?: string
-}
+import { TapiResponse } from "@repo/ui/type"
 
-export async function fetchTimezones(): Promise<IapiResponse> {
+export async function fetchTimezones(): Promise<TapiResponse> {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
-  const headers = {
+  const ldHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,
-    'Content-Type': 'application/json',
-    Cookie: 'full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=',
+    "Content-Type": "application/json",
+    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   }
 
   try {
-    const res = await fetch(
-      `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.get_timezones`,
-      {
-        method: 'GET',
-        headers,
-        redirect: 'follow',
-      }
-    )
+    const LTimezoneUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.get_timezones`
 
-    if (!res.ok) {
-      throw new Error('Failed to fetch timezones')
+    const LdResponse = await fetch(LTimezoneUrl, {
+      method: "GET",
+      headers: ldHeaders,
+      redirect: "follow",
+    })
+
+    if (!LdResponse.ok) {
+      throw new Error("Failed to fetch timezones")
     }
 
-    const json = await res.json()
+    const LdJson = await LdResponse.json()
 
     return {
-      message: 'Timezones fetched successfully',
-      data: json.message,
+      message: "Timezones fetched successfully",
+      data: LdJson.message,
     }
   } catch (error: any) {
-    return { error: error.message || 'Something went wrong' }
+    return { error: error.message || "Something went wrong" }
   }
 }

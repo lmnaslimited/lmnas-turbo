@@ -1,29 +1,23 @@
 "use server"
 
 import { z } from "zod"
+import { TapiResponse } from "@repo/ui/type"
 
-export type IapiResponse = {
-  message?: string
-  error?: string
-  data?: any
-}
-
-
-async function fnVerifyRecaptcha(token: string): Promise<boolean> {
-  const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
-  const URL = `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`
+async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
+  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
+  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
 
   try {
-    const response = await fetch(URL, { method: "POST" })
-    const data = await response.json()
-    return data.success && data.score >= 0.5
+    const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
+    const LdData = await LdResponse.json()
+    return LdData.success && LdData.score >= 0.5
   } catch (error) {
     console.error("reCAPTCHA verification error:", error)
     return false
   }
 }
 
-const appointmentSchema = z.object({
+const LdAppointmentSchema = z.object({
   date: z.string(),
   time: z.string(),
   timezone: z.string(),
@@ -37,46 +31,48 @@ const appointmentSchema = z.object({
 })
 
 export async function bookAppointmentAction(
-  formData: z.infer<typeof appointmentSchema>
-): Promise<IapiResponse> {
+  iFormData: z.infer<typeof LdAppointmentSchema>
+): Promise<TapiResponse> {
 
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
     Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   })
-  const { date, time, timezone, contact, recaptchaToken } = formData
 
-  const isHuman = await fnVerifyRecaptcha(recaptchaToken)
-  if (!isHuman) {
+  const { date, time, timezone, contact, recaptchaToken } = iFormData
+
+  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
+  if (!LIsHuman) {
     return { error: "reCAPTCHA verification failed" }
   }
 
   try {
-    const payload = {
+    const LdPayload = {
       date,
       time,
       tz: timezone,
-      contact: JSON.stringify(contact)
+      contact: JSON.stringify(contact),
     }
-    const url = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
 
-    const response = await fetch(url, {
+    const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
+
+    const LdResponse = await fetch(LBookingUrl, {
       method: "POST",
       headers: ldHeaders,
       redirect: "follow",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(LdPayload),
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      return { error: errorText }
+    if (!LdResponse.ok) {
+      const lErrorText = await LdResponse.text()
+      return { error: lErrorText }
     }
 
-    const result = await response.json()
+    const LdResult = await LdResponse.json()
     return {
       message: "Booking confirmed successfully",
-      data: result,
+      data: LdResult,
     }
   } catch (error) {
     console.error("Booking error:", error)

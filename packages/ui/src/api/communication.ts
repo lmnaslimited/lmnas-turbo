@@ -1,77 +1,68 @@
 "use server"
 
 import { z } from "zod"
+import { TapiResponse } from "@repo/ui/type"
 
-export type IapiResponse = {
-    message?: string
-    error?: string
-    data?: any
-  }
-
-async function fnVerifyRecaptcha(token: string): Promise<boolean> {
-  const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
-  const URL = `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`
+async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
+  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
+  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
 
   try {
-    const response = await fetch(URL, { method: "POST" })
-    const data = await response.json()
-    return data.success && data.score >= 0.5
+    const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" })
+    const LdData = await LdRecaptchaResponse.json()
+    return LdData.success && LdData.score >= 0.5
   } catch (error) {
     console.error("reCAPTCHA verification error:", error)
     return false
   }
 }
 
-// schema for communication form
-const communicationSchema = z.object({
+const LdCommunicationSchema = z.object({
   email: z.string().email(),
   notes: z.string().min(1, "Message is required"),
   option: z.string().optional(),
   recaptchaToken: z.string(),
 })
 
-export async function sendCommunicationAction(
-  formData: z.infer<typeof communicationSchema>
-): Promise<IapiResponse> {
-  
+export async function sendCommunicationAction(iFormData: z.infer<typeof LdCommunicationSchema>): Promise<TapiResponse> {
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
     Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   })
-    const { email, notes, option, recaptchaToken } = formData
 
-//   // Optional: reCAPTCHA validation
-  const isHuman = await fnVerifyRecaptcha(recaptchaToken)
-  if (!isHuman) {
+  const { email, notes, option, recaptchaToken } = iFormData
+
+  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
+  if (!LIsHuman) {
     return { error: "reCAPTCHA verification failed" }
   }
 
   try {
-    const url = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.templates.utils.send_message`
+    const LContactUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.templates.utils.send_message`
 
-    const payload = {
+    const LdPayload = {
       sender: email,
       message: notes,
       subject: `From Website - enquiry type : ${option || "Free Trial"}`,
     }
 
-    const response = await fetch(url, {
+    const LdResponse = await fetch(LContactUrl, {
       method: "POST",
       headers: ldHeaders,
       redirect: "follow",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(LdPayload),
     })
 
-    if (!response.ok) {
-      const errorText = await response.text()
+    if (!LdResponse.ok) {
+      const errorText = await LdResponse.text()
       return { error: errorText }
     }
 
-    const result = await response.json()
+    const LdResult = await LdResponse.json()
     return {
       message: "Thank you for your message",
-      data: result,
+      data: LdResult,
     }
   } catch (error) {
     console.error("Server-side error:", error)

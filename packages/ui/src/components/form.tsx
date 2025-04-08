@@ -1,7 +1,6 @@
 "use client"
 import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
 import type React from "react"
-
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -26,6 +25,7 @@ import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
 import { subscribeNewsletter } from "@repo/ui/api/subscribe"
 import { sendCommunicationAction } from "@repo/ui/api/communication"
+import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
@@ -77,7 +77,7 @@ export const LdBookingFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            placeholder: "Enter your name *",
+            placeholder: "Enter your full name *",
             required: true,
             className: "w-1/2 pr-2 mb-3",
         },
@@ -90,14 +90,15 @@ export const LdBookingFormConfig: TformConfig = {
         {
             name: "email",
             type: "email",
-            placeholder: "Enter your email *",
+            placeholder: "Enter your email address *",
             required: true,
             className: "w-full mb-3",
         },
         {
             name: "message",
             type: "textarea",
-            placeholder: "Additional information",
+            required: true,
+            placeholder: "Your message *",
             className: "w-full mb-3",
         },
         {
@@ -140,7 +141,7 @@ export const LdContactFormConfig: TformConfig = {
         {
             name: "email",
             type: "email",
-            placeholder: "Enter your email *",
+            placeholder: "Enter your email address *",
             required: true,
             className: "w-full mb-3",
         },
@@ -155,7 +156,6 @@ export const LdContactFormConfig: TformConfig = {
             name: "newsletter",
             type: "checkbox",
             placeholder: "Subscribe to newsletter",
-            required: true,
             className: "w-full mb-4",
         },
     ],
@@ -178,14 +178,14 @@ export const LdDownloadFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            placeholder: "Enter your name *",
+            placeholder: "Enter your full name *",
             required: true,
             className: "w-full mb-3",
         },
         {
             name: "email",
             type: "email",
-            placeholder: "Enter your email *",
+            placeholder: "Enter your email address*",
             required: true,
             className: "w-full mb-3",
         },
@@ -193,7 +193,6 @@ export const LdDownloadFormConfig: TformConfig = {
             name: "newsletter",
             type: "checkbox",
             placeholder: "Subscribe to newsletter",
-            required: true,
             className: "w-full mb-4",
         },
     ],
@@ -212,9 +211,8 @@ export const LdContactPageFormConfig: TformConfig = {
     schema: z.object({
         name: z
             .string()
-            .min(1, "Name is required")
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+        email: z.string().email("Please enter a valid email"),
         company: z.string().optional(),
         phone: z
             .string()
@@ -231,36 +229,31 @@ export const LdContactPageFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            label: "Full Name",
-            placeholder: "Enter your full name",
+            placeholder: "Enter your full name *",
             required: true,
             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
         },
         {
             name: "email",
             type: "email",
-            label: "Email Address *",
-            placeholder: "Enter your email",
+            placeholder: "Enter your email address*",
             required: true,
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
         },
         {
             name: "company",
             type: "text",
-            label: "Company Name",
             placeholder: "Enter your company name",
             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
         },
         {
             name: "phone",
             type: "phone",
-            label: "Phone Number",
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
         },
         {
             name: "product",
             type: "select",
-            label: "Select a Product",
             placeholder: "Select product",
             className: "w-full md:w-1/2 md:pr-2 mb-3",
             options: [
@@ -272,7 +265,6 @@ export const LdContactPageFormConfig: TformConfig = {
         {
             name: "enquiryType",
             type: "select",
-            label: "Enquiry Type",
             placeholder: "Select enquiry type",
             className: "w-full md:w-1/2 md:pl-2 mb-3",
             options: [
@@ -285,8 +277,7 @@ export const LdContactPageFormConfig: TformConfig = {
         {
             name: "message",
             type: "textarea",
-            label: "Your Message *",
-            placeholder: "Your message",
+            placeholder: "Your message *",
             required: true,
             className: "w-full mb-3",
         },
@@ -315,9 +306,8 @@ export const LdBookingPageFormConfig: TformConfig = {
         timeSlot: z.string({ required_error: "Please select a time slot." }),
         name: z
             .string()
-            .min(1, "Name is required")
             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        email: z.string().min(1, "Email is required").email("Please enter a valid email"),
+        email: z.string().email("Please enter a valid email"),
         company: z.string().optional(),
         phone: z
             .string()
@@ -332,7 +322,6 @@ export const LdBookingPageFormConfig: TformConfig = {
         {
             name: "date",
             type: "date",
-            label: "Date",
             placeholder: "Select date",
             required: true,
             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
@@ -340,7 +329,6 @@ export const LdBookingPageFormConfig: TformConfig = {
         {
             name: "timezone",
             type: "timezone",
-            label: "Timezone",
             placeholder: "Select timezone",
             required: true,
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
@@ -348,7 +336,6 @@ export const LdBookingPageFormConfig: TformConfig = {
         {
             name: "timeSlot",
             type: "timeslot",
-            label: "Available Time Slots",
             placeholder: "Select time slot",
             required: true,
             className: "w-full mb-3",
@@ -356,30 +343,26 @@ export const LdBookingPageFormConfig: TformConfig = {
         {
             name: "name",
             type: "text",
-            label: "Full Name *",
-            placeholder: "Enter your full name",
+            placeholder: "Enter your full name *",
             required: true,
             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
         },
         {
             name: "phone",
             type: "phone",
-            label: "Phone Number",
             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
         },
         {
             name: "email",
             type: "email",
-            label: "Email Address *",
-            placeholder: "Enter your email",
+            placeholder: "Enter your email address *",
             required: true,
             className: "w-full mb-3",
         },
         {
             name: "message",
             type: "textarea",
-            label: "Your Message *",
-            placeholder: "Additional information",
+            placeholder: "Your message *",
             className: "w-full mb-3",
         },
         {
@@ -425,19 +408,19 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
         if (LdResponse.error) {
             return { error: LdResponse.error }
         }
-        const L_STATUS = LdResponse?.data?.message?.status
+        const LStatus = LdResponse?.data?.message?.status
 
-        const lTitle = L_STATUS === "Unverified" ? "Welcome To Our Family!" : "Thank You!"
+        const LTitle = LStatus === "Unverified" ? "Welcome To Our Family!" : "Thank You!"
 
-        const lMessage =
-            L_STATUS === "Unverified"
+        const LMessage =
+            LStatus === "Unverified"
                 ? "Please check your email to confirm the appointment"
                 : "Booking confirmed successfully"
 
         return {
             data: LdResponse.data,
-            title: lTitle,
-            message: lMessage,
+            title: LTitle,
+            message: LMessage,
         }
     } catch (error) {
         console.error("Client-side appointment error", error)
@@ -475,6 +458,7 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
             data: LdResponse.data,
             message: LdResponse.message,
         }
+
     } catch (error) {
         console.error("Client-side communication error:", error)
         return { error: "Something went wrong while submitting the contact form." }
@@ -529,11 +513,8 @@ function InnerSectionForm({
     const SelectedDate = LdForm.watch("date")
     const SelectedTimezone = LdForm.watch("timezone")
 
-    // Fetch timezones once
+    // Fetches available timezones from the server
     useEffect(() => {
-        /**
-         * Fetches available timezones from the server
-         */
         const fnLoadTimezones = async () => {
             try {
                 const result = await fetchTimezones()
@@ -546,7 +527,6 @@ function InnerSectionForm({
                 fnSetIsLoadingTimezones(false)
             }
         }
-
         fnLoadTimezones()
     }, [])
 
@@ -564,11 +544,8 @@ function InnerSectionForm({
         availability: boolean
     }
 
-    // fetch timeslots
+    //   Fetches available time slots based on selected date and timezone
     useEffect(() => {
-        /**
-         * Fetches available time slots based on selected date and timezone
-         */
         const loadTimeSlots = async () => {
             if (SelectedDate && SelectedTimezone) {
                 fnSetILoadingSlots(true)
@@ -620,8 +597,8 @@ function InnerSectionForm({
 
             if (config.id === "appointment") {
                 LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
-                config.successMessage = LdResponse.message ? LdResponse.message : LdResponse.data.message
-                config.successTitle = LdResponse.title ? LdResponse.title : LdResponse.data.title
+                config.successMessage = LdResponse.message ? LdResponse.message : ""
+                config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.id === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
             } else {
@@ -639,17 +616,16 @@ function InnerSectionForm({
                 type: "manual",
                 message: error?.message || "Something went wrong",
             })
-            console.log(error?.message)
         } finally {
             fnSetIsSubmitting(false)
         }
     }
 
     /**
-     * Renders a form field based on its type and configuration
-     * idField - Field configuration object
-     * returns React node containing the rendered form field
-     */
+      * Renders a form field based on its type and configuration
+      * idField - Field configuration object
+      * returns React node containing the rendered form field
+      */
     const fnRenderField = (idField: TformFieldConfig): ReactNode => {
         if (idField.type === "timeslot" && !ShowTimeSlots) return null
 
@@ -663,12 +639,12 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <FormControl>
-                                    <Input
-                                        placeholder={idField.placeholder}
-                                        type={idField.type === "phone" ? "tel" : idField.type}
-                                        className={cn("h-12", idField.inputClassName, iFieldState.error && "border-red-400")}
+                                    <FloatingLabelInput
+                                        label={idField.label || idField.placeholder || ""}
+                                        type={idField.type}
+                                        error={!!iFieldState.error}
+                                        inputClassName={idField.inputClassName}
                                         {...iField}
                                         value={iField.value || ""}
                                     />
@@ -686,7 +662,6 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <FormControl>
                                     <PhoneInput
                                         defaultCountry="de"
@@ -716,7 +691,6 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <Select onValueChange={iField.onChange} value={iField.value || ""}>
                                     <FormControl>
                                         <SelectTrigger className="h-12">
@@ -745,7 +719,6 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <FormControl>
                                     <Textarea
                                         placeholder={idField.placeholder}
@@ -768,7 +741,6 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -805,7 +777,6 @@ function InnerSectionForm({
                         name={idField.name}
                         render={({ field: iField }) => (
                             <FormItem className={idField.className}>
-                                {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <Select onValueChange={iField.onChange} value={iField.value || ""} disabled={IsLoadingTimezones}>
                                     <FormControl>
                                         <SelectTrigger className="h-12">
@@ -973,10 +944,10 @@ function InnerSectionForm({
 }
 
 /**
- * Wrapper component that provides ReCaptcha functionality to the form
- * props - Form props passed to the inner form component
- * returns React element with ReCaptcha provider and inner form
- */
+* Wrapper component that provides ReCaptcha functionality to the form
+* props - Form props passed to the inner form component
+* returns React element with ReCaptcha provider and inner form
+*/
 export const SectionForm = (props: TdynamicFormProps): ReactElement => {
     /**
      * Inner component that wraps the form with ReCaptcha provider
@@ -992,4 +963,3 @@ export const SectionForm = (props: TdynamicFormProps): ReactElement => {
     }
     return <WrappedComponent {...props} />
 }
-
