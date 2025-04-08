@@ -22,7 +22,6 @@ export async function fetchTimeSlots(selectedDate: string, timezone: string): Pr
       "Content-Type": "application/json",
       "Cookie": "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
     })
-
     const response = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.get_appointment_slots?date=${selectedDate}&timezone=${timezone}`,
       {

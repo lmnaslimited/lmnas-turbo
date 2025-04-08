@@ -1,11 +1,23 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { Briefcase, ChartPie, DollarSign, EllipsisVertical, Factory, Globe, MoreHorizontal, Store, Truck, Users } from "lucide-react"
-
-import { cn } from "@repo/ui/lib/utils"
-import { Button } from "@repo/ui/components/ui/button"
+import * as React from "react";
+import Link from "next/link";
+import {
+  BrainCog,
+  Briefcase,
+  ChartPie,
+  Compass,
+  DollarSign,
+  EllipsisVertical,
+  Factory,
+  Globe,
+  MoreHorizontal,
+  Store,
+  Truck,
+  Users,
+} from "lucide-react";
+import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@repo/ui/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,10 +26,15 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
-} from "@repo/ui/components/ui/navigation-menu"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui/components/ui/dropdown-menu"
-import { ThemeToggle } from "@repo/ui/components/theme-toggle"
-import { SVGComponent } from "@repo/ui/svg/svgs"
+} from "@repo/ui/components/ui/navigation-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/ui/dropdown-menu";
+import { ThemeToggle } from "@repo/ui/components/theme-toggle";
+import { SVGComponent } from "@repo/ui/svg/svgs";
 
 const LaProducts = [
   {
@@ -26,49 +43,18 @@ const LaProducts = [
     description: "Powering Your Business Operations",
     icon: <Briefcase />,
   },
-  // {
-  //   title: "CPQ Cloud",
-  //   href: "/products/cpq-cloud",
-  //   description: "SaaS solution designed to assist businesses",
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="24"
-  //       height="24"
-  //       viewBox="0 0 24 24"
-  //       fill="none"
-  //       stroke="currentColor"
-  //       strokeWidth="2"
-  //       strokeLinecap="round"
-  //       strokeLinejoin="round"
-  //     >
-  //       <path d="M7 21a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v16Z" />
-  //       <path d="M12 10h.01" />
-  //     </svg>
-  //   ),
-  // },
-  // {
-  //   title: "CRM Cloud",
-  //   href: "/products/crm-cloud",
-  //   description: "Empowering Your Customer Relationship Management",
-  //   icon: (
-  //     <svg
-  //       xmlns="http://www.w3.org/2000/svg"
-  //       width="24"
-  //       height="24"
-  //       viewBox="0 0 24 24"
-  //       fill="none"
-  //       stroke="currentColor"
-  //       strokeWidth="2"
-  //       strokeLinecap="round"
-  //       strokeLinejoin="round"
-  //     >
-  //       <path d="M14 19a6 6 0 0 0-12 0" />
-  //       <circle cx="8" cy="9" r="4" />
-  //       <path d="M22 19a6 6 0 0 0-6-6 4 4 0 1 0 0-8" />
-  //     </svg>
-  //   ),
-  // },
+  {
+    title: "CPQ Cloud",
+    href: "/products/cpq-cloud",
+    description: "SaaS solution designed to assist businesses",
+    icon: <BrainCog />,
+  },
+  {
+    title: "CRM Cloud",
+    href: "/products/crm-cloud",
+    description: "Empowering Your Customer Relationship Management",
+    icon:     <Compass />,     
+  },
   // {
   //   title: "LUMI",
   //   href: "/products/lumi",
@@ -118,28 +104,28 @@ const LaProducts = [
   //     </svg>
   //   ),
   // },
-]
+];
 
 const LaIndustries = [
   {
     title: "Manufacturing",
     href: "/industries/manufacturing",
     description: "Industrial solutions for factories",
-    icon: <Factory />
+    icon: <Factory />,
   },
   {
     title: "Distribution",
     href: "/industries/distribution",
     description: "Supply chain optimization tools",
-    icon: <Truck />
+    icon: <Truck />,
   },
   {
     title: "Retail",
     href: "/industries/retail",
     description: "Point of sale and inventory management",
-    icon: <Store/>
+    icon: <Store />,
   },
-]
+];
 
 const LaMore = [
   {
@@ -158,7 +144,7 @@ const LaMore = [
     title: "Trending",
     href: "/trending-now",
   },
-]
+];
 
 const LaLanguages = [
   { code: "en", name: "English", flag: "🇬🇧" },
@@ -166,43 +152,46 @@ const LaLanguages = [
   // { code: "fr", name: "Français", flag: "🇫🇷" },
   // { code: "zh", name: "中文", flag: "🇨🇳" },
   // { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
-]
+];
 
 export default function Navbar(): React.ReactElement {
-  const [Language, fnSetLanguage] = React.useState("en")
-  const [IsScrolled, fnSetIsScrolled] = React.useState(false)
-  const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
-  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
-  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
+  const [Language, fnSetLanguage] = React.useState("en");
+  const [IsScrolled, fnSetIsScrolled] = React.useState(false);
+  const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false);
+  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] =
+    React.useState(false);
+  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
+    React.useState(false);
 
   // Handle scroll effect
   React.useEffect(() => {
-    const fnHandleScroll = (): void => { //only update no return
+    const fnHandleScroll = (): void => {
+      //only update no return
       if (window.scrollY > 10) {
-        fnSetIsScrolled(true)
+        fnSetIsScrolled(true);
       } else {
-        fnSetIsScrolled(false)
+        fnSetIsScrolled(false);
       }
-    }
+    };
 
-    window.addEventListener("scroll", fnHandleScroll)
+    window.addEventListener("scroll", fnHandleScroll);
     return () => {
-      window.removeEventListener("scroll", fnHandleScroll)
-    }
-  }, [])
+      window.removeEventListener("scroll", fnHandleScroll);
+    };
+  }, []);
 
   // Get current language display
   const fnGetCurrentLanguageDisplay = (): string => {
-    const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language)
-    return CurrentLang ? CurrentLang.code.toUpperCase() : "EN"
-  }
+    const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language);
+    return CurrentLang ? CurrentLang.code.toUpperCase() : "EN";
+  };
 
   return (
     <>
       <header
         className={cn(
           "sticky top-0 z-50 w-full border-b border-border ",
-          IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent ",
+          IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent "
         )}
       >
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
@@ -230,11 +219,17 @@ export default function Navbar(): React.ReactElement {
                             <Link href={idProduct.href} key={idProduct.title}>
                               <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                  <div className="w-6 h-6 flex items-center justify-center">{idProduct.icon}</div>
+                                  <div className="w-6 h-6 flex items-center justify-center">
+                                    {idProduct.icon}
+                                  </div>
                                 </div>
                                 <div>
-                                  <span className="font-medium text-md  ">{idProduct.title}</span>
-                                  <p className="text-xs text-muted-foreground ">{idProduct.description}</p>
+                                  <span className="font-medium text-md  ">
+                                    {idProduct.title}
+                                  </span>
+                                  <p className="text-xs text-muted-foreground ">
+                                    {idProduct.description}
+                                  </p>
                                 </div>
                               </div>
                             </Link>
@@ -258,11 +253,17 @@ export default function Navbar(): React.ReactElement {
                                 className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
                               >
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                  <div className="w-6 h-6 flex items-center justify-center">{idIndustry.icon}</div>
+                                  <div className="w-6 h-6 flex items-center justify-center">
+                                    {idIndustry.icon}
+                                  </div>
                                 </div>
                                 <div>
-                                  <span className="font-medium text-md  ">{idIndustry.title}</span>
-                                  <p className="text-xs text-muted-foreground ">{idIndustry.description}</p>
+                                  <span className="font-medium text-md  ">
+                                    {idIndustry.title}
+                                  </span>
+                                  <p className="text-xs text-muted-foreground ">
+                                    {idIndustry.description}
+                                  </p>
                                 </div>
                               </div>
                             </Link>
@@ -277,7 +278,7 @@ export default function Navbar(): React.ReactElement {
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
                         )}
                       >
                         Solutions
@@ -290,7 +291,7 @@ export default function Navbar(): React.ReactElement {
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
                         )}
                       >
                         Pricing
@@ -320,7 +321,9 @@ export default function Navbar(): React.ReactElement {
                             asChild
                             className={cn(
                               "py-2 text-md font-normal text-center ",
-                              iIndex === 1 ? "border-b border-border  pb-2 mb-1" : "",
+                              iIndex === 1
+                                ? "border-b border-border  pb-2 mb-1"
+                                : ""
                             )}
                           >
                             <Link href={idItem.href}>{idItem.title}</Link>
@@ -338,16 +341,21 @@ export default function Navbar(): React.ReactElement {
           <div className="hidden lg:flex lg:items-center lg:gap-4">
             {/* Theme Switcher */}
             <div className="flex items-center gap-2">
-
               <ThemeToggle />
             </div>
 
             {/* Language Switcher */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm" className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
+                >
                   <Globe className="h-4 w-4" />
-                  <span className="text-md">{fnGetCurrentLanguageDisplay()}</span>
+                  <span className="text-md">
+                    {fnGetCurrentLanguageDisplay()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -361,10 +369,12 @@ export default function Navbar(): React.ReactElement {
                       onClick={() => fnSetLanguage(idLang.code)}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.code === Language ? "bg-muted " : "",
+                        idLang.code === Language ? "bg-muted " : ""
                       )}
                     >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.flag}</span>
+                      <span className="flex items-center justify-center w-6 h-6 text-base">
+                        {idLang.flag}
+                      </span>
                       <span>{idLang.name}</span>
                       {idLang.code === Language && (
                         <svg
@@ -386,9 +396,12 @@ export default function Navbar(): React.ReactElement {
               </DropdownMenuContent>
             </DropdownMenu>
             <Link href="/contact">
-            <Button variant="default" className="rounded-lg h-10 flex items-center">
-              Contact Us
-            </Button>
+              <Button
+                variant="default"
+                className="rounded-lg h-10 flex items-center"
+              >
+                Contact Us
+              </Button>
             </Link>
           </div>
 
@@ -396,16 +409,21 @@ export default function Navbar(): React.ReactElement {
           <div className="flex lg:hidden items-center gap-2">
             {/* Theme Switcher for Mobile */}
             <div className="flex items-center">
-
               <ThemeToggle />
             </div>
 
             {/* Language Switcher for Mobile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm" className="gap-1 h-8 flex items-center ">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1 h-8 flex items-center "
+                >
                   <Globe className="h-4 w-4" />
-                  <span className="text-xs">{fnGetCurrentLanguageDisplay()}</span>
+                  <span className="text-xs">
+                    {fnGetCurrentLanguageDisplay()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
@@ -419,10 +437,12 @@ export default function Navbar(): React.ReactElement {
                       onClick={() => fnSetLanguage(idLang.code)}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.code === Language ? "bg-muted " : "",
+                        idLang.code === Language ? "bg-muted " : ""
                       )}
                     >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.flag}</span>
+                      <span className="flex items-center justify-center w-6 h-6 text-base">
+                        {idLang.flag}
+                      </span>
                       <span>{idLang.name}</span>
                       {idLang.code === Language && (
                         <svg
@@ -450,6 +470,13 @@ export default function Navbar(): React.ReactElement {
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background/80  border-t border-border  lg:hidden">
         <div className="flex justify-around items-center h-16 px-2">
+          <Link
+            href="/solutions"
+            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
+          >
+            <ChartPie className="w-5 h-6 mb-1" />
+            <span className="text-xs">Solutions</span>
+          </Link>
           <button
             onMouseEnter={() => fnSetMobileProductsOpen(true)}
             onMouseLeave={() => fnSetMobileProductsOpen(false)}
@@ -457,7 +484,7 @@ export default function Navbar(): React.ReactElement {
               "flex flex-col items-center justify-center w-1/5 h-full",
               MobileProductsOpen
                 ? "text-primary "
-                : "text-muted-foreground  hover:text-primary ",
+                : "text-muted-foreground  hover:text-primary "
             )}
           >
             <Briefcase className="w-5 h-6 mb-1" />
@@ -470,19 +497,13 @@ export default function Navbar(): React.ReactElement {
               "flex flex-col items-center justify-center w-1/5 h-full",
               MobileIndustriesOpen
                 ? "text-primary "
-                : "text-muted-foreground  hover:text-primary ",
+                : "text-muted-foreground  hover:text-primary "
             )}
           >
             <Factory className="w-5 h-6 mb-1" />
             <span className="text-xs">Industries</span>
           </button>
-          <Link
-            href="/solutions"
-            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
-          >
-            <ChartPie className="w-5 h-6 mb-1" />
-            <span className="text-xs">Solutions</span>
-          </Link>
+
           <Link
             href="/pricing"
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
@@ -520,19 +541,19 @@ export default function Navbar(): React.ReactElement {
           </DropdownMenu> */}
 
           {/* "More" button */}
-            <button
-              onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
-              onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
-              className={cn(
-                "flex flex-col items-center justify-center w-1/5 h-full",
-                MobileModeDropdownOpen
-                  ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
-              )}
-            >
-              <EllipsisVertical className="w-5 h-6 mb-1" />
-              <span className="text-xs">More</span>
-            </button>
+          <button
+            onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
+            onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+            className={cn(
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileModeDropdownOpen
+                ? "text-primary"
+                : "text-muted-foreground hover:text-primary"
+            )}
+          >
+            <EllipsisVertical className="w-5 h-6 mb-1" />
+            <span className="text-xs">More</span>
+          </button>
         </div>
       </div>
 
@@ -553,10 +574,14 @@ export default function Navbar(): React.ReactElement {
                 >
                   {/* SVG Icon on Left */}
                   <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                    <div className="w-6 h-6 text-primary/70 ">{idProduct.icon}</div>
+                    <div className="w-6 h-6 text-primary/70 ">
+                      {idProduct.icon}
+                    </div>
                   </div>
                   {/* Title on Right */}
-                  <span className="text-xs font-medium text-primary ">{idProduct.title}</span>
+                  <span className="text-xs font-medium text-primary ">
+                    {idProduct.title}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -580,10 +605,14 @@ export default function Navbar(): React.ReactElement {
                 >
                   {/* SVG Icon on Left */}
                   <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                    <div className="w-6 h-6 text-primary/70 ">{idIndustry.icon}</div>
+                    <div className="w-6 h-6 text-primary/70 ">
+                      {idIndustry.icon}
+                    </div>
                   </div>
                   {/* Title on Right */}
-                  <span className="text-xs font-medium text-primary ">{idIndustry.title}</span>
+                  <span className="text-xs font-medium text-primary ">
+                    {idIndustry.title}
+                  </span>
                 </Link>
               ))}
             </div>
@@ -614,5 +643,5 @@ export default function Navbar(): React.ReactElement {
         </div>
       )}
     </>
-  )
+  );
 }

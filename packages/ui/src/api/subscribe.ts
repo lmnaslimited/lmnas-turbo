@@ -9,16 +9,15 @@ const LdSchema = z.object({
   email: z.string().email('Please enter a valid email'),
 })
 
-//headers for API requests
+
+export async function subscribeNewsletter(prevState: { message: string }, formData: FormData):Promise<{ message: string }>
+{
+    //headers for API requests
 const LdHeaders = {
   "Authorization": `${process.env.AUTH_BASE_64}`,
   'Content-Type': 'application/json',
   Cookie: 'full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=',
 }
-
-export async function subscribeNewsletter(prevState: { message: string }, formData: FormData):Promise<{ message: string }>
-{
-    console.log("url", process.env.SUBSCRIBE_URL)
     // Validate form input early to fail fast and give user feedback before hitting the backend
   const LdParsed = LdSchema.safeParse({
     email: formData.get('email'),

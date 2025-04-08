@@ -8,12 +8,6 @@ export type IapiResponse = {
     data?: any
   }
 
-const ldHeaders = new Headers({
-  Authorization: `${process.env.AUTH_BASE_64}`,
-  "Content-Type": "application/json",
-  Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
-})
-
 async function fnVerifyRecaptcha(token: string): Promise<boolean> {
   const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
   const URL = `https://www.google.com/recaptcha/api/siteverify?secret=${SECRET_KEY}&response=${token}`
@@ -39,6 +33,12 @@ const communicationSchema = z.object({
 export async function sendCommunicationAction(
   formData: z.infer<typeof communicationSchema>
 ): Promise<IapiResponse> {
+  
+  const ldHeaders = new Headers({
+    Authorization: `${process.env.AUTH_BASE_64}`,
+    "Content-Type": "application/json",
+    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+  })
     const { email, notes, option, recaptchaToken } = formData
 
 //   // Optional: reCAPTCHA validation

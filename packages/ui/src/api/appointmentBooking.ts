@@ -8,11 +8,6 @@ export type IapiResponse = {
   data?: any
 }
 
-const ldHeaders = new Headers({
-  Authorization: `${process.env.AUTH_BASE_64}`,
-  "Content-Type": "application/json",
-  Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
-})
 
 async function fnVerifyRecaptcha(token: string): Promise<boolean> {
   const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY
@@ -45,6 +40,11 @@ export async function bookAppointmentAction(
   formData: z.infer<typeof appointmentSchema>
 ): Promise<IapiResponse> {
 
+  const ldHeaders = new Headers({
+    Authorization: `${process.env.AUTH_BASE_64}`,
+    "Content-Type": "application/json",
+    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+  })
   const { date, time, timezone, contact, recaptchaToken } = formData
 
   const isHuman = await fnVerifyRecaptcha(recaptchaToken)
