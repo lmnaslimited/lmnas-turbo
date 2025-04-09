@@ -1,6 +1,5 @@
 "use client"
 import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
-import type React from "react"
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -78,13 +77,13 @@ export const LdBookingFormConfig: TformConfig = {
             type: "text",
             placeholder: "Enter your full name *",
             required: true,
-            className: "w-1/2 pr-2 mb-3",
+            className: "md:w-1/2 w-full md:pr-2 mb-3",
         },
         {
             name: "phone",
             type: "phone",
             required: true,
-            className: "w-1/2 pl-2 mb-3",
+            className: "md:w-1/2 w-full md:pl-2 mb-3",
         },
         {
             name: "email",
@@ -662,13 +661,11 @@ function InnerSectionForm({
                                         value={iField.value || ""}
                                         onChange={iField.onChange}
                                         onBlur={iField.onBlur}
-                                        style={
-                                            {
-                                                "--react-international-phone-height": "48px",
-                                                "--react-international-phone-flag-height": "48px",
-                                                "--react-international-phone-flag-width": "28px",
-                                            } as React.CSSProperties
-                                        }
+                                        className="!w-full !rounded-md" // Same as containerClass
+                                        inputClassName="!w-full p-5 border rounded-md text-sm focus:outline-none !h-12" // Same as inputClass
+                                        countrySelectorStyleProps={{
+                                            buttonClassName: "!p-2 !h-12 !w-fit", // Equivalent to dropdownClass
+                                        }}
                                     />
                                 </FormControl>
                                 <FormMessage />
