@@ -11,7 +11,6 @@ import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
 import { Calendar } from "@repo/ui/components/ui/calendar"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
-import { Input } from "@repo/ui/components/ui/input"
 import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 import { Textarea } from "@repo/ui/components/ui/textarea"
@@ -19,7 +18,7 @@ import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from "react-international-phone"
 import "react-international-phone/style.css"
 import { isValidPhoneNumber } from "libphonenumber-js"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps } from "@repo/ui/type"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/ui/type"
 import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
@@ -483,7 +482,7 @@ function InnerSectionForm({
 }: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
-    const [TimeSlots, fnSetTimeSlots] = useState<TimeSlot[]>([])
+    const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([])
     const [IsLoadingSlots, fnSetILoadingSlots] = useState(false)
     const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false)
     const [IsSubmitting, fnSetIsSubmitting] = useState(false)
@@ -515,14 +514,14 @@ function InnerSectionForm({
 
     // Fetches available timezones from the server
     useEffect(() => {
-        const fnLoadTimezones = async () => {
+        const fnLoadTimezones = async (): Promise<void> => {
             try {
-                const result = await fetchTimezones()
-                if (result?.data) {
-                    fnSetTimezones(result.data)
+                const LdResult = await fetchTimezones()
+                if (LdResult?.data) {
+                    fnSetTimezones(LdResult.data)
                 }
-            } catch (err) {
-                console.error("Failed to load timezones:", err)
+            } catch (error) {
+                console.error("Failed to load timezones:", error)
             } finally {
                 fnSetIsLoadingTimezones(false)
             }
@@ -539,14 +538,9 @@ function InnerSectionForm({
         }
     }, [Timezones])
 
-    type TimeSlot = {
-        time: string
-        availability: boolean
-    }
-
     //   Fetches available time slots based on selected date and timezone
     useEffect(() => {
-        const loadTimeSlots = async () => {
+        const fnLoadTimeSlots = async (): Promise<void> => {
             if (SelectedDate && SelectedTimezone) {
                 fnSetILoadingSlots(true)
                 try {
@@ -566,7 +560,7 @@ function InnerSectionForm({
             }
         }
 
-        loadTimeSlots()
+        fnLoadTimeSlots()
     }, [SelectedDate, SelectedTimezone])
 
     // Setting Timeslots
@@ -813,7 +807,7 @@ function InnerSectionForm({
                                     ) : TimeSlots.length === 0 ? (
                                         <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">No slots available</p>
                                     ) : (
-                                        TimeSlots.map(({ time, availability }) => {
+                                        TimeSlots.map(({ time, availability }) => { //here the variable is destructure from response
                                             const fromTime = time.slice(11, 16)
                                             const [hourStr = "00", minuteStr = "00"] = fromTime.split(":")
                                             const hour = Number.parseInt(hourStr, 10)
@@ -826,9 +820,9 @@ function InnerSectionForm({
                                                     type="button"
                                                     variant={availability ? (iField.value === formattedValue ? "default" : "outline") : "outline"}
                                                     className={`h-10 ${iField.value === formattedValue
-                                                        ? "bg-black text-white hover:bg-black"
+                                                        ? "bg-dark text-secondary hover:bg-dark"
                                                         : !availability
-                                                            ? "bg-gray-50 text-gray-400 hover:bg-gray-50 hover:text-gray-400 cursor-not-allowed"
+                                                            ? "bg-grayBackground text-muted hover:bg-grayBackground hover:text-muted cursor-not-allowed"
                                                             : ""
                                                         }`}
                                                     onClick={() => iField.onChange(formattedValue)}

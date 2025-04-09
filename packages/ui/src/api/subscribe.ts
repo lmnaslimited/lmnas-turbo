@@ -10,7 +10,7 @@ const LdSchema = z.object({
 })
 
 
-export async function subscribeNewsletter(prevState: { message: string }, formData: FormData):Promise<{ message: string }>
+export async function subscribeNewsletter(idPrevState: { message: string }, idFormData: FormData):Promise<{ message: string }>
 {
     //headers for API requests
 const LdHeaders = {
@@ -20,7 +20,7 @@ const LdHeaders = {
 }
     // Validate form input early to fail fast and give user feedback before hitting the backend
   const LdParsed = LdSchema.safeParse({
-    email: formData.get('email'),
+    email: idFormData.get('email'),
   })
 
    // If validation fails, return a user-friendly message without making any API requests
@@ -31,19 +31,19 @@ const LdHeaders = {
   }
 
   // At this point, we have a clean, validated email to use in API calls
-  const Email = LdParsed.data.email
+  const LEmail = LdParsed.data.email
   
   // Disables TLS verification for local development 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
   try {
     // First check: is this email already subscribed? Prevents duplicate entries and unnecessary API calls
-    const checkEmailGroup = await fetch(
-      `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${Email}","email_group":"Website"}`,
+    const LdCheckEmailGroup = await fetch(
+      `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${LEmail}","email_group":"Website"}`,
       { method: 'GET', headers: LdHeaders }
     )
 
-    const LdCheckData = await checkEmailGroup.json()
+    const LdCheckData = await LdCheckEmailGroup.json()
 
     // If email exists in the "Website" group, inform the user instead of trying to subscribe again
     if (LdCheckData?.data?.length > 0) {
@@ -51,22 +51,22 @@ const LdHeaders = {
     }
 
      // If the email isn't already subscribed, submit it to the backend via a POST request
-    const Subscribe = await fetch(
+    const LdSubscribe = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/method/frappe.email.doctype.newsletter.newsletter.subscribe`,
       {
         method: 'POST',
         headers: LdHeaders,
-        body: JSON.stringify({ email: Email }),
+        body: JSON.stringify({ email: LEmail }),
       }
     )
 
-    if (Subscribe.status === 429) {
+    if (LdSubscribe.status === 429) {
         return { message: 'Too many requests. Please wait a moment before trying again.' }
       }
 
     // If the backend returns a failure response, throw and handle the error for user feedback
-    if (!Subscribe.ok) {
-      throw new Error(await Subscribe.text())
+    if (!LdSubscribe.ok) {
+      throw new Error(await LdSubscribe.text())
     }
 
     return { message: 'Please check your inbox!' }
