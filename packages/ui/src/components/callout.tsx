@@ -73,7 +73,7 @@ export default function Callout({
             <Link href={idButton.href} key={`btn-${index}`}>
               <Button
                 variant={idButton.variant || "default"}
-                size={idButton.size || "default"}
+                size={idButton.size || "lg"}
               >
                 {ButtonContent}
               </Button>
@@ -84,7 +84,7 @@ export default function Callout({
             <Button
               key={`btn-${index}`}
               variant={idButton.variant || "default"}
-              size={idButton.size || "default"}
+              size={idButton.size || "lg"}
               onClick={() => {
                 if (onButtonClick && idButton.formMode) {
                   onButtonClick(idButton.formMode)
