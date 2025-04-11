@@ -159,6 +159,7 @@ export type TdynamicFormProps = {
   className?: string
   defaultValues?: Record<string, any>
   hideCardHeader?: boolean
+  pdfData?:any
 }
 
 //solution individual
