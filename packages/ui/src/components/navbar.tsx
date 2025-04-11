@@ -186,6 +186,8 @@ export default function Navbar(): React.ReactElement {
     return CurrentLang ? CurrentLang.code.toUpperCase() : "EN";
   };
 
+  
+
   return (
     <>
       <header
