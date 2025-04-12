@@ -13,8 +13,8 @@
     "./components/*": "./src/components/*.tsx",
     "./svg/*": "./src/svg/*.tsx",
     "./api/*": "./src/api/*.ts",
-    "./lib/apollo-client":"./src/lib/apollo-client.ts",
-    "./utils/*":"./src/utils/*.ts"
+    "./lib/apollo-client": "./src/lib/apollo-client.ts",
+    "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

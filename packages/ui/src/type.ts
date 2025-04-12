@@ -272,14 +272,14 @@ export type TslotResponse = {
 }
 
 
-export type TnavbarItem = {
-  label: string
-  href: string
-  description?: string | null
-  icon?: keyof typeof LucideIcons | React.ReactNode | null
-}
+// export type TnavbarItem = {
+//   label: string
+//   href: string
+//   description?: string | null
+//   icon?: keyof typeof LucideIcons | React.ReactNode | null
+// }
 
-export type Tnavbar = Record<string, TnavbarItem[]>
+// export type Tnavbar = Record<string, TnavbarItem[]>
 
 
 //page
@@ -352,3 +352,20 @@ export type Tproduct = {
   }
 }
 
+// --------------------------------------------------------------------------------------------------------------
+
+export type TnavbarItem = {
+  label: string
+  href: string
+  description?: string | null
+  icon?: keyof typeof LucideIcons | React.ReactNode | null
+}
+
+export type Tnavbar = {
+  logo: TnavbarItem[]
+  menu: TnavbarItem[]
+  product: TnavbarItem[]
+  industry: TnavbarItem[]
+  more: TnavbarItem[]
+  language: TnavbarItem[]
+}

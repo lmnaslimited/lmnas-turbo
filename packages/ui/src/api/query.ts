@@ -3,29 +3,42 @@ import { DocumentNode } from 'graphql';
 
 // Navbar query
 export const NAVBAR_QUERY = gql`
-  query Navbar($locale: I18NLocaleCode) {
-    navbar(locale: $locale) {
-      locale
-      Product {
-        label
-        description
-        href
-        icon
-      }
-      Industry {
-        label
-        description
-        href
-        icon
-      }
-      More {
-        label
-        href
-      }
+ query Navbar($locale: I18NLocaleCode) {
+  navbar(locale: $locale) {
+    locale
+    logo {
+      label
+      href
+    }
+    menu {
+      label
+      href
+      icon
+    }
+    product {
+      label
+      href
+      description
+      icon
+    }
+    industry {
+      label
+      href
+      description
+      icon
+    }
+    more {
+      label
+      href
+    }
+    language {
+      label
+      description
+      icon
     }
   }
+}
 `;
-
 
 
 // Footer query
