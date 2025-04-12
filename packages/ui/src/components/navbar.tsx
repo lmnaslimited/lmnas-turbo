@@ -35,6 +35,7 @@ import {
 } from "@repo/ui/components/ui/dropdown-menu";
 import { ThemeToggle } from "@repo/ui/components/theme-toggle";
 import { SVGComponent } from "@repo/ui/svg/svgs";
+import { Tnavbar } from "@repo/ui/type";
 
 const LaProducts = [
   {
@@ -106,6 +107,7 @@ const LaProducts = [
   // },
 ];
 
+
 const LaIndustries = [
   {
     title: "Manufacturing",
@@ -154,7 +156,11 @@ const LaLanguages = [
   // { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
 ];
 
-export default function Navbar(): React.ReactElement {
+
+export default function Navbar({NavData}:{NavData:Tnavbar}): React.ReactElement {
+
+console.log("from nav",NavData)
+
   const [Language, fnSetLanguage] = React.useState("en");
   const [IsScrolled, fnSetIsScrolled] = React.useState(false);
   const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false);

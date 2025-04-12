@@ -26,6 +26,8 @@ export const NAVBAR_QUERY = gql`
   }
 `;
 
+
+
 // Footer query
 export const FOOTER_QUERY = gql`
   query Footer($locale: I18NLocaleCode) {
@@ -43,13 +45,17 @@ export const FOOTER_QUERY = gql`
   }
 `;
 
-const queries: { [key: string]: DocumentNode } = {
-    NAVBAR_QUERY,
-    navbar: NAVBAR_QUERY,
-    FOOTER_QUERY,
-    footer: FOOTER_QUERY,
-  };
-  
-  export function getQueryByName(queryName: string): DocumentNode | null {
-    return queries[queryName] || null;
-  }
+// Query map with aliases
+const queries = {
+  navbar: NAVBAR_QUERY,
+  footer: FOOTER_QUERY,
+};
+
+// Type-safe query name
+export type QueryName = keyof typeof queries;
+
+// Type-safe function to get query
+export function getQueryByName(queryName: QueryName): DocumentNode {
+  return queries[queryName];
+}
+

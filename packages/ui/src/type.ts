@@ -253,6 +253,35 @@ export type Tindustry = {
   }
 }
 
+
+export type TapiResponse = {
+  message?: string
+  error?: string
+  data?: any
+}
+
+export type Tslot = {
+  time: string
+  availability: boolean
+}
+
+export type TslotResponse = {
+  message?: string
+  data?: Tslot[]
+  error?: string
+}
+
+
+export type TnavbarItem = {
+  label: string
+  href: string
+  description?: string | null
+  icon?: keyof typeof LucideIcons | React.ReactNode | null
+}
+
+export type Tnavbar = Record<string, TnavbarItem[]>
+
+
 //page
 export type Tproduct = {
   hero: TheroProps
@@ -323,19 +352,3 @@ export type Tproduct = {
   }
 }
 
-export type TapiResponse = {
-  message?: string
-  error?: string
-  data?: any
-}
-
-export type Tslot = {
-  time: string
-  availability: boolean
-}
-
-export type TslotResponse = {
-  message?: string
-  data?: Tslot[]
-  error?: string
-}

@@ -1,17 +1,21 @@
-import { DocumentNode } from 'graphql';
+import { getQueryByName } from '@repo/ui/api/query';
+import type { QueryName } from '@repo/ui/api/query'; 
 import { createApolloClient } from '@repo/ui/lib/apollo-client';
 
 type FetchOptions = {
-    query: DocumentNode;
-    locale?: string;
-    variables?: Record<string, any>;
+  query: QueryName;
+  locale?: string;
+  variables?: Record<string, any>;
 };
 
 export async function fetchFromStrapi<T>({ query, locale = 'en', variables = {} }: FetchOptions): Promise<T> {
-    const client = createApolloClient();    const { data } = await client.query({
-        query,
+    console.log("API Triggered")
+
+    const Query=getQueryByName(query);
+    const client = createApolloClient();    
+    const { data } = await client.query({
+        query:Query,
         variables: { locale, ...variables },
     });    
-    // :point_down: Only return `navbar` from the data
     return (data as any).navbar as T;
 }
