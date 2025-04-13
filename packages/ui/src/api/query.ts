@@ -85,7 +85,7 @@ export const FOOTER_QUERY = gql`
 export const TREND_QUERY = gql`
 query Trend($locale: I18NLocaleCode) {
   trend(locale: $locale) {
-    herosection {
+    heroSection {
       heading {
         highlight
         title
@@ -142,7 +142,6 @@ query Trend($locale: I18NLocaleCode) {
   }
 }
 `;
-
 
 // Query map with aliases
 const queries = {

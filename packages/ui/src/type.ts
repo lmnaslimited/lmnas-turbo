@@ -6,34 +6,34 @@ export type Titems = {
   answer: string
   icon?: keyof typeof LucideIcons | React.ReactNode
 }
-export type Theader = {
-  textWithoutColor?: string
-  badge?: string
-  text?: string;
-  subtitle?: string
-  className?: string
-  headingClass?: string
-  descripClass?: string
-}
-export type Tbutton = {
-  label: string;
-  href?: string;
-  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
-  size?: "default" | "sm" | "lg" | "icon"
-  icon?: React.ReactNode | keyof typeof LucideIcons
-  iconPosition?: "before" | "after";
-  className?: string
-  formMode?: "booking" | "contact" | "download"
-}
-export type Timage = {
-  src?: string
-  alt: string
-  aspectRatio?: "square" | "video" | "wide" | "auto"
-  width?: string
-  height?: string
-  svg?: React.ReactNode | keyof typeof LucideIcons
-  position?: string
-}
+// export type Theader = {
+//   textWithoutColor?: string
+//   badge?: string
+//   text?: string;
+//   subtitle?: string
+// className?: string
+// headingClass?: string
+// descripClass?: string
+// }
+// export type Tbutton = {
+//   label: string;
+//   href?: string;
+//   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
+//   size?: "default" | "sm" | "lg" | "icon"
+//   icon?: React.ReactNode | keyof typeof LucideIcons
+//   iconPosition?: "before" | "after";
+//   className?: string
+//   formMode?: "booking" | "contact" | "download"
+// }
+// export type Timage = {
+//   src?: string
+//   alt: string
+//   aspectRatio?: "square" | "video" | "wide" | "auto"
+//   width?: string
+//   height?: string
+//   svg?: React.ReactNode | keyof typeof LucideIcons
+//   position?: string
+// }
 
 //component
 export type TcalloutProps = {
@@ -354,23 +354,26 @@ export type Tproduct = {
 
 // --------------------------------------------------------------------------------------------------------------
 
-export type TItem = {
+
+export type Tbutton = {
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
+  icon?: string
+  formMode?: "booking" | "contact" | "download" | "undefined"
+  description?: string
   label: string
-  href: string
-  description?: string | null
-  icon?: keyof typeof LucideIcons | React.ReactNode | null
+  href: string | null
 }
 
-export type Tnavbar = {
-  logo: TItem[]
-  menu: TItem[]
-  product: TItem[]
-  industry: TItem[]
-  more: TItem[]
-  language: TItem[]
+export type Tcard = {
+  headline: string
+  summary: string
+  sourceName: string
+  imageUrl: string
+  authorName: string
+  publishedDate: string
 }
 
-export type TContact = {
+export type Tcontact = {
   address: string
   phoneLabel: string
   phoneHref: string
@@ -378,26 +381,91 @@ export type TContact = {
   emailHref: string
 }
 
-export type TMenu = {
+export type Theader = {
+  title: string
+  subtitle?: string
+  highlight?: string
+  badge?: string
+  className?: string
+  headingClass?: string
+  descripClass?: string
+}
+
+export type Tmenu = {
   itemOne: string
   itemTwo: string
   itemThree: string
   itemFour: string
 }
 
+export type Thighlight = {
+  icon: string
+  label: string
+  description: string
+}
+
+export type Timage = {
+  src: string
+  alt: string
+  aspectRatio: 'square' | 'video' | 'wide' | 'auto'
+  width?: string
+  height?: string
+  svg?: string
+  position?: string
+}
+
+export type Tblock = {
+  title: string
+  subtitle: string
+  list: Tmenu
+}
+
+export type Tcallout = {
+  header?: Theader
+  title?: string
+  subtitle?: string
+  list?: Tmenu
+  button?: Tbutton
+}
+
+export type Thero = {
+  heading: Theader
+  description?: string
+  highlight?: Thighlight[]
+  button?: Tbutton[]
+  image?: Timage
+}
+
+export type TteckStack = {
+  heading: Theader
+  point: Thighlight[]
+}
+
+export type Tnavbar = {
+  logo: Tbutton
+  menu: Tbutton[]
+  product: Tbutton[]
+  industry: Tbutton[]
+  more: Tbutton[]
+  language: Tbutton[]
+}
+
 export type Tfooter = {
   companyName: string
   companyInfo: string
-  social: TItem[]
-  product: TItem[]
-  more: TItem[]
-  contact: TContact
-  policies: TItem[]
-  menu: TMenu
+  menu: Tmenu
+  social: Tbutton[]
+  product: Tbutton[]
+  more: Tbutton[]
+  contact: Tcontact
+  policies: Tbutton[]
 }
 
-
-
 export type Ttrend = {
-
+  heroSection: Thero
+  trendHeader: Theader
+  trendFooter: Theader
+  noiseSection: TteckStack[]
+  frustrationSection: (Theader | Tcallout)[]
+  calloutSection: Tcallout
 }

@@ -10,7 +10,6 @@ type FetchOptions = {
 
 export async function fetchFromStrapi<T>({ query, locale = 'en', variables = {} }: FetchOptions): Promise<T> {
   const Query = getQueryByName(query);
-  console.log(Query)
   const { data } = await client.query({
     query: Query,
     variables: { locale, ...variables },
