@@ -44,24 +44,111 @@ export const NAVBAR_QUERY = gql`
 // Footer query
 export const FOOTER_QUERY = gql`
   query Footer($locale: I18NLocaleCode) {
-    footer(locale: $locale) {
-      locale
-      links {
+  footer(locale: $locale) {
+    companyName
+    companyInfo
+    social {
+      label
+      href
+      icon
+    }
+    product {
+      label
+      href
+    }
+    more {
+      label
+      href
+    }
+    contact {
+      address
+      phoneLabel
+      phoneHref
+      emailLabel
+      emailHref
+    }
+    policies {
+      label
+      href
+    }
+    menu {
+      itemOne
+      itemTwo
+      itemThree
+      itemFour
+    }
+  }
+}
+`;
+
+
+export const TREND_QUERY = gql`
+query Trend($locale: I18NLocaleCode) {
+  trend(locale: $locale) {
+    herosection {
+      heading {
+        highlight
+        title
+        subtitle
+      }
+      description
+      button {
+        label
+        href
+        formMode
+      }
+    }
+    trendHeader {
+      highlight
+      title
+      subtitle
+    }
+    trendFooter {
+      title
+    }
+    noiseSection {
+      heading {
+        title
+        subtitle
+      }
+      point {
+        label
+        description
+      }
+    }
+    frustrationSection {
+      ... on ComponentSharedCallout {
+        header {
+          highlight
+        }
+        title
+        subtitle
+        button {
+          label
+          formMode
+        }
+      }
+    }
+    calloutSection {
+      header {
+        highlight
+      }
+      subtitle
+      button {
         label
         href
       }
-      socialMedia {
-        platform
-        url
-      }
     }
   }
+}
 `;
+
 
 // Query map with aliases
 const queries = {
   navbar: NAVBAR_QUERY,
   footer: FOOTER_QUERY,
+  trend: TREND_QUERY
 };
 
 // Type-safe query name
@@ -71,4 +158,5 @@ export type QueryName = keyof typeof queries;
 export function getQueryByName(queryName: QueryName): DocumentNode {
   return queries[queryName];
 }
+
 

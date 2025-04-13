@@ -354,7 +354,7 @@ export type Tproduct = {
 
 // --------------------------------------------------------------------------------------------------------------
 
-export type TnavbarItem = {
+export type TItem = {
   label: string
   href: string
   description?: string | null
@@ -362,10 +362,42 @@ export type TnavbarItem = {
 }
 
 export type Tnavbar = {
-  logo: TnavbarItem[]
-  menu: TnavbarItem[]
-  product: TnavbarItem[]
-  industry: TnavbarItem[]
-  more: TnavbarItem[]
-  language: TnavbarItem[]
+  logo: TItem[]
+  menu: TItem[]
+  product: TItem[]
+  industry: TItem[]
+  more: TItem[]
+  language: TItem[]
+}
+
+export type TContact = {
+  address: string
+  phoneLabel: string
+  phoneHref: string
+  emailLabel: string
+  emailHref: string
+}
+
+export type TMenu = {
+  itemOne: string
+  itemTwo: string
+  itemThree: string
+  itemFour: string
+}
+
+export type Tfooter = {
+  companyName: string
+  companyInfo: string
+  social: TItem[]
+  product: TItem[]
+  more: TItem[]
+  contact: TContact
+  policies: TItem[]
+  menu: TMenu
+}
+
+
+
+export type Ttrend = {
+
 }
