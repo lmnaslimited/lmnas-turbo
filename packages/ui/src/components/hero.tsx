@@ -2,17 +2,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
 import { Zap } from "lucide-react";
-import { TheroProps, TformMode } from "../type.js";
+import { Thero, TformMode } from "../type.js";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 
-type THeroProps = {
-  idHero: TheroProps;
+type Thero = {
+  idHero: Thero;
   onButtonClick?: (mode: TformMode) => void;
 }
 
-export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
+export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
   /**
   * Renders a badge with an icon and text.
   * Typically used for highlighting a special feature or status.

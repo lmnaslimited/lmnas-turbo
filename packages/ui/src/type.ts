@@ -98,16 +98,16 @@ export type TfeatureProps = {
 }
 
 //component
-export type TheroProps = {
-  heading: Theader;
-  items?: {
-    icon: React.ReactNode | keyof typeof LucideIcons
-    item: string
-  }[];
-  description?: string;
-  buttons: Tbutton[];
-  image: Timage;
-}
+// export type TheroProps = {
+//   heading: Theader;
+//   items?: {
+//     icon: React.ReactNode | keyof typeof LucideIcons
+//     item: string
+//   }[];
+//   description?: string;
+//   buttons: Tbutton[];
+//   image: Timage;
+// }
 
 //component
 export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
@@ -211,7 +211,7 @@ export type TSidebarCardType = {
 
 //page
 export type Tindustry = {
-  hero: TheroProps
+  hero: Thero
   problems: {
     header: Theader
     items: Titems[]
@@ -284,7 +284,7 @@ export type TslotResponse = {
 
 //page
 export type Tproduct = {
-  hero: TheroProps
+  hero: Thero
   problems: {
     header: Theader
     card: TcardProps
