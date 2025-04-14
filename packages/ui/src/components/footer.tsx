@@ -51,7 +51,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">{idFooter.menu.itemOne}</h3>
+            <h3 className="font-semibold text-lg mb-4">{idFooter.menu[0]?.label}</h3>
             <ul className="space-y-3">
               {idFooter.product.map((item) => (
                 <li key={item.label}>
@@ -64,7 +64,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">{idFooter.menu.itemTwo}</h3>
+            <h3 className="font-semibold text-lg mb-4">{idFooter.menu[1]?.label}</h3>
             <ul className="space-y-3">
               {idFooter.more.map((item) => (
                 <li key={item.label}>
@@ -77,7 +77,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
           </div>
 
           <div>
-            <h3 className="font-semibold text-lg mb-4">{idFooter.menu.itemThree}</h3>
+            <h3 className="font-semibold text-lg mb-4">{idFooter.menu[2]?.label}</h3>
             <ul className="space-y-3">
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-primary/70 mr-2 mt-0.5" />
@@ -124,7 +124,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
         <div className="border-t border-border pt-8 pb-16 sm:pb-0">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-primary/70 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} {idFooter.companyName}. {idFooter.menu.itemFour}
+              &copy; {new Date().getFullYear()} {idFooter.companyName}. {idFooter.menu[3]?.label}
             </p>
             <div className="flex space-x-6">
               {idFooter.policies.map((item) => (

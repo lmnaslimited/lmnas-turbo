@@ -72,10 +72,7 @@ export const FOOTER_QUERY = gql`
       href
     }
     menu {
-      itemOne
-      itemTwo
-      itemThree
-      itemFour
+      label
     }
   }
 }
@@ -117,6 +114,9 @@ query Trend($locale: I18NLocaleCode) {
       }
     }
     frustrationSection {
+      ... on ComponentCoreHeader {
+        highlight
+      }
       ... on ComponentSharedCallout {
         header {
           highlight

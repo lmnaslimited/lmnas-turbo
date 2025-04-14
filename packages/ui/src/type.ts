@@ -1,11 +1,11 @@
 import * as LucideIcons from "lucide-react"
 import { z } from "zod"
 
-export type Titems = {
-  question: string
-  answer: string
-  icon?: keyof typeof LucideIcons | React.ReactNode
-}
+// export type Titems = {
+//   question: string
+//   answer: string
+//   icon?: keyof typeof LucideIcons | React.ReactNode
+// }
 // export type Theader = {
 //   textWithoutColor?: string
 //   badge?: string
@@ -36,17 +36,17 @@ export type Titems = {
 // }
 
 //component
-export type TcalloutProps = {
-  header: Theader
-  buttons: Tbutton[]
-  points?: {
-    title: string
-    items?: string[]
-    actionText: string
-  }
-  variant?: string
-  layout?: "classic" | "simple" | string
-};
+// export type TcalloutProps = {
+//   header: Theader
+//   buttons: Tbutton[]
+//   points?: {
+//     title: string
+//     items?: string[]
+//     actionText: string
+//   }
+//   variant?: string
+//   layout?: "classic" | "simple" | string
+// };
 //component
 export type TcardProps = {
   image?: Timage
@@ -88,14 +88,14 @@ export type TlogoShowcaseProps = {
 }
 
 //componnet
-export type TfeatureProps = {
-  buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
-  layout?: "classic" | "centered";
-  iShowButton?: boolean;
-  header: Theader;
-  button?: Tbutton
-  items?: Titems[]
-}
+// export type TfeatureProps = {
+//   buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
+//   layout?: "classic" | "centered";
+//   iShowButton?: boolean;
+//   header: Theader;
+//   button?: Tbutton
+//   items?: Titems[]
+// }
 
 //component
 // export type TheroProps = {
@@ -110,16 +110,16 @@ export type TfeatureProps = {
 // }
 
 //component
-export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
+// export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
-export type TtrendCardProps = {
-  title: string;
-  description: string;
-  source: string;
-  imageUrl?: string;
-  author: string;
-  date: string;
-}
+// export type TtrendCardProps = {
+//   title: string;
+//   description: string;
+//   source: string;
+//   imageUrl?: string;
+//   author: string;
+//   date: string;
+// }
 
 
 // Form types
@@ -210,48 +210,48 @@ export type TSidebarCardType = {
 };
 
 //page
-export type Tindustry = {
-  hero: Thero
-  problems: {
-    header: Theader
-    items: Titems[]
-    footer: {
-      header: Theader
-      points: {
-        title: string
-      }
-      buttons: Tbutton[]
-    }
-  }
-  features: {
-    header: Theader
-    feature: {
-      header: Theader
-      image: Timage
-      card: TcardProps
-    }[]
-  }
-  allFeature: {
-    header: Theader
-    cards: TcardProps[]
-  }
-  cta: {
-    header: Theader
-    cards: TcardProps[]
-    footer: {
-      title: string
-      button: Tbutton
-    }
-  }
-  successStory: {
-    header: Theader
-    cards: TcardProps[]
-    footer: {
-      title: string
-      button: Tbutton
-    }
-  }
-}
+// export type Tindustry = {
+//   hero: Thero
+//   problems: {
+//     header: Theader
+//     items: Titems[]
+//     footer: {
+//       header: Theader
+//       points: {
+//         title: string
+//       }
+//       buttons: Tbutton[]
+//     }
+//   }
+//   features: {
+//     header: Theader
+//     feature: {
+//       header: Theader
+//       image: Timage
+//       card: TcardProps
+//     }[]
+//   }
+//   allFeature: {
+//     header: Theader
+//     cards: TcardProps[]
+//   }
+//   cta: {
+//     header: Theader
+//     cards: TcardProps[]
+//     footer: {
+//       title: string
+//       button: Tbutton
+//     }
+//   }
+//   successStory: {
+//     header: Theader
+//     cards: TcardProps[]
+//     footer: {
+//       title: string
+//       button: Tbutton
+//     }
+//   }
+// }
 
 
 export type TapiResponse = {
@@ -358,10 +358,13 @@ export type Tproduct = {
 export type Tbutton = {
   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
   icon?: string
-  formMode?: "booking" | "contact" | "download" | "undefined"
+  formMode?: "booking" | "contact" | "download" | undefined
   description?: string
   label: string
-  href: string | null
+  href?: string | null
+  className?: string
+  size?: "default" | "sm" | "lg" | "icon"
+  iconPosition?: "before" | "after";
 }
 
 export type Tcard = {
@@ -382,7 +385,7 @@ export type Tcontact = {
 }
 
 export type Theader = {
-  title: string
+  title?: string
   subtitle?: string
   highlight?: string
   badge?: string
@@ -391,17 +394,10 @@ export type Theader = {
   descripClass?: string
 }
 
-export type Tmenu = {
-  itemOne: string
-  itemTwo: string
-  itemThree: string
-  itemFour: string
-}
-
 export type Thighlight = {
   icon: string
   label: string
-  description: string
+  description?: string
 }
 
 export type Timage = {
@@ -414,25 +410,21 @@ export type Timage = {
   position?: string
 }
 
-export type Tblock = {
-  title: string
-  subtitle: string
-  list: Tmenu
-}
-
 export type Tcallout = {
-  header?: Theader
+  header: Theader
   title?: string
   subtitle?: string
-  list?: Tmenu
-  button?: Tbutton
+  list?: { label: string[] }
+  button: Tbutton[]
+  variant?: string
+  layout?: "classic" | "simple" | string
 }
 
 export type Thero = {
   heading: Theader
-  description?: string
+  description: string
   highlight?: Thighlight[]
-  button?: Tbutton[]
+  button: Tbutton[];
   image?: Timage
 }
 
@@ -453,7 +445,7 @@ export type Tnavbar = {
 export type Tfooter = {
   companyName: string
   companyInfo: string
-  menu: Tmenu
+  menu: Thighlight[]
   social: Tbutton[]
   product: Tbutton[]
   more: Tbutton[]
@@ -461,11 +453,32 @@ export type Tfooter = {
   policies: Tbutton[]
 }
 
+export type TFrustrationSectionItem = {
+  highlight?: string
+  header?: Theader
+  title?: string
+  subtitle?: string
+  button?: Tbutton
+}
+
+export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
+
+export type TtrendCardProps = {
+  title: string;
+  description: string;
+  source: string;
+  imageUrl?: string;
+  author: string;
+  date: string;
+}
+
+
 export type Ttrend = {
   heroSection: Thero
   trendHeader: Theader
   trendFooter: Theader
   noiseSection: TteckStack[]
-  frustrationSection: (Theader | Tcallout)[]
+  frustrationSection: TFrustrationSectionItem[]
   calloutSection: Tcallout
+  trendsData: TtrendCardProps[]
 }

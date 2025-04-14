@@ -7,12 +7,12 @@ import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 
-type Thero = {
+type THeroProps = {
   idHero: Thero;
   onButtonClick?: (mode: TformMode) => void;
 }
 
-export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
+export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
   /**
   * Renders a badge with an icon and text.
   * Typically used for highlighting a special feature or status.
@@ -28,12 +28,12 @@ export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
   * Displays a list of features, each represented by an icon and text.
   * This section helps in showcasing key benefits or highlights of the hero section.
   */
-  const FeatureList = ({ iaItems }: { iaItems?: TheroProps["items"] }): ReactElement => (
+  const FeatureList = ({ iaHighlight }: { iaHighlight?: Thero["highlight"] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {iaItems?.map((idItem, iIndex) => (
+      {iaHighlight?.map((idHighlight, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
-          {idItem?.icon}
-          <span>{idItem?.item}</span>
+          {idHighlight?.icon}
+          <span>{idHighlight?.label}</span>
         </div>
       ))}
     </div>
@@ -43,9 +43,9 @@ export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
   * Renders a list of call-to-action (CTA) buttons.
   * Supports both internal navigation (via Link) and functional actions.
   */
-  const CTAButtons = ({ iaButtons }: { iaButtons: TheroProps["buttons"] }): ReactElement => (
+  const CTAButtons = ({ iaButton }: { iaButton: Thero["button"] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
-      {iaButtons.map((idButton, iIndex) =>
+      {iaButton.map((idButton, iIndex) =>
         idButton.href ? (
           <Link href={idButton.href} key={iIndex}>
             <Button
@@ -89,8 +89,8 @@ export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {idHero.items && <FeatureList iaItems={idHero.items} />}
-        <CTAButtons iaButtons={idHero.buttons} />
+        {idHero.highlight && <FeatureList iaHighlight={idHero.highlight} />}
+        <CTAButtons iaButton={idHero.button} />
       </div>
       {/* Image part */}
       <div className={cn("flex items-center justify-center")}>
@@ -126,7 +126,7 @@ export default function Hero({ idHero, onButtonClick }: Thero): ReactElement {
           <p className={cn("max-w-[85%] text-muted-foreground md:text-xl/relaxed mx-auto mb-2")}>
             {idHero.description}
           </p>
-          <CTAButtons iaButtons={idHero.buttons} />
+          <CTAButtons iaButton={idHero.button} />
         </div>
       </div>
     </section>
