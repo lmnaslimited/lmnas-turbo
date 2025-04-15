@@ -339,3 +339,52 @@ export type TslotResponse = {
   data?: Tslot[]
   error?: string
 }
+
+
+// ---------------------------------------------------------
+
+export type TbuttonStrapi = {
+  label: string
+  href?: string | null
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+  icon?: string | React.ReactNode | keyof typeof LucideIcons
+  iconPosition?: "before" | "after";
+  formMode?: "booking" | "contact" | "download" | undefined
+  description?: string
+  className?: string
+}
+
+export type Thighlight = {
+  icon?: string
+  label: string
+  description?: string
+}
+
+export type TcontactData = {
+  address: string
+  phoneLabel: string
+  phoneHref: string
+  emailLabel: string
+  emailHref: string
+}
+
+export type Tnavbar = {
+  logo: TbuttonStrapi
+  menu: TbuttonStrapi[]
+  product: TbuttonStrapi[]
+  industry: TbuttonStrapi[]
+  more: TbuttonStrapi[]
+  language: TbuttonStrapi[]
+}
+
+export type Tfooter = {
+  companyName: string
+  companyInfo: string
+  menu: Thighlight[]
+  social: TbuttonStrapi[]
+  product: TbuttonStrapi[]
+  more: TbuttonStrapi[]
+  contact: TcontactData
+  policies: TbuttonStrapi[]
+}
