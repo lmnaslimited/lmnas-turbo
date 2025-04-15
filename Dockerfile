@@ -15,7 +15,12 @@ RUN pnpm install --frozen-lockfile
 # Fetch apps and build them
 FROM deps AS build
 COPY . .
-RUN pnpm get-app braccoli-site-2.0 && pnpm get-app braccoli-bites && pnpm build
+ARG BUILD_ENV_CONTENT
+RUN pnpm get-app braccoli-site-2.0 && pnpm get-app braccoli-bites
+RUN echo -e "$BUILD_ENV_CONTENT" > .env.temp && \
+    cp .env.temp apps/braccoli-site-2.0/.env && \
+    cp .env.temp apps/braccoli-bites/.env
+RUN pnpm build
 
 # Create the final runtime image
 FROM base AS runner
