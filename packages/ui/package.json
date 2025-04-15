@@ -8,12 +8,10 @@
     "./type": "./src/type.ts",
     "./postcss.config": "./postcss.config.mjs",
     "./tailwind.config": "./tailwind.config.ts",
-    "./lib/utils": "./src/lib/utils.ts",
-    "./lib/broadcast-channel": "./src/lib/broadcast-channel.ts",
+    "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
     "./svg/*": "./src/svg/*.tsx",
     "./api/*": "./src/api/*.ts",
-    "./lib/apollo-client": "./src/lib/apollo-client.ts",
     "./utils/*": "./src/utils/*.ts"
   },
   "scripts": {

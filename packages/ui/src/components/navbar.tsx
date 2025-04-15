@@ -12,442 +12,442 @@ import { SVGComponent } from "@repo/ui/svg/svgs"
 import type { Tnavbar } from "@repo/ui/type"
 
 const renderIcon = (iconName: string | React.ReactNode) => {
-    if (typeof iconName === "string") {
-        switch (iconName) {
-            case "Briefcase":
-                return <Briefcase />
-            case "BrainCog":
-                return <BrainCog />
-            case "Compass":
-                return <Compass />
-            case "Factory":
-                return <Factory />
-            case "Users":
-                return <Users />
-            case "Truck":
-                return <Truck />
-            case "Store":
-                return <Store />
-            case "ChartPie":
-                return <ChartPie />
-            case "DollarSign":
-                return <DollarSign />
-            case "EllipsisVertical":
-                return <EllipsisVertical />
-            default:
-                return null
-        }
+  if (typeof iconName === "string") {
+    switch (iconName) {
+      case "Briefcase":
+        return <Briefcase />
+      case "BrainCog":
+        return <BrainCog />
+      case "Compass":
+        return <Compass />
+      case "Factory":
+        return <Factory />
+      case "Users":
+        return <Users />
+      case "Truck":
+        return <Truck />
+      case "Store":
+        return <Store />
+      case "ChartPie":
+        return <ChartPie />
+      case "DollarSign":
+        return <DollarSign />
+      case "EllipsisVertical":
+        return <EllipsisVertical />
+      default:
+        return null
     }
-    return iconName
+  }
+  return iconName
 }
 
 
 export default function Navbar({ idNavbar }: { idNavbar: Tnavbar }): React.ReactElement {
-    const [Language, fnSetLanguage] = React.useState("en")
-    const [IsScrolled, fnSetIsScrolled] = React.useState(false)
-    const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
-    const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
-    const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
+  const [Language, fnSetLanguage] = React.useState("en")
+  const [IsScrolled, fnSetIsScrolled] = React.useState(false)
+  const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
+  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
+  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
 
-    React.useEffect(() => {
-        const fnHandleScroll = (): void => {
-            if (window.scrollY > 10) {
-                fnSetIsScrolled(true)
-            } else {
-                fnSetIsScrolled(false)
-            }
-        }
-
-        window.addEventListener("scroll", fnHandleScroll)
-        return () => {
-            window.removeEventListener("scroll", fnHandleScroll)
-        }
-    }, [])
-
-    const fnGetCurrentLanguageDisplay = (): string => {
-        const CurrentLang = idNavbar.language.find((idLang) => idLang.label === Language)
-        return CurrentLang ? CurrentLang.label.toUpperCase() : "EN"
+  React.useEffect(() => {
+    const fnHandleScroll = (): void => {
+      if (window.scrollY > 10) {
+        fnSetIsScrolled(true)
+      } else {
+        fnSetIsScrolled(false)
+      }
     }
 
-    return (
-        <>
-            <header
-                className={cn(
-                    "sticky top-0 z-50 w-full border-b border-border ",
-                    IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent ",
-                )}
-            >
-                <div className="container flex h-16 items-center justify-between px-4 md:px-6">
-                    <div className="flex items-center gap-6">
-                        {/* Logo and Brand */}
-                        <Link href="/" className="flex items-center gap-2">
-                            <div className="w-10 h-10 bg-dark rounded-md flex items-center justify-center text-primary-foreground">
-                                <SVGComponent />
-                            </div>
-                            <span className="text-lg font-bold tracking-tight ">LMNAs</span>
-                        </Link>
+    window.addEventListener("scroll", fnHandleScroll)
+    return () => {
+      window.removeEventListener("scroll", fnHandleScroll)
+    }
+  }, [])
 
-                        {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
-                        <div className="hidden lg:flex lg:items-center">
-                            <NavigationMenu className="md:justify-center">
-                                <NavigationMenuList className="flex items-center">
-                                    <NavigationMenuItem>
-                                        <NavigationMenuTrigger className="text-md flex items-center  transition-transform duration-200 hover:scale-105">
-                                            {idNavbar.menu[0]?.label}
-                                        </NavigationMenuTrigger>
-                                        <NavigationMenuContent className="border border-border  shadow-sm">
-                                            <div className="p-5 w-[500px]">
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {idNavbar.product.map((idProduct) => (
-                                                        <Link href={idProduct.href} key={idProduct.label}>
-                                                            <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                                                    <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idProduct.icon)}</div>
-                                                                </div>
-                                                                <div>
-                                                                    <span className="font-medium text-md  ">{idProduct.label}</span>
-                                                                    <p className="text-xs text-muted-foreground ">{idProduct.description}</p>
-                                                                </div>
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </NavigationMenuContent>
-                                    </NavigationMenuItem>
+  const fnGetCurrentLanguageDisplay = (): string => {
+    const CurrentLang = idNavbar.language.find((idLang) => idLang.label === Language)
+    return CurrentLang ? CurrentLang.label.toUpperCase() : "EN"
+  }
 
-                                    <NavigationMenuItem>
-                                        <NavigationMenuTrigger className="text-md flex items-center h-10  transition-transform duration-200 hover:scale-105">
-                                            {idNavbar.menu[1]?.label}
-                                        </NavigationMenuTrigger>
-                                        <NavigationMenuContent className="border border-border  shadow-sm">
-                                            <div className="p-5 w-[500px]">
-                                                <div className="grid grid-cols-2 gap-2">
-                                                    {idNavbar.industry.map((idIndustry) => (
-                                                        <Link href={idIndustry.href} key={idIndustry.label}>
-                                                            <div
-                                                                key={idIndustry.label}
-                                                                className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
-                                                            >
-                                                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                                                    <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idIndustry.icon)}</div>
-                                                                </div>
-                                                                <div>
-                                                                    <span className="font-medium text-md  ">{idIndustry.label}</span>
-                                                                    <p className="text-xs text-muted-foreground ">{idIndustry.description}</p>
-                                                                </div>
-                                                            </div>
-                                                        </Link>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </NavigationMenuContent>
-                                    </NavigationMenuItem>
+  return (
+    <>
+      <header
+        className={cn(
+          "sticky top-0 z-50 w-full border-b border-border ",
+          IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent ",
+        )}
+      >
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+          <div className="flex items-center gap-6">
+            {/* Logo and Brand */}
+            <Link href="/" className="flex items-center gap-2">
+              <div className="w-10 h-10 bg-dark rounded-md flex items-center justify-center text-primary-foreground">
+                <SVGComponent />
+              </div>
+              <span className="text-lg font-bold tracking-tight ">LMNAs</span>
+            </Link>
 
-                                    <NavigationMenuItem>
-                                        <Link href={idNavbar.menu[2]?.href} legacyBehavior passHref>
-                                            <NavigationMenuLink
-                                                className={cn(
-                                                    navigationMenuTriggerStyle(),
-                                                    "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
-                                                )}
-                                            >
-                                                {idNavbar.menu[2]?.label}
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </NavigationMenuItem>
-
-                                    <NavigationMenuItem>
-                                        <Link href={idNavbar.menu[3]?.href} legacyBehavior passHref>
-                                            <NavigationMenuLink
-                                                className={cn(
-                                                    navigationMenuTriggerStyle(),
-                                                    "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
-                                                )}
-                                            >
-                                                {idNavbar.menu[3]?.label}
-                                            </NavigationMenuLink>
-                                        </Link>
-                                    </NavigationMenuItem>
-
-                                    <NavigationMenuItem className="flex items-center">
-                                        <DropdownMenu>
-                                            <DropdownMenuTrigger asChild>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="icon"
-                                                    className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
-                                                >
-                                                    <MoreHorizontal className="h-6 w-6" />
-                                                </Button>
-                                            </DropdownMenuTrigger>
-                                            <DropdownMenuContent align="end" className="w-[80px] p-2 border border-border shadow-sm">
-                                                {idNavbar.more.map((idItem, iIndex) => (
-                                                    <DropdownMenuItem
-                                                        key={idItem.label}
-                                                        asChild
-                                                        className={cn(
-                                                            "py-2 text-md font-normal text-center ",
-                                                            iIndex === 1 ? "border-b border-border  pb-2 mb-1" : "",
-                                                        )}
-                                                    >
-                                                        <Link href={idItem.href}>{idItem.label}</Link>
-                                                    </DropdownMenuItem>
-                                                ))}
-                                            </DropdownMenuContent>
-                                        </DropdownMenu>
-                                    </NavigationMenuItem>
-                                </NavigationMenuList>
-                            </NavigationMenu>
-                        </div>
-                    </div>
-
-                    {/* Right side controls */}
-                    <div className="hidden lg:flex lg:items-center lg:gap-4">
-                        {/* Theme Switcher */}
-                        <div className="flex items-center gap-2">
-                            <ThemeToggle />
-                        </div>
-
-                        {/* Language Switcher */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button
-                                    variant="secondary"
-                                    size="sm"
-                                    className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
-                                >
-                                    <Globe className="h-4 w-4" />
-                                    <span className="text-md">{fnGetCurrentLanguageDisplay()}</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px] border border-border  shadow-sm">
-                                <div className="grid grid-cols-1 gap-0">
-                                    {idNavbar.language.map((idLang) => (
-                                        <DropdownMenuItem
-                                            key={idLang.label}
-                                            onClick={() => fnSetLanguage(idLang.label)}
-                                            className={cn(
-                                                "flex items-center py-2 px-2 text-md font-normal text-center ",
-                                                idLang.label === Language ? "bg-muted " : "",
-                                            )}
-                                        >
-                                            <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
-                                            <span>{idLang.description}</span>
-                                            {idLang.label === Language && (
-                                                <svg
-                                                    className="ml-auto h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                >
-                                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                                </svg>
-                                            )}
-                                        </DropdownMenuItem>
-                                    ))}
+            {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
+            <div className="hidden lg:flex lg:items-center">
+              <NavigationMenu className="md:justify-center">
+                <NavigationMenuList className="flex items-center">
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-md flex items-center  transition-transform duration-200 hover:scale-105">
+                      {idNavbar.menu[0]?.label}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="border border-border  shadow-sm">
+                      <div className="p-5 w-[500px]">
+                        <div className="grid grid-cols-2 gap-2">
+                          {idNavbar.product.map((idProduct) => (
+                            <Link href={idProduct.href} key={idProduct.label}>
+                              <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
+                                  <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idProduct.icon)}</div>
                                 </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                        <Link href={idNavbar.menu[5]?.href}>
-                            <Button variant="default" className="rounded-lg h-10 flex items-center">
-                                {idNavbar.menu[5]?.label}
-                            </Button>
-                        </Link>
-                    </div>
-
-                    {/* Mobile menu button - removed hamburger menu */}
-                    <div className="flex lg:hidden items-center gap-2">
-                        {/* Theme Switcher for Mobile */}
-                        <div className="flex items-center">
-                            <ThemeToggle />
-                        </div>
-
-                        {/* Language Switcher for Mobile */}
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="secondary" size="sm" className="gap-1 h-8 flex items-center ">
-                                    <Globe className="h-4 w-4" />
-                                    <span className="text-xs">{fnGetCurrentLanguageDisplay()}</span>
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-[160px] border border-border shadow-sm">
-                                <div className="grid grid-cols-1 gap-0">
-                                    {idNavbar.language.map((idLang) => (
-                                        <DropdownMenuItem
-                                            key={idLang.label}
-                                            onClick={() => fnSetLanguage(idLang.label)}
-                                            className={cn(
-                                                "flex items-center py-2 px-2 text-md font-normal text-center ",
-                                                idLang.label === Language ? "bg-muted " : "",
-                                            )}
-                                        >
-                                            <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
-                                            <span>{idLang.description}</span>
-                                            {idLang.label === Language && (
-                                                <svg
-                                                    className="ml-auto h-4 w-4"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 24 24"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                >
-                                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                                </svg>
-                                            )}
-                                        </DropdownMenuItem>
-                                    ))}
+                                <div>
+                                  <span className="font-medium text-md  ">{idProduct.label}</span>
+                                  <p className="text-xs text-muted-foreground ">{idProduct.description}</p>
                                 </div>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                </div>
-            </header>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
 
-            {/* Mobile Bottom Navigation */}
-            <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background/80  border-t border-border  lg:hidden">
-                <div className="flex justify-around items-center h-16 px-2">
-                    <Link
-                        href={idNavbar.menu[2]?.href}
-                        className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
-                    >
-                        <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[2]?.icon)}</span>
-                        <span className="text-xs">{idNavbar.menu[2]?.label}</span>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger className="text-md flex items-center h-10  transition-transform duration-200 hover:scale-105">
+                      {idNavbar.menu[1]?.label}
+                    </NavigationMenuTrigger>
+                    <NavigationMenuContent className="border border-border  shadow-sm">
+                      <div className="p-5 w-[500px]">
+                        <div className="grid grid-cols-2 gap-2">
+                          {idNavbar.industry.map((idIndustry) => (
+                            <Link href={idIndustry.href} key={idIndustry.label}>
+                              <div
+                                key={idIndustry.label}
+                                className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
+                              >
+                                <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
+                                  <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idIndustry.icon)}</div>
+                                </div>
+                                <div>
+                                  <span className="font-medium text-md  ">{idIndustry.label}</span>
+                                  <p className="text-xs text-muted-foreground ">{idIndustry.description}</p>
+                                </div>
+                              </div>
+                            </Link>
+                          ))}
+                        </div>
+                      </div>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+
+                  <NavigationMenuItem>
+                    <Link href={idNavbar.menu[2]?.href} legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                        )}
+                      >
+                        {idNavbar.menu[2]?.label}
+                      </NavigationMenuLink>
                     </Link>
-                    <button
-                        onMouseEnter={() => fnSetMobileProductsOpen(true)}
-                        onMouseLeave={() => fnSetMobileProductsOpen(false)}
-                        className={cn(
-                            "flex flex-col items-center justify-center w-1/5 h-full",
-                            MobileProductsOpen ? "text-primary " : "text-muted-foreground  hover:text-primary ",
-                        )}
-                    >
-                        <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[0]?.icon)}</span>
-                        <span className="text-xs">{idNavbar.menu[0]?.label}</span>
-                    </button>
-                    <button
-                        onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
-                        onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
-                        className={cn(
-                            "flex flex-col items-center justify-center w-1/5 h-full",
-                            MobileIndustriesOpen ? "text-primary " : "text-muted-foreground  hover:text-primary ",
-                        )}
-                    >
-                        <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[1]?.icon)}</span>
-                        <span className="text-xs">{idNavbar.menu[1]?.label}</span>
-                    </button>
+                  </NavigationMenuItem>
 
-                    <Link
-                        href={idNavbar.menu[3]?.href}
-                        className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
-                    >
-                        <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[3]?.icon)}</span>
-                        <span className="text-xs">{idNavbar.menu[3]?.label}</span>
+                  <NavigationMenuItem>
+                    <Link href={idNavbar.menu[3]?.href} legacyBehavior passHref>
+                      <NavigationMenuLink
+                        className={cn(
+                          navigationMenuTriggerStyle(),
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                        )}
+                      >
+                        {idNavbar.menu[3]?.label}
+                      </NavigationMenuLink>
                     </Link>
+                  </NavigationMenuItem>
 
-                    {/* "More" button */}
-                    <button
-                        onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
-                        onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
-                        className={cn(
-                            "flex flex-col items-center justify-center w-1/5 h-full",
-                            MobileModeDropdownOpen ? "text-primary" : "text-muted-foreground hover:text-primary",
-                        )}
-                    >
-                        <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[4]?.icon)}</span>
-                        <span className="text-xs">{idNavbar.menu[4]?.label}</span>
-                    </button>
-                </div>
+                  <NavigationMenuItem className="flex items-center">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
+                        >
+                          <MoreHorizontal className="h-6 w-6" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-[80px] p-2 border border-border shadow-sm">
+                        {idNavbar.more.map((idItem, iIndex) => (
+                          <DropdownMenuItem
+                            key={idItem.label}
+                            asChild
+                            className={cn(
+                              "py-2 text-md font-normal text-center ",
+                              iIndex === 1 ? "border-b border-border  pb-2 mb-1" : "",
+                            )}
+                          >
+                            <Link href={idItem.href}>{idItem.label}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
+            </div>
+          </div>
+
+          {/* Right side controls */}
+          <div className="hidden lg:flex lg:items-center lg:gap-4">
+            {/* Theme Switcher */}
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
             </div>
 
-            {/* Mobile Products Card */}
-            {MobileProductsOpen && (
-                <div
-                    className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
-                    onMouseEnter={() => fnSetMobileProductsOpen(true)}
-                    onMouseLeave={() => fnSetMobileProductsOpen(false)}
+            {/* Language Switcher */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
                 >
-                    <div className="p-3">
-                        <div className="grid grid-cols-2 gap-2">
-                            {idNavbar.product.slice(0, 6).map((idProduct) => {
-                                return (
-                                    <Link
-                                        key={idProduct.label}
-                                        href={idProduct.href}
-                                        className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
-                                    >
-                                        {/* SVG Icon on Left */}
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                                            <div className="w-6 h-6 text-primary/70 ">{renderIcon(idProduct.icon)}</div>
-                                        </div>
-                                        {/* Title on Right */}
-                                        <span className="text-xs font-medium text-primary ">{idProduct.label}</span>
-                                    </Link>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {MobileIndustriesOpen && (
-                <div
-                    className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
-                    onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
-                    onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
-                >
-                    <div className="p-3">
-                        <div className="grid grid-cols-2 gap-2">
-                            {idNavbar.industry.map((idIndustry) => {
-                                return (
-                                    <Link
-                                        key={idIndustry.label}
-                                        href={idIndustry.href}
-                                        className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
-                                    >
-                                        {/* SVG Icon on Left */}
-                                        <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                                            <div className="w-6 h-6 text-primary/70 ">{renderIcon(idIndustry.icon)}</div>
-                                        </div>
-                                        {/* Title on Right */}
-                                        <span className="text-xs font-medium text-primary ">{idIndustry.label}</span>
-                                    </Link>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* "More" dropdown content */}
-            {MobileModeDropdownOpen && (
-                <div
-                    className="fixed bottom-16 right-3 z-[90] w-[120px] p-2 bg-grayBackground border border-border rounded-lg lg:hidden animate-fadeInUp"
-                    onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
-                    onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
-                >
-                    {idNavbar.more.map((idItem, iIndex) => (
-                        <div
-                            key={idItem.label}
-                            className={cn(
-                                "py-2 text-sm font-normal text-center",
-                                iIndex === 1 ? "border-b border-border pb-2 mb-1" : "",
-                            )}
+                  <Globe className="h-4 w-4" />
+                  <span className="text-md">{fnGetCurrentLanguageDisplay()}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[160px] border border-border  shadow-sm">
+                <div className="grid grid-cols-1 gap-0">
+                  {idNavbar.language.map((idLang) => (
+                    <DropdownMenuItem
+                      key={idLang.label}
+                      onClick={() => fnSetLanguage(idLang.label)}
+                      className={cn(
+                        "flex items-center py-2 px-2 text-md font-normal text-center ",
+                        idLang.label === Language ? "bg-muted " : "",
+                      )}
+                    >
+                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
+                      <span>{idLang.description}</span>
+                      {idLang.label === Language && (
+                        <svg
+                          className="ml-auto h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
                         >
-                            <Link href={idItem.href} className="block w-full text-primary">
-                                {idItem.label}
-                            </Link>
-                        </div>
-                    ))}
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
                 </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link href={idNavbar.menu[5]?.href}>
+              <Button variant="default" className="rounded-lg h-10 flex items-center">
+                {idNavbar.menu[5]?.label}
+              </Button>
+            </Link>
+          </div>
+
+          {/* Mobile menu button - removed hamburger menu */}
+          <div className="flex lg:hidden items-center gap-2">
+            {/* Theme Switcher for Mobile */}
+            <div className="flex items-center">
+              <ThemeToggle />
+            </div>
+
+            {/* Language Switcher for Mobile */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="secondary" size="sm" className="gap-1 h-8 flex items-center ">
+                  <Globe className="h-4 w-4" />
+                  <span className="text-xs">{fnGetCurrentLanguageDisplay()}</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-[160px] border border-border shadow-sm">
+                <div className="grid grid-cols-1 gap-0">
+                  {idNavbar.language.map((idLang) => (
+                    <DropdownMenuItem
+                      key={idLang.label}
+                      onClick={() => fnSetLanguage(idLang.label)}
+                      className={cn(
+                        "flex items-center py-2 px-2 text-md font-normal text-center ",
+                        idLang.label === Language ? "bg-muted " : "",
+                      )}
+                    >
+                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
+                      <span>{idLang.description}</span>
+                      {idLang.label === Language && (
+                        <svg
+                          className="ml-auto h-4 w-4"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                      )}
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background/80  border-t border-border  lg:hidden">
+        <div className="flex justify-around items-center h-16 px-2">
+          <Link
+            href={idNavbar.menu[2]?.href}
+            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
+          >
+            <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[2]?.icon)}</span>
+            <span className="text-xs">{idNavbar.menu[2]?.label}</span>
+          </Link>
+          <button
+            onMouseEnter={() => fnSetMobileProductsOpen(true)}
+            onMouseLeave={() => fnSetMobileProductsOpen(false)}
+            className={cn(
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileProductsOpen ? "text-primary " : "text-muted-foreground  hover:text-primary ",
             )}
-        </>
-    )
+          >
+            <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[0]?.icon)}</span>
+            <span className="text-xs">{idNavbar.menu[0]?.label}</span>
+          </button>
+          <button
+            onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
+            onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
+            className={cn(
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileIndustriesOpen ? "text-primary " : "text-muted-foreground  hover:text-primary ",
+            )}
+          >
+            <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[1]?.icon)}</span>
+            <span className="text-xs">{idNavbar.menu[1]?.label}</span>
+          </button>
+
+          <Link
+            href={idNavbar.menu[3]?.href}
+            className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground  hover:text-primary "
+          >
+            <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[3]?.icon)}</span>
+            <span className="text-xs">{idNavbar.menu[3]?.label}</span>
+          </Link>
+
+          {/* "More" button */}
+          <button
+            onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
+            onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+            className={cn(
+              "flex flex-col items-center justify-center w-1/5 h-full",
+              MobileModeDropdownOpen ? "text-primary" : "text-muted-foreground hover:text-primary",
+            )}
+          >
+            <span className="w-5 h-6 mb-1"> {renderIcon(idNavbar.menu[4]?.icon)}</span>
+            <span className="text-xs">{idNavbar.menu[4]?.label}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Products Card */}
+      {MobileProductsOpen && (
+        <div
+          className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileProductsOpen(true)}
+          onMouseLeave={() => fnSetMobileProductsOpen(false)}
+        >
+          <div className="p-3">
+            <div className="grid grid-cols-2 gap-2">
+              {idNavbar.product.slice(0, 6).map((idProduct) => {
+                return (
+                  <Link
+                    key={idProduct.label}
+                    href={idProduct.href}
+                    className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
+                  >
+                    {/* SVG Icon on Left */}
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
+                      <div className="w-6 h-6 text-primary/70 ">{renderIcon(idProduct.icon)}</div>
+                    </div>
+                    {/* Title on Right */}
+                    <span className="text-xs font-medium text-primary ">{idProduct.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {MobileIndustriesOpen && (
+        <div
+          className="fixed bottom-16 left-5 z-[90] max-w-[70%] bg-grayBackground  border border-border  rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileIndustriesOpen(true)}
+          onMouseLeave={() => fnSetMobileIndustriesOpen(false)}
+        >
+          <div className="p-3">
+            <div className="grid grid-cols-2 gap-2">
+              {idNavbar.industry.map((idIndustry) => {
+                return (
+                  <Link
+                    key={idIndustry.label}
+                    href={idIndustry.href}
+                    className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
+                  >
+                    {/* SVG Icon on Left */}
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
+                      <div className="w-6 h-6 text-primary/70 ">{renderIcon(idIndustry.icon)}</div>
+                    </div>
+                    {/* Title on Right */}
+                    <span className="text-xs font-medium text-primary ">{idIndustry.label}</span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* "More" dropdown content */}
+      {MobileModeDropdownOpen && (
+        <div
+          className="fixed bottom-16 right-3 z-[90] w-[120px] p-2 bg-grayBackground border border-border rounded-lg lg:hidden animate-fadeInUp"
+          onMouseEnter={() => fnSetMobileModeDropdownOpen(true)}
+          onMouseLeave={() => fnSetMobileModeDropdownOpen(false)}
+        >
+          {idNavbar.more.map((idItem, iIndex) => (
+            <div
+              key={idItem.label}
+              className={cn(
+                "py-2 text-sm font-normal text-center",
+                iIndex === 1 ? "border-b border-border pb-2 mb-1" : "",
+              )}
+            >
+              <Link href={idItem.href} className="block w-full text-primary">
+                {idItem.label}
+              </Link>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  )
 }

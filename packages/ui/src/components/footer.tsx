@@ -103,7 +103,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
               </li>
             </ul>
             <div className="mt-6">
-              <h4 className="font-medium mb-2">Subscribe to our Newsletter</h4>
+              <h4 className="font-medium mb-2">{idFooter.menu[3]?.label}</h4>
               <form action={formAction} className="flex gap-2">
                 <Input
                   type="email"

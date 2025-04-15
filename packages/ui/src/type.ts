@@ -346,7 +346,22 @@ export type TcontactProp = {
   emailHref: string
 }
 
-export type Theader = {
+
+// ---------------------------------------------------------
+
+export type TbuttonStrapi = {
+  label: string
+  href?: string | null
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+  icon?: string | React.ReactNode | keyof typeof LucideIcons
+  iconPosition?: "before" | "after";
+  formMode?: "booking" | "contact" | "download" | undefined
+  description?: string
+  className?: string
+}
+
+export type TheaderStrapi = {
   title?: string
   subtitle?: string
   highlight?: string
