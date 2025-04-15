@@ -14,7 +14,6 @@ export async function fnFetchFromStrapi<T>({
     variables: idVariables = {},
 }: LdFetchOptions): Promise<T> {
     const LQuery = fnGetQueryByName(iQuery);
-
     const { data } = await client.query({
         query: LQuery,
         variables: {

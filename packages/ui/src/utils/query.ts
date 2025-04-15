@@ -77,10 +77,70 @@ export const LFooterQuery: DocumentNode = gql`
   }
 `;
 
+export const LPrivacyPolicyQuery: DocumentNode = gql`
+query Query($locale: I18NLocaleCode) {
+  privacyPolicy(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`;
+
+export const LTermsAndConditionsQuery: DocumentNode = gql`
+query Query($locale: I18NLocaleCode) {
+  termsAndCondition(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`;
+
 // Query map with aliases
 const LdQueryMap = {
   navbar: LNavbarQuery,
   footer: LFooterQuery,
+  privacyPolicy: LPrivacyPolicyQuery,
+  termsAndCondition: LTermsAndConditionsQuery,
 };
 
 // Type-safe query name

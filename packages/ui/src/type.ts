@@ -355,18 +355,38 @@ export type TbuttonStrapi = {
   className?: string
 }
 
+export type TheaderStrapi = {
+  title?: string
+  subtitle?: string
+  highlight?: string
+  badge?: string
+  className?: string
+  headingClass?: string
+  descripClass?: string
+}
+
 export type Thighlight = {
   icon?: string
-  label: string
+  label?: string
   description?: string
 }
 
 export type TcontactData = {
-  address: string
-  phoneLabel: string
-  phoneHref: string
-  emailLabel: string
-  emailHref: string
+  address?: string
+  phoneLabel?: string
+  phoneHref?: string
+  emailLabel?: string
+  emailHref?: string
+  description?: string
+  websiteLabel?: string
+  websiteHref: string
+  label?: string
+}
+
+
+export type TteckStack = {
+  heading:  TheaderStrapi
+  point: Thighlight[]
 }
 
 export type Tnavbar = {
@@ -387,4 +407,11 @@ export type Tfooter = {
   more: TbuttonStrapi[]
   contact: TcontactData
   policies: TbuttonStrapi[]
+}
+
+export type TtermPrivacy = {
+  header: TheaderStrapi
+  acknowledgement: string
+  faq:TteckStack
+  contact: TcontactData
 }
