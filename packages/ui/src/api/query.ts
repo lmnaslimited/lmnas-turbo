@@ -75,8 +75,7 @@ export const FOOTER_QUERY = gql`
       label
     }
   }
-}
-`;
+}`;
 
 
 export const TREND_QUERY = gql`
@@ -140,6 +139,53 @@ query Trend($locale: I18NLocaleCode) {
       }
     }
   }
+}`;
+
+export const CONTACT_QUERY = gql`
+query Contact($locale: I18NLocaleCode) {
+  contact(locale: $locale) {
+    header {
+      highlight
+      title
+      subtitle
+    }
+  }
+}`;
+
+export const PRICING_QUERY = gql`
+query Pricing($locale: I18NLocaleCode) {
+  pricing(locale: $locale) {
+    heroSection {
+      heading {
+        highlight
+        subtitle
+      }
+      description
+      button {
+        label
+        href
+      }
+    }
+     problemSection {
+      ... on ComponentCoreHeader {
+        highlight
+      }
+      ... on ComponentCoreHighlight {
+        label
+        description
+      }
+      ... on ComponentSharedCallout {
+        header {
+          title
+        }
+        button {
+          label
+          href
+          formMode
+        }
+      }
+    }
+  }
 }
 `;
 
@@ -147,7 +193,9 @@ query Trend($locale: I18NLocaleCode) {
 const queries = {
   navbar: NAVBAR_QUERY,
   footer: FOOTER_QUERY,
-  trend: TREND_QUERY
+  trend: TREND_QUERY,
+  contact: CONTACT_QUERY,
+  pricing: PRICING_QUERY,
 };
 
 // Type-safe query name
@@ -157,5 +205,6 @@ export type QueryName = keyof typeof queries;
 export function getQueryByName(queryName: QueryName): DocumentNode {
   return queries[queryName];
 }
+
 
 

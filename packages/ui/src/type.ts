@@ -122,44 +122,6 @@ export type TlogoShowcaseProps = {
 // }
 
 
-// Form types
-export type TformMode = "booking" | "contact" | "download" | undefined | null
-
-export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
-
-export type TformFieldConfig = {
-  name: string
-  label?: string
-  placeholder?: string
-  type: TfieldType
-  required?: boolean
-  options?: { value: string; label: string }[]
-  className?: string
-  inputClassName?: string
-}
-
-export type TformConfig = {
-  id: string
-  title: string
-  description?: string
-  fields: TformFieldConfig[]
-  submitText: string
-  schema: z.ZodObject<any>
-  successTitle: string
-  successMessage: string
-  showTerms?: boolean
-  termsText?: string
-  privacyText?: string
-}
-
-export type TdynamicFormProps = {
-  config: TformConfig
-  onSuccess: (message: string, title: string) => void
-  onCancel?: () => void
-  className?: string
-  defaultValues?: Record<string, any>
-  hideCardHeader?: boolean
-}
 
 //solution individual
 
@@ -357,7 +319,7 @@ export type Tproduct = {
 
 export type Tbutton = {
   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
-  icon?: string
+  icon?: string | React.ReactNode | keyof typeof LucideIcons
   formMode?: "booking" | "contact" | "download" | undefined
   description?: string
   label: string
@@ -376,7 +338,7 @@ export type Tcard = {
   publishedDate: string
 }
 
-export type Tcontact = {
+export type TcontactProp = {
   address: string
   phoneLabel: string
   phoneHref: string
@@ -449,7 +411,7 @@ export type Tfooter = {
   social: Tbutton[]
   product: Tbutton[]
   more: Tbutton[]
-  contact: Tcontact
+  contact: TcontactProp
   policies: Tbutton[]
 }
 
@@ -472,7 +434,6 @@ export type TtrendCardProps = {
   date: string;
 }
 
-
 export type Ttrend = {
   heroSection: Thero
   trendHeader: Theader
@@ -481,4 +442,52 @@ export type Ttrend = {
   frustrationSection: TFrustrationSectionItem[]
   calloutSection: Tcallout
   trendsData: TtrendCardProps[]
+}
+
+// Form types
+export type TformMode = "booking" | "contact" | "download" | undefined | null
+
+export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
+
+export type TformFieldConfig = {
+  name: string
+  label?: string
+  placeholder?: string
+  type: TfieldType
+  required?: boolean
+  options?: { value: string; label: string }[]
+  className?: string
+  inputClassName?: string
+}
+
+export type TformConfig = {
+  id: string
+  title: string
+  description?: string
+  fields: TformFieldConfig[]
+  submitText: string
+  schema: z.ZodObject<any>
+  successTitle: string
+  successMessage: string
+  showTerms?: boolean
+  termsText?: string
+  privacyText?: string
+}
+
+export type TdynamicFormProps = {
+  config: TformConfig
+  onSuccess: (message: string, title: string) => void
+  onCancel?: () => void
+  className?: string
+  defaultValues?: Record<string, any>
+  hideCardHeader?: boolean
+}
+
+export type Tcontact = {
+  header: Theader[]
+}
+
+export type Tpricing = {
+  heroSection: Thero
+
 }
