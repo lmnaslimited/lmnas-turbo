@@ -411,7 +411,7 @@ export type Tfooter = {
 
 export type TtermPrivacy = {
   header: TheaderStrapi
-  acknowledgement: string
+  acknowledgment: string
   faq:TteckStack
   contact: TcontactData
 }
