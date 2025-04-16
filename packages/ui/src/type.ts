@@ -369,6 +369,9 @@ export type Thighlight = {
   icon?: string
   label?: string
   description?: string
+  // Need to remove the below question and answer
+  question?: string
+  answer?: string
 }
 
 export type TcontactData = {

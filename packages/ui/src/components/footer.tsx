@@ -9,15 +9,18 @@ import { Tfooter } from "@repo/ui/type"
 
 // Map of icon names to their components
 const iconMap = {
-  Twitter,
-  Linkedin,
-  Youtube,
-  Mail,
-  Phone,
-  MapPin,
-}
+  Twitter: Twitter,
+  Linkedin: Linkedin,
+  Youtube: Youtube,
+  Mail: Mail,
+  Phone: Phone,
+  MapPin: MapPin,
+} as const
+
+type IconKey = keyof typeof iconMap
 
 export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElement {
+  console.log(idFooter.social)
   const LdInitialState = {
     message: "",
   }
@@ -35,7 +38,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
             <p className="text-primary/70 mb-6">{idFooter.companyInfo}</p>
             <div className="flex space-x-4">
               {idFooter.social.map((item) => {
-                const IconComponent = iconMap[item.icon as keyof typeof iconMap]
+                const IconComponent = iconMap[item.icon as IconKey]
                 return (
                   <Link
                     key={item.label}
@@ -124,7 +127,7 @@ export default function Footer({ idFooter }: { idFooter: Tfooter }): ReactElemen
         <div className="border-t border-border pt-8 pb-16 sm:pb-0">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-primary/70 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} {idFooter.companyName}. {idFooter.menu[3]?.label}
+              &copy; {new Date().getFullYear()} {idFooter.companyName}. {idFooter.menu[4]?.label}
             </p>
             <div className="flex space-x-6">
               {idFooter.policies.map((item) => (
