@@ -6,25 +6,25 @@ export type Titems = {
   answer: string
   icon?: keyof typeof LucideIcons | React.ReactNode
 }
-export type Theader = {
-  textWithoutColor?: string
-  badge?: string
-  text?: string;
-  subtitle?: string
-  className?: string
-  headingClass?: string
-  descripClass?: string
-}
-export type Tbutton = {
-  label: string;
-  href?: string;
-  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
-  size?: "default" | "sm" | "lg" | "icon"
-  icon?: React.ReactNode | keyof typeof LucideIcons
-  iconPosition?: "before" | "after";
-  className?: string
-  formMode?: "booking" | "contact" | "download"
-}
+// export type Theader = {
+//   textWithoutColor?: string
+//   badge?: string
+//   text?: string;
+//   subtitle?: string
+//   className?: string
+//   headingClass?: string
+//   descripClass?: string
+// }
+// export type Tbutton = {
+//   label: string;
+//   href?: string;
+//   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
+//   size?: "default" | "sm" | "lg" | "icon"
+//   icon?: React.ReactNode | keyof typeof LucideIcons
+//   iconPosition?: "before" | "after";
+//   className?: string
+//   formMode?: "booking" | "contact" | "download"
+// }
 // export type Timage = {
 //   src?: string
 //   alt: string
@@ -93,16 +93,16 @@ export type TfeatureProps = {
   items?: Titems[]
 }
 
-export type TheroProps = {
-  heading: Theader;
-  items?: {
-    icon: React.ReactNode | keyof typeof LucideIcons
-    item: string
-  }[];
-  description?: string;
-  buttons: Tbutton[];
-  image: Timage;
-}
+// export type TheroProps = {
+//   heading: Theader;
+//   items?: {
+//     icon: React.ReactNode | keyof typeof LucideIcons
+//     item: string
+//   }[];
+//   description?: string;
+//   buttons: Tbutton[];
+//   image: Timage;
+// }
 
 // export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
@@ -327,7 +327,7 @@ export type TcontactProp = {
 
 // ---------------------------------------------------------
 
-export type TbuttonStrapi = {
+export type Tbutton = {
   label: string
   href?: string | null
   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
@@ -339,7 +339,7 @@ export type TbuttonStrapi = {
   className?: string
 }
 
-export type TheaderStrapi = {
+export type Theader = {
   title?: string
   subtitle?: string
   highlight?: string
@@ -347,6 +347,8 @@ export type TheaderStrapi = {
   className?: string
   headingClass?: string
   descripClass?: string
+  textWithoutColor?: string
+  text?: string;
 }
 
 export type Thighlight = {
@@ -369,7 +371,7 @@ export type Timage = {
 }
 
 export type Tcallout = {
-  header: TheaderStrapi
+  header: Theader
   title?: string
   subtitle?: string
   list?: { label: string[] }
@@ -378,16 +380,21 @@ export type Tcallout = {
   layout?: "classic" | "simple" | string
 }
 
-export type Thero = {
-  heading: TheaderStrapi
+export type TheroProps = {
+  heading: Theader
   description: string
   highlight?: Thighlight[]
   button: Tbutton[];
   image?: Timage
+  // items?: {
+  //   icon: React.ReactNode | keyof typeof LucideIcons
+  //   item: string
+  // }[];
+  // buttons: Tbutton[];
 }
 
 export type TteckStack = {
-  heading: TheaderStrapi
+  heading: Theader
   point: Thighlight[]
 }
 
@@ -413,7 +420,7 @@ export type Tfooter = {
 
 export type TFrustrationSectionItem = {
   highlight?: string
-  header?: TheaderStrapi
+  header?: Theader
   title?: string
   subtitle?: string
   button?: Tbutton
@@ -432,8 +439,8 @@ export type TtrendCardProps = {
 
 export type Ttrend = {
   heroSection: Thero
-  trendHeader: TheaderStrapi
-  trendFooter: TheaderStrapi
+  trendHeader: Theader
+  trendFooter: Theader
   noiseSection: TteckStack[]
   frustrationSection: TFrustrationSectionItem[]
   calloutSection: Tcallout
@@ -480,7 +487,7 @@ export type TdynamicFormProps = {
 }
 
 export type Tcontact = {
-  header: TheaderStrapi[]
+  header: Theader[]
 }
 
 export type Tpricing = {

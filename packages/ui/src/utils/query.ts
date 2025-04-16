@@ -135,12 +135,125 @@ query Query($locale: I18NLocaleCode) {
   }
 }`;
 
+export const LConatctQuery: DocumentNode = gql`
+query Contact($locale: I18NLocaleCode) {
+  contact(locale: $locale) {
+    header {
+      highlight
+      title
+      subtitle
+    }
+  }
+}`;
+
+export const LTrendQuery: DocumentNode = gql`
+query Trend($locale: I18NLocaleCode) {
+  trend(locale: $locale) {
+    heroSection {
+      heading {
+        highlight
+        title
+        subtitle
+      }
+      description
+      button {
+        label
+        href
+        formMode
+      }
+    }
+    trendHeader {
+      highlight
+      title
+      subtitle
+    }
+    trendFooter {
+      title
+    }
+    noiseSection {
+      heading {
+        title
+        subtitle
+      }
+      point {
+        label
+        description
+      }
+    }
+    frustrationSection {
+      ... on ComponentCoreHeader {
+        highlight
+      }
+      ... on ComponentSharedCallout {
+        header {
+          highlight
+        }
+        title
+        subtitle
+        button {
+          label
+          formMode
+        }
+      }
+    }
+    calloutSection {
+      header {
+        highlight
+      }
+      subtitle
+      button {
+        label
+        href
+      }
+    }
+  }
+}`;
+
+export const LPricingQuery: DocumentNode = gql`
+query Pricing($locale: I18NLocaleCode) {
+  pricing(locale: $locale) {
+    heroSection {
+      heading {
+        highlight
+        subtitle
+      }
+      description
+      button {
+        label
+        href
+      }
+    }
+    problemSection {
+      ... on ComponentCoreHeader {
+        highlight
+      }
+      ... on ComponentCoreHighlight {
+        label
+        description
+      }
+      ... on ComponentSharedCallout {
+        header {
+          title
+        }
+        button {
+          label
+          href
+          formMode
+        }
+      }
+    }
+}
+}`;
+
 // Query map with aliases
 const LdQueryMap = {
   navbar: LNavbarQuery,
   footer: LFooterQuery,
+  contact: LConatctQuery,
   privacyPolicy: LPrivacyPolicyQuery,
   termsAndCondition: LTermsAndConditionsQuery,
+  trend: LTrendQuery,
+  pricing: LPricingQuery
 };
 
 // Type-safe query name
