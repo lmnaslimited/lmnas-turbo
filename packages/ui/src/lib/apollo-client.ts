@@ -4,7 +4,7 @@ export const createApolloClient = () => {
     return new ApolloClient({
         ssrMode: true,
         link: new HttpLink({
-            uri: 'http://localhost:1337/graphql',
+            uri: 'https://dumps-240005.lmnaslens.com/graphql',
             fetch,
         }),
         cache: new InMemoryCache(),
