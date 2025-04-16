@@ -1,52 +1,45 @@
 import { gql } from '@apollo/client';
 import { DocumentNode } from 'graphql';
 
+// Utility function to generate a GraphQL query for a specific type.  
 
-const SharedTermsQuery = `{
-    header {
-      title
-      subtitle
-      highlight
-    }
-    acknowledgment
-    faq {
-      heading {
+
+function fnGetQueryByType(typeName: string) {
+  return gql`query Query($locale: I18NLocaleCode) {
+    ${typeName}(locale: $locale) {
+      header {
         title
+        subtitle
+        highlight
       }
-      point {
+      acknowledgment
+      faq {
+        heading {
+          title
+        }
+        point {
+          label
+          description
+        }
+      }
+      contact {
         label
         description
+        websiteLabel
+        websiteHref
+        emailLabel
+        emailHref
       }
     }
-    contact {
-      label
-      description
-      websiteLabel
-      websiteHref
-      emailLabel
-      emailHref
-    }
   }`
-
-// Queries to fetch data from Strapi   
-
-// Privacy Policy query
-  export const LTermsAndConditionsQuery: DocumentNode = gql`
-  query Query($locale: I18NLocaleCode) {
-    termsAndCondition(locale: $locale) ${SharedTermsQuery}
-  }`;
-
-// Terms and Conditions query
-export const LPrivacyPolicyQuery: DocumentNode = gql`
-query Query($locale: I18NLocaleCode) {
-  privacyPolicy(locale: $locale) ${SharedTermsQuery}
-}`;
+}
+  
 
 
 // Query map with aliases
 const LdQueryMap = {
-  termsAndCondition: LTermsAndConditionsQuery,
-  privacyPolicy: LPrivacyPolicyQuery
+  termsAndCondition: fnGetQueryByType('termsAndCondition'),
+  privacyPolicy: fnGetQueryByType('privacyPolicy'),
 };
 
 
