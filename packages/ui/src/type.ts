@@ -1,30 +1,30 @@
 import * as LucideIcons from "lucide-react"
 import { z } from "zod"
 
-// export type Titems = {
-//   question: string
-//   answer: string
-//   icon?: keyof typeof LucideIcons | React.ReactNode
-// }
-// export type Theader = {
-//   textWithoutColor?: string
-//   badge?: string
-//   text?: string;
-//   subtitle?: string
-// className?: string
-// headingClass?: string
-// descripClass?: string
-// }
-// export type Tbutton = {
-//   label: string;
-//   href?: string;
-//   variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
-//   size?: "default" | "sm" | "lg" | "icon"
-//   icon?: React.ReactNode | keyof typeof LucideIcons
-//   iconPosition?: "before" | "after";
-//   className?: string
-//   formMode?: "booking" | "contact" | "download"
-// }
+export type Titems = {
+  question: string
+  answer: string
+  icon?: keyof typeof LucideIcons | React.ReactNode
+}
+export type Theader = {
+  textWithoutColor?: string
+  badge?: string
+  text?: string;
+  subtitle?: string
+  className?: string
+  headingClass?: string
+  descripClass?: string
+}
+export type Tbutton = {
+  label: string;
+  href?: string;
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
+  size?: "default" | "sm" | "lg" | "icon"
+  icon?: React.ReactNode | keyof typeof LucideIcons
+  iconPosition?: "before" | "after";
+  className?: string
+  formMode?: "booking" | "contact" | "download"
+}
 // export type Timage = {
 //   src?: string
 //   alt: string
@@ -35,19 +35,18 @@ import { z } from "zod"
 //   position?: string
 // }
 
-//component
-// export type TcalloutProps = {
-//   header: Theader
-//   buttons: Tbutton[]
-//   points?: {
-//     title: string
-//     items?: string[]
-//     actionText: string
-//   }
-//   variant?: string
-//   layout?: "classic" | "simple" | string
-// };
-//component
+export type TcalloutProps = {
+  header: Theader
+  buttons: Tbutton[]
+  points?: {
+    title: string
+    items?: string[]
+    actionText: string
+  }
+  variant?: string
+  layout?: "classic" | "simple" | string
+};
+
 export type TcardProps = {
   image?: Timage
   header: Theader
@@ -74,7 +73,6 @@ export type TcardProps = {
   category?: string
   onButtonClick?: (mode: TformMode) => void
 }
-//component
 export type TlogoShowcaseProps = {
   logos: Timage[]
   variant: "marquee" | "grid"
@@ -86,30 +84,26 @@ export type TlogoShowcaseProps = {
   pauseOnHover?: boolean
   dimensions?: { width: number; height: number }
 }
+export type TfeatureProps = {
+  buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
+  layout?: "classic" | "centered";
+  iShowButton?: boolean;
+  header: Theader;
+  button?: Tbutton
+  items?: Titems[]
+}
 
-//componnet
-// export type TfeatureProps = {
-//   buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
-//   layout?: "classic" | "centered";
-//   iShowButton?: boolean;
-//   header: Theader;
-//   button?: Tbutton
-//   items?: Titems[]
-// }
+export type TheroProps = {
+  heading: Theader;
+  items?: {
+    icon: React.ReactNode | keyof typeof LucideIcons
+    item: string
+  }[];
+  description?: string;
+  buttons: Tbutton[];
+  image: Timage;
+}
 
-//component
-// export type TheroProps = {
-//   heading: Theader;
-//   items?: {
-//     icon: React.ReactNode | keyof typeof LucideIcons
-//     item: string
-//   }[];
-//   description?: string;
-//   buttons: Tbutton[];
-//   image: Timage;
-// }
-
-//component
 // export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
 // export type TtrendCardProps = {
@@ -120,8 +114,6 @@ export type TlogoShowcaseProps = {
 //   author: string;
 //   date: string;
 // }
-
-
 
 //solution individual
 
@@ -171,49 +163,48 @@ export type TSidebarCardType = {
   };
 };
 
-//page
-// export type Tindustry = {
-//   hero: Thero
-//   problems: {
-//     header: Theader
-//     items: Titems[]
-//     footer: {
-//       header: Theader
-//       points: {
-//         title: string
-//       }
-//       buttons: Tbutton[]
-//     }
-//   }
-//   features: {
-//     header: Theader
-//     feature: {
-//       header: Theader
-//       image: Timage
-//       card: TcardProps
-//     }[]
-//   }
-//   allFeature: {
-//     header: Theader
-//     cards: TcardProps[]
-//   }
-//   cta: {
-//     header: Theader
-//     cards: TcardProps[]
-//     footer: {
-//       title: string
-//       button: Tbutton
-//     }
-//   }
-//   successStory: {
-//     header: Theader
-//     cards: TcardProps[]
-//     footer: {
-//       title: string
-//       button: Tbutton
-//     }
-//   }
-// }
+export type Tindustry = {
+  hero: Thero
+  problems: {
+    header: Theader
+    items: Titems[]
+    footer: {
+      header: Theader
+      points: {
+        title: string
+      }
+      buttons: Tbutton[]
+    }
+  }
+  features: {
+    header: Theader
+    feature: {
+      header: Theader
+      image: Timage
+      card: TcardProps
+    }[]
+  }
+  allFeature: {
+    header: Theader
+    cards: TcardProps[]
+  }
+  cta: {
+    header: Theader
+    cards: TcardProps[]
+    footer: {
+      title: string
+      button: Tbutton
+    }
+  }
+  successStory: {
+    header: Theader
+    cards: TcardProps[]
+    footer: {
+      title: string
+      button: Tbutton
+    }
+  }
+}
 
 
 export type TapiResponse = {
@@ -243,8 +234,6 @@ export type TslotResponse = {
 
 // export type Tnavbar = Record<string, TnavbarItem[]>
 
-
-//page
 export type Tproduct = {
   hero: Thero
   problems: {
@@ -317,17 +306,6 @@ export type Tproduct = {
 // --------------------------------------------------------------------------------------------------------------
 
 
-export type Tbutton = {
-  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
-  icon?: string | React.ReactNode | keyof typeof LucideIcons
-  formMode?: "booking" | "contact" | "download" | undefined
-  description?: string
-  label: string
-  href?: string | null
-  className?: string
-  size?: "default" | "sm" | "lg" | "icon"
-  iconPosition?: "before" | "after";
-}
 
 export type Tcard = {
   headline: string
@@ -388,7 +366,7 @@ export type Timage = {
 }
 
 export type Tcallout = {
-  header: Theader
+  header: TheaderStrapi
   title?: string
   subtitle?: string
   list?: { label: string[] }
@@ -398,7 +376,7 @@ export type Tcallout = {
 }
 
 export type Thero = {
-  heading: Theader
+  heading: TheaderStrapi
   description: string
   highlight?: Thighlight[]
   button: Tbutton[];
@@ -406,7 +384,7 @@ export type Thero = {
 }
 
 export type TteckStack = {
-  heading: Theader
+  heading: TheaderStrapi
   point: Thighlight[]
 }
 
@@ -432,7 +410,7 @@ export type Tfooter = {
 
 export type TFrustrationSectionItem = {
   highlight?: string
-  header?: Theader
+  header?: TheaderStrapi
   title?: string
   subtitle?: string
   button?: Tbutton
@@ -451,8 +429,8 @@ export type TtrendCardProps = {
 
 export type Ttrend = {
   heroSection: Thero
-  trendHeader: Theader
-  trendFooter: Theader
+  trendHeader: TheaderStrapi
+  trendFooter: TheaderStrapi
   noiseSection: TteckStack[]
   frustrationSection: TFrustrationSectionItem[]
   calloutSection: Tcallout
@@ -499,7 +477,7 @@ export type TdynamicFormProps = {
 }
 
 export type Tcontact = {
-  header: Theader[]
+  header: TheaderStrapi[]
 }
 
 export type Tpricing = {

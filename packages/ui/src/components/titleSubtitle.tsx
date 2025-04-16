@@ -1,9 +1,9 @@
 "use client"
 import { cn } from "@repo/ui/lib/utils";
-import { Theader } from "@repo/ui/type";
+import { Theader, TheaderStrapi } from "@repo/ui/type";
 import { ReactElement } from "react";
 
-export default function TitleSubtitle({ idTitle }: { idTitle: Theader }): ReactElement {
+export default function TitleSubtitle({ idTitle }: { idTitle: TheaderStrapi }): ReactElement {
     return (
         <div className={cn("w-full flex flex-col space-y-4 mb-10", idTitle.className)}>
             <h2 className={cn("text-3xl font-bold tracking-tighter sm:text-4xl", idTitle.headingClass)}>

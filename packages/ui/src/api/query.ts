@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { DocumentNode } from 'graphql';
 
 // Navbar query
-export const NAVBAR_QUERY = gql`
+export const LNavbarQuery: DocumentNode = gql`
  query Navbar($locale: I18NLocaleCode) {
   navbar(locale: $locale) {
     locale
@@ -40,45 +40,102 @@ export const NAVBAR_QUERY = gql`
 }
 `;
 
-
 // Footer query
-export const FOOTER_QUERY = gql`
+export const LFooterQuery: DocumentNode = gql`
   query Footer($locale: I18NLocaleCode) {
-  footer(locale: $locale) {
-    companyName
-    companyInfo
-    social {
-      label
-      href
-      icon
+    footer(locale: $locale) {
+      companyName
+      companyInfo
+      social {
+        label
+        href
+        icon
+      }
+      menu {
+        label
+      }
+      product {
+        label
+        href
+      }
+      more {
+        label
+        href
+      }
+      contact {
+        address
+        phoneLabel
+        phoneHref
+        emailLabel
+        emailHref
+      }
+      policies {
+        label
+        href
+      }
     }
-    product {
-      label
-      href
+  }
+`;
+
+export const LPrivacyPolicyQuery: DocumentNode = gql`
+query Query($locale: I18NLocaleCode) {
+  privacyPolicy(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
     }
-    more {
-      label
-      href
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
     }
     contact {
-      address
-      phoneLabel
-      phoneHref
+      label
+      description
+      websiteLabel
+      websiteHref
       emailLabel
       emailHref
-    }
-    policies {
-      label
-      href
-    }
-    menu {
-      label
     }
   }
 }`;
 
+export const LTermsAndConditionsQuery: DocumentNode = gql`
+query Query($locale: I18NLocaleCode) {
+  termsAndCondition(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`;
 
-export const TREND_QUERY = gql`
+export const LTrendQuery = gql`
 query Trend($locale: I18NLocaleCode) {
   trend(locale: $locale) {
     heroSection {
@@ -141,7 +198,7 @@ query Trend($locale: I18NLocaleCode) {
   }
 }`;
 
-export const CONTACT_QUERY = gql`
+export const LContactQuery = gql`
 query Contact($locale: I18NLocaleCode) {
   contact(locale: $locale) {
     header {
@@ -152,7 +209,7 @@ query Contact($locale: I18NLocaleCode) {
   }
 }`;
 
-export const PRICING_QUERY = gql`
+export const LPricingQuery = gql`
 query Pricing($locale: I18NLocaleCode) {
   pricing(locale: $locale) {
     heroSection {
@@ -190,21 +247,21 @@ query Pricing($locale: I18NLocaleCode) {
 `;
 
 // Query map with aliases
-const queries = {
-  navbar: NAVBAR_QUERY,
-  footer: FOOTER_QUERY,
-  trend: TREND_QUERY,
-  contact: CONTACT_QUERY,
-  pricing: PRICING_QUERY,
+const LdQueryMap = {
+  navbar: LNavbarQuery,
+  footer: LFooterQuery,
+  contact: LContactQuery,
+  trend: LTrendQuery,
+  pricing: LPricingQuery,
+  privacyPolicy: LPrivacyPolicyQuery,
+  termsAndCondition: LTermsAndConditionsQuery,
 };
 
 // Type-safe query name
-export type QueryName = keyof typeof queries;
+export type QueryName = keyof typeof LdQueryMap;
 
 // Type-safe function to get query
-export function getQueryByName(queryName: QueryName): DocumentNode {
-  return queries[queryName];
+export function fnGetQueryByName(iQueryName: QueryName): DocumentNode {
+  return LdQueryMap[iQueryName];
 }
-
-
 
