@@ -339,3 +339,82 @@ export type TslotResponse = {
   data?: Tslot[]
   error?: string
 }
+
+
+// ---------------------------------------------------------
+
+export type TbuttonStrapi = {
+  label: string
+  href?: string | null
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link"
+  size?: "default" | "sm" | "lg" | "icon"
+  icon?: string | React.ReactNode | keyof typeof LucideIcons
+  iconPosition?: "before" | "after";
+  formMode?: "booking" | "contact" | "download" | undefined
+  description?: string
+  className?: string
+}
+
+export type TheaderStrapi = {
+  title?: string
+  subtitle?: string
+  highlight?: string
+  badge?: string
+  className?: string
+  headingClass?: string
+  descripClass?: string
+}
+
+export type Thighlight = {
+  icon?: string
+  label?: string
+  description?: string
+  // Need to remove the below question and answer
+  question?: string
+  answer?: string
+}
+
+export type TcontactData = {
+  address?: string
+  phoneLabel?: string
+  phoneHref?: string
+  emailLabel?: string
+  emailHref?: string
+  description?: string
+  websiteLabel?: string
+  websiteHref: string
+  label?: string
+}
+
+
+export type TteckStack = {
+  heading:  TheaderStrapi
+  point: Thighlight[]
+}
+
+export type Tnavbar = {
+  logo: TbuttonStrapi
+  menu: TbuttonStrapi[]
+  product: TbuttonStrapi[]
+  industry: TbuttonStrapi[]
+  more: TbuttonStrapi[]
+  language: TbuttonStrapi[]
+}
+
+export type Tfooter = {
+  companyName: string
+  companyInfo: string
+  menu: Thighlight[]
+  social: TbuttonStrapi[]
+  product: TbuttonStrapi[]
+  more: TbuttonStrapi[]
+  contact: TcontactData
+  policies: TbuttonStrapi[]
+}
+
+export type TtermPrivacy = {
+  header: TheaderStrapi
+  acknowledgment: string
+  faq:TteckStack
+  contact: TcontactData
+}
