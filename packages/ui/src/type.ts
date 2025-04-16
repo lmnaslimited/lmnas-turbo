@@ -361,15 +361,15 @@ export type TteckStack = {
 
 
 export type TcontactData = {
-  address?: string
-  phoneLabel?: string
-  phoneHref?: string
-  emailLabel?: string
-  emailHref?: string
-  description?: string
-  websiteLabel?: string
+  address: string
+  phoneLabel: string
+  phoneHref: string
+  emailLabel: string
+  emailHref: string
+  description: string
+  websiteLabel: string
   websiteHref: string
-  label?: string
+  label: string
 }
 
 export type Tnavbar = {
