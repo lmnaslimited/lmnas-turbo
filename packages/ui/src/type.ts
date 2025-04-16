@@ -113,12 +113,16 @@ export type TheroProps = {
 export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
 export type TtrendCardProps = {
+  id:string
   title: string;
   description: string;
   source: string;
-  imageUrl?: string;
+  media?:{
+    url: string
+    alt: string
+  };
   author: string;
-  date: string;
+  publishedAt: string;
 }
 
 
@@ -338,4 +342,66 @@ export type TslotResponse = {
   message?: string
   data?: Tslot[]
   error?: string
+}
+
+//job api
+export type JobOpening = {
+  name: string;
+  job_title: string;
+  status: string;
+  designation: string;
+  custom_exert_description: string;
+  location?: string;
+  _user_tags: string[];
+  creation: string;
+};
+
+export type JobFilters = {
+  role: string[];
+  location: string[];
+};
+
+export type JobData = {
+  id: string;
+  title: string;
+  location: string;
+  role: string ;
+  description: string;
+};
+
+export type MappedResult = {
+  filters: JobFilters;
+  data: JobData[];
+};
+
+//tweeter
+export type TwitterUser ={
+  id: string;
+  name: string;
+  username: string;
+}
+
+export type TwitterMedia ={
+  media_key: string;
+  url?: string;
+  alt_text?: string;
+  preview_image_url?: string;
+}
+
+export type TwitterTweet ={
+  id: string;
+  created_at: string;
+  text: string;
+  author_id: string;
+  attachments?: {
+    media_keys: string[];
+  };
+}
+
+export type TwitterApiResponse ={
+  data: TwitterTweet[];
+  includes?: {
+    users?: TwitterUser[];
+    media?: TwitterMedia[];
+  };
 }
