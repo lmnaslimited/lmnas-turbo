@@ -159,14 +159,11 @@ export default function Footer():ReactElement {
               &copy; {new Date().getFullYear()} LMNAs. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link href="#privacy" className="text-sm text-primary/70 hover:text-primary transition-colors">
+              <Link href="/privacy-policy" className="text-sm text-primary/70 hover:text-primary transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="#terms" className="text-sm text-primary/70 hover:text-primary transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="#cookies" className="text-sm text-primary/70 hover:text-primary transition-colors">
-                Cookie Policy
+              <Link href="/terms-and-conditions" className="text-sm text-primary/70 hover:text-primary transition-colors">
+                Terms and Conditions
               </Link>
             </div>
           </div>

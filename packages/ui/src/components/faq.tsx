@@ -9,8 +9,8 @@ export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
       <Accordion type="single" collapsible className="w-full">
         {idFaq.map((idFaq, iIndex) => (
           <AccordionItem key={iIndex} value={`item-${iIndex}`}>
-            <AccordionTrigger>{idFaq.question}</AccordionTrigger>
-            <AccordionContent>{idFaq.answer}</AccordionContent>
+            <AccordionTrigger>{idFaq.question || idFaq.label}</AccordionTrigger>
+            <AccordionContent>{idFaq.answer || idFaq.description}</AccordionContent>
           </AccordionItem>
         ))}
       </Accordion>

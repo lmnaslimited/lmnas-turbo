@@ -4,7 +4,9 @@ import { z } from "zod"
 export type Titems = {
   question: string
   answer: string
-  icon?: keyof typeof LucideIcons | React.ReactNode
+  icon?: keyof typeof LucideIcons | React.ReactNode | string
+  label?: string
+  description?: string
 }
 export type Theader = {
   textWithoutColor?: string
@@ -14,6 +16,8 @@ export type Theader = {
   className?: string
   headingClass?: string
   descripClass?: string
+  title?: string
+  highlight?: string
 }
 export type Tbutton = {
   label: string;
@@ -24,6 +28,7 @@ export type Tbutton = {
   iconPosition?: "before" | "after";
   className?: string
   formMode?: "booking" | "contact" | "download"
+  description?: string
 }
 export type Timage = {
   src?: string
@@ -338,4 +343,40 @@ export type TslotResponse = {
   message?: string
   data?: Tslot[]
   error?: string
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+export type TtermPrivacy = {
+  header: Theader
+  acknowledgment: string
+  faq:TteckStack
+  contact: TcontactData
+}
+
+export type TteckStack = {
+  heading:  Theader
+  point: Titems[]
+}
+
+
+export type TcontactData = {
+  address?: string
+  phoneLabel?: string
+  phoneHref?: string
+  emailLabel?: string
+  emailHref?: string
+  description?: string
+  websiteLabel?: string
+  websiteHref: string
+  label?: string
+}
+
+export type Tnavbar = {
+  logo: Tbutton
+  menu: Tbutton[]
+  product: Tbutton[]
+  industry: Tbutton[]
+  more: Tbutton[]
+  language: Tbutton[]
 }
