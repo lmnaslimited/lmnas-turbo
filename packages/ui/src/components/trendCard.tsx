@@ -4,6 +4,7 @@ import { Youtube, Linkedin, Twitter } from "lucide-react";
 import Image from "next/image";
 import { TtrendCardProps } from "@repo/ui/type";
 import { ReactElement, ReactNode } from "react";
+import Link from "next/link";
 
 /**
  * Function to return the appropriate icon based on the source platform.
@@ -21,8 +22,23 @@ const fnGetIcon = (iSource: string):ReactNode => {
   }
 };
 
+const fnGetPlatformUrl = (iSource: string, iId: string): string => {
+  switch (iSource) {
+    case "LinkedIn":
+      return `https://www.linkedin.com/posts/${iId}`;
+    case "YouTube":
+      return `https://www.youtube.com/watch?v=${iId}`;
+    case "Twitter":
+      return `https://twitter.com/${iId}`;
+    default:
+      return "#";
+  }
+};
+
 export default function TrendCard({ idTrends }: {idTrends:TtrendCardProps}):ReactElement {
+  const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
+    <Link href={LPlatformUrl} >
     <Card className="overflow-hidden">
       <CardHeader className="p-4">
         <div className="flex items-center justify-between">
@@ -30,15 +46,21 @@ export default function TrendCard({ idTrends }: {idTrends:TtrendCardProps}):Reac
             {fnGetIcon(idTrends.source)}
             {idTrends.source}
           </Badge>
-          <CardDescription>{idTrends.date}</CardDescription>
+          <CardDescription>{new Date(idTrends.publishedAt).toLocaleDateString()}</CardDescription>
         </div>
         <CardTitle className="line-clamp-2">{idTrends.title}</CardTitle>
       </CardHeader>
 
-      {idTrends.imageUrl && (
-        <div className="relative h-48 w-full">
-          <Image src={idTrends.imageUrl} alt={idTrends.title} layout="fill" objectFit="cover" />
-        </div>
+      {idTrends.media?.url && (
+         <div className="relative w-full aspect-video">
+         <Image
+          className="absolute top-0 left-0 w-full h-full object-cover"
+          src={idTrends.media.url}  // Image URL
+          alt={idTrends.media.alt || "Media preview"}  // Image alt text (optional)
+          width={800} // Provide width and height for Image component optimization
+          height={450}
+         />
+       </div>
       )}
 
       <CardContent className="p-4">
@@ -46,5 +68,6 @@ export default function TrendCard({ idTrends }: {idTrends:TtrendCardProps}):Reac
         <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
       </CardContent>
     </Card>
+    </Link>
   );
 }
