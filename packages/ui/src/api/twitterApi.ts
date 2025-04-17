@@ -2,7 +2,7 @@
 
 import { TapiResponse, TwitterApiResponse } from "@repo/ui/type";
 
-export async function TweeterApi(): Promise<TapiResponse> {
+export async function TwitterApi(): Promise<TapiResponse> {
  
   const LdHeaders = {
     Authorization: `${process.env.TWITTER_BEARER_TOKEN}`,
@@ -19,6 +19,7 @@ export async function TweeterApi(): Promise<TapiResponse> {
   }
 
   const LdUserTweetsData = await userTweetsResponse.json();
+ 
   const LTweetIds = LdUserTweetsData.data?.map((tweet: any) => tweet.id).join(',');
 
   if (!LTweetIds) {
@@ -74,7 +75,7 @@ if (LdMedia && LdMedia.preview_image_url) {
       title: tweet.text.split('\n')[0], // Use first line as title
       description: tweet.text,
       author: LdAuthor?.name ?? 'Unknown',
-      source: 'Twitter',
+      source: 'X',
       media: LdMediaToDisplay,
     };
   });
