@@ -1,57 +1,7 @@
+
 import * as LucideIcons from "lucide-react"
 import { z } from "zod"
 
-export type Titems = {
-  question: string
-  answer: string
-  icon?: keyof typeof LucideIcons | React.ReactNode | string
-  label?: string
-  description?: string
-}
-export type Theader = {
-  textWithoutColor?: string
-  badge?: string
-  text?: string;
-  subtitle?: string
-  className?: string
-  headingClass?: string
-  descripClass?: string
-  title?: string
-  highlight?: string
-}
-export type Tbutton = {
-  label: string;
-  href?: string;
-  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
-  size?: "default" | "sm" | "lg" | "icon"
-  icon?: React.ReactNode | keyof typeof LucideIcons
-  iconPosition?: "before" | "after";
-  className?: string
-  formMode?: "booking" | "contact" | "download"
-  description?: string
-}
-export type Timage = {
-  src?: string
-  alt: string
-  aspectRatio?: "square" | "video" | "wide" | "auto"
-  width?: string
-  height?: string
-  svg?: React.ReactNode | keyof typeof LucideIcons
-  position?: string
-}
-
-//component
-export type TcalloutProps = {
-  header: Theader
-  buttons: Tbutton[]
-  points?: {
-    title: string
-    items?: string[]
-    actionText: string
-  }
-  variant?: string
-  layout?: "classic" | "simple" | string
-};
 //component
 export type TcardProps = {
   image?: Timage
@@ -100,18 +50,6 @@ export type TfeatureProps = {
   header: Theader;
   button?: Tbutton
   items?: Titems[]
-}
-
-//component
-export type TheroProps = {
-  heading: Theader;
-  items?: {
-    icon: React.ReactNode | keyof typeof LucideIcons
-    item: string
-  }[];
-  description?: string;
-  buttons: Tbutton[];
-  image: Timage;
 }
 
 //component
@@ -415,18 +353,47 @@ export type TwitterApiResponse = {
 
 /////////////////////////////////////////////////////////////////////////////
 
-export type TtermPrivacy = {
-  header: Theader
-  acknowledgment: string
-  faq: TteckStack
-  contact: TcontactData
+export type Titems = {
+  question: string
+  answer: string
+  icon?: keyof typeof LucideIcons | React.ReactNode | string
+  label?: string
+  description?: string
 }
 
-export type TteckStack = {
-  heading: Theader
-  point: Titems[]
+export type Theader = {
+  textWithoutColor?: string
+  badge?: string
+  text?: string;
+  subtitle?: string
+  className?: string
+  headingClass?: string
+  descripClass?: string
+  title?: string
+  highlight?: string
 }
 
+export type Tbutton = {
+  label: string;
+  href?: string;
+  variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
+  size?: "default" | "sm" | "lg" | "icon"
+  icon?: React.ReactNode | keyof typeof LucideIcons
+  iconPosition?: "before" | "after";
+  className?: string
+  formMode?: "booking" | "contact" | "download"
+  description?: string
+}
+
+export type Timage = {
+  src?: string
+  alt: string
+  aspectRatio?: "square" | "video" | "wide" | "auto"
+  width?: string
+  height?: string
+  svg?: React.ReactNode | keyof typeof LucideIcons
+  position?: string
+}
 
 export type TcontactData = {
   address: string
@@ -440,11 +407,55 @@ export type TcontactData = {
   label: string
 }
 
-export type Tnavbar = {
-  logo: Tbutton
-  menu: Tbutton[]
-  product: Tbutton[]
-  industry: Tbutton[]
-  more: Tbutton[]
-  language: Tbutton[]
+export type TteckStack = {
+  heading: Theader
+  point: Titems[]
+}
+
+export type TheroProps = {
+  heading: Theader;
+  // items?: {
+  //   icon: React.ReactNode | keyof typeof LucideIcons
+  //   item: string
+  // }[];
+  highlight?: Titems[]
+  description?: string;
+  buttons: Tbutton[];
+  image: Timage;
+}
+
+export type TcalloutProps = {
+  header: Theader
+  buttons: Tbutton[]
+  // points?: {
+  //   title: string
+  //   items?: string[]
+  //   actionText: string
+  // }
+  title?: string
+  subtitle?: string
+  points?: Titems[]
+  variant?: string
+  layout?: "classic" | "simple" | string
+}
+
+export type TtermPrivacy = {
+  header: Theader
+  acknowledgment: string
+  faq: TteckStack
+  contact: TcontactData
+}
+
+export type TfrustationSectionItem = {
+  header: Theader
+  callout: TcalloutProps
+}
+
+export type Ttrend = {
+  heroSection: TheroProps
+  trendHeader: Theader
+  trendFooter: Theader
+  noiseSection: TteckStack
+  frustationSection: TfrustationSectionItem
+  calloutSection: TcalloutProps
 }

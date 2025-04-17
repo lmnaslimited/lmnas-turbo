@@ -28,12 +28,12 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Displays a list of features, each represented by an icon and text.
   * This section helps in showcasing key benefits or highlights of the hero section.
   */
-  const FeatureList = ({ iaItems }: { iaItems?: TheroProps["items"] }): ReactElement => (
+  const FeatureList = ({ iaHighlight }: { iaHighlight?: TheroProps["highlight"] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {iaItems?.map((idItem, iIndex) => (
+      {iaHighlight?.map((idHighlight, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
-          {idItem?.icon}
-          <span>{idItem?.item}</span>
+          {idHighlight?.icon}
+          <span>{idHighlight?.label}</span>
         </div>
       ))}
     </div>
@@ -89,7 +89,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {idHero.items && <FeatureList iaItems={idHero.items} />}
+        {idHero.highlight && <FeatureList iaHighlight={idHero.highlight} />}
         <CTAButtons iaButtons={idHero.buttons} />
       </div>
       {/* Image part */}
