@@ -43,7 +43,7 @@ export default function Callout({
       <ul className="mt-4 space-y-4">
         {idCallout.points?.map((iPoint, iIndex) => (
           <li key={iIndex} className={cn("text-lg", idCallout.variant || "text-secondary")}>
-            {iPoint.label}
+            {iPoint?.label}
           </li>
         ))}
       </ul>
@@ -55,7 +55,7 @@ export default function Callout({
 
       {/* Render callout buttons with appropriate behavior for link and Onclick actions */}
       <div className="mt-8 flex flex-col gap-4 sm:flex-row justify-center">
-        {idCallout.buttons.map((idButton, index) => {
+        {idCallout.buttons?.map((idButton, index) => {
           // Construct button content, including an optional icon
           const ButtonContent = (
             <>

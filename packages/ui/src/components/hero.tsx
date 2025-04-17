@@ -45,7 +45,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   */
   const CTAButtons = ({ iaButtons }: { iaButtons: TheroProps["buttons"] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
-      {iaButtons.map((idButton, iIndex) =>
+      {iaButtons?.map((idButton, iIndex) =>
         idButton.href ? (
           <Link href={idButton.href} key={iIndex}>
             <Button

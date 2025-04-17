@@ -164,9 +164,9 @@ export type Tindustry = {
     items: Titems[]
     footer: {
       header: Theader
-      points: {
-        title: string
-      }
+
+      title: string
+
       buttons: Tbutton[]
     }
   }
@@ -420,7 +420,7 @@ export type TheroProps = {
   // }[];
   highlight?: Titems[]
   description?: string;
-  buttons: Tbutton[];
+  buttons?: Tbutton[];
   image: Timage;
 }
 
@@ -446,16 +446,20 @@ export type TtermPrivacy = {
   contact: TcontactData
 }
 
-export type TfrustationSectionItem = {
-  header: Theader
-  callout: TcalloutProps
+export type TFrustrationSectionItem = {
+  highlight?: string
+  header?: Theader
+  title?: string
+  subtitle?: string
+  buttons?: Tbutton
 }
+
 
 export type Ttrend = {
   heroSection: TheroProps
   trendHeader: Theader
   trendFooter: Theader
-  noiseSection: TteckStack
-  frustationSection: TfrustationSectionItem
+  noiseSection: TteckStack[]
+  frustrationSection: TFrustrationSectionItem[]
   calloutSection: TcalloutProps
 }

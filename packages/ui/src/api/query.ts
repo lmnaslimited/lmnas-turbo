@@ -14,7 +14,7 @@ query Trend($locale: I18NLocaleCode) {
         highlight
       }
       description
-      button {
+      buttons {
         label
         href
         icon
@@ -44,7 +44,7 @@ query Trend($locale: I18NLocaleCode) {
         header {
           highlight
         }
-        button {
+        buttons {
           label
           icon
           formMode
@@ -59,9 +59,9 @@ query Trend($locale: I18NLocaleCode) {
     calloutSection {
       header {
         highlight
-        title
       }
-      button {
+      title
+      buttons {
         label
         href
         icon
@@ -103,8 +103,8 @@ function fnGetQueryByType(typeName: string) {
 const LdQueryMap = {
   termsAndCondition: fnGetQueryByType('termsAndCondition'),
   privacyPolicy: fnGetQueryByType('privacyPolicy'),
-  Trend: LTrendQuery,
-}; 
+  trend: LTrendQuery,
+};
 
 
 // Type-safe query name
