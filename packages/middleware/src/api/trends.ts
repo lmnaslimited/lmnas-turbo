@@ -3,7 +3,7 @@ import { clQuery } from './query'
 import { ArrowRight, ChevronRight, Linkedin, Mail, Twitter, Youtube } from "lucide-react";
 
 
-class clQueryTrends extends clQuery<TtrendsPageSource> {
+export class clQueryTrends extends clQuery<TtrendsPageSource> {
     constructor() {
       super();
     }

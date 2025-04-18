@@ -1,9 +1,13 @@
 
 export type TtrendsPageSource  = {
+    trend: Ttrend
+    
+
+}
+type Ttrend = {
     heroSection: TheroSection
 
 }
-
 export type TheroSection = {
         heading: Theading
         description: string
