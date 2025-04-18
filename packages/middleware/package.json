@@ -2,5 +2,8 @@
     "name": "@repo/middleware",
     "version": "0.0.0",
     "private": true,
-    "type": "module"
+    "type": "module",
+    "exports":{
+        "./types/*": "./src/types/*.ts"
+    }
 }
