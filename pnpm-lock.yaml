@@ -189,7 +189,17 @@ importers:
         specifier: ^8.22.0
         version: 8.22.0(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)
 
-  packages/middleware: {}
+  packages/middleware:
+    dependencies:
+      '@apollo/client':
+        specifier: ^3.13.7
+        version: 3.13.7(@types/react@19.0.8)(graphql@16.10.0)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      '@types/node':
+        specifier: ^22.12.0
+        version: 22.13.0
+      graphql:
+        specifier: ^16.10.0
+        version: 16.10.0
 
   packages/typescript-config: {}
 
