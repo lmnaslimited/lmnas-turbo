@@ -3,10 +3,10 @@ export type Middleware ={
     description: string;
     version: string;
 }
-export interface Iquery  {
+export interface Iquery<T>  {
     query: string
     getQuery():string
-    executeQuery():<T>
+    executeQuery():Promise<T>
 }
 export interface Itransformer {
     contentType: string
