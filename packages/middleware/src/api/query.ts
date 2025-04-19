@@ -7,9 +7,9 @@ export abstract class clQuery<T> implements Iquery<T> {
     query: string;
     locale: string;
     iDvaribles: {}
-
-    abstract getQuery(): string;
     // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
+    abstract getQuery(): string;
+    
     async executeQuery(): Promise<T> {
             const { data } = await client.query({
             query:gql`${this.query}`

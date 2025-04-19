@@ -8,13 +8,13 @@ export interface Iquery<T>  {
     getQuery():string
     executeQuery():Promise<T>
 }
-export interface Itransformer<T> {
+export interface Itransformer<T, S=T, R=any> {
     contentType: string
     transformationRule: string
-    sourceType: IsourceType
-    targetType: ItargetType
+    sourceType: S
+    targetType: R
     query: Iquery<T>
-    performTransformation(idSourceData:IsourceType):ItargetType
+    performTransformation(idSourceData:IsourceType):Promise<R>
     getData():Promise<T>
 }
 export interface ItransformationRule {
@@ -31,9 +31,12 @@ export interface ItargetType {
 
 export type TtrendsPageSource  = {
     trend: Ttrend
-    
 
 }
+export type TtrendsPageTarget = {
+    trend: Ttrend
+}
+
 type Ttrend = {
     heroSection: TheroSection
 
