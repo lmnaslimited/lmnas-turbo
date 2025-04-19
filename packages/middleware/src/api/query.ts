@@ -1,7 +1,8 @@
-import { Iquery } from "../types/types";
+import { Iquery, TtrendsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
-import { clQueryTrends } from "./trends";
+
+// The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<T> implements Iquery<T> {
     query: string;
     locale: string;
@@ -19,19 +20,49 @@ export abstract class clQuery<T> implements Iquery<T> {
         this.query = this.getQuery()
     }
 }
+// The clQueryTrends class extends the clQuery class and provides a specific implementation for the "Trends" query.
 
-
-// Extend this map as you add more content types and their corresponding queries
-const queryMap: Record<string, new () => clQuery<any>> = {
-    trend: clQueryTrends,
-  };
-  
-  export class QueryFactory {
-    static create<T>(contentType: string): clQuery<T> {
-      const QueryClass = queryMap[contentType.toLowerCase()];
-      if (!QueryClass) {
-        throw new Error(`No query defined for content type: ${contentType}`);
-      }
-      return new QueryClass() as clQuery<T>;
-    }
+export class clQueryTrends extends clQuery<TtrendsPageSource> {
+  constructor() {
+    super();
   }
+
+  getQuery(): string {
+    return `
+      query Trend($locale: I18NLocaleCode) {
+        trend(locale: $locale) {
+          heroSection {
+            heading {
+              title
+              subtitle
+              highlight
+            }
+            description
+            buttons {
+              label
+              href
+              icon
+              formMode
+            }
+          }
+        }
+      }
+    `;
+  }
+
+  async executeQuery(): Promise<TtrendsPageSource> {
+    return super.executeQuery();
+  }
+}
+export class clQueryFactory {
+  private static queryMap: { [key: string]: new () => Iquery<any> } = {
+    "Trends": clQueryTrends,
+    // Add more mappings here
+  };
+
+  static createQuery<T extends object>(queryType: string): Iquery<T> {
+    const QueryClass = this.queryMap[queryType];
+    if (!QueryClass) throw new Error(`Invalid query type: ${queryType}`);
+    return new QueryClass();
+  }
+}

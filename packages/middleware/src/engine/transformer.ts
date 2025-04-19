@@ -1,6 +1,7 @@
-import { Iquery, IsourceType, ItargetType, Itransformer } from "../types/types";
+import { Iquery, IsourceType, ItargetType, Itransformer } from "../types";
+import { clQueryFactory } from "../api/query";
 
-export abstract class clTransformer<T> implements Itransformer<T> {
+export abstract class clTransforme implements Itransformer {
     contentType: string
     transformationRule: string 
     sourceType: IsourceType
@@ -12,6 +13,7 @@ export abstract class clTransformer<T> implements Itransformer<T> {
     }
     constructor(iContentType: string) {
         this.contentType = iContentType
+        this.query = clQueryFactory.create<TtrendsPageSource>("trend");
         
     }
 }
