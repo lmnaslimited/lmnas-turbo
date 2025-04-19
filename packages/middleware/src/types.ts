@@ -3,19 +3,21 @@ export type Middleware ={
     description: string;
     version: string;
 }
-export interface Iquery<T>  {
+export interface Iquery<DynamicSourceType>  {
     query: string
     getQuery():string
-    executeQuery():Promise<T>
+    executeQuery():Promise<DynamicSourceType>
 }
-export interface Itransformer<T, S=T, R=any> {
+export interface Itransformer<DynamicSourceType, DynamicTargetType=any> {
     contentType: string
     transformationRule: string
-    sourceType: S
-    targetType: R
-    query: Iquery<T>
-    performTransformation(idSourceData:IsourceType):Promise<R>
-    getData():Promise<T>
+    sourceData: DynamicSourceType
+    targetData: DynamicTargetType
+    query: Iquery<DynamicSourceType>
+    execute():Promise<DynamicTargetType>
+    init?(): Promise<void>
+    performTransformation(idSourceData:DynamicSourceType):Promise<DynamicTargetType>
+    getData():Promise<DynamicSourceType>
 }
 export interface ItransformationRule {
 

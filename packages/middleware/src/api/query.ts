@@ -3,18 +3,18 @@ import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
-export abstract class clQuery<T> implements Iquery<T> {
+export abstract class clQuery<DynamicSourceType> implements Iquery<DynamicSourceType> {
     query: string;
     locale: string;
     iDvaribles: {}
     // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
     abstract getQuery(): string;
     
-    async executeQuery(): Promise<T> {
+    async executeQuery(): Promise<DynamicSourceType> {
             const { data } = await client.query({
             query:gql`${this.query}`
         });    
-        return (data) as T;   
+        return (data) as DynamicSourceType;   
     }
     constructor(){
         this.query = this.getQuery()
