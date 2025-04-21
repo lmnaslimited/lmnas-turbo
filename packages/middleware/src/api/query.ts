@@ -1,4 +1,4 @@
-import { Iquery, TtrendsPageSource } from "../types";
+import { Iquery, TpricingPageSource, TtrendsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -54,9 +54,39 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     return super.executeQuery();
   }
 }
+
+export class clQueryPricing extends clQuery<TpricingPageSource> {
+  constructor() {
+    super();
+  }
+
+  getQuery(): string {
+    return `
+  query Pricing($locale: I18NLocaleCode) {
+  pricing(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+  }
+}`;
+  }
+}
 export class clQueryFactory {
   private static queryMap: { [key: string]: new () => Iquery<any> } = {
     "Trends": clQueryTrends,
+    "Pricing": clQueryPricing,
     // Add more mappings here
   };
 

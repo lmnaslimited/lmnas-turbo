@@ -41,9 +41,7 @@ export type Titems = {
 }
 
 export type Theader = {
-    textWithoutColor?: string
     badge?: string
-    text?: string;
     subtitle?: string
     className?: string
     headingClass?: string
@@ -82,6 +80,8 @@ export type TheroSection = {
     image: Timage;
 }
 
+export type TformMode = "booking" | "contact" | "download" | undefined | null
+
 export type TtrendsPageSource = {
     trend: Ttrend
 
@@ -91,5 +91,17 @@ export type TtrendsPageTarget = {
 }
 
 type Ttrend = {
+    heroSection: TheroSection
+}
+
+export type TpricingPageSource = {
+    pricing: Tpricing
+
+}
+export type TpricingPageTarget = {
+    pricing: Tpricing
+}
+
+type Tpricing = {
     heroSection: TheroSection
 }
