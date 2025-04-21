@@ -14,8 +14,9 @@ export interface Itransformer<DynamicSourceType, DynamicTargetType=any> {
     sourceData: DynamicSourceType
     targetData: DynamicTargetType
     query: Iquery<DynamicSourceType>
-    execute():Promise<DynamicTargetType>
-    init?(): Promise<void>
+    locale: string
+    execute(context?: Record<string, any>):Promise<DynamicTargetType>
+    init?(context?: Record<string, any>): Promise<void>
     performTransformation(idSourceData:DynamicSourceType):Promise<DynamicTargetType>
     getData():Promise<DynamicSourceType>
 }

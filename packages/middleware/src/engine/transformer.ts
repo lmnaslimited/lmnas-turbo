@@ -1,40 +1,53 @@
 import { Iquery, Itransformer, TtrendsPageSource, TtrendsPageTarget } from "../types";
 import { clQueryFactory } from "../api/query";
-// Sleep function to introduce a delay
+// Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export abstract class clTransformer<DynamicSourceType, DynamicTargetType=any> implements Itransformer<DynamicSourceType, DynamicTargetType> {
+export abstract class clTransformer<DynamicSourceType extends object, DynamicTargetType=any> implements Itransformer<DynamicSourceType, DynamicTargetType> {
     contentType: string
     transformationRule: string 
     sourceData: DynamicSourceType
     targetData: DynamicTargetType
     query: Iquery<DynamicSourceType>
-    async execute(): Promise<DynamicTargetType> {
-      await this.init()
+    locale: string
+    async execute(context?: Record<string, any>): Promise<DynamicTargetType> {
+      // Initialise the transformation
+      await this.init(context)
+      // Fire the query of the content type. Note the Query is intiated for the content type 
+      // in the transformation constructor
       this.sourceData = await this.getData()
+      // Perform the transformation for the data retrived from the query
       this.targetData = await this.performTransformation(this.sourceData)
+      // finally retrun the transformed data
       return this.targetData
     }
+    // Implement specific transformation rule of Source Data to Traget data in the respective
+    // Content type implementation.
     abstract performTransformation(idSourceData:DynamicSourceType):Promise<DynamicTargetType>
-    async init(): Promise<void> {
-        await sleep(100)
+    // Additional intiation specefic to Execute. Useful to have more controls for the execution
+    // of the transformation
+    async init(context?: Record<string, any>): Promise<void> {
+      // initilaise the contect of the transformation
+      // Intialalise the Loacle to language requested else fallback to English 
+      this.locale = context?.locale ?? 'en' 
+      // Disallow any new Promise before 100 ms
+      await sleep(100)
     }
     async getData():Promise<DynamicSourceType> {
-        return this.query.executeQuery()
+      return this.query.executeQuery()
     }
-    constructor(iContentType: string) {
-        this.contentType = iContentType
-        this.query = clQueryFactory.createQuery(iContentType)
-        
+    // Intantiate the Transformation engine for the content type
+    // inject dependecy of Query for unit testing
+    constructor(iContentType: string, iQuery?: Iquery<DynamicSourceType>) {
+      // Intialise the content type
+      this.contentType = iContentType
+      // create an query instance if for the content type
+      // For unit testing scenarios the Query instance is injected
+      this.query = iQuery ?? clQueryFactory.createQuery<DynamicSourceType>(iContentType)       
     }
 }
 
-export class clTrendsTransformer extends clTransformer< TtrendsPageSource, TtrendsPageTarget> {
-  contentType: string
-  transformationRule: string 
-  sourceData: TtrendsPageSource
-  targetData: TtrendsPageTarget 
-  query: Iquery<TtrendsPageSource>
+export class clTrendsTransformer extends clTransformer <TtrendsPageSource, TtrendsPageTarget> {
   async performTransformation(idSourceData:TtrendsPageSource):Promise<TtrendsPageTarget> {
     this.targetData = this.sourceData
     return this.targetData
@@ -42,28 +55,35 @@ export class clTrendsTransformer extends clTransformer< TtrendsPageSource, Ttren
   constructor(iContentType: string) {
       super(iContentType)
   }
-
 }
 
+// An interface to hold the list of Transformer class
 interface ITransformerMap {
   Trends: clTrendsTransformer;
   // Add other content types and corresponding transformers
 }
-
+// A factory class to create a new instance for the transformation engine
 export class clTransformerFactory {
+  // method to return the respective class for the content type
   private static transformerMap: {
-    [K in keyof ITransformerMap]: new (contentType: K) => ITransformerMap[K];
+    [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K];
   } = {
     Trends: clTrendsTransformer,
     // Add more mappings
   };
 
+  // Create a new instance of the tranformer for the content type
   static createTransformer<K extends keyof ITransformerMap>(
-    contentType: K
+    iContentType: K
   ): ITransformerMap[K] {
-    const TransformerClass = this.transformerMap[contentType];
-    if (!TransformerClass) throw new Error(`Invalid transformer type: ${contentType}`);
+    const TransformerClass = this.transformerMap[iContentType];
+    if (!TransformerClass){
+      // Log error if there isn't a specific implemenation for the content type
+      // for debugging
+      console.error(`Transformer not found for contentType: ${iContentType}`);
+      throw new Error(`Invalid transformer type: ${iContentType}`);
+    } 
 
-    return new TransformerClass(contentType); // use contentType as constructor arg
+    return new TransformerClass(iContentType); // use contentType as constructor arg
   }
 }
