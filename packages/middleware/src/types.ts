@@ -105,3 +105,15 @@ export type TpricingPageTarget = {
 type Tpricing = {
     heroSection: TheroSection
 }
+
+export type TsolutionsPageSource = {
+    solution: Tsolution
+
+}
+export type TsolutionsPageTarget = {
+    solution: Tsolution
+}
+
+type Tsolution = {
+    heroSection: TheroSection
+}
