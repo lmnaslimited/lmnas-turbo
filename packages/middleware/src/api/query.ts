@@ -7,15 +7,21 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     query: string;
     contentType: string;
     locale: string;
-    iDvaribles: {}
+    variables: {}
     // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
     abstract getQuery(): string;
     
     async executeQuery(): Promise<DynamicSourceType> {
-            const { data } = await client.query({
-            query:gql`${this.query}`
-        });    
-        return (data) as DynamicSourceType;   
+      // Set params of the query
+      this.setVariables({locale: this.locale})
+      const { data } = await client.query({
+        query:gql`${this.query}`,
+        variables: this.variables || {},
+      });    
+      return (data) as DynamicSourceType;   
+    }
+    setVariables(variables: Record<string, any>): void {
+      this.variables = variables;
     }
     constructor(iContentType: string){
         this.contentType = iContentType
@@ -32,7 +38,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
   getQuery(): string {
     return `
       query Trend($locale: I18NLocaleCode) {
-        trend(locale: $locale) {
+        ${this.contentType}(locale: $locale) {
           heroSection {
             heading {
               title
@@ -58,7 +64,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
 }
 export class clQueryFactory {
   private static queryMap: { [key: string]: new (icontentType: string) => IQuery<any> } = {
-    "Trends": clQueryTrends,
+    "trend": clQueryTrends,
     // Add more mappings here
   };
 
