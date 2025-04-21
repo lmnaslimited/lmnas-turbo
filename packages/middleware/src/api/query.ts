@@ -45,6 +45,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
         href
         icon
         formMode
+        variant
       }
     }
   }
@@ -100,7 +101,10 @@ export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
         subtitle
         highlight
       }
-      description
+      image {
+        src
+        alt
+      }
       buttons {
         label
         href
@@ -165,6 +169,7 @@ export class clQueryCareers extends clQuery<TcareersPageSource> {
         href
         icon
         formMode
+        variant
       }
     image {
       src
