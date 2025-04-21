@@ -1,2 +1,2 @@
 export * from "./types";
-export {clQueryFactory} from "./api/query";
+export {clTransformerFactory} from './engine/transformer'
