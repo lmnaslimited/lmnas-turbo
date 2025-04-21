@@ -17,8 +17,8 @@ export interface Itransformer<DynamicSourceType, DynamicTargetType=any> {
     locale: string
     execute(context?: Record<string, any>):Promise<DynamicTargetType>
     init?(context?: Record<string, any>): Promise<void>
-    performTransformation(idSourceData:DynamicSourceType):Promise<DynamicTargetType>
     getData():Promise<DynamicSourceType>
+    performTransformation(idSourceData:DynamicSourceType):Promise<DynamicTargetType>  
 }
 export interface ItransformationRule {
 
