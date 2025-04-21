@@ -11,7 +11,7 @@
     "./components/*": "./src/components/*.tsx",
     "./svg/*": "./src/svg/*.tsx",
     "./api/*": "./src/api/*.ts",
-    "./utils/*":"./src/utils/*.ts",
+    "./utils/*": "./src/utils/*.ts",
     "./lib/*": "./src/lib/*.ts"
   },
   "scripts": {
@@ -22,6 +22,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@repo/middleware": "workspace:*",
     "@turbo/gen": "^2.3.4",
     "@types/node": "^22.12.0",
     "@types/react": "19.0.8",

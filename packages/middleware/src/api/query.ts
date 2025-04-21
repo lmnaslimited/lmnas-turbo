@@ -4,21 +4,21 @@ import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType> implements Iquery<DynamicSourceType> {
-    query: string;
-    locale: string;
-    iDvaribles: {}
-    // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
-    abstract getQuery(): string;
-    
-    async executeQuery(): Promise<DynamicSourceType> {
-            const { data } = await client.query({
-            query:gql`${this.query}`
-        });    
-        return (data) as DynamicSourceType;   
-    }
-    constructor(){
-        this.query = this.getQuery()
-    }
+  query: string;
+  locale: string;
+  iDvaribles: {}
+  // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
+  abstract getQuery(): string;
+
+  async executeQuery(): Promise<DynamicSourceType> {
+    const { data } = await client.query({
+      query: gql`${this.query}`
+    });
+    return (data) as DynamicSourceType;
+  }
+  constructor() {
+    this.query = this.getQuery()
+  }
 }
 // The clQueryTrends class extends the clQuery class and provides a specific implementation for the "Trends" query.
 
@@ -29,25 +29,25 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
 
   getQuery(): string {
     return `
-      query Trend($locale: I18NLocaleCode) {
-        trend(locale: $locale) {
-          heroSection {
-            heading {
-              title
-              subtitle
-              highlight
-            }
-            description
-            buttons {
-              label
-              href
-              icon
-              formMode
-            }
-          }
-        }
+  query Trend($locale: I18NLocaleCode) {
+  trend(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
       }
-    `;
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+  }
+}`;
   }
 
   async executeQuery(): Promise<TtrendsPageSource> {
