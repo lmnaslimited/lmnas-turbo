@@ -3,18 +3,22 @@ export type Middleware ={
     description: string;
     version: string;
 }
-export interface Iquery<DynamicSourceType>  {
+export interface IBaseComponent{
+    contentType: string
+    locale: string
+    // execute?(): Promise<DynamicDataType>
+}
+export interface IQuery<DynamicSourceType> extends IBaseComponent {
     query: string
     getQuery():string
     executeQuery():Promise<DynamicSourceType>
 }
-export interface Itransformer<DynamicSourceType, DynamicTargetType=any> {
+export interface ITransformer<DynamicSourceType, DynamicTargetType=any> extends IBaseComponent{
     contentType: string
     transformationRule: string
     sourceData: DynamicSourceType
     targetData: DynamicTargetType
-    query: Iquery<DynamicSourceType>
-    locale: string
+    query: IQuery<DynamicSourceType>
     execute(context?: Record<string, any>):Promise<DynamicTargetType>
     init?(context?: Record<string, any>): Promise<void>
     getData():Promise<DynamicSourceType>

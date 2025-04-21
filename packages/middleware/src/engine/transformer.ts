@@ -1,4 +1,4 @@
-import { Iquery, Itransformer, TtrendsPageSource, TtrendsPageTarget } from "../types";
+import { IQuery, ITransformer, TtrendsPageSource, TtrendsPageTarget } from "../types";
 import { clQueryFactory } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
