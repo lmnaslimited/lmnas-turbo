@@ -147,3 +147,14 @@ export type TproductsPageTarget = {
 type Tproduct = {
     heroSection: TheroSection
 }
+
+export type TindustriesPageSource = {
+    industries: Tindustries[]
+}
+export type TindustriesPageTarget = {
+    industries: Tindustries[]
+}
+export type Tindustries = {
+    slug: string
+    heroSection: TheroSection
+}

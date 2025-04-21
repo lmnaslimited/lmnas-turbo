@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -54,6 +54,45 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
 
   async executeQuery(): Promise<TtrendsPageSource> {
     return super.executeQuery();
+  }
+}
+
+export class clQueryIndustries extends clQuery<TindustriesPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Industrie($locale: I18NLocaleCode){
+  industries(locale: $locale) {
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+      highlight {
+        label
+        icon
+      }
+      image {
+        alt
+        src
+      }
+      buttons {
+        formMode
+        href
+        icon
+        label
+        variant
+      }
+    }
+  }
+}
+`
   }
 }
 
@@ -189,6 +228,7 @@ export class clQueryFactory {
     "Solutions": clQuerySolutions,
     "Products": clQueryProducts,
     "Careers": clQueryCareers,
+    "Industries": clQueryIndustries,
     // Add more mappings here
   };
 
