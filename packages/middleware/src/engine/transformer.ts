@@ -107,7 +107,7 @@ export class clIndustriesTransformer extends clTransformer<TindustriesPageSource
 }
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
-  Trends: clTrendsTransformer;
+  trend: clTrendsTransformer;
   Pricing: clPricingTransformer;
   Solutions: clSolutionsTransformer;
   Products: clProductsTransformer
@@ -121,7 +121,7 @@ export class clTransformerFactory {
   private static transformerMap: {
     [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K];
   } = {
-      Trends: clTrendsTransformer,
+      trend: clTrendsTransformer,
       Pricing: clPricingTransformer,
       Solutions: clSolutionsTransformer,
       Products: clProductsTransformer,
