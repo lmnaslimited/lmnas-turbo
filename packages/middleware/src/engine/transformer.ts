@@ -1,4 +1,4 @@
-import { Iquery, Itransformer, TpricingPageSource, TpricingPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget } from "../types";
+import { Iquery, Itransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget } from "../types";
 import { clQueryFactory } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -77,12 +77,21 @@ export class clSolutionsTransformer extends clTransformer<TsolutionsPageSource, 
   }
 }
 
-
+export class clProductsTransformer extends clTransformer<TproductsPageSource, TproductsPageTarget> {
+  async performTransformation(idSourceData: TproductsPageSource): Promise<TproductsPageTarget> {
+    this.targetData = this.sourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   Trends: clTrendsTransformer;
   Pricing: clPricingTransformer;
   Solutions: clSolutionsTransformer;
+  Products: clProductsTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -94,6 +103,7 @@ export class clTransformerFactory {
       Trends: clTrendsTransformer,
       Pricing: clPricingTransformer,
       Solutions: clSolutionsTransformer,
+      Products: clProductsTransformer,
       // Add other content types and corresponding transformers
     };
 

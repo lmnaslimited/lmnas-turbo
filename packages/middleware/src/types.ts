@@ -117,3 +117,15 @@ export type TsolutionsPageTarget = {
 type Tsolution = {
     heroSection: TheroSection
 }
+
+export type TproductsPageSource = {
+    product: Tproduct
+
+}
+export type TproductsPageTarget = {
+    product: Tproduct
+}
+
+type Tproduct = {
+    heroSection: TheroSection
+}
