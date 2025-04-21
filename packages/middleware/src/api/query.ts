@@ -1,4 +1,4 @@
-import { Iquery, TcareersPageSource, TtrendsPageSource } from "../types";
+import { Iquery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -28,7 +28,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
   }
 
   getQuery(): string {
-  return`
+    return `
   query Trend($locale: I18NLocaleCode) {
   trend(locale: $locale) {
   heroSection {
@@ -54,13 +54,100 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
   }
 }
 
+export class clQueryPricing extends clQuery<TpricingPageSource> {
+  constructor() {
+    super();
+  }
+
+  getQuery(): string {
+    return `
+  query Pricing($locale: I18NLocaleCode) {
+  pricing(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+  }
+}`;
+  }
+}
+
+export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
+  constructor() {
+    super();
+  }
+
+  getQuery(): string {
+    return `
+  query Solution($locale: I18NLocaleCode) {
+  solution(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+  }
+}`;
+  }
+}
+
+export class clQueryProducts extends clQuery<TproductsPageSource> {
+  constructor() {
+    super();
+  }
+
+  getQuery(): string {
+    return `
+  query Products($locale: I18NLocaleCode) {
+  products(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+  }
+}`;
+  }
+}
+
 export class clQueryCareers extends clQuery<TcareersPageSource> {
   constructor() {
     super();
   }
 
   getQuery(): string {
-  return`
+    return `
   query Career($locale: I18NLocaleCode) {
   career(locale: $locale) {
   heroSection {
@@ -91,6 +178,9 @@ export class clQueryCareers extends clQuery<TcareersPageSource> {
 export class clQueryFactory {
   private static queryMap: { [key: string]: new () => Iquery<any> } = {
     "Trends": clQueryTrends,
+    "Pricing": clQueryPricing,
+    "Solutions": clQuerySolutions,
+    "Products": clQueryProducts,
     "Careers": clQueryCareers,
     // Add more mappings here
   };
