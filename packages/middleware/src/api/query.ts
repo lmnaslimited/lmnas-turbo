@@ -57,8 +57,8 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
 }
 
 export class clQueryPricing extends clQuery<TpricingPageSource> {
-  constructor() {
-    super();
+  constructor(iContentType: string) {
+    super(iContentType);
   }
 
   getQuery(): string {
@@ -86,8 +86,8 @@ export class clQueryPricing extends clQuery<TpricingPageSource> {
 }
 
 export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
-  constructor() {
-    super();
+  constructor(iContentType: string) {
+    super(iContentType);
   }
 
   getQuery(): string {
@@ -115,8 +115,8 @@ export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
 }
 
 export class clQueryProducts extends clQuery<TproductsPageSource> {
-  constructor() {
-    super();
+  constructor(iContentType: string) {
+    super(iContentType);
   }
 
   getQuery(): string {
@@ -144,8 +144,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
 }
 
 export class clQueryCareers extends clQuery<TcareersPageSource> {
-  constructor() {
-    super();
+  constructor(iContentType: string) {
+    super(iContentType);
   }
 
   getQuery(): string {
