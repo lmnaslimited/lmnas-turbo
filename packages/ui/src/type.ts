@@ -68,46 +68,6 @@ export type TtrendCardProps = {
   publishedAt: string;
 }
 
-
-// Form types
-export type TformMode = "booking" | "contact" | "download" | undefined | null
-
-export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
-
-export type TformFieldConfig = {
-  name: string
-  label?: string
-  placeholder?: string
-  type: TfieldType
-  required?: boolean
-  options?: { value: string; label: string }[]
-  className?: string
-  inputClassName?: string
-}
-
-export type TformConfig = {
-  id: string
-  title: string
-  description?: string
-  fields: TformFieldConfig[]
-  submitText: string
-  schema: z.ZodObject<any>
-  successTitle: string
-  successMessage: string
-  showTerms?: boolean
-  termsText?: string
-  privacyText?: string
-}
-
-export type TdynamicFormProps = {
-  config: TformConfig
-  onSuccess: (message: string, title: string) => void
-  onCancel?: () => void
-  className?: string
-  defaultValues?: Record<string, any>
-  hideCardHeader?: boolean
-}
-
 //solution individual
 
 export type TproblemSection = {
@@ -462,4 +422,63 @@ export type Ttrend = {
   noiseSection: TteckStack[]
   frustrationSection: TFrustrationSectionItem[]
   calloutSection: TcalloutProps
+}
+
+// Form types
+export type TformMode = "booking" | "contact" | "download" | undefined | null
+
+export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
+
+export type TformFieldConfig = {
+  name: string
+  label?: string
+  placeholder?: string
+  type: TfieldType
+  required?: boolean
+  options?: { value: string; label: string }[]
+  className?: string
+  inputClassName?: string
+}
+
+export type TformConfig = {
+  id: string
+  title: string
+  description?: string
+  fields: TformFieldConfig[]
+  submitText: string
+  schema: z.ZodObject<any>
+  successTitle: string
+  successMessage: string
+  showTerms?: boolean
+  termsText?: string
+  privacyText?: string
+}
+
+export type TdynamicFormProps = {
+  config: TformConfig
+  onSuccess: (message: string, title: string) => void
+  onCancel?: () => void
+  className?: string
+  defaultValues?: Record<string, any>
+  hideCardHeader?: boolean
+}
+
+export type Tcontact = {
+  header: Theader[]
+  formMode?: TformMode
+  formConfig: TformConfig
+  dynamicFormProps?: TdynamicFormProps
+}
+
+export type TproblemSectionItem = {
+  header: Theader
+  label: string
+  description: string
+  title: string
+  buttons: Tbutton[]
+}
+
+export type Tpricing = {
+  heroSection: TheroProps
+  problemSection: TproblemSectionItem
 }
