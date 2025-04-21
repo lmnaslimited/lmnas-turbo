@@ -3,12 +3,12 @@ import { clQueryFactory } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-export abstract class clTransformer<DynamicSourceType extends object, DynamicTargetType=any> implements Itransformer<DynamicSourceType, DynamicTargetType> {
+export abstract class clTransformer<DynamicSourceType extends object, DynamicTargetType=any> implements ITransformer<DynamicSourceType, DynamicTargetType> {
     contentType: string
     transformationRule: string 
     sourceData: DynamicSourceType
     targetData: DynamicTargetType
-    query: Iquery<DynamicSourceType>
+    query: IQuery<DynamicSourceType>
     locale: string
     async execute(context?: Record<string, any>): Promise<DynamicTargetType> {
       // Initialise the transformation
@@ -29,7 +29,7 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     async init(context?: Record<string, any>): Promise<void> {
       // initilaise the contect of the transformation
       // Intialalise the Loacle to language requested else fallback to English 
-      this.locale = context?.locale ?? 'en' 
+      this.locale = this.query.locale = context?.locale ?? 'en' 
       // Disallow any new Promise before 100 ms
       await sleep(100)
     }
@@ -38,7 +38,7 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     }
     // Intantiate the Transformation engine for the content type
     // inject dependecy of Query for unit testing
-    constructor(iContentType: string, iQuery?: Iquery<DynamicSourceType>) {
+    constructor(iContentType: string, iQuery?: IQuery<DynamicSourceType>) {
       // Intialise the content type
       this.contentType = iContentType
       // create an query instance if for the content type
