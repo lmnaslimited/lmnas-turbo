@@ -1,4 +1,4 @@
-import { Iquery, TtrendsPageSource } from "../types";
+import { Iquery, TcareersPageSource, TtrendsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -28,7 +28,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
   }
 
   getQuery(): string {
-    return `
+  return`
   query Trend($locale: I18NLocaleCode) {
   trend(locale: $locale) {
   heroSection {
@@ -43,20 +43,55 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
         href
         icon
         formMode
-        variant
       }
     }
   }
-}`;
+}`
   }
 
   async executeQuery(): Promise<TtrendsPageSource> {
     return super.executeQuery();
   }
 }
+
+export class clQueryCareers extends clQuery<TcareersPageSource> {
+  constructor() {
+    super();
+  }
+
+  getQuery(): string {
+  return`
+  query Career($locale: I18NLocaleCode) {
+  career(locale: $locale) {
+  heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+      }
+    image {
+      src
+      alt
+    }
+  }
+  }
+}`
+  }
+}
+
+
 export class clQueryFactory {
   private static queryMap: { [key: string]: new () => Iquery<any> } = {
     "Trends": clQueryTrends,
+    "Careers": clQueryCareers,
     // Add more mappings here
   };
 

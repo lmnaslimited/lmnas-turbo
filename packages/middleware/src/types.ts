@@ -93,3 +93,15 @@ export type TtrendsPageTarget = {
 type Ttrend = {
     heroSection: TheroSection
 }
+
+export type TcareersPageSource = {
+    career: Ttrend
+
+}
+export type TcareersPageTarget = {
+    career: Ttrend
+}
+
+type Tcareers = {
+    heroSection: TheroSection
+}

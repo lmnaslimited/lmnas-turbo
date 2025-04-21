@@ -1,4 +1,4 @@
-import { Iquery, Itransformer, TtrendsPageSource, TtrendsPageTarget } from "../types";
+import { Iquery, Itransformer, TcareersPageSource, TcareersPageTarget, TtrendsPageSource, TtrendsPageTarget } from "../types";
 import { clQueryFactory } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -57,9 +57,20 @@ export class clTrendsTransformer extends clTransformer <TtrendsPageSource, Ttren
   }
 }
 
+export class clCareersTransformer extends clTransformer<TcareersPageSource, TcareersPageTarget> {
+  async performTransformation(idSourceData:TcareersPageSource):Promise<TcareersPageTarget> {
+    this.targetData = this.sourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+      super(iContentType)
+  }
+}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   Trends: clTrendsTransformer;
+  Careers: clCareersTransformer;
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -69,7 +80,8 @@ export class clTransformerFactory {
     [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K];
   } = {
     Trends: clTrendsTransformer,
-    // Add more mappings
+    Careers: clCareersTransformer,
+     // Add more mappings
   };
 
   // Create a new instance of the tranformer for the content type
