@@ -12,8 +12,10 @@ export interface IBaseComponent {
 }
 export interface IQuery<DynamicSourceType> extends IBaseComponent {
     query: string
-    getQuery(): string
-    executeQuery(): Promise<DynamicSourceType>
+    getQuery():string
+    executeQuery():Promise<DynamicSourceType>
+    variables?: Record<string, any>;
+    setVariables(variables: Record<string, any>): void;
 }
 export interface ITransformer<DynamicSourceType, DynamicTargetType = any> extends IBaseComponent {
     contentType: string
