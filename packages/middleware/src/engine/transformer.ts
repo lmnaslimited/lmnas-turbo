@@ -1,5 +1,5 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareersPageSource, TcareersPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget } from "../types";
-import { clQueryFactory } from "../api/query";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareersPageSource, TcareersPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget } from "../types";
+import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
@@ -30,6 +30,8 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     // initilaise the contect of the transformation
     // Intialalise the Loacle to language requested else fallback to English 
     this.locale = this.query.locale = context?.locale ?? 'en'
+    // set the query vaiables
+    this.query.setVariables(context)
     // Disallow any new Promise before 100 ms
     await sleep(100)
   }
@@ -46,6 +48,17 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     this.locale = 'en'
     this.query = iQuery ?? clQueryFactory.createQuery<DynamicSourceType>(iContentType)
 
+  }
+}
+
+export class clSlugsTransformer extends clTransformer<TslugsSource, TslugsTarget> {
+  async performTransformation(idSourceData: TslugsSource): Promise<TslugsTarget> {
+    // Return only the slugs
+    this.targetData = idSourceData[this.contentType].map(entry => entry) 
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
   }
 }
 

@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -13,7 +13,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     
     async executeQuery(): Promise<DynamicSourceType> {
       // Set params of the query
-      this.setVariables({locale: this.locale})
+      // this.setVariables({locale: this.locale})
       const { data } = await client.query({
         query:gql`${this.query}`,
         variables: this.variables || {},
@@ -30,6 +30,19 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     }
 }
 // The clQueryTrends class extends the clQuery class and provides a specific implementation for the "Trends" query.
+export class clQuerySlug extends clQuery<TslugsSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+  getQuery(): string {
+    return `
+    query Slugs {
+      ${this.contentType} {
+        slug
+      }
+    }`
+  }
+}
 
 export class clQueryTrends extends clQuery<TtrendsPageSource> {
   constructor(iContentType: string) {
