@@ -88,6 +88,7 @@ export type TheroSection = {
 
 export type TformMode = "booking" | "contact" | "download" | undefined | null
 
+// trending now
 
 export type TtrendsPageSource = {
     trend: Ttrend
@@ -101,6 +102,7 @@ type Ttrend = {
     heroSection: TheroSection
 }
 
+// careers
 
 export type TcareersPageSource = {
     career: Tcareers
@@ -114,6 +116,34 @@ type Tcareers = {
     heroSection: TheroSection
 }
 
+// terms and conditions
+
+export type TtermsAndConditionsPageSource = {
+    termsAndCondition: TtermsAndCondition
+}
+
+export type TtermsAndConditionsPageTarget = {
+    termsAndCondition: TtermsAndCondition
+}
+type TtermsAndCondition = {
+    header: Theader
+    
+}
+
+// privacy policy
+
+export type TprivacyPolicyPageSource = {
+    privacyPolicy: TprivacyPolicy
+}
+export type TprivacyPolicyPageTarget = {
+    privacyPolicy: TprivacyPolicy
+}
+type TprivacyPolicy = {
+    header: Theader
+}
+
+// pricing
+
 export type TpricingPageSource = {
     pricing: Tpricing
 
@@ -125,6 +155,8 @@ export type TpricingPageTarget = {
 type Tpricing = {
     heroSection: TheroSection
 }
+
+//solutions
 
 export type TsolutionsPageSource = {
     solution: Tsolution
@@ -138,6 +170,8 @@ type Tsolution = {
     heroSection: TheroSection
 }
 
+//products
+
 export type TproductsPageSource = {
     product: Tproduct
 
@@ -149,6 +183,8 @@ export type TproductsPageTarget = {
 type Tproduct = {
     heroSection: TheroSection
 }
+
+// industries
 
 export type TindustriesPageSource = {
     industries: Tindustries[]

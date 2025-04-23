@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareersPageSource, TcareersPageTarget, TindustriesPageSource, TindustriesPageTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareersPageSource, TcareersPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget } from "../types";
 import { clQueryFactory } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -107,15 +107,40 @@ export class clIndustriesTransformer extends clTransformer<TindustriesPageSource
     super(iContentType)
   }
 }
+
+// TermsandConditions transformer
+export class clTermsandConditionsTransformer extends clTransformer<TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget> {
+  async performTransformation(idSourceData: TtermsAndConditionsPageSource): Promise<TtermsAndConditionsPageTarget> {
+    this.targetData = idSourceData;
+    return this.targetData;
+  }
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+}
+
+// PrivacyPolicy transformer
+export class clPrivacyPolicyTransformer extends clTransformer<TprivacyPolicyPageSource, TprivacyPolicyPageTarget> {
+  async performTransformation(idSourceData: TprivacyPolicyPageSource): Promise<TprivacyPolicyPageTarget> {
+    this.targetData = idSourceData;
+    return this.targetData;
+  }
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   trend: clTrendsTransformer;
   Pricing: clPricingTransformer;
   Solutions: clSolutionsTransformer;
-  Products: clProductsTransformer
+  Products: clProductsTransformer;
   Careers: clCareersTransformer;
-  Industries: clIndustriesTransformer,
-  // Add other content types and corresponding transformers
+  Industries: clIndustriesTransformer;
+  PrivacyPolicy: clPrivacyPolicyTransformer;
+  TermsAndConditions: clTermsandConditionsTransformer;
+   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
 export class clTransformerFactory {
@@ -129,6 +154,8 @@ export class clTransformerFactory {
       Products: clProductsTransformer,
       Careers: clCareersTransformer,
       Industries: clIndustriesTransformer,
+      PrivacyPolicy: clPrivacyPolicyTransformer,
+      TermsAndConditions: clTermsandConditionsTransformer,
       // Add other content types and corresponding transformers
     };
 

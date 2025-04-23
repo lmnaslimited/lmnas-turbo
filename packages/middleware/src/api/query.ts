@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -228,6 +228,84 @@ export class clQueryCareers extends clQuery<TcareersPageSource> {
 }
 
 
+export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Query($locale: I18NLocaleCode) {
+  termsAndCondition(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`
+  }
+}
+
+
+export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Query($locale: I18NLocaleCode) {
+  privacyPolicy(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`
+  }
+}
+
+
+
+
 export class clQueryFactory {
   private static queryMap: { [key: string]: new (icontentType: string) => IQuery<any> } = {
     "trend": clQueryTrends,
@@ -236,6 +314,8 @@ export class clQueryFactory {
     "Products": clQueryProducts,
     "Careers": clQueryCareers,
     "Industries": clQueryIndustries,
+    "TermsAndConditions": clQueryTermsAndConditions,
+    "PrivacyPolicy": clQueryPrivacyPolicy,  
     // Add more mappings here
   };
 
