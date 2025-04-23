@@ -19,9 +19,9 @@ export interface IQuery<DynamicSourceType> extends IBaseComponent {
 }
 export interface ITransformer<DynamicSourceType, DynamicTargetType = any> extends IBaseComponent {
     contentType: string
-    transformationRule: string
-    sourceData: DynamicSourceType
-    targetData: DynamicTargetType
+    transformationRule?: string
+    // sourceData?: DynamicSourceType
+    targetData?: DynamicTargetType
     query: IQuery<DynamicSourceType>
     execute(context?: Record<string, any>): Promise<DynamicTargetType>
     init?(context?: Record<string, any>): Promise<void>

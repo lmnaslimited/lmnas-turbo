@@ -7,7 +7,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     query: string;
     contentType: string;
     locale: string;
-    variables: {}
+    variables?: Record<string, any>;
     // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
     abstract getQuery(): string;
     
@@ -25,6 +25,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     }
     constructor(iContentType: string){
         this.contentType = iContentType
+        this.locale = 'en'
         this.query = this.getQuery()
     }
 }

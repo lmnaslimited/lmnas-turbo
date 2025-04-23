@@ -29,7 +29,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Displays a list of features, each represented by an icon and text.
   * This section helps in showcasing key benefits or highlights of the hero section.
   */
-  const FeatureList = ({ iaItems }: { iaItems?: Titems }): ReactElement => (
+  const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {iaItems?.map((idItem, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
@@ -44,7 +44,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Renders a list of call-to-action (CTA) buttons.
   * Supports both internal navigation (via Link) and functional actions.
   */
-  const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton }): ReactElement => (
+  const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton[] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
       {iaButtons.map((idButton, iIndex) => {
         const IconComponent =

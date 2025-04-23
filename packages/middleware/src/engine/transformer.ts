@@ -5,9 +5,9 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 export abstract class clTransformer<DynamicSourceType extends object, DynamicTargetType = any> implements ITransformer<DynamicSourceType, DynamicTargetType> {
   contentType: string
-  transformationRule: string
-  sourceData: DynamicSourceType
-  targetData: DynamicTargetType
+  transformationRule?: string
+  // sourceData?: DynamicSourceType
+  targetData?: DynamicTargetType
   query: IQuery<DynamicSourceType>
   locale: string
   async execute(context?: Record<string, any>): Promise<DynamicTargetType> {
@@ -15,9 +15,9 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     await this.init(context)
     // Fire the query of the content type. Note the Query is intiated for the content type 
     // in the transformation constructor
-    this.sourceData = await this.getData()
+    // this.sourceData = await this.getData()
     // Perform the transformation for the data retrived from the query
-    this.targetData = await this.performTransformation(this.sourceData)
+    this.targetData = await this.performTransformation(await this.getData())
     // finally retrun the transformed data
     return this.targetData
   }
@@ -43,13 +43,15 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
     this.contentType = iContentType
     // create an query instance if for the content type
     // For unit testing scenarios the Query instance is injected
+    this.locale = 'en'
     this.query = iQuery ?? clQueryFactory.createQuery<DynamicSourceType>(iContentType)
+
   }
 }
 
 export class clTrendsTransformer extends clTransformer<TtrendsPageSource, TtrendsPageTarget> {
   async performTransformation(idSourceData: TtrendsPageSource): Promise<TtrendsPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -59,7 +61,7 @@ export class clTrendsTransformer extends clTransformer<TtrendsPageSource, Ttrend
 
 export class clPricingTransformer extends clTransformer<TpricingPageSource, TpricingPageTarget> {
   async performTransformation(idSourceData: TpricingPageSource): Promise<TpricingPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -69,7 +71,7 @@ export class clPricingTransformer extends clTransformer<TpricingPageSource, Tpri
 
 export class clSolutionsTransformer extends clTransformer<TsolutionsPageSource, TsolutionsPageTarget> {
   async performTransformation(idSourceData: TsolutionsPageSource): Promise<TsolutionsPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -79,7 +81,7 @@ export class clSolutionsTransformer extends clTransformer<TsolutionsPageSource, 
 
 export class clProductsTransformer extends clTransformer<TproductsPageSource, TproductsPageTarget> {
   async performTransformation(idSourceData: TproductsPageSource): Promise<TproductsPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -88,7 +90,7 @@ export class clProductsTransformer extends clTransformer<TproductsPageSource, Tp
 }
 export class clCareersTransformer extends clTransformer<TcareersPageSource, TcareersPageTarget> {
   async performTransformation(idSourceData: TcareersPageSource): Promise<TcareersPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -98,7 +100,7 @@ export class clCareersTransformer extends clTransformer<TcareersPageSource, Tcar
 
 export class clIndustriesTransformer extends clTransformer<TindustriesPageSource, TindustriesPageTarget> {
   async performTransformation(idSourceData: TindustriesPageSource): Promise<TindustriesPageTarget> {
-    this.targetData = this.sourceData
+    this.targetData =idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
