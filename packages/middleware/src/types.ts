@@ -37,6 +37,15 @@ export interface IsourceType {
 export interface ItargetType {
 
 }
+export type TslugsSource = {
+    [key: string]: {
+      slug: string;
+    }[];
+};
+export type TslugsTarget = Tslug[]
+export type Tslug = {
+    slug: string
+}
 
 export type Titems = {
     question: string
