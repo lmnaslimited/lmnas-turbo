@@ -193,7 +193,7 @@ export default function Navbar(): React.ReactElement {
 //middleware
   React.useEffect(() => {
     const currentLang = pathname.split('/')[1]; // get "en" from /en/trending-now
-    fnSetLanguage(currentLang);
+    fnSetLanguage(currentLang??"en");
   }, [pathname]);
 
   const handleLanguageChange = (newLang: string) => {

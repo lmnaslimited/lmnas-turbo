@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
 type PdfProps = {
   heading: {
     textWithoutColor: string;
-    text: string;
-    subtitle: string;
+    title: string;
+    highlight: string;
   };
   image: {
     src: string;
@@ -51,7 +51,7 @@ export const PdfDocument = ({ data }: {data:PdfProps}) => (
       <View style={styles.headingSection}>
         <Text style={styles.textWithoutColor}>{data.heading.title}</Text>
         <Text style={styles.text}>{data.heading.highlight}</Text>
-        <Text style={styles.subtitle}>{data.heading.subtitle}</Text>
+        <Text style={styles.subtitle}>{data.heading.highlight}</Text>
       </View>
       {/* <Image src={data.image?.source} style={styles.image} /> */}
     </Page>

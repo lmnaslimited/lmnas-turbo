@@ -15,7 +15,7 @@ export interface IQuery<DynamicSourceType> extends IBaseComponent {
     getQuery():string
     executeQuery():Promise<DynamicSourceType>
     variables?: Record<string, any>;
-    setVariables(variables: Record<string, any>): void;
+    setVariables(variables?: Record<string, any>): void;
 }
 export interface ITransformer<DynamicSourceType, DynamicTargetType = any> extends IBaseComponent {
     contentType: string
@@ -53,6 +53,8 @@ export type Titems = {
     icon?: keyof typeof LucideIcons | React.ReactNode | string
     label?: string
     description?: string
+    title: string
+    subtitle: string
 }
 
 export type Theader = {
@@ -65,9 +67,19 @@ export type Theader = {
     highlight?: string
 }
 
+export type TcalloutProps = {
+    header: Theader
+    buttons: Tbutton[]
+    list: Titems[]
+    variant?: string
+    layout?: "classic" | "simple" | string
+    title?: string
+    subtitle?: string
+  };
+
 export type Tbutton = {
     label?: string;
-    href?: string;
+    href: string;
     variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
     size?: "default" | "sm" | "lg" | "icon"
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -78,8 +90,8 @@ export type Tbutton = {
 }
 
 export type Timage = {
-    src?: string
-    alt: string
+    source: string
+    alternate: string
     aspectRatio?: "square" | "video" | "wide" | "auto"
     width?: string
     height?: string
@@ -95,6 +107,24 @@ export type TheroSection = {
     image: Timage;
 }
 
+type TtechStack = {
+    heading: Theader
+    point: Titems[]
+}
+
+export type TcontactData = {
+    address: string
+    phoneLabel: string
+    phoneHref: string
+    emailLabel: string
+    emailHref: string
+    description: string
+    websiteLabel: string
+    websiteHref: string
+    label: string
+  }
+  
+
 export type TformMode = "booking" | "contact" | "download" | undefined | null
 
 // trending now
@@ -109,8 +139,17 @@ export type TtrendsPageTarget = {
 
 type Ttrend = {
     heroSection: TheroSection
+    frustrationSection: [Theader,TcalloutProps]
+    noiseSection: TnoiseSection[]
+    trendingSection: Theader
+    showAll:Tbutton  
+    calloutSection: TcalloutProps
 }
 
+type TnoiseSection = {
+    heading: Theader
+    point: Titems[]
+}
 // careers
 
 export type TcareersPageSource = {
@@ -123,7 +162,22 @@ export type TcareersPageTarget = {
 
 type Tcareers = {
     heroSection: TheroSection
+    challengeSection: TheroSection
+    guideSection: GuideSection
+    jobsSection: TcalloutProps
+    planSection: TheroSection
+    trendingSection: Theader
 }
+
+type GuideSection = [
+    {
+      heading: Theader;
+      point: Titems[];
+    },
+    Tbutton
+    
+  ];
+
 
 // terms and conditions
 
@@ -136,9 +190,10 @@ export type TtermsAndConditionsPageTarget = {
 }
 type TtermsAndCondition = {
     header: Theader
-    
+    acknowledgment: string
+    faq: TtechStack
+    contact: TcontactData
 }
-
 // privacy policy
 
 export type TprivacyPolicyPageSource = {
@@ -149,6 +204,9 @@ export type TprivacyPolicyPageTarget = {
 }
 type TprivacyPolicy = {
     header: Theader
+    acknowledgment: string
+    faq: TtechStack
+    contact: TcontactData
 }
 
 // pricing

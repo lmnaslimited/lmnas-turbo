@@ -53,7 +53,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     return `
   query Trend($locale: I18NLocaleCode) {
   ${this.contentType}(locale: $locale) {
-  heroSection {
+   heroSection {
       heading {
         title
         subtitle
@@ -65,7 +65,57 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
         href
         icon
         formMode
+      }
+    }
+    frustrationSection {
+      ... on ComponentCoreHeader {
+        title
+        
+      }
+      ... on ComponentSharedCallout {
+        header {
+          title
+        }
+        buttons {
+          label
+          formMode
+          variant
+          icon
+        }
+        title
+        subtitle
+      }
+    }
+    noiseSection {
+      heading {
+        title
+        subtitle
+      }
+      point {
+        label
+        description
+      }
+    }
+    trendingSection {
+      title
+      highlight
+      subtitle
+    }
+    showAll {
+      label
+    }
+    calloutSection {
+      header {
+        highlight
+        title
+      }
+      title
+      buttons {
+        icon
+        href
+        label
         variant
+        formMode
       }
     }
   }
@@ -99,8 +149,8 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         icon
       }
       image {
-        alt
-        src
+       source:src
+        alternate:alt
       }
       buttons {
         formMode
@@ -161,8 +211,8 @@ export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
         highlight
       }
       image {
-        src
-        alt
+        source:src
+        alternate:alt
       }
       buttons {
         label
@@ -228,13 +278,95 @@ export class clQueryCareers extends clQuery<TcareersPageSource> {
         href
         icon
         formMode
-        variant
       }
     image {
-      src
-      alt
+      source:src
+        alternate:alt
+      
     }
   }
+  challengeSection {
+      heading {
+        title
+        subtitle
+        badge
+      }
+      highlight {
+        label
+        description
+      }
+      image {
+        source:src
+        alternate:alt
+      }
+      buttons {
+        label
+        href
+      }
+    }
+    guideSection {
+      ... on ComponentSharedTeckStack {
+        heading {
+          title
+          subtitle
+          badge
+        }
+        point {
+          icon
+          title:label
+          subtitle:description
+        }
+      }
+      ... on ComponentCoreButton {
+        label
+        href
+      }
+    }
+    jobsSection {
+      header {
+        title
+        subtitle
+        highlight
+      }
+      list {
+        title:label
+        subtitle:description
+      }
+      buttons {
+        label
+        href
+        formMode
+        description
+        icon
+        variant
+      }
+    }
+    planSection {
+      heading {
+        title
+        subtitle
+        badge
+        highlight
+      }
+      highlight {
+        title:label
+        subtitle:description
+      }
+      image {
+        source:src
+        alternate:alt
+      }
+      buttons {
+        label
+        href
+        variant
+      }
+    }
+      trendingSection{
+      title
+      subtitle
+      }
+    
   }
 }`
   }

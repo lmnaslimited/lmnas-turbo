@@ -54,11 +54,11 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
 export class clSlugsTransformer extends clTransformer<TslugsSource, TslugsTarget> {
   async performTransformation(idSourceData: TslugsSource): Promise<TslugsTarget> {
     // Return only the slugs
-    this.targetData = idSourceData[this.contentType].map(entry => entry) 
+    this.targetData = idSourceData[this.contentType]?.map(entry => entry)??[]
     return this.targetData
   }
-  constructor(iContentType: string) {
-    super(iContentType)
+  constructor(iContentType: string, iQuery?: IQuery<TslugsSource>) {
+    super(iContentType, iQuery)
   }
 }
 

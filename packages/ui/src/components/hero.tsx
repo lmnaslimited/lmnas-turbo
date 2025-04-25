@@ -86,7 +86,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
     </div>
   );
 
-  return idHero.image?.src ? (
+  return idHero.image?.source ? (
     /**
     * Hero section variant with an image.
     * Displays content alongside a visual representation for better engagement.
@@ -100,7 +100,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {idHero.items && <FeatureList iaItems={idHero.items} />}
+        {idHero.highlight && <FeatureList iaItems={idHero.highlight} />}
         <CTAButtons iaButtons={idHero.buttons} />
       </div>
       {/* Image part */}
@@ -108,8 +108,8 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
         <div className={cn("relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1")}>
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src={idHero.image?.src || "/placeholder.svg"}
-              alt={idHero?.image?.alt || ""}
+              src={idHero.image?.source || "/placeholder.svg"}
+              alt={idHero?.image?.alternate || ""}
               className={cn("h-full w-full object-cover")}
               width={100}
               height={100}
