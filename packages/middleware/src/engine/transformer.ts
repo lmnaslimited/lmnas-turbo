@@ -54,7 +54,7 @@ export abstract class clTransformer<DynamicSourceType extends object, DynamicTar
 export class clSlugsTransformer extends clTransformer<TslugsSource, TslugsTarget> {
   async performTransformation(idSourceData: TslugsSource): Promise<TslugsTarget> {
     // Return only the slugs
-    this.targetData = idSourceData[this.contentType]?.map(entry => entry)??[]
+    this.targetData = idSourceData[this.contentType]?.map(entry => entry) ?? []
     return this.targetData
   }
   constructor(iContentType: string, iQuery?: IQuery<TslugsSource>) {
@@ -113,7 +113,7 @@ export class clCareersTransformer extends clTransformer<TcareersPageSource, Tcar
 
 export class clIndustriesTransformer extends clTransformer<TindustriesPageSource, TindustriesPageTarget> {
   async performTransformation(idSourceData: TindustriesPageSource): Promise<TindustriesPageTarget> {
-    this.targetData =idSourceData
+    this.targetData = idSourceData
     return this.targetData
   }
   constructor(iContentType: string) {
@@ -146,14 +146,14 @@ export class clPrivacyPolicyTransformer extends clTransformer<TprivacyPolicyPage
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   trend: clTrendsTransformer;
-  Pricing: clPricingTransformer;
+  pricing: clPricingTransformer;
   Solutions: clSolutionsTransformer;
-  Products: clProductsTransformer;
-  Careers: clCareersTransformer;
-  Industries: clIndustriesTransformer;
-  PrivacyPolicy: clPrivacyPolicyTransformer;
+  products: clProductsTransformer;
+  careers: clCareersTransformer;
+  industries: clIndustriesTransformer;
+  privacyPolicy: clPrivacyPolicyTransformer;
   TermsAndConditions: clTermsandConditionsTransformer;
-   // Add other content types and corresponding transformers
+  // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
 export class clTransformerFactory {
@@ -162,12 +162,12 @@ export class clTransformerFactory {
     [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K];
   } = {
       trend: clTrendsTransformer,
-      Pricing: clPricingTransformer,
+      pricing: clPricingTransformer,
       Solutions: clSolutionsTransformer,
-      Products: clProductsTransformer,
-      Careers: clCareersTransformer,
-      Industries: clIndustriesTransformer,
-      PrivacyPolicy: clPrivacyPolicyTransformer,
+      products: clProductsTransformer,
+      careers: clCareersTransformer,
+      industries: clIndustriesTransformer,
+      privacyPolicy: clPrivacyPolicyTransformer,
       TermsAndConditions: clTermsandConditionsTransformer,
       // Add other content types and corresponding transformers
     };

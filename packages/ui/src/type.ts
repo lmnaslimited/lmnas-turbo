@@ -118,11 +118,11 @@ export type TheroProps = {
 export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
 export type TtrendCardProps = {
-  id:string
+  id: string
   title: string;
   description: string;
   source: string;
-  media?:{
+  media?: {
     url: string
     alt: string
   };
@@ -356,12 +356,12 @@ export type TslotResponse = {
 export type TtermPrivacy = {
   header: Theader
   acknowledgment: string
-  faq:TteckStack
+  faq: TteckStack
   contact: TcontactData
 }
 
 export type TteckStack = {
-  heading:  Theader
+  heading: Theader
   point: Titems[]
 }
 
@@ -410,7 +410,7 @@ export type JobData = {
   id: string;
   title: string;
   location: string;
-  role: string ;
+  role: string;
   description: string;
 };
 
@@ -420,20 +420,20 @@ export type MappedResult = {
 };
 
 //tweeter
-export type TwitterUser ={
+export type TwitterUser = {
   id: string;
   name: string;
   username: string;
 }
 
-export type TwitterMedia ={
+export type TwitterMedia = {
   media_key: string;
   url?: string;
   alt_text?: string;
   preview_image_url?: string;
 }
 
-export type TwitterTweet ={
+export type TwitterTweet = {
   id: string;
   created_at: string;
   text: string;
@@ -443,7 +443,7 @@ export type TwitterTweet ={
   };
 }
 
-export type TwitterApiResponse ={
+export type TwitterApiResponse = {
   data: TwitterTweet[];
   includes?: {
     users?: TwitterUser[];

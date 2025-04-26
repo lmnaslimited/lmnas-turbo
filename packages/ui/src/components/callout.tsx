@@ -1,9 +1,8 @@
 import Link from "next/link"
-import {  TformMode } from "@repo/ui/type";
+import { TcalloutProps, TformMode } from "@repo/middleware";
 import { Button } from "@repo/ui/components/ui/button"
 import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
-import { TcalloutProps } from "@repo/middleware"
 
 export default function Callout({
   idCallout,
@@ -16,7 +15,6 @@ export default function Callout({
   // Determine the layout type, defaulting to "classic" if not provided
   const Layout = idCallout.layout || "classic";
 
-  console.log("idCallout", idCallout);
   return (
     <div
       className={`${Layout === "classic" ? "max-w-3xl" : "max-w-7xl"} mx-auto text-center py-16 px-4 sm:py-20 sm:px-6 lg:px-8`}

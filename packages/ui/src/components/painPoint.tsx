@@ -1,10 +1,10 @@
 "use client";
 
 import { useRef, useEffect, ReactElement } from "react";
-import { Titems } from "../type.js";
+import { Titems } from "@repo/middleware";
 
 // PainPoints Component: Displays a list of pain points with a smooth fade-in animation when they enter the viewport.
-export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElement {
+export default function PainPoints({ idItems }: { idItems: Titems[] }): ReactElement {
   const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElem
     const Observer = new IntersectionObserver(
       (laEntries) => {
         laEntries.forEach((idEntry) => {
-            // If the element is visible in the viewport, apply the fade-in effect
+          // If the element is visible in the viewport, apply the fade-in effect
           if (idEntry.isIntersecting) {
             idEntry.target.classList.add("opacity-100", "translate-y-0");
             idEntry.target.classList.remove("opacity-0", "translate-y-4");
@@ -53,10 +53,10 @@ export default function PainPoints({ idItems }: { idItems: Titems[] }):ReactElem
             </div>
             <div>
               <h3 className="text-xl font-semibold text-primary">
-                {idPoint.question}
+                {idPoint.label}
               </h3>
               <p className="mt-2 text-muted-foreground">
-                {idPoint.answer}
+                {idPoint.description}
               </p>
             </div>
           </div>

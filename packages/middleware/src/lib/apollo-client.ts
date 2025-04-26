@@ -4,7 +4,7 @@ import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 // This function initializes and returns an Apollo Client instance configured for SSR (Server-Side Rendering).
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://dumps-240005.lmnaslens.com/graphql';
-
+console.log(API_URL)
 export const createApolloClient = () => {
     return new ApolloClient({
         ssrMode: true,

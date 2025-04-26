@@ -1,14 +1,13 @@
 "use client";
-
-import { ReactElement, useRef } from "react";
 import Link from "next/link";
+import { ReactElement, useRef } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Download, CheckCircle2, ArrowRight } from "lucide-react";
 import { TSidebarCardType } from "@repo/ui/type";
 
-export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[]}):ReactElement {
-   // Reference to the sidebar container for potential future use (e.g., scrolling)
+export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[] }): ReactElement {
+  // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -22,7 +21,7 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[
               <h3 className="mb-4 text-xl font-semibold">{idCard.title}</h3>
               <p className="mb-6 text-muted-foreground">{idCard.content}</p>
 
-               {/* Render solutions list if available */}
+              {/* Render solutions list if available */}
               {idCard.solutions && (
                 <ul className="space-y-4">
                   {idCard.solutions.map((iSolution, iIndex) => (
@@ -39,7 +38,7 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[
                 </ul>
               )}
 
-               {/* Render a button if provided */}
+              {/* Render a button if provided */}
               {idCard.button && (
                 <Button className="w-full gap-2">
                   <Download className="h-5 w-5 text-primary" />

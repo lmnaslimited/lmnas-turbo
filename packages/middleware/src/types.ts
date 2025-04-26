@@ -12,8 +12,8 @@ export interface IBaseComponent {
 }
 export interface IQuery<DynamicSourceType> extends IBaseComponent {
     query: string
-    getQuery():string
-    executeQuery():Promise<DynamicSourceType>
+    getQuery(): string
+    executeQuery(): Promise<DynamicSourceType>
     variables?: Record<string, any>;
     setVariables(variables?: Record<string, any>): void;
 }
@@ -39,10 +39,12 @@ export interface ItargetType {
 }
 export type TslugsSource = {
     [key: string]: {
-      slug: string;
+        slug: string;
     }[];
 };
+
 export type TslugsTarget = Tslug[]
+
 export type Tslug = {
     slug: string
 }
@@ -75,7 +77,7 @@ export type TcalloutProps = {
     layout?: "classic" | "simple" | string
     title?: string
     subtitle?: string
-  };
+};
 
 export type Tbutton = {
     label?: string;
@@ -90,7 +92,7 @@ export type Tbutton = {
 }
 
 export type Timage = {
-    source: string
+    source?: string
     alternate: string
     aspectRatio?: "square" | "video" | "wide" | "auto"
     width?: string
@@ -104,12 +106,35 @@ export type TheroSection = {
     highlight?: Titems[]
     description?: string;
     buttons: Tbutton[]
-    image: Timage;
+    image?: Timage;
 }
 
 type TtechStack = {
     heading: Theader
     point: Titems[]
+}
+
+export type TcardProps = {
+    image?: Timage
+    header: Theader
+    buttons?: Tbutton[]
+    link?: Tbutton[]
+    list?: Titems[];
+    avatar?: Timage
+    avatarDetails?: {
+        name: string
+        place?: string
+    }
+    namePosition?: "top" | "bottom" | "left" | "right"
+    footerClassName?: string
+    tag?: string
+    layout?: "vertical" | "horizontal"
+    width?: "full" | "compact"
+    onClick?: () => void
+    className?: string
+    buttonPosition?: string
+    category?: string
+    onButtonClick?: (mode: TformMode) => void
 }
 
 export type TcontactData = {
@@ -122,44 +147,45 @@ export type TcontactData = {
     websiteLabel: string
     websiteHref: string
     label: string
-  }
-  
+}
+
 
 export type TformMode = "booking" | "contact" | "download" | undefined | null
 
 // trending now
-
 export type TtrendsPageSource = {
     trend: Ttrend
-
 }
 export type TtrendsPageTarget = {
     trend: Ttrend
 }
-
-type Ttrend = {
-    heroSection: TheroSection
-    frustrationSection: [Theader,TcalloutProps]
-    noiseSection: TnoiseSection[]
-    trendingSection: Theader
-    showAll:Tbutton  
-    calloutSection: TcalloutProps
-}
-
 type TnoiseSection = {
     heading: Theader
     point: Titems[]
 }
-// careers
+type Ttrend = {
+    heroSection: TheroSection
+    frustrationSection: [Theader, TcalloutProps]
+    noiseSection: TnoiseSection[]
+    trendingSection: Theader
+    showAll: Tbutton
+    calloutSection: TcalloutProps
+}
 
+// careers
 export type TcareersPageSource = {
     career: Tcareers
-
 }
 export type TcareersPageTarget = {
     career: Tcareers
 }
-
+type GuideSection = [
+    {
+        heading: Theader;
+        point: Titems[];
+    },
+    Tbutton
+];
 type Tcareers = {
     heroSection: TheroSection
     challengeSection: TheroSection
@@ -169,18 +195,7 @@ type Tcareers = {
     trendingSection: Theader
 }
 
-type GuideSection = [
-    {
-      heading: Theader;
-      point: Titems[];
-    },
-    Tbutton
-    
-  ];
-
-
 // terms and conditions
-
 export type TtermsAndConditionsPageSource = {
     termsAndCondition: TtermsAndCondition
 }
@@ -194,8 +209,8 @@ type TtermsAndCondition = {
     faq: TtechStack
     contact: TcontactData
 }
-// privacy policy
 
+// privacy policy
 export type TprivacyPolicyPageSource = {
     privacyPolicy: TprivacyPolicy
 }
@@ -210,7 +225,6 @@ type TprivacyPolicy = {
 }
 
 // pricing
-
 export type TpricingPageSource = {
     pricing: Tpricing
 
@@ -219,15 +233,41 @@ export type TpricingPageTarget = {
     pricing: Tpricing
 }
 
+
 type Tpricing = {
     heroSection: TheroSection
+    problemSection: TcalloutProps
+}
+
+// industries
+
+export type TindustriesPageSource = {
+    industries: Tindustries[]
+}
+export type TindustriesPageTarget = {
+    industries: Tindustries[]
+}
+export type Tindustries = {
+    slug: string;
+    heroSection: TheroSection
+    problemSection: TcalloutProps
+    featuresSectionHeader: Theader
+    feature: {
+        header?: Theader;
+        image?: Timage;
+        card?: TcardProps
+    }[]
+    allFeatureHeader: Theader
+    allFeatureCard: TcardProps[]
+    cta: TcalloutProps
+    successStoryHeaderFooter: TcalloutProps
+    successStoryCard: TcardProps[]
 }
 
 //solutions
 
 export type TsolutionsPageSource = {
     solution: Tsolution
-
 }
 export type TsolutionsPageTarget = {
     solution: Tsolution
@@ -240,26 +280,25 @@ type Tsolution = {
 //products
 
 export type TproductsPageSource = {
-    product: Tproduct
-
+    products: Tproducts[]
 }
 export type TproductsPageTarget = {
-    product: Tproduct
+    products: Tproducts[]
 }
-
-type Tproduct = {
+export type Tproducts = {
+    slug: string;
     heroSection: TheroSection
-}
-
-// industries
-
-export type TindustriesPageSource = {
-    industries: Tindustries[]
-}
-export type TindustriesPageTarget = {
-    industries: Tindustries[]
-}
-export type Tindustries = {
-    slug: string
-    heroSection: TheroSection
+    problemsHeader: Theader
+    problemsSection: TcalloutProps
+    solutionsHeaderFooter: TcalloutProps
+    solutionsCard: TcalloutProps[]
+    guideSectionHeaderFooter: TcalloutProps
+    guideFeature: TheroSection[]
+    successStoryHeaderFooter: TcalloutProps
+    successStoryCard: TcardProps[]
+    successStoryHighlight: Titems[]
+    pricingSectionHeaderFooter: TcalloutProps
+    pricingHighlight: TcalloutProps
+    ctaSectionHeader: Theader
+    ctaSection: TcalloutProps
 }
