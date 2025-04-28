@@ -35,6 +35,7 @@ import {
 } from "@repo/ui/components/ui/dropdown-menu";
 import { ThemeToggle } from "@repo/ui/components/theme-toggle";
 import { SVGComponent } from "@repo/ui/svg/svgs";
+import { useRouter, usePathname } from "next/navigation"
 
 const LaProducts = [
   {
@@ -184,6 +185,23 @@ export default function Navbar(): React.ReactElement {
   const fnGetCurrentLanguageDisplay = (): string => {
     const CurrentLang = LaLanguages.find((idLang) => idLang.code === Language);
     return CurrentLang ? CurrentLang.code.toUpperCase() : "EN";
+  };
+
+  const router = useRouter();
+  const pathname = usePathname();
+
+//middleware
+  React.useEffect(() => {
+    const currentLang = pathname.split('/')[1]; // get "en" from /en/trending-now
+    fnSetLanguage(currentLang??"en");
+  }, [pathname]);
+
+  const handleLanguageChange = (newLang: string) => {
+    const segments = pathname.split('/');
+    segments[1] = newLang; // replace language segment
+    const newPath = segments.join('/');
+    fnSetLanguage(newLang);
+    router.push(newPath); // navigate to new lang route
   };
 
   return (
@@ -366,7 +384,7 @@ export default function Navbar(): React.ReactElement {
                   {LaLanguages.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.code}
-                      onClick={() => fnSetLanguage(idLang.code)}
+                      onClick={() => handleLanguageChange(idLang.code)}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.code === Language ? "bg-muted " : ""
@@ -434,7 +452,7 @@ export default function Navbar(): React.ReactElement {
                   {LaLanguages.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.code}
-                      onClick={() => fnSetLanguage(idLang.code)}
+                      onClick={() => handleLanguageChange(idLang.code)}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.code === Language ? "bg-muted " : ""

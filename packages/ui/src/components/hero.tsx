@@ -2,13 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@repo/ui/components/ui/button";
 import { Zap } from "lucide-react";
-import { TheroProps, TformMode } from "../type.js";
+import { TheroSection, TformMode, Tbutton, Titems } from "@repo/middleware";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
+import * as Icons from "lucide-react";
 
 type THeroProps = {
-  idHero: TheroProps;
+  idHero: TheroSection;
   onButtonClick?: (mode: TformMode) => void;
 }
 
@@ -28,12 +29,12 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Displays a list of features, each represented by an icon and text.
   * This section helps in showcasing key benefits or highlights of the hero section.
   */
-  const FeatureList = ({ iaItems }: { iaItems?: TheroProps["items"] }): ReactElement => (
+  const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {iaItems?.map((idItem, iIndex) => (
         <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
           {idItem?.icon}
-          <span>{idItem?.item}</span>
+          <span>{idItem?.label}</span>
         </div>
       ))}
     </div>
@@ -43,19 +44,30 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Renders a list of call-to-action (CTA) buttons.
   * Supports both internal navigation (via Link) and functional actions.
   */
-  const CTAButtons = ({ iaButtons }: { iaButtons: TheroProps["buttons"] }): ReactElement => (
+  const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton[] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
-      {iaButtons.map((idButton, iIndex) =>
-        idButton.href ? (
+      {iaButtons.map((idButton, iIndex) => {
+        const IconComponent =
+          (Icons[idButton.icon as keyof typeof Icons] as Icons.LucideIcon) || Icons.Users;
+
+        const iconElement = <IconComponent className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />;
+
+        const buttonContent = (
+          <>
+            {idButton.iconPosition === "before" && iconElement}
+            {idButton.label}
+            {idButton.iconPosition === "after" && iconElement}
+          </>
+        );
+
+        return idButton.href ? (
           <Link href={idButton.href} key={iIndex}>
             <Button
               size={idButton.size || "lg"}
               variant={idButton.variant || "default"}
               className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
             >
-              {idButton.iconPosition === "before" && idButton.icon}
-              {idButton.label}
-              {idButton.iconPosition === "after" && idButton.icon}
+              {buttonContent}
             </Button>
           </Link>
         ) : (
@@ -63,19 +75,18 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             key={iIndex}
             size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
-            className={idButton.className}
+            className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
             onClick={() => onButtonClick?.(idButton.formMode)}
           >
-            {idButton.iconPosition === "before" && idButton.icon}
-            {idButton.label}
-            {idButton.iconPosition === "after" && idButton.icon}
+            {buttonContent}
           </Button>
-        )
-      )}
+        );
+      })}
+
     </div>
   );
 
-  return idHero.image?.src ? (
+  return idHero.image?.source ? (
     /**
     * Hero section variant with an image.
     * Displays content alongside a visual representation for better engagement.
@@ -89,7 +100,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
           headingClass: "md:text-6xl lg:text-7xl tracking-tight",
           descripClass: "max-w-xl md:text-2xl"
         }} />
-        {idHero.items && <FeatureList iaItems={idHero.items} />}
+        {idHero.highlight && <FeatureList iaItems={idHero.highlight} />}
         <CTAButtons iaButtons={idHero.buttons} />
       </div>
       {/* Image part */}
@@ -97,8 +108,8 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
         <div className={cn("relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1")}>
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src={idHero.image?.src || "/placeholder.svg"}
-              alt={idHero?.image?.alt || ""}
+              src={idHero.image?.source || "/placeholder.svg"}
+              alt={idHero?.image?.alternate || ""}
               className={cn("h-full w-full object-cover")}
               width={100}
               height={100}

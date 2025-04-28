@@ -478,6 +478,7 @@ function InnerSectionForm({
     className = "",
     defaultValues,
     hideCardHeader = false,
+    pdfData
 }: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
@@ -594,7 +595,29 @@ function InnerSectionForm({
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.id === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-            } else {
+            } else if (config.id === "download") {
+                const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
+                const { pdf } = await import("@react-pdf/renderer")
+
+                const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
+                console.log(blob)
+                // Create a URL and download the PDF
+                const url = URL.createObjectURL(blob)
+                const link = document.createElement("a")
+                link.href = url
+                link.download = "download.pdf"
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                URL.revokeObjectURL(url)
+
+                LdResponse = {
+                    message: "Your file has been downloaded.",
+                    title: "Download Success",
+                }
+            } 
+            
+            else {
                 throw new Error("Unsupported form type")
             }
 

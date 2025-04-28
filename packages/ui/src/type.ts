@@ -4,7 +4,9 @@ import { z } from "zod"
 export type Titems = {
   question: string
   answer: string
-  icon?: keyof typeof LucideIcons | React.ReactNode
+  icon?: keyof typeof LucideIcons | React.ReactNode | string
+  label?: string
+  description?: string
 }
 export type Theader = {
   textWithoutColor?: string
@@ -14,6 +16,8 @@ export type Theader = {
   className?: string
   headingClass?: string
   descripClass?: string
+  title?: string
+  highlight?: string
 }
 export type Tbutton = {
   label: string;
@@ -24,6 +28,7 @@ export type Tbutton = {
   iconPosition?: "before" | "after";
   className?: string
   formMode?: "booking" | "contact" | "download"
+  description?: string
 }
 export type Timage = {
   src?: string
@@ -113,13 +118,18 @@ export type TheroProps = {
 export type TtrendSource = "LinkedIn" | "YouTube" | "Twitter"
 
 export type TtrendCardProps = {
+  id: string
   title: string;
   description: string;
   source: string;
-  imageUrl?: string;
+  media?: {
+    url: string
+    alt: string
+  };
   author: string;
-  date: string;
+  publishedAt: string;
 }
+
 
 
 // Form types
@@ -159,6 +169,7 @@ export type TdynamicFormProps = {
   className?: string
   defaultValues?: Record<string, any>
   hideCardHeader?: boolean
+  pdfData?: any
 }
 
 //solution individual
@@ -338,4 +349,104 @@ export type TslotResponse = {
   message?: string
   data?: Tslot[]
   error?: string
+}
+
+/////////////////////////////////////////////////////////////////////////////
+
+export type TtermPrivacy = {
+  header: Theader
+  acknowledgment: string
+  faq: TteckStack
+  contact: TcontactData
+}
+
+export type TteckStack = {
+  heading: Theader
+  point: Titems[]
+}
+
+
+export type TcontactData = {
+  address: string
+  phoneLabel: string
+  phoneHref: string
+  emailLabel: string
+  emailHref: string
+  description: string
+  websiteLabel: string
+  websiteHref: string
+  label: string
+}
+
+export type Tnavbar = {
+  logo: Tbutton
+  menu: Tbutton[]
+  product: Tbutton[]
+  industry: Tbutton[]
+  more: Tbutton[]
+  language: Tbutton[]
+}
+
+
+
+//job api
+export type JobOpening = {
+  name: string;
+  job_title: string;
+  status: string;
+  designation: string;
+  custom_exert_description: string;
+  location?: string;
+  _user_tags: string[];
+  creation: string;
+};
+
+export type JobFilters = {
+  role: string[];
+  location: string[];
+};
+
+export type JobData = {
+  id: string;
+  title: string;
+  location: string;
+  role: string;
+  description: string;
+};
+
+export type MappedResult = {
+  filters: JobFilters;
+  data: JobData[];
+};
+
+//tweeter
+export type TwitterUser = {
+  id: string;
+  name: string;
+  username: string;
+}
+
+export type TwitterMedia = {
+  media_key: string;
+  url?: string;
+  alt_text?: string;
+  preview_image_url?: string;
+}
+
+export type TwitterTweet = {
+  id: string;
+  created_at: string;
+  text: string;
+  author_id: string;
+  attachments?: {
+    media_keys: string[];
+  };
+}
+
+export type TwitterApiResponse = {
+  data: TwitterTweet[];
+  includes?: {
+    users?: TwitterUser[];
+    media?: TwitterMedia[];
+  };
 }
