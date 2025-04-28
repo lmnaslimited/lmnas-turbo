@@ -27,6 +27,9 @@ importers:
 
   apps/braccoli-bites:
     dependencies:
+      '@repo/middleware':
+        specifier: workspace:*
+        version: link:../../packages/middleware
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
