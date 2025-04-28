@@ -2,9 +2,9 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@r
 import { Titems } from "../type.js"
 import { ReactElement } from "react"
 
-export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
+export default function FAQs({ idFaq }: { idFaq: Titems[] }): ReactElement {
   return (
-   
+
     <div className="mt-6 space-y-6 divide-y divide-muted">
       <Accordion type="single" collapsible className="w-full">
         {idFaq.map((idFaq, iIndex) => (
@@ -15,6 +15,6 @@ export default function FAQs({idFaq}:{idFaq:Titems[]}):ReactElement {
         ))}
       </Accordion>
     </div>
-      
+
   )
 }

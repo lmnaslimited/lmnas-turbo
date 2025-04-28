@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareersPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -42,6 +42,182 @@ export class clQuerySlug extends clQuery<TslugsSource> {
         slug
       }
     }`
+  }
+}
+
+export class clQueryNavbar extends clQuery<TnavbarSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Navbar($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    locale
+    logo {
+      label
+      href
+    }
+    menu {
+      label
+      href
+      icon
+    }
+    product {
+      label
+      href
+      description
+      icon
+    }
+    industry {
+      label
+      href
+      description
+      icon
+    }
+    more {
+      label
+      href
+    }
+    language {
+      label
+      description
+      icon
+    }
+  }
+}`
+  }
+}
+
+export class clQueryFooter extends clQuery<TfooterSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Footer($locale: I18NLocaleCode) {
+    ${this.contentType}(locale: $locale) {
+      companyName
+      companyInfo
+      social {
+        label
+        href
+        icon
+      }
+      menu {
+        label
+      }
+      product {
+        label
+        href
+      }
+      more {
+        label
+        href
+      }
+      contact {
+        address
+        phoneLabel
+        phoneHref
+        emailLabel
+        emailHref
+      }
+      policies {
+        label
+        href
+      }
+    }
+  }`
+  }
+}
+
+export class clQueryHome extends clQuery<ThomePageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Home($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+   heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      description
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+      image {
+      source
+        alternate
+      }
+    }
+      problemSection {
+      highlight {
+        label
+        description
+        icon
+      }
+      buttons {
+        label
+        href
+      }
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+    }
+    faqSection {
+      title
+      list {
+        label
+        description
+      }
+    }
+    calloutSection {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        formMode
+        variant
+      }
+      title
+      subtitle
+      list {
+        label
+      }
+    }
+    socialSection {
+      heading {
+        title
+        subtitle
+      }
+      description
+      highlight {
+        label
+        description
+      }
+      buttons {
+        label
+        href
+      }
+    }
+  }
+}`
   }
 }
 
@@ -125,7 +301,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
   }
 }
 
-export class clQueryCareers extends clQuery<TcareersPageSource> {
+export class clQueryCareer extends clQuery<TcareerPageSource> {
   constructor(iContentType: string) {
     super(iContentType);
   }
@@ -241,223 +417,6 @@ export class clQueryCareers extends clQuery<TcareersPageSource> {
   }
 }
 
-export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
-  constructor(iContentType: string) {
-    super(iContentType);
-  }
-
-  getQuery(): string {
-    return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
-    header {
-      title
-      subtitle
-      highlight
-    }
-    acknowledgment
-    faq {
-      heading {
-        title
-      }
-      point {
-        label
-        description
-      }
-    }
-    contact {
-      label
-      description
-      websiteLabel
-      websiteHref
-      emailLabel
-      emailHref
-    }
-  }
-}`
-  }
-}
-
-export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
-  constructor(iContentType: string) {
-    super(iContentType);
-  }
-
-  getQuery(): string {
-    return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
-    header {
-      title
-      subtitle
-      highlight
-    }
-    acknowledgment
-    faq {
-      heading {
-        title
-      }
-      point {
-        label
-        description
-      }
-    }
-    contact {
-      label
-      description
-      websiteLabel
-      websiteHref
-      emailLabel
-      emailHref
-    }
-  }
-}`
-  }
-}
-
-export class clQueryIndustries extends clQuery<TindustriesPageSource> {
-  constructor(iContentType: string) {
-    super(iContentType);
-  }
-
-  getQuery(): string {
-    return `
-  query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
-    name
-    slug
-    heroSection {
-      heading {
-        title
-        subtitle
-        highlight
-        badge
-      }
-      highlight {
-        label
-        icon
-      }
-      image {
-       source
-        alternate
-      }
-      buttons {
-        formMode
-        href
-        icon
-        label
-        variant
-      }
-    }
-    problemSection {
-      header {
-        highlight
-        title
-        subtitle
-      }
-      list {
-        icon
-        label
-        description
-      }
-      title
-      subtitle
-      buttons {
-        label
-        href
-        variant
-        formMode
-        icon
-      }
-    }
-    featuresSectionHeader {
-      title
-      subtitle
-    }
-    feature {
-      header {
-        title
-        subtitle
-      }
-      image {
-        source
-        alternate
-      }
-      card {
-        header {
-          title
-          subtitle
-        }
-        buttons {
-          label
-          href
-        }
-      }
-    }
-    allFeatureHeader {
-      title
-    }
-    allFeatureCard {
-      header {
-        title
-        subtitle
-      }
-      image {
-        source
-        alternate
-      }
-      category
-      link {
-        label
-        href
-      }
-    }
-    cta {
-      header {
-        title
-        subtitle
-      }
-      list {
-        icon
-        label
-        description
-      }
-      title
-      buttons {
-        label
-        formMode
-      }
-    }
-    successStoryHeaderFooter {
-      header {
-        title
-        subtitle
-      }
-      title
-      buttons {
-        label
-        formMode
-      }
-    }
-    successStoryCard {
-      header {
-        title
-        subtitle
-      }
-      category
-      image {
-        source
-        alternate
-      }
-      buttons {
-        label
-        href
-      }
-    }
-  }
-}`}
-}
-
 export class clQueryPricing extends clQuery<TpricingPageSource> {
   constructor(iContentType: string) {
     super(iContentType);
@@ -465,20 +424,17 @@ export class clQueryPricing extends clQuery<TpricingPageSource> {
 
   getQuery(): string {
     return `
-  query Pricing($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
-  heroSection {
+query Pricing($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    heroSection {
       heading {
-        title
-        subtitle
         highlight
+        subtitle
       }
       description
       buttons {
         label
         href
-        icon
-        formMode
         variant
       }
     }
@@ -500,7 +456,126 @@ export class clQueryPricing extends clQuery<TpricingPageSource> {
         variant
       }
     }
+    planHeader {
+      highlight
+      badge
+      subtitle
+    }
+    planSection {
+      tableHead
+      pricingPlans {
+        name
+        users
+        warranty
+        support
+        maintenance
+        db
+        consulting
+      }
+      features {
+        label
+      }
+    }
+    planFooter {
+      title
+      header {
+        highlight
+        subtitle
+      }
+      buttons {
+        label
+        href
+        variant
+        formMode
+      }
+    }
+    testimonialHeader {
+      header {
+        title
+      }
+      buttons {
+        label
+        href
+      }
+    }
+    testimonialSection {
+      header {
+        title
+        subtitle
+      }
+      avatar {
+        source
+        alternate
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    faqSection {
+      heading {
+        highlight
+      }
+      point {
+        label
+        description
+      }
+    }
+    guideHeader {
+      highlight
+      subtitle
+      badge
+    }
+    guideCategories {
+      label
+    }
+    guideTableHeader {
+      label
+    }
+    guideSection {
+      point {
+        label
+        description
+      }
+      heading {
+        title
+        subtitle
+      }
+    }
+    guideFooter {
+      header {
+        highlight
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+    guideCallout {
+      highlight
+      subtitle
+      badge
   }
+  ctaSection {
+      heading {
+        highlight
+        subtitle
+        badge
+      }
+      description
+      buttons {
+        description
+        label
+        href
+        formMode
+        variant
+    }
+  }
+}
 }`
   }
 }
@@ -713,10 +788,230 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
   }
 }
 
+export class clQueryIndustries extends clQuery<TindustriesPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput) {
+  ${this.contentType}(locale: $locale, filters: $filters) {
+    name
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+      highlight {
+        label
+        icon
+      }
+      image {
+       source
+        alternate
+      }
+      buttons {
+        formMode
+        href
+        icon
+        label
+        variant
+      }
+    }
+    problemSection {
+      header {
+        highlight
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    featuresSectionHeader {
+      title
+      subtitle
+    }
+    feature {
+      header {
+        title
+        subtitle
+      }
+      image {
+        source
+        alternate
+      }
+      card {
+        header {
+          title
+          subtitle
+        }
+        buttons {
+          label
+          href
+        }
+      }
+    }
+    allFeatureHeader {
+      title
+    }
+    allFeatureCard {
+      header {
+        title
+        subtitle
+      }
+      image {
+        source
+        alternate
+      }
+      category
+      link {
+        label
+        href
+      }
+    }
+    cta {
+      header {
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      buttons {
+        label
+        formMode
+      }
+    }
+    successStoryHeaderFooter {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        label
+        formMode
+      }
+    }
+    successStoryCard {
+      header {
+        title
+        subtitle
+      }
+      category
+      image {
+        source
+        alternate
+      }
+      buttons {
+        label
+        href
+      }
+    }
+  }
+}`}
+}
+
+export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Query($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`
+  }
+}
+
+export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Query($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    header {
+      title
+      subtitle
+      highlight
+    }
+    acknowledgment
+    faq {
+      heading {
+        title
+      }
+      point {
+        label
+        description
+      }
+    }
+    contact {
+      label
+      description
+      websiteLabel
+      websiteHref
+      emailLabel
+      emailHref
+    }
+  }
+}`
+  }
+}
+
 export class clQueryFactory {
   private static queryMap: { [key: string]: new (icontentType: string) => IQuery<any> } = {
+    "navbar": clQueryNavbar,
+    "footer": clQueryFooter,
+    "home": clQueryHome,
     "trend": clQueryTrends,
-    "career": clQueryCareers,
+    "career": clQueryCareer,
     "pricing": clQueryPricing,
     "Solutions": clQuerySolutions,
     "products": clQueryProducts,

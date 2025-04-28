@@ -49,6 +49,15 @@ export type Tslug = {
     slug: string
 }
 
+export type Tcontext = {
+    locale: string
+    filters?: {
+        slug: {
+            eq: string
+        }
+    }
+}
+
 export type Titems = {
     question: string
     answer: string
@@ -81,7 +90,7 @@ export type TcalloutProps = {
 
 export type Tbutton = {
     label?: string;
-    href: string;
+    href?: string;
     variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
     size?: "default" | "sm" | "lg" | "icon"
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -149,8 +158,46 @@ export type TcontactData = {
     label: string
 }
 
+export type TPlanFeature = {
+    tableHead: string
+    pricingPlans: {
+        name: string
+        users: string
+        warranty: string
+        support: string
+        db: string
+        maintenance: string
+        consulting: string
+    }[]
+    features: Titems[]
+}
+
+export type TfeatureProps = {
+    buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
+    layout?: "classic" | "centered";
+    iShowButton?: boolean;
+    heading: Theader;
+    buttons?: Tbutton
+    highlight?: Titems[]
+}
 
 export type TformMode = "booking" | "contact" | "download" | undefined | null
+
+// home
+export type ThomePageSource = {
+    home: Thome
+}
+export type ThomePageTarget = {
+    home: Thome
+}
+
+export type Thome = {
+    heroSection: TheroSection
+    problemSection: TfeatureProps[]
+    calloutSection: TcalloutProps[]
+    faqSection: TcalloutProps
+    socialSection: TheroSection
+}
 
 // trending now
 export type TtrendsPageSource = {
@@ -173,11 +220,11 @@ type Ttrend = {
 }
 
 // careers
-export type TcareersPageSource = {
-    career: Tcareers
+export type TcareerPageSource = {
+    career: Tcareer
 }
-export type TcareersPageTarget = {
-    career: Tcareers
+export type TcareerPageTarget = {
+    career: Tcareer
 }
 type GuideSection = [
     {
@@ -186,7 +233,7 @@ type GuideSection = [
     },
     Tbutton
 ];
-type Tcareers = {
+type Tcareer = {
     heroSection: TheroSection
     challengeSection: TheroSection
     guideSection: GuideSection
@@ -227,20 +274,29 @@ type TprivacyPolicy = {
 // pricing
 export type TpricingPageSource = {
     pricing: Tpricing
-
 }
 export type TpricingPageTarget = {
     pricing: Tpricing
 }
-
-
-type Tpricing = {
+export type Tpricing = {
     heroSection: TheroSection
     problemSection: TcalloutProps
+    planHeader: Theader
+    planSection: TPlanFeature
+    planFooter: TcalloutProps
+    testimonialHeader: TcalloutProps
+    testimonialSection: TcardProps[]
+    faqSection: TtechStack
+    guideHeader: Theader
+    guideCategories: Titems[]
+    guideTableHeader: Titems[]
+    guideSection: TtechStack[]
+    guideFooter: TcalloutProps
+    guideCallout: Theader
+    ctaSection: TheroSection
 }
 
 // industries
-
 export type TindustriesPageSource = {
     industries: Tindustries[]
 }
@@ -265,20 +321,28 @@ export type Tindustries = {
 }
 
 //solutions
-
 export type TsolutionsPageSource = {
     solution: Tsolution
 }
 export type TsolutionsPageTarget = {
     solution: Tsolution
 }
-
-type Tsolution = {
+export type Tsolution = {
     heroSection: TheroSection
+    problemSection: TcalloutProps
+    guideHeader: TcardProps
+    guideFooter: TcalloutProps
+    planHeader: TcardProps
+    planFooter: TcalloutProps
+    solutionHeader: TcardProps
+    solutionFooter: TcalloutProps
+    storySection: TcardProps
+    calloutSection: TcardProps
+    successHeader: TcardProps
+    successFooter: TcalloutProps
 }
 
 //products
-
 export type TproductsPageSource = {
     products: Tproducts[]
 }
@@ -301,4 +365,36 @@ export type Tproducts = {
     pricingHighlight: TcalloutProps
     ctaSectionHeader: Theader
     ctaSection: TcalloutProps
+}
+
+export type TnavbarSource = {
+    navbar: Tnavbar[]
+}
+export type TnavbarTarget = {
+    navbar: Tnavbar[]
+}
+export type Tnavbar = {
+    logo: Tbutton
+    menu: Tbutton[]
+    product: Tbutton[]
+    industry: Tbutton[]
+    more: Tbutton[]
+    language: Tbutton[]
+}
+
+export type TfooterSource = {
+    footer: Tfooter
+}
+export type TfooterTarget = {
+    footer: Tfooter
+}
+export type Tfooter = {
+    companyName: string
+    companyInfo: string
+    menu: Titems[]
+    social: Tbutton[]
+    product: Tbutton[]
+    more: Tbutton[]
+    contact: TcontactData
+    policies: Tbutton[]
 }

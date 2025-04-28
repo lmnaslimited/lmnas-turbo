@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareersPageSource, TcareersPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -62,6 +62,36 @@ export class clSlugsTransformer extends clTransformer<TslugsSource, TslugsTarget
   }
 }
 
+export class clNavbarTransformer extends clTransformer<TnavbarSource, TnavbarTarget> {
+  async performTransformation(idSourceData: TnavbarSource): Promise<TnavbarTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+export class clFooterTransformer extends clTransformer<TfooterSource, TfooterTarget> {
+  async performTransformation(idSourceData: TfooterSource): Promise<TfooterTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+export class clHomeTransformer extends clTransformer<ThomePageSource, ThomePageTarget> {
+  async performTransformation(idSourceData: ThomePageSource): Promise<ThomePageTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
 export class clTrendsTransformer extends clTransformer<TtrendsPageSource, TtrendsPageTarget> {
   async performTransformation(idSourceData: TtrendsPageSource): Promise<TtrendsPageTarget> {
     this.targetData = idSourceData
@@ -101,8 +131,8 @@ export class clProductsTransformer extends clTransformer<TproductsPageSource, Tp
     super(iContentType)
   }
 }
-export class clCareersTransformer extends clTransformer<TcareersPageSource, TcareersPageTarget> {
-  async performTransformation(idSourceData: TcareersPageSource): Promise<TcareersPageTarget> {
+export class clCareerTransformer extends clTransformer<TcareerPageSource, TcareerPageTarget> {
+  async performTransformation(idSourceData: TcareerPageSource): Promise<TcareerPageTarget> {
     this.targetData = idSourceData
     return this.targetData
   }
@@ -145,14 +175,17 @@ export class clPrivacyPolicyTransformer extends clTransformer<TprivacyPolicyPage
 
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
+  navbar: clNavbarTransformer;
+  footer: clFooterTransformer;
+  home: clHomeTransformer;
   trend: clTrendsTransformer;
   pricing: clPricingTransformer;
   Solutions: clSolutionsTransformer;
   products: clProductsTransformer;
-  careers: clCareersTransformer;
+  career: clCareerTransformer;
   industries: clIndustriesTransformer;
   privacyPolicy: clPrivacyPolicyTransformer;
-  TermsAndConditions: clTermsandConditionsTransformer;
+  termsAndCondition: clTermsandConditionsTransformer;
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -161,14 +194,17 @@ export class clTransformerFactory {
   private static transformerMap: {
     [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K];
   } = {
+      navbar: clNavbarTransformer,
+      footer: clFooterTransformer,
+      home: clHomeTransformer,
       trend: clTrendsTransformer,
       pricing: clPricingTransformer,
       Solutions: clSolutionsTransformer,
       products: clProductsTransformer,
-      careers: clCareersTransformer,
+      career: clCareerTransformer,
       industries: clIndustriesTransformer,
       privacyPolicy: clPrivacyPolicyTransformer,
-      TermsAndConditions: clTermsandConditionsTransformer,
+      termsAndCondition: clTermsandConditionsTransformer,
       // Add other content types and corresponding transformers
     };
 

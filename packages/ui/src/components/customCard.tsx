@@ -54,8 +54,8 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
           idCardProps.namePosition === "top" ||
           idCardProps.namePosition === "bottom") && (
           <Avatar>
-            <AvatarImage src={idCardProps.avatar.src} alt={idCardProps.avatar.alt} />
-            <AvatarFallback>{idCardProps.avatar.alt}</AvatarFallback>
+            <AvatarImage src={idCardProps.avatar.source} alt={idCardProps.avatar.alternate} />
+            <AvatarFallback>{idCardProps.avatar.alternate}</AvatarFallback>
           </Avatar>
         )}
       <div
@@ -95,8 +95,8 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
             </div>
           ) : (
             <Image
-              src={idCardProps.image?.src || "/placeholder.svg"}
-              alt={idCardProps.image.alt}
+              src={idCardProps.image?.source || "/placeholder.svg"}
+              alt={idCardProps.image.alternate}
               width={500}
               height={300}
               className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
@@ -116,7 +116,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
       <div className={cn("flex flex-col", idCardProps.layout === "horizontal" && "md:flex-1")}>
 
         {/* Horizontal layout: Renders image on the side if applicable */}
-        {idCardProps.image?.alt && idCardProps.layout === "horizontal" && (
+        {idCardProps.image?.alternate && idCardProps.layout === "horizontal" && (
           <div
             className={cn(
               "md:w-48 overflow-hidden",
@@ -135,8 +135,8 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
               </div>
             ) : (
               <Image
-                src={idCardProps.image.src || "/placeholder.svg"}
-                alt={idCardProps.image.alt}
+                src={idCardProps.image.source || "/placeholder.svg"}
+                alt={idCardProps.image.alternate}
                 width={500}
                 height={300}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
