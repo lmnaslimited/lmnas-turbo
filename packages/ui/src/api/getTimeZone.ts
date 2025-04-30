@@ -1,7 +1,6 @@
 'use server'
 
-import { TapiResponse } from "@repo/ui/type"
-
+import { TapiResponse } from "@repo/middleware"
 
 /**
  * Fetches the list of available timezones from the backend.
@@ -29,15 +28,15 @@ export async function fetchTimezones(): Promise<TapiResponse> {
       redirect: "follow",
     })
 
-     // If the response is not OK (e.g., 404, 500), throw an error
+    // If the response is not OK (e.g., 404, 500), throw an error
     if (!LdResponse.ok) {
       throw new Error("Failed to fetch timezones")
     }
 
-     // Parse the response body to JSON
+    // Parse the response body to JSON
     const LdJson = await LdResponse.json()
 
-     // Return the parsed timezones with a success message
+    // Return the parsed timezones with a success message
     return {
       message: "Timezones fetched successfully",
       data: LdJson.message,

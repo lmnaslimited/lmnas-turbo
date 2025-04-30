@@ -1,15 +1,16 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Youtube, Linkedin, Twitter } from "lucide-react";
-import Image from "next/image";
-import { TtrendCardProps } from "@repo/ui/type";
-import { ReactElement, ReactNode } from "react";
 import Link from "next/link";
+import Image from "next/image";
+import { ReactElement, ReactNode } from "react";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
+import { Youtube, Linkedin, Twitter } from "lucide-react";
+import { TtrendCardProps } from "@repo/middleware";
 
 /**
  * Function to return the appropriate icon based on the source platform.
  */
-const fnGetIcon = (iSource: string):ReactNode => {
+
+const fnGetIcon = (iSource: string): ReactNode => {
   switch (iSource) {
     case "LinkedIn":
       return <Linkedin className="h-4 w-4" />;
@@ -35,39 +36,39 @@ const fnGetPlatformUrl = (iSource: string, iId: string): string => {
   }
 };
 
-export default function TrendCard({ idTrends }: {idTrends:TtrendCardProps}):ReactElement {
+export default function TrendCard({ idTrends }: { idTrends: TtrendCardProps }): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
     <Link href={LPlatformUrl} >
-    <Card className="overflow-hidden">
-      <CardHeader className="p-4">
-        <div className="flex items-center justify-between">
-          <Badge variant="outline" className="flex items-center gap-1">
-            {fnGetIcon(idTrends.source)}
-            {idTrends.source}
-          </Badge>
-          <CardDescription>{new Date(idTrends.publishedAt).toLocaleDateString()}</CardDescription>
-        </div>
-        <CardTitle className="line-clamp-2">{idTrends.title}</CardTitle>
-      </CardHeader>
+      <Card className="overflow-hidden">
+        <CardHeader className="p-4">
+          <div className="flex items-center justify-between">
+            <Badge variant="outline" className="flex items-center gap-1">
+              {fnGetIcon(idTrends.source)}
+              {idTrends.source}
+            </Badge>
+            <CardDescription>{new Date(idTrends.publishedAt).toLocaleDateString()}</CardDescription>
+          </div>
+          <CardTitle className="line-clamp-2">{idTrends.title}</CardTitle>
+        </CardHeader>
 
-      {idTrends.media?.url && (
-         <div className="relative w-full aspect-video">
-         <Image
-          className="absolute top-0 left-0 w-full h-full object-cover"
-          src={idTrends.media.url}  // Image URL
-          alt={idTrends.media.alt || "Media preview"}  // Image alt text (optional)
-          width={800} // Provide width and height for Image component optimization
-          height={450}
-         />
-       </div>
-      )}
+        {idTrends.media?.url && (
+          <div className="relative w-full aspect-video">
+            <Image
+              className="absolute top-0 left-0 w-full h-full object-cover"
+              src={idTrends.media.url}  // Image URL
+              alt={idTrends.media.alt || "Media preview"}  // Image alt text (optional)
+              width={800} // Provide width and height for Image component optimization
+              height={450}
+            />
+          </div>
+        )}
 
-      <CardContent className="p-4">
-        <CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>
-        <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
-      </CardContent>
-    </Card>
+        <CardContent className="p-4">
+          <CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>
+          <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
+        </CardContent>
+      </Card>
     </Link>
   );
 }

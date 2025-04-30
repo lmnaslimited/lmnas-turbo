@@ -1,4 +1,3 @@
-
 'use server'
 
 // Zod is a TypeScript-first schema validation library recommended by Next.js
@@ -9,21 +8,19 @@ const LdSchema = z.object({
   email: z.string().email('Please enter a valid email'),
 })
 
-
-export async function subscribeNewsletter(idPrevState: { message: string }, idFormData: FormData):Promise<{ message: string }>
-{
-    //headers for API requests
-const LdHeaders = {
-  "Authorization": `${process.env.AUTH_BASE_64}`,
-  'Content-Type': 'application/json',
-  Cookie: 'full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=',
-}
-    // Validate form input early to fail fast and give user feedback before hitting the backend
+export async function subscribeNewsletter(idPrevState: { message: string }, idFormData: FormData): Promise<{ message: string }> {
+  //headers for API requests
+  const LdHeaders = {
+    "Authorization": `${process.env.AUTH_BASE_64}`,
+    'Content-Type': 'application/json',
+    Cookie: 'full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=',
+  }
+  // Validate form input early to fail fast and give user feedback before hitting the backend
   const LdParsed = LdSchema.safeParse({
     email: idFormData.get('email'),
   })
 
-   // If validation fails, return a user-friendly message without making any API requests
+  // If validation fails, return a user-friendly message without making any API requests
   if (!LdParsed.success) {
     return {
       message: LdParsed.error.flatten().fieldErrors.email?.[0] || 'Invalid input',
@@ -32,7 +29,7 @@ const LdHeaders = {
 
   // At this point, we have a clean, validated email to use in API calls
   const LEmail = LdParsed.data.email
-  
+
   // Disables TLS verification for local development 
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
@@ -50,7 +47,7 @@ const LdHeaders = {
       return { message: "You're already subscribed!" }
     }
 
-     // If the email isn't already subscribed, submit it to the backend via a POST request
+    // If the email isn't already subscribed, submit it to the backend via a POST request
     const LdSubscribe = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/method/frappe.email.doctype.newsletter.newsletter.subscribe`,
       {
@@ -61,8 +58,8 @@ const LdHeaders = {
     )
 
     if (LdSubscribe.status === 429) {
-        return { message: 'Too many requests. Please wait a moment before trying again.' }
-      }
+      return { message: 'Too many requests. Please wait a moment before trying again.' }
+    }
 
     // If the backend returns a failure response, throw and handle the error for user feedback
     if (!LdSubscribe.ok) {

@@ -3,13 +3,19 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
-import { Button } from "@repo/ui/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui/avatar";
-import { Badge } from "@repo/ui/components/ui/badge";
 import { ReactElement } from "react";
-import { TcardProps } from "@repo/middleware";
+import { Button } from "@repo/ui/components/ui/button";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui/avatar";
+import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
+import { TcardProps, Tbutton } from "@repo/middleware";
+import { getIconComponent } from "@repo/ui/lib/icon";
 
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-6 h-6 text-muted-foreground" />;
+};
 /**
  * CustomCard component renders a flexible and responsive card UI
  * that can include an image, profile details, header, footer, buttons, and links.
@@ -91,7 +97,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
           {idCardProps.image?.svg ? (
             <div>
               {" "}
-              {idCardProps.image?.svg}{" "}
+              {renderIcon(idCardProps.image?.svg)}{" "}
             </div>
           ) : (
             <Image
@@ -168,7 +174,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
             <ul className="space-y-2">
               {idCardProps.list.map((idItem, iIndex) => (
                 <li key={iIndex} className="flex items-start gap-2 py-2">
-                  {idItem.icon && <span className="text-primary">{idItem.icon}</span>}
+                  {idItem.icon && <span className="text-primary">{renderIcon(idItem.icon)}</span>}
                   <div>
                     <span className="font-medium">{idItem.label}</span>
                     {idItem.description && (
@@ -207,14 +213,14 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
                 >
                   {/* If iconPosition is 'before', render icon first */}
                   {idBtn.icon && idBtn.iconPosition === "before" && (
-                    <span className="mr-2">{idBtn.icon}</span>
+                    <span className="mr-2">{renderIcon(idBtn.icon)}</span>
                   )}
 
                   {/* Button Label */}
                   <Link href={idBtn.href}>{idBtn.label}</Link>
                   {/* If iconPosition is 'after', render icon after */}
                   {idBtn.icon && idBtn.iconPosition === "after" && (
-                    <span className="ml-2">{idBtn.icon}</span>
+                    <span className="ml-2">{renderIcon(idBtn.icon)}</span>
                   )}
                 </Button>) : (
                 <Button
@@ -225,12 +231,12 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
                 >
                   {/* If iconPosition is 'before', render icon first */}
                   {idBtn.icon && idBtn.iconPosition === "before" && (
-                    <span className="mr-2">{idBtn.icon}</span>
+                    <span className="mr-2">{renderIcon(idBtn.icon)}</span>
                   )}
                   {idBtn.label}
                   {/* If iconPosition is 'after', render icon after */}
                   {idBtn.icon && idBtn.iconPosition === "after" && (
-                    <span className="ml-2">{idBtn.icon}</span>
+                    <span className="ml-2">{renderIcon(idBtn.icon)}</span>
                   )}
                 </Button>
               )
@@ -246,11 +252,11 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
                   onClick={(event) => event.stopPropagation()}
                 >
                   {idLnk.icon && idLnk.iconPosition === "before" && (
-                    <span className="mr-2">{idLnk.icon}</span>
+                    <span className="mr-2">{renderIcon(idLnk.icon)}</span>
                   )}{" "}
                   {idLnk.href ? <Link href={idLnk.href}>{idLnk.label}</Link> : idLnk.label}
                   {idLnk.icon && idLnk.iconPosition === "after" && (
-                    <span>{idLnk.icon}</span>
+                    <span>{renderIcon(idLnk.icon)}</span>
                   )}
                 </Button>
               ))}

@@ -17,7 +17,7 @@ import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from "react-international-phone"
 import "react-international-phone/style.css"
 import { isValidPhoneNumber } from "libphonenumber-js"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/ui/type"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/middleware"
 import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
@@ -38,16 +38,11 @@ export const LdBookingFormConfig: TformConfig = {
     privacyText: "Privacy Policy",
     // The schema defines validation rules using Zod for each field in the form
     schema: z.object({
-        date: z.date({ required_error: "Please select a date." }),
-        timezone: z.string({ required_error: "Please select a timezone." }),
-        timeSlot: z.string({ required_error: "Please select a time slot." }),
         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+        email: z.string().email("Please enter a valid email"),
+        phone: z.string().refine((val) => isValidPhoneNumber(val), {
             message: "Invalid phone number",
         }),
-        email: z.string().email("Please enter a valid email"),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
     }),
     // Field configurations define the UI and behavior of each form field
     fields: [
@@ -117,10 +112,8 @@ export const LdContactFormConfig: TformConfig = {
     successMessage: "Your message has been sent!",
     showTerms: true,
     schema: z.object({
-        enquiryType: z.string().default("Free Trial"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
     }),
     fields: [
         {
@@ -170,7 +163,6 @@ export const LdDownloadFormConfig: TformConfig = {
     schema: z.object({
         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
-        newsletter: z.boolean().default(true),
     }),
     fields: [
         {
@@ -207,21 +199,8 @@ export const LdContactPageFormConfig: TformConfig = {
     termsText: "Terms of Service",
     privacyText: "Privacy Policy",
     schema: z.object({
-        name: z
-            .string()
-            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
-        company: z.string().optional(),
-        phone: z
-            .string()
-            .refine((iVal) => isValidPhoneNumber(iVal), {
-                message: "Invalid phone number",
-            })
-            .optional(),
-        product: z.string().optional(),
-        enquiryType: z.string().optional(),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
     }),
     fields: [
         {
@@ -299,22 +278,11 @@ export const LdBookingPageFormConfig: TformConfig = {
     termsText: "Terms of Service",
     privacyText: "Privacy Policy",
     schema: z.object({
-        date: z.date({ required_error: "Please select a date." }),
-        timezone: z.string({ required_error: "Please select a timezone." }),
-        timeSlot: z.string({ required_error: "Please select a time slot." }),
-        name: z
-            .string()
-            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
         email: z.string().email("Please enter a valid email"),
-        company: z.string().optional(),
-        phone: z
-            .string()
-            .refine((iVal) => isValidPhoneNumber(iVal), {
-                message: "Invalid phone number",
-            })
-            .optional(),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
+        phone: z.string().refine((val) => isValidPhoneNumber(val), {
+            message: "Invalid phone number",
+        }),
     }),
     fields: [
         {
@@ -478,7 +446,6 @@ function InnerSectionForm({
     className = "",
     defaultValues,
     hideCardHeader = false,
-    pdfData
 }: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
@@ -595,29 +562,7 @@ function InnerSectionForm({
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.id === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-            } else if (config.id === "download") {
-                const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
-                const { pdf } = await import("@react-pdf/renderer")
-
-                const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
-                console.log(blob)
-                // Create a URL and download the PDF
-                const url = URL.createObjectURL(blob)
-                const link = document.createElement("a")
-                link.href = url
-                link.download = "download.pdf"
-                document.body.appendChild(link)
-                link.click()
-                document.body.removeChild(link)
-                URL.revokeObjectURL(url)
-
-                LdResponse = {
-                    message: "Your file has been downloaded.",
-                    title: "Download Success",
-                }
-            } 
-            
-            else {
+            } else {
                 throw new Error("Unsupported form type")
             }
 
@@ -940,11 +885,11 @@ function InnerSectionForm({
                             {config.showTerms && (
                                 <p className="text-xs text-center text-muted-foreground">
                                     By submitting, you agree to our{" "}
-                                    <a href="#" className="underline">
+                                    <a href="/terms-and-conditions" className="underline">
                                         {config.termsText || "Terms"}
                                     </a>{" "}
                                     and{" "}
-                                    <a href="#" className="underline">
+                                    <a href="/privacy-policy" className="underline">
                                         {config.privacyText || "Privacy Policy"}
                                     </a>
                                 </p>

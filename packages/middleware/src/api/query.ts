@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TsolutionsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -326,9 +326,8 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
         variant
       }
     image {
-      source:src
-        alternate:alt
-      
+      source
+        alternate
     }
   }
   challengeSection {
@@ -342,8 +341,8 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
         description
       }
       image {
-        source:src
-        alternate:alt
+        source
+        alternate
       }
       buttons {
         label
@@ -399,8 +398,8 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
         subtitle:description
       }
       image {
-        source:src
-        alternate:alt
+        source
+        alternate
       }
       buttons {
         label
@@ -428,7 +427,7 @@ query Pricing($locale: I18NLocaleCode) {
   ${this.contentType}(locale: $locale) {
     heroSection {
       heading {
-        highlight
+        title
         subtitle
       }
       description
@@ -440,7 +439,7 @@ query Pricing($locale: I18NLocaleCode) {
     }
     problemSection {
       header {
-        highlight
+        title
         subtitle
       }
       list {
@@ -457,7 +456,7 @@ query Pricing($locale: I18NLocaleCode) {
       }
     }
     planHeader {
-      highlight
+      title
       badge
       subtitle
     }
@@ -479,7 +478,7 @@ query Pricing($locale: I18NLocaleCode) {
     planFooter {
       title
       header {
-        highlight
+        title
         subtitle
       }
       buttons {
@@ -514,7 +513,9 @@ query Pricing($locale: I18NLocaleCode) {
     }
     faqSection {
       heading {
-        highlight
+        title
+        subtitle
+        badge
       }
       point {
         label
@@ -533,14 +534,10 @@ query Pricing($locale: I18NLocaleCode) {
       label
     }
     guideSection {
-      point {
-        label
-        description
-      }
-      heading {
-        title
-        subtitle
-      }
+      badge
+      title
+      highlight
+      subtitle
     }
     guideFooter {
       header {
@@ -561,8 +558,8 @@ query Pricing($locale: I18NLocaleCode) {
       badge
   }
   ctaSection {
-      heading {
-        highlight
+    heading {
+        title
         subtitle
         badge
       }
@@ -580,7 +577,26 @@ query Pricing($locale: I18NLocaleCode) {
   }
 }
 
-export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
+export class clQueryContact extends clQuery<TcontactSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Contact($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    header {
+      highlight
+      title
+      subtitle
+    }
+  }
+}`
+  }
+}
+
+export class clQuerySolution extends clQuery<TsolutionPageSource> {
   constructor(iContentType: string) {
     super(iContentType);
   }
@@ -596,8 +612,8 @@ export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
         highlight
       }
       image {
-        source:src
-        alternate:alt
+        source
+        alternate
       }
       buttons {
         label
@@ -605,6 +621,170 @@ export class clQuerySolutions extends clQuery<TsolutionsPageSource> {
         icon
         formMode
         variant
+      }
+    }
+    guideHeader {
+      title
+      subtitle
+    }
+    guideSection {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        variant
+        formMode
+        icon
+      }
+    }
+    guideFooter {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        formMode
+        icon
+        href
+      }
+    }
+    planHeader {
+      title
+      subtitle
+    }
+    planFooter {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        formMode
+        variant
+        icon
+        label
+        href
+      }
+    }
+    solutionHeader {
+      title
+      subtitle
+    }
+    solutionSection {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        variant
+        href
+        icon
+        formMode
+      }
+    }
+    solutionFooter {
+      title
+      buttons {
+        label
+        formMode
+        icon
+      }
+    }
+    successHeader {
+      title
+      subtitle
+    }
+    successSection {
+      header {
+        subtitle
+        title
+      }
+      category
+      image {
+        source
+        alternate
+      }
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    successFooter {
+      label
+      variant
+      formMode
+      icon
+    }
+    storyHeader {
+      title
+      subtitle
+    }
+    storySection {
+      header {
+        title
+        subtitle
+      }
+    }
+    storyFooter {
+      label
+      formMode
+      variant
+      icon
+      description
+    }
+    calloutHeader {
+      title
+      subtitle
+    }
+    calloutCard {
+      header {
+        subtitle
+      }
+      image {
+        source
+        alternate
+      }
+      avatar {
+        alternate
+        source
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    calloutFooter {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        label
+        href
+        icon
+      }
+    }
+    calloutSection {
+      header {
+        title
+      }
+      title
+      subtitle
+      list {
+        label
+      }
+      buttons {
+        variant
+        formMode
+        label
+        icon
       }
     }
   }
@@ -1012,8 +1192,9 @@ export class clQueryFactory {
     "home": clQueryHome,
     "trend": clQueryTrends,
     "career": clQueryCareer,
+    "contact": clQueryContact,
     "pricing": clQueryPricing,
-    "Solutions": clQuerySolutions,
+    "solution": clQuerySolution,
     "products": clQueryProducts,
     "industries": clQueryIndustries,
     "termsAndCondition": clQueryTermsAndConditions,

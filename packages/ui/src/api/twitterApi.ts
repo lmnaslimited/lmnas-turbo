@@ -1,9 +1,9 @@
 'use server';
 
-import { TapiResponse, TwitterApiResponse } from "@repo/ui/type";
+import { TapiResponse, TwitterApiResponse } from "@repo/middleware";
 
 export async function TwitterApi(): Promise<TapiResponse> {
- 
+
   const LdHeaders = {
     Authorization: `${process.env.TWITTER_BEARER_TOKEN}`,
   };
@@ -19,7 +19,7 @@ export async function TwitterApi(): Promise<TapiResponse> {
   }
 
   const LdUserTweetsData = await userTweetsResponse.json();
- 
+
   const LTweetIds = LdUserTweetsData.data?.map((tweet: any) => tweet.id).join(',');
 
   if (!LTweetIds) {
@@ -61,13 +61,13 @@ export async function TwitterApi(): Promise<TapiResponse> {
     };
 
     // Check if the media has a preview image URL (which is typically available for video)
-if (LdMedia && LdMedia.preview_image_url) {
-  
-  LdMediaToDisplay = {
-    url: LdMedia.preview_image_url, // Use the preview image for videos
-    alt: LMediaAlt,
-  };
-}
+    if (LdMedia && LdMedia.preview_image_url) {
+
+      LdMediaToDisplay = {
+        url: LdMedia.preview_image_url, // Use the preview image for videos
+        alt: LMediaAlt,
+      };
+    }
 
     return {
       id: tweet.id,

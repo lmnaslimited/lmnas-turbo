@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { TapiResponse } from "@repo/ui/type"
+import { TapiResponse } from "@repo/middleware"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -45,7 +45,7 @@ export async function sendCommunicationAction(idFormData: z.infer<typeof LdCommu
 
   const { email, notes, option, recaptchaToken } = idFormData
 
-   // Verify that the user is not a bot
+  // Verify that the user is not a bot
   const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
   if (!LIsHuman) {
     return { error: "reCAPTCHA verification failed" }
@@ -69,7 +69,7 @@ export async function sendCommunicationAction(idFormData: z.infer<typeof LdCommu
       body: JSON.stringify(LdPayload),
     })
 
-     // If the response is not OK, return error from server
+    // If the response is not OK, return error from server
     if (!LdResponse.ok) {
       const errorText = await LdResponse.text()
       return { error: errorText }

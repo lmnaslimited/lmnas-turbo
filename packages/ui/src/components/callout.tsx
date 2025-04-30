@@ -1,8 +1,8 @@
 import Link from "next/link"
-import { TcalloutProps, TformMode } from "@repo/middleware";
-import { Button } from "@repo/ui/components/ui/button"
 import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@repo/ui/components/ui/button"
+import { TcalloutProps, TformMode } from "@repo/middleware";
 
 export default function Callout({
   idCallout,

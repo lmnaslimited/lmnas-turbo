@@ -1,14 +1,15 @@
 import Link from "next/link"
 import * as LucideIcons from "lucide-react"
 import { cva } from "class-variance-authority"
-import { Button } from "@repo/ui/components/ui/button"
 import { ReactElement } from "react"
+import { Button } from "@repo/ui/components/ui/button"
 import { TfeatureProps, Titems } from "@repo/middleware"
 
 /**
  * Utility function to define the button container styles based on position.
  * Uses `cva` (Class Variance Authority) to generate responsive styles dynamically.
  */
+
 const fnButtonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
     position: {
@@ -22,7 +23,6 @@ const fnButtonContainer = cva("mt-8 flex lg:flex-shrink-0", {
     position: "header",
   },
 })
-
 
 export default function Feature({ idFeature }: { idFeature: TfeatureProps }): ReactElement {
   return (
@@ -50,10 +50,17 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
           {/* Conditionally render a button in the header if `iShowButton` is true and button position is `header` */}
           {idFeature.iShowButton && idFeature.buttonPosition === "header" && (
             <div className={fnButtonContainer({ position: "header" })}>
-              <Button asChild size="lg">
-                {idFeature.buttons?.href && (
-                  <Link href={idFeature.buttons?.href}>{idFeature.buttons?.label}</Link>)}
-              </Button>
+              {/* <Button asChild size="lg">
+                {idFeature.buttons[0]?.href && (
+                  <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
+              </Button> */}
+              {idFeature.buttons?.[0]?.href && (
+                <Button asChild size="lg">
+                  <Link href={idFeature.buttons[0].href}>
+                    {idFeature.buttons[0].label}
+                  </Link>
+                </Button>
+              )}
             </div>
           )}
         </div>
@@ -72,10 +79,17 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
         {/* Conditionally render a button at the bottom if `iShowButton` is true and button position is not `header` */}
         {idFeature.iShowButton && idFeature.buttonPosition !== "header" && (
           <div className={fnButtonContainer({ position: idFeature.buttonPosition })}>
-            <Button asChild size="lg">
-              {idFeature.buttons?.href && (
-                <Link href={idFeature.buttons?.href}>{idFeature.buttons?.label}</Link>)}
-            </Button>
+            {/* <Button asChild size="lg">
+              {idFeature.buttons[0]?.href && (
+                <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
+            </Button> */}
+            {idFeature.buttons?.[0]?.href && (
+              <Button asChild size="lg">
+                <Link href={idFeature.buttons[0].href}>
+                  {idFeature.buttons[0].label}
+                </Link>
+              </Button>
+            )}
           </div>
         )}
       </div>

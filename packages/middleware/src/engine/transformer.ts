@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionsPageSource, TsolutionsPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -112,8 +112,18 @@ export class clPricingTransformer extends clTransformer<TpricingPageSource, Tpri
   }
 }
 
-export class clSolutionsTransformer extends clTransformer<TsolutionsPageSource, TsolutionsPageTarget> {
-  async performTransformation(idSourceData: TsolutionsPageSource): Promise<TsolutionsPageTarget> {
+export class clContactTransformer extends clTransformer<TcontactSource, TcontactTarget> {
+  async performTransformation(idSourceData: TcontactSource): Promise<TcontactTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+export class clSolutionTransformer extends clTransformer<TsolutionPageSource, TsolutionPageTarget> {
+  async performTransformation(idSourceData: TsolutionPageSource): Promise<TsolutionPageTarget> {
     this.targetData = idSourceData
     return this.targetData
   }
@@ -180,9 +190,10 @@ interface ITransformerMap {
   home: clHomeTransformer;
   trend: clTrendsTransformer;
   pricing: clPricingTransformer;
-  Solutions: clSolutionsTransformer;
-  products: clProductsTransformer;
   career: clCareerTransformer;
+  contact: clContactTransformer;
+  solution: clSolutionTransformer;
+  products: clProductsTransformer;
   industries: clIndustriesTransformer;
   privacyPolicy: clPrivacyPolicyTransformer;
   termsAndCondition: clTermsandConditionsTransformer;
@@ -199,9 +210,10 @@ export class clTransformerFactory {
       home: clHomeTransformer,
       trend: clTrendsTransformer,
       pricing: clPricingTransformer,
-      Solutions: clSolutionsTransformer,
-      products: clProductsTransformer,
       career: clCareerTransformer,
+      contact: clContactTransformer,
+      solution: clSolutionTransformer,
+      products: clProductsTransformer,
       industries: clIndustriesTransformer,
       privacyPolicy: clPrivacyPolicyTransformer,
       termsAndCondition: clTermsandConditionsTransformer,

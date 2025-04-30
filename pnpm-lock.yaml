@@ -206,6 +206,9 @@ importers:
       lucide-react:
         specifier: ^0.474.0
         version: 0.474.0(react@19.0.0)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
 
   packages/typescript-config: {}
 
