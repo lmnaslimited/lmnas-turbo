@@ -1,11 +1,11 @@
 'use server'
 
-import { TtrendCardProps } from "@repo/ui/type";
+import { TtrendCardProps } from "@repo/middleware";
 
 export type TsocialAPIPostIds = {
   data: TtrendCardProps[];
 };
-export type Tpost ={
+export type Tpost = {
   content: { media: { id: string; altText: string } }
 }
 
@@ -28,13 +28,13 @@ function fnFetchWithTimeout(iUrl: string, idOptions: RequestInit, iTimeout: numb
 // ----------------------------------------
 // Retries failed fetch requests up to `iRetries` times, with a delay between each retry
 async function fnRetryFetch(iUrl: string, idOptions: RequestInit, iRetries: number = 3, iDelay: number = 3000): Promise<Response> {
-  let ldLastError 
+  let ldLastError
   for (let lAttempt = 0; lAttempt < iRetries; lAttempt++) {
     try {
       return await fnFetchWithTimeout(iUrl, idOptions, 10000); // 10 seconds timeout for each request
     } catch (error) {
       ldLastError = error;
-       // Retry only if not the last attempt
+      // Retry only if not the last attempt
       if (lAttempt < iRetries - 1) {
         console.log(`Retrying... Attempt ${lAttempt + 2}`);
         await new Promise(resolve => setTimeout(resolve, iDelay)); // wait before retry
@@ -57,32 +57,32 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
   });
 
   try {
-      // Step 1: Fetch latest 20 posts from the organization's LinkedIn page
+    // Step 1: Fetch latest 20 posts from the organization's LinkedIn page
     const LdResponse = await fnRetryFetch(
-      "https://api.linkedin.com/rest/posts?author=urn%3Ali%3Aorganization%3A67940092&q=author&count=20", 
+      "https://api.linkedin.com/rest/posts?author=urn%3Ali%3Aorganization%3A67940092&q=author&count=20",
       {
         method: "GET",
         headers: LdHeaders,
         redirect: "follow",
       }
     );
-    
+
     if (!LdResponse.ok) {
       throw new Error(`HTTP error! Status: ${LdResponse.status}`);
     }
 
     const LdLinkedIn = await LdResponse.json();
-    
-     // Step 2: Filter posts that have media (e.g., images)
+
+    // Step 2: Filter posts that have media (e.g., images)
     const LaPostsWithMedia = LdLinkedIn.elements.filter(
       (post: { content: { media?: { id: string; altText: string } } }) =>
         post.content?.media?.id
     );
-   // Step 3: Collect media IDs and map them with alt text for later use
+    // Step 3: Collect media IDs and map them with alt text for later use
     const LaMediaMap = new Map<string, string>();
     const LaMediaIds: string[] = [];
 
-    LaPostsWithMedia.forEach((idPost:Tpost) => {
+    LaPostsWithMedia.forEach((idPost: Tpost) => {
       const LId = idPost.content.media.id;
       LaMediaIds.push(LId);
       LaMediaMap.set(LId, idPost.content.media.altText || "");
@@ -91,7 +91,7 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
     // Step 4: Fetch image data in bulk using media IDs
     const LImageUrl = new URL("https://api.linkedin.com/rest/images");
     LaMediaIds.forEach((iId) => LImageUrl.searchParams.append("ids", iId)); // Append each media ID
-    
+
     const LdImageResponse = await fnRetryFetch(LImageUrl.toString(), {
       method: "GET",
       headers: LdHeaders,
@@ -120,7 +120,7 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
         author: "LMNAs Cloud Solutions",
       };
     })
-   // Return the final formatted post data
+    // Return the final formatted post data
     return { data: LdFormattedPosts };
   } catch (error) {
     console.error("Error fetching LinkedIn posts:", error);

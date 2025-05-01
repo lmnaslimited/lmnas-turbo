@@ -1,6 +1,6 @@
 'use server'
 
-import { TapiResponse } from "@repo/ui/type"
+import { TapiResponse } from "@repo/middleware"
 
 export async function youTubeApi(): Promise<TapiResponse> {
 
@@ -13,24 +13,24 @@ export async function youTubeApi(): Promise<TapiResponse> {
     })
 
     if (!LdResponse.ok) {
-        console.log(LdResponse)
+      console.log(LdResponse)
       throw new Error("Failed to fetch youtube")
     }
 
     const LdJson = await LdResponse.json()
     const LaFormatData = LdJson.items.map((item: any) => ({
-        id: item.id.videoId,
-        publishedAt: item.snippet.publishedAt,
-        title: item.snippet.title,
-        description: item.snippet.description,
-        author: item.snippet.channelTitle,
-        source: "YouTube",
-        media:{
-            // url: `https://www.youtube.com/embed/${item.id.videoId}`,
-            url: `https://img.youtube.com/vi/${item.id.videoId}/hqdefault.jpg`,
-            alt: item.snippet.title
-        }
-      }))
+      id: item.id.videoId,
+      publishedAt: item.snippet.publishedAt,
+      title: item.snippet.title,
+      description: item.snippet.description,
+      author: item.snippet.channelTitle,
+      source: "YouTube",
+      media: {
+        // url: `https://www.youtube.com/embed/${item.id.videoId}`,
+        url: `https://img.youtube.com/vi/${item.id.videoId}/hqdefault.jpg`,
+        alt: item.snippet.title
+      }
+    }))
     return {
       message: "youtube fetched successfully",
       data: LaFormatData,

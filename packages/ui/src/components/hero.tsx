@@ -1,12 +1,13 @@
+import * as Icons from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@repo/ui/components/ui/button";
 import { Zap } from "lucide-react";
-import { TheroSection, TformMode, Tbutton, Titems } from "@repo/middleware";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
-import * as Icons from "lucide-react";
+import { getIconComponent } from "@repo/ui/lib/icon";
+import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
 
 type THeroProps = {
   idHero: TheroSection;
@@ -29,14 +30,19 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Displays a list of features, each represented by an icon and text.
   * This section helps in showcasing key benefits or highlights of the hero section.
   */
+
   const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {iaItems?.map((idItem, iIndex) => (
-        <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
-          {idItem?.icon}
-          <span>{idItem?.label}</span>
-        </div>
-      ))}
+      {iaItems?.map((idItem, iIndex) => {
+        const iconName = typeof idItem?.icon === "string" ? idItem.icon : "HelpCircle";
+        const IconComponent = getIconComponent(iconName);
+        return (
+          <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
+            <IconComponent className="w-5 h-5 text-muted-foreground" />
+            <span>{idItem?.label}</span>
+          </div>
+        );
+      })}
     </div>
   );
 
@@ -49,9 +55,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
       {iaButtons.map((idButton, iIndex) => {
         const IconComponent =
           (Icons[idButton.icon as keyof typeof Icons] as Icons.LucideIcon) || Icons.Users;
-
         const iconElement = <IconComponent className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />;
-
         const buttonContent = (
           <>
             {idButton.iconPosition === "before" && iconElement}
@@ -59,7 +63,6 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             {idButton.iconPosition === "after" && iconElement}
           </>
         );
-
         return idButton.href ? (
           <Link href={idButton.href} key={iIndex}>
             <Button

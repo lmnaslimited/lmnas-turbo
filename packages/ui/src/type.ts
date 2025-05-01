@@ -79,6 +79,7 @@ export type TcardProps = {
   category?: string
   onButtonClick?: (mode: TformMode) => void
 }
+
 //component
 export type TlogoShowcaseProps = {
   logos: Timage[]
@@ -129,8 +130,6 @@ export type TtrendCardProps = {
   author: string;
   publishedAt: string;
 }
-
-
 
 // Form types
 export type TformMode = "booking" | "contact" | "download" | undefined | null

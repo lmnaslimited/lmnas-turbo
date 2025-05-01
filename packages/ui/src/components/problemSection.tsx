@@ -1,22 +1,21 @@
 "use client";
-
 import { useRef, useEffect, useState, ReactElement } from "react";
 import { motion, useInView } from "framer-motion";
-import { ChevronRight, Download } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
-import { TproblemSection } from "@repo/ui/type";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
+import { ChevronRight, Download } from "lucide-react";
+import { TproblemSection } from "@repo/ui/type";
 
-export function ProblemSection({idCaseStudy,}: {idCaseStudy: TproblemSection}): ReactElement {
+export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null);
 
   // Checks if the section is in view for triggering animations
   const IsInView = useInView(SectionRef, { once: false, amount: 0.3 });
 
-   // Manages the active challenge being displayed
+  // Manages the active challenge being displayed
   const [ActiveChallenge, fnSetActiveChallenge] = useState(0);
 
-   // Auto-rotates through the list of challenges every 3 seconds when in view
+  // Auto-rotates through the list of challenges every 3 seconds when in view
   useEffect(() => {
     if (!IsInView) return;
 
@@ -56,25 +55,23 @@ export function ProblemSection({idCaseStudy,}: {idCaseStudy: TproblemSection}): 
           />
         </motion.div>
 
-         {/* List of challenges with interactive selection */}
+        {/* List of challenges with interactive selection */}
         <motion.div variants={ItemVariants} className="mb-12 space-y-6">
           {idCaseStudy.challenges.map((iChallenge, iIndex) => (
             <div
               key={iIndex}
-              className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${
-                iIndex === ActiveChallenge
-                  ? "border-primary bg-primary/5 shadow-md"
-                  : "border-muted bg-card hover:border-muted/80 hover:bg-muted/5"
-              }`}
+              className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${iIndex === ActiveChallenge
+                ? "border-primary bg-primary/5 shadow-md"
+                : "border-muted bg-card hover:border-muted/80 hover:bg-muted/5"
+                }`}
               onClick={() => fnSetActiveChallenge(iIndex)}
             >
               <div className="flex items-start gap-4">
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                    iIndex === ActiveChallenge
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-muted-foreground"
-                  }`}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iIndex === ActiveChallenge
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                    }`}
                 >
                   <span className="font-mono text-sm font-bold">
                     {iIndex + 1}
@@ -86,7 +83,7 @@ export function ProblemSection({idCaseStudy,}: {idCaseStudy: TproblemSection}): 
                   >
                     {iChallenge}
                   </p>
-                   {/* Additional details for the active challenge */}
+                  {/* Additional details for the active challenge */}
                   {iIndex === ActiveChallenge && (
                     <motion.p
                       initial={{ opacity: 0 }}

@@ -1,15 +1,16 @@
 "use client";
-
 import { ReactElement, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
-import { ArrowRight } from "lucide-react";
 import CustomCard from "@repo/ui/components/customCard";
+import { ArrowRight } from "lucide-react";
 import { TcardProps } from "@repo/middleware";
+
 type TtabProps = {
   data: TcardProps[]
   TabDefault: { text: string, label: string }
 }
+
 export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
   const [VisibleCount, fnSetVisibleCount] = useState(4);
 

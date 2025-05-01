@@ -1,4 +1,5 @@
 import * as LucideIcons from "lucide-react"
+import { z } from "zod"
 
 export type Middleware = {
     name: string;
@@ -37,6 +38,7 @@ export interface IsourceType {
 export interface ItargetType {
 
 }
+
 export type TslugsSource = {
     [key: string]: {
         slug: string;
@@ -134,6 +136,10 @@ export type TcardProps = {
         name: string
         place?: string
     }
+    nameAndPlace?: {
+        name: string
+        place?: string
+    }
     namePosition?: "top" | "bottom" | "left" | "right"
     footerClassName?: string
     tag?: string
@@ -172,16 +178,133 @@ export type TPlanFeature = {
     features: Titems[]
 }
 
+//component
 export type TfeatureProps = {
     buttonPosition?: "header" | "bottom-left" | "bottom-center" | "bottom-right";
     layout?: "classic" | "centered";
     iShowButton?: boolean;
     heading: Theader;
-    buttons?: Tbutton
+    buttons?: Tbutton[]
     highlight?: Titems[]
 }
 
+//component
+export type TlogoShowcaseProps = {
+    logos: Timage[]
+    variant: "marquee" | "grid"
+    className?: string
+    logoSize?: "small" | "medium" | "large"
+    speed?: "slow" | "medium" | "fast" | number
+    spacing?: "tight" | "normal" | "loose" | string
+    logosPerRow?: number
+    pauseOnHover?: boolean
+    dimensions?: { width: number; height: number }
+}
+
+//component
+export type TtrendCardProps = {
+    id: string
+    title: string;
+    description: string;
+    source: string;
+    media?: {
+        url: string
+        alt: string
+    };
+    author: string;
+    publishedAt: string;
+}
+
+// Form Type
 export type TformMode = "booking" | "contact" | "download" | undefined | null
+
+export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
+
+export type TformFieldConfig = {
+    name: string
+    label?: string
+    placeholder?: string
+    type: TfieldType
+    required?: boolean
+    options?: { value: string; label: string }[]
+    className?: string
+    inputClassName?: string
+}
+
+export type TformConfig = {
+    id: string
+    title: string
+    description?: string
+    fields: TformFieldConfig[]
+    submitText: string
+    schema: z.ZodObject<any>
+    successTitle: string
+    successMessage: string
+    showTerms?: boolean
+    termsText?: string
+    privacyText?: string
+}
+
+export type TdynamicFormProps = {
+    config: TformConfig
+    onSuccess: (message: string, title: string) => void
+    onCancel?: () => void
+    className?: string
+    defaultValues?: Record<string, any>
+    hideCardHeader?: boolean
+    pdfData?: any
+}
+
+export type TapiResponse = {
+    message?: string
+    error?: string
+    data?: any
+}
+
+export type Tslot = {
+    time: string
+    availability: boolean
+}
+
+export type TslotResponse = {
+    message?: string
+    data?: Tslot[]
+    error?: string
+}
+
+// Navbar
+export type TnavbarSource = {
+    navbar: Tnavbar
+}
+export type TnavbarTarget = {
+    navbar: Tnavbar
+}
+export type Tnavbar = {
+    logo: Tbutton
+    menu: Tbutton[]
+    product: Tbutton[]
+    industry: Tbutton[]
+    more: Tbutton[]
+    language: Tbutton[]
+}
+
+// Footer
+export type TfooterSource = {
+    footer: Tfooter
+}
+export type TfooterTarget = {
+    footer: Tfooter
+}
+export type Tfooter = {
+    companyName: string
+    companyInfo: string
+    menu: Titems[]
+    social: Tbutton[]
+    product: Tbutton[]
+    more: Tbutton[]
+    contact: TcontactData
+    policies: Tbutton[]
+}
 
 // home
 export type ThomePageSource = {
@@ -219,7 +342,7 @@ type Ttrend = {
     calloutSection: TcalloutProps
 }
 
-// careers
+// career
 export type TcareerPageSource = {
     career: Tcareer
 }
@@ -290,7 +413,7 @@ export type Tpricing = {
     guideHeader: Theader
     guideCategories: Titems[]
     guideTableHeader: Titems[]
-    guideSection: TtechStack[]
+    guideSection: Theader[]
     guideFooter: TcalloutProps
     guideCallout: Theader
     ctaSection: TheroSection
@@ -321,25 +444,34 @@ export type Tindustries = {
 }
 
 //solutions
-export type TsolutionsPageSource = {
+export type TsolutionPageSource = {
     solution: Tsolution
 }
-export type TsolutionsPageTarget = {
+export type TsolutionPageTarget = {
     solution: Tsolution
 }
 export type Tsolution = {
     heroSection: TheroSection
     problemSection: TcalloutProps
-    guideHeader: TcardProps
+    guideHeader: Theader
+    guideSection: TcardProps[]
     guideFooter: TcalloutProps
-    planHeader: TcardProps
+    planHeader: Theader
+    planSection: TcardProps[]
     planFooter: TcalloutProps
-    solutionHeader: TcardProps
+    solutionHeader: Theader
+    solutionSection: TcardProps[]
     solutionFooter: TcalloutProps
-    storySection: TcardProps
-    calloutSection: TcardProps
-    successHeader: TcardProps
+    successHeader: Theader
+    successSection: TcardProps[]
     successFooter: TcalloutProps
+    storyHeader: Theader
+    storySection: TcardProps[]
+    storyFooter: Tbutton
+    calloutHeader: Theader
+    calloutCard: TcardProps[]
+    calloutSection: TcalloutProps
+    calloutFooter: TcalloutProps
 }
 
 //products
@@ -367,34 +499,77 @@ export type Tproducts = {
     ctaSection: TcalloutProps
 }
 
-export type TnavbarSource = {
-    navbar: Tnavbar[]
+// Contact
+export type TcontactSource = {
+    contact: Tcontact
 }
-export type TnavbarTarget = {
-    navbar: Tnavbar[]
+export type TcontactTarget = {
+    contact: Tcontact
 }
-export type Tnavbar = {
-    logo: Tbutton
-    menu: Tbutton[]
-    product: Tbutton[]
-    industry: Tbutton[]
-    more: Tbutton[]
-    language: Tbutton[]
+export type Tcontact = {
+    header: Theader[]
 }
 
-export type TfooterSource = {
-    footer: Tfooter
+// -------------------------------------------------------------------------------------------
+
+//job api
+export type JobOpening = {
+    name: string;
+    job_title: string;
+    status: string;
+    designation: string;
+    custom_exert_description: string;
+    location?: string;
+    _user_tags: string[];
+    creation: string;
+};
+
+export type JobFilters = {
+    role: string[];
+    location: string[];
+};
+
+export type JobData = {
+    id: string;
+    title: string;
+    location: string;
+    role: string;
+    description: string;
+};
+
+export type MappedResult = {
+    filters: JobFilters;
+    data: JobData[];
+};
+
+//tweeter
+export type TwitterUser = {
+    id: string;
+    name: string;
+    username: string;
 }
-export type TfooterTarget = {
-    footer: Tfooter
+
+export type TwitterMedia = {
+    media_key: string;
+    url?: string;
+    alt_text?: string;
+    preview_image_url?: string;
 }
-export type Tfooter = {
-    companyName: string
-    companyInfo: string
-    menu: Titems[]
-    social: Tbutton[]
-    product: Tbutton[]
-    more: Tbutton[]
-    contact: TcontactData
-    policies: Tbutton[]
+
+export type TwitterTweet = {
+    id: string;
+    created_at: string;
+    text: string;
+    author_id: string;
+    attachments?: {
+        media_keys: string[];
+    };
+}
+
+export type TwitterApiResponse = {
+    data: TwitterTweet[];
+    includes?: {
+        users?: TwitterUser[];
+        media?: TwitterMedia[];
+    };
 }

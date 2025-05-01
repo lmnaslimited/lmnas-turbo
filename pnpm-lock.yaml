@@ -27,6 +27,9 @@ importers:
 
   apps/braccoli-bites:
     dependencies:
+      '@repo/middleware':
+        specifier: workspace:*
+        version: link:../../packages/middleware
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
@@ -203,6 +206,9 @@ importers:
       lucide-react:
         specifier: ^0.474.0
         version: 0.474.0(react@19.0.0)
+      zod:
+        specifier: ^3.24.2
+        version: 3.24.2
 
   packages/typescript-config: {}
 

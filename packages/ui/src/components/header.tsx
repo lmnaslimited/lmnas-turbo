@@ -1,7 +1,6 @@
 "use client"
-
-import { useState, useEffect } from "react"
 import Link from "next/link"
+import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 import { Button } from "@repo/ui/components/ui/button"
@@ -21,9 +20,8 @@ export default function Header() {
 
   return (
     <header
-      className={`w-full py-4 transition-all duration-300 z-50 ${
-        isScrolled ? "sticky top-0 bg-background/95 backdrop-blur-sm shadow-sm" : ""
-      }`}
+      className={`w-full py-4 transition-all duration-300 z-50 ${isScrolled ? "sticky top-0 bg-background/95 backdrop-blur-sm shadow-sm" : ""
+        }`}
     >
       <div className="container mx-auto px-4 flex items-center justify-between">
         <Link href="/" className="flex items-center space-x-2">

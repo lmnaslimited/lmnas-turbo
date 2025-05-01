@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { TapiResponse } from "@repo/ui/type"
+import { TapiResponse } from "@repo/middleware"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -11,7 +11,7 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   try {
     const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
     const LdData = await LdResponse.json()
-     // Return true only if verification is successful and the score is above threshold
+    // Return true only if verification is successful and the score is above threshold
     return LdData.success && LdData.score >= 0.5
   } catch (error) {
     console.error("reCAPTCHA verification error:", error)
@@ -43,7 +43,7 @@ export async function bookAppointmentAction(
   idFormData: z.infer<typeof LdAppointmentSchema>
 ): Promise<TapiResponse> {
 
-   // Prepare API headers including authentication and session cookies
+  // Prepare API headers including authentication and session cookies
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export async function bookAppointmentAction(
 
     const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
 
-     // Send the appointment request
+    // Send the appointment request
     const LdResponse = await fetch(LBookingUrl, {
       method: "POST",
       headers: ldHeaders,

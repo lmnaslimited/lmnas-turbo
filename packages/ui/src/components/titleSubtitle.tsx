@@ -7,7 +7,7 @@ export default function TitleSubtitle({ idTitle }: { idTitle: Theader }): ReactE
     return (
         <div className={cn("w-full flex flex-col space-y-4 mb-10", idTitle.className)}>
             <h2 className={cn("text-3xl font-bold tracking-tighter sm:text-4xl", idTitle.headingClass)}>
-                <span >{idTitle.title}</span>{" "}
+                <span>{idTitle.title}</span>{" "}
                 <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">{idTitle.highlight}</span>
             </h2>
             <p className={cn("max-w-[700px] text-muted-foreground md:text-xl", idTitle.descripClass)}>

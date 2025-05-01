@@ -1,6 +1,6 @@
 'use server'
 
-import { TslotResponse, Tslot } from "@repo/ui/type"
+import { TslotResponse, Tslot } from "@repo/middleware"
 
 /**
  * Fetches available appointment time slots for a given date and timezone.
@@ -33,7 +33,7 @@ export async function fetchTimeSlots(iSelectedDate: string, iTimezone: string): 
       cache: "no-store",
     })
 
-     // If response is not successful, extract and return error message
+    // If response is not successful, extract and return error message
     if (!LdResponse.ok) {
       const lErrorText = await LdResponse.text()
       return { error: lErrorText }
