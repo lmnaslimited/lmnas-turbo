@@ -17,7 +17,7 @@ import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from "react-international-phone"
 import "react-international-phone/style.css"
 import { isValidPhoneNumber } from "libphonenumber-js"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/ui/type"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/middleware"
 import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
@@ -917,11 +917,11 @@ function InnerSectionForm({
                             {config.showTerms && (
                                 <p className="text-xs text-center text-muted-foreground">
                                     By submitting, you agree to our{" "}
-                                    <a href="#" className="underline">
+                                    <a href="/terms-and-conditions" className="underline">
                                         {config.termsText || "Terms"}
                                     </a>{" "}
                                     and{" "}
-                                    <a href="#" className="underline">
+                                    <a href="/privacy-policy" className="underline">
                                         {config.privacyText || "Privacy Policy"}
                                     </a>
                                 </p>
