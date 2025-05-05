@@ -55,7 +55,11 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
       {iaButtons.map((idButton, iIndex) => {
         const IconComponent =
           (Icons[idButton.icon as keyof typeof Icons] as Icons.LucideIcon) || Icons.Users;
-        const iconElement = <IconComponent className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />;
+
+        const iconElement = (
+          <IconComponent className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+        );
+
         const buttonContent = (
           <>
             {idButton.iconPosition === "before" && iconElement}
@@ -63,29 +67,19 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             {idButton.iconPosition === "after" && iconElement}
           </>
         );
-        return idButton.href ? (
-          <Link href={idButton.href} key={iIndex}>
-            <Button
-              size={idButton.size || "lg"}
-              variant={idButton.variant || "default"}
-              className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
-            >
-              {buttonContent}
-            </Button>
-          </Link>
-        ) : (
+
+        return (
           <Button
             key={iIndex}
-            size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
-            className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
-            onClick={() => onButtonClick?.(idButton.formMode)}
+            className={"flex-1 md:w-auto w-full"}
+            asChild={!!idButton.href}
+            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode) : undefined}
           >
-            {buttonContent}
+            {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>
         );
       })}
-
     </div>
   );
 
