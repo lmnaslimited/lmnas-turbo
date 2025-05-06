@@ -248,7 +248,6 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     frustrationSection {
       ... on ComponentCoreHeader {
         title
-        
       }
       ... on ComponentSharedCallout {
         header {
@@ -284,13 +283,11 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     }
     calloutSection {
       header {
-        highlight
         title
       }
       title
       buttons {
         icon
-        href
         label
         variant
         formMode
@@ -435,6 +432,7 @@ query Pricing($locale: I18NLocaleCode) {
         label
         href
         variant
+        icon
       }
     }
     problemSection {
@@ -523,7 +521,7 @@ query Pricing($locale: I18NLocaleCode) {
       }
     }
     guideHeader {
-      highlight
+      title
       subtitle
       badge
     }
@@ -541,7 +539,7 @@ query Pricing($locale: I18NLocaleCode) {
     }
     guideFooter {
       header {
-        highlight
+        title
         subtitle
       }
       buttons {

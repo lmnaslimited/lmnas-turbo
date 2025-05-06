@@ -2,7 +2,14 @@ import Link from "next/link"
 import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/ui/button"
-import { TcalloutProps, TformMode } from "@repo/middleware";
+import { TcalloutProps, TformMode, Tbutton } from "@repo/middleware";
+import { getIconComponent } from "@repo/ui/lib/icon";
+
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-5 h-5 text-black" />;
+};
 
 export default function Callout({
   idCallout,
@@ -60,11 +67,11 @@ export default function Callout({
           const ButtonContent = (
             <>
               {idButton.icon && idButton.iconPosition === "before" && (
-                <span className="mr-2">{idButton.icon}</span>
+                <span className="mr-2">{renderIcon(idButton.icon)}</span>
               )}
               {idButton.label}
               {idButton.icon && idButton.iconPosition === "after" && (
-                <span className="ml-2">{idButton.icon}</span>
+                <span className="ml-2">{renderIcon(idButton.icon)}</span>
               )}
             </>
           );

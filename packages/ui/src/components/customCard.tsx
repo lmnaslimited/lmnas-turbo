@@ -14,7 +14,7 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-6 h-6 text-muted-foreground" />;
+  return <IconComponent className="w-6 h-6 text-black" />;
 };
 /**
  * CustomCard component renders a flexible and responsive card UI
@@ -73,9 +73,9 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
               : "text-left"
         )}
       >
-        <p className="font-medium">{idCardProps.avatarDetails.name}</p>
-        {idCardProps.avatarDetails.place && (
-          <p className="text-sm text-muted-foreground">{idCardProps.avatarDetails.place}</p>
+        <p className="font-medium">{idCardProps.avatarDetails.label}</p>
+        {idCardProps.avatarDetails.description && (
+          <p className="text-sm text-muted-foreground">{idCardProps.avatarDetails.description}</p>
         )}
       </div>
     </div>
@@ -96,8 +96,11 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
         <div className={cn("w-full overflow-hidden relative", fnGetAspectRatioClass())}>
           {idCardProps.image?.svg ? (
             <div>
-              {" "}
-              {renderIcon(idCardProps.image?.svg)}{" "}
+              {""}
+              {typeof idCardProps.image?.svg === "string"
+                ? renderIcon(idCardProps.image.svg)
+                : idCardProps.image?.svg}
+              {""}
             </div>
           ) : (
             <Image
@@ -136,7 +139,6 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
                   height: `${idCardProps.image.height}px`,
                 }}
               >
-
                 {idCardProps.image.svg}
               </div>
             ) : (
