@@ -810,6 +810,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
       image {
         source

@@ -211,10 +211,12 @@ export type TtrendCardProps = {
     };
     author: string;
     publishedAt: string;
+    formMode?: string
+    btnLabel?: string
 }
 
 // Form Type
-export type TformMode = "booking" | "contact" | "download" | undefined | null
+export type TformMode = "booking" | "contact" | "download" | "webinar" | undefined | null
 
 export type TfieldType = "text" | "email" | "phone" | "textarea" | "select" | "date" | "timezone" | "timeslot" | "checkbox"
 
@@ -251,6 +253,7 @@ export type TdynamicFormProps = {
     defaultValues?: Record<string, any>
     hideCardHeader?: boolean
     pdfData?: any
+    data?: any
 }
 
 export type TapiResponse = {
@@ -268,6 +271,17 @@ export type TslotResponse = {
     message?: string
     data?: Tslot[]
     error?: string
+}
+
+export type TcontactApi = {
+    formData: {
+        name: string
+        job: string
+        company: string
+        email: string
+        phone: string
+    }
+    recaptchaToken: string
 }
 
 // Navbar
