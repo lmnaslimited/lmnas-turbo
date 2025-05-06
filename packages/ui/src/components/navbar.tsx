@@ -36,7 +36,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
   const renderIcon = (icon: Tbutton['icon']) => {
     const iconName = typeof icon === "string" ? icon : "HelpCircle";
     const IconComponent = getIconComponent(iconName);
-    return <IconComponent className="w-6 h-6 text-muted-foreground" />;
+    return <IconComponent className="w-6 h-6 text-black" />;
   };
 
   const fnGetCurrentLanguageDisplay = (): string => {

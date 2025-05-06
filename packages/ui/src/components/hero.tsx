@@ -14,6 +14,12 @@ type THeroProps = {
   onButtonClick?: (mode: TformMode) => void;
 }
 
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-5 h-5" />;
+};
+
 export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
   /**
   * Renders a badge with an icon and text.
@@ -34,11 +40,9 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
       {iaItems?.map((idItem, iIndex) => {
-        const iconName = typeof idItem?.icon === "string" ? idItem.icon : "HelpCircle";
-        const IconComponent = getIconComponent(iconName);
         return (
           <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
-            <IconComponent className="w-5 h-5 text-muted-foreground" />
+            {renderIcon(idItem?.icon)}
             <span>{idItem?.label}</span>
           </div>
         );
@@ -53,39 +57,31 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton[] }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
       {iaButtons.map((idButton, iIndex) => {
-        const IconComponent =
-          (Icons[idButton.icon as keyof typeof Icons] as Icons.LucideIcon) || Icons.Users;
-        const iconElement = <IconComponent className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />;
-        const buttonContent = (
-          <>
-            {idButton.iconPosition === "before" && iconElement}
-            {idButton.label}
-            {idButton.iconPosition === "after" && iconElement}
-          </>
+        const iconElement = (
+          <span className="h-4 w-4 transition-transform group-hover:translate-x-1">
+            {renderIcon(idButton.icon)}
+          </span>
         );
-        return idButton.href ? (
-          <Link href={idButton.href} key={iIndex}>
-            <Button
-              size={idButton.size || "lg"}
-              variant={idButton.variant || "default"}
-              className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
-            >
-              {buttonContent}
-            </Button>
-          </Link>
-        ) : (
+        const buttonContent = (
+          <span className="flex items-center justify-center gap-2">
+            {idButton.iconPosition === "before" && iconElement}
+            <span>{idButton.label}</span>
+            {idButton.iconPosition === "after" && iconElement}
+          </span>
+        );
+        return (
           <Button
             key={iIndex}
             size={idButton.size || "lg"}
             variant={idButton.variant || "default"}
-            className={cn("w-full sm:w-auto sm:flex-1", idButton.className)}
-            onClick={() => onButtonClick?.(idButton.formMode)}
+            className={cn("sm:w-auto sm:flex-1", idButton.className)}
+            asChild={!!idButton.href}
+            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode) : undefined}
           >
-            {buttonContent}
+            {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>
         );
       })}
-
     </div>
   );
 

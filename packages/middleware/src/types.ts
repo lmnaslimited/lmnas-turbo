@@ -61,8 +61,6 @@ export type Tcontext = {
 }
 
 export type Titems = {
-    question: string
-    answer: string
     icon?: keyof typeof LucideIcons | React.ReactNode | string
     label?: string
     description?: string
@@ -133,12 +131,12 @@ export type TcardProps = {
     list?: Titems[];
     avatar?: Timage
     avatarDetails?: {
-        name: string
-        place?: string
+        label: string
+        description?: string
     }
     nameAndPlace?: {
-        name: string
-        place?: string
+        label: string
+        description?: string
     }
     namePosition?: "top" | "bottom" | "left" | "right"
     footerClassName?: string
