@@ -59,7 +59,6 @@ export async function EventApi(): Promise<TsocialAPIPostIds> {
             })
         );
 
-        console.log(LdEventResult)
         // Return the final array of mapped event data
         return {
             data: LaMappedEvents,

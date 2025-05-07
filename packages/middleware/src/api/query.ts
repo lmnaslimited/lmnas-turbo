@@ -647,11 +647,22 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
         formMode
         icon
         href
+        variant
       }
     }
     planHeader {
       title
       subtitle
+    }
+    planCard {
+      header {
+        title
+        subtitle
+        badge
+      }
+      image {
+        svg
+      }
     }
     planFooter {
       header {
@@ -745,7 +756,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
         subtitle
       }
       image {
-        source
+        svg
         alternate
       }
       avatar {

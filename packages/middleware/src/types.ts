@@ -148,6 +148,7 @@ export type TcardProps = {
     onClick?: () => void
     className?: string
     buttonPosition?: string
+    cardPosition?: string
     category?: string
     onButtonClick?: (mode: TformMode) => void
 }
@@ -471,7 +472,7 @@ export type Tsolution = {
     guideSection: TcardProps[]
     guideFooter: TcalloutProps
     planHeader: Theader
-    planSection: TcardProps[]
+    planCard: TcardProps[]
     planFooter: TcalloutProps
     solutionHeader: Theader
     solutionSection: TcardProps[]
