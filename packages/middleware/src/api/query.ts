@@ -823,6 +823,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     problemsSection {
       title
       list {
+        icon
         label
         description
       }
@@ -945,12 +946,12 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     ctaSectionHeader {
       title
       subtitle
+      badge
     }
     ctaSection {
       header {
         title
         subtitle
-        badge
       }
       title
       subtitle
