@@ -1,15 +1,15 @@
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { ReactElement, ReactNode } from "react";
+import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
-import { Youtube, Linkedin, Twitter } from "lucide-react";
-import { TtrendCardProps } from "@repo/middleware";
+import { Youtube, Linkedin, Twitter, Clipboard, ArrowRight } from "lucide-react";
+import { TformMode, TtrendCardProps } from "@repo/middleware";
 
 /**
  * Function to return the appropriate icon based on the source platform.
  */
-
 const fnGetIcon = (iSource: string): ReactNode => {
   switch (iSource) {
     case "LinkedIn":
@@ -18,8 +18,10 @@ const fnGetIcon = (iSource: string): ReactNode => {
       return <Youtube className="h-4 w-4" />;
     case "Twitter":
       return <Twitter className="h-4 w-4" />;
+    case "webinar":
+      return <Clipboard className="h-4 w-4" />
     default:
-      return null;
+      return <Clipboard className="h-4 w-4" />
   }
 };
 
@@ -36,7 +38,11 @@ const fnGetPlatformUrl = (iSource: string, iId: string): string => {
   }
 };
 
-export default function TrendCard({ idTrends }: { idTrends: TtrendCardProps }): ReactElement {
+type TtrendsProps = {
+  idTrends: TtrendCardProps
+  onButtonClick?: (mode: TformMode) => void
+}
+export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
     <Link href={LPlatformUrl} >
@@ -53,7 +59,7 @@ export default function TrendCard({ idTrends }: { idTrends: TtrendCardProps }): 
         </CardHeader>
 
         {idTrends.media?.url && (
-          <div className="relative w-full aspect-video">
+          <div className="relative w-full aspect-video mb-4">
             <Image
               className="absolute top-0 left-0 w-full h-full object-cover"
               src={idTrends.media.url}  // Image URL
@@ -64,9 +70,19 @@ export default function TrendCard({ idTrends }: { idTrends: TtrendCardProps }): 
           </div>
         )}
 
-        <CardContent className="p-4">
-          <CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>
-          <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
+        <CardContent className="px-4">
+          {idTrends.description && (<CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>)}
+          {idTrends.author && <p className="mt-2 text-sm font-medium">{idTrends.author}</p>}
+          {idTrends.formMode && (
+            <div className="py-2"><Button
+              size="sm"
+              onClick={() => onButtonClick?.(idTrends.formMode as TformMode)}
+            >
+              {idTrends.btnLabel}
+              <ArrowRight />
+            </Button>
+            </div>
+          )}
         </CardContent>
       </Card>
     </Link>

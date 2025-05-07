@@ -823,6 +823,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     problemsSection {
       title
       list {
+        icon
         label
         description
       }
@@ -945,12 +946,12 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     ctaSectionHeader {
       title
       subtitle
+      badge
     }
     ctaSection {
       header {
         title
         subtitle
-        badge
       }
       title
       subtitle
@@ -1042,6 +1043,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         buttons {
           label
           href
+          icon
         }
       }
     }
@@ -1054,7 +1056,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         subtitle
       }
       image {
-        source
+        svg
         alternate
       }
       category
@@ -1103,6 +1105,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         href
+        icon
       }
     }
   }
