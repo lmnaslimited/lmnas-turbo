@@ -11,11 +11,13 @@ import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
 import { TcardProps, Tbutton } from "@repo/middleware";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
-const renderIcon = (icon: Tbutton['icon']) => {
+const renderIcon = (icon: Tbutton['icon'], classname: string = "w-6 h-6 text-black") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-6 h-6 text-black" />;
+
+  return <IconComponent className={classname} />;
 };
+
 /**
  * CustomCard component renders a flexible and responsive card UI
  * that can include an image, profile details, header, footer, buttons, and links.
@@ -98,7 +100,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
             <div>
               {""}
               {typeof idCardProps.image?.svg === "string"
-                ? renderIcon(idCardProps.image.svg)
+                ? renderIcon(idCardProps.image.svg, idCardProps.image.className)
                 : idCardProps.image?.svg}
               {""}
             </div>

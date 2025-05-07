@@ -17,13 +17,15 @@ import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from "react-international-phone"
 import "react-international-phone/style.css"
 import { isValidPhoneNumber } from "libphonenumber-js"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/middleware"
 import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
 import { subscribeNewsletter } from "@repo/ui/api/subscribe"
 import { sendCommunicationAction } from "@repo/ui/api/communication"
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
+import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
+import { ContactApi } from "@repo/ui/api/contact"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/middleware"
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
@@ -372,6 +374,122 @@ export const LdBookingPageFormConfig: TformConfig = {
     ],
 }
 
+export const LdWebinarFormConfig: TformConfig = {
+    id: "webinar",
+    title: "Join Our Webinar – Register Now",
+    description: "Fill out the form to receive your webinar access link.",
+    submitText: "Register",
+    successTitle: "Thank You!",
+    successMessage: "Thank you for registering! A confirmation email has been sent to your inbox",
+    showTerms: true,
+    termsText: "Terms of Service",
+    privacyText: "Privacy Policy",
+    // The schema defines validation rules using Zod for each field in the form
+    schema: z.object({
+        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+            message: "Invalid phone number",
+        }).optional(),
+        email: z.string().email("Please enter a valid email"),
+        company: z.string().optional(),
+        job: z.string().optional(),
+        newsletter: z.boolean().default(true),
+    }),
+    // Field configurations define the UI and behavior of each form field
+    fields: [
+        {
+            name: "name",
+            type: "text",
+            placeholder: "Enter your full name *",
+            required: true,
+            className: "md:w-1/2 w-full md:pr-2 mb-3",
+        },
+        {
+            name: "phone",
+            type: "phone",
+            className: "md:w-1/2 w-full md:pl-2 mb-3",
+        },
+        {
+            name: "email",
+            type: "email",
+            placeholder: "Enter your email address *",
+            required: true,
+            className: "w-full mb-3",
+        },
+        {
+            name: "company",
+            type: "text",
+            placeholder: "Enter your Company Name",
+            className: "w-full mb-3",
+        },
+        {
+            name: "job",
+            type: "text",
+            placeholder: "Enter your Job Title",
+            className: "w-full mb-3",
+        },
+        {
+            name: "newsletter",
+            type: "checkbox",
+            placeholder: "Subscribe to newsletter",
+            className: "w-full mb-4",
+        },
+    ],
+}
+
+/**
+ * Checks if the contact exists or creates a new one.
+ * Adds the participant to the corresponding event.
+ *
+ * idFormData - Form data containing contact details
+ * idData - Data containing the event ID
+ * iRecaptchaToken - ReCaptcha token for verification
+ * Object containing response data or error
+ */
+export async function fnSubmitWebinar(idFormData: any, idData: any, iRecaptchaToken: string) {
+    try {
+
+        const LdPayload = {
+            formData: idFormData,
+            recaptchaToken: iRecaptchaToken,
+        }
+        // Step 1: Fetch contact data (create or check if the contact already exists)
+        const LdContact = await ContactApi(LdPayload);
+
+        // Step 2: Handle newsletter subscription if needed
+        if (idFormData.newsletter) {
+            const LdNewFormData = new FormData();
+            LdNewFormData.append("email", idFormData.email);
+            await subscribeNewsletter({ message: "" }, LdNewFormData);
+        }
+
+        // Check if the contact was successfully created or already exists
+        if (LdContact.message === 'created' || LdContact.message === 'exist') {
+            // Step 3: Update event participant
+            const LdUpdateEventParticipant = await UpdateEventParticipant(idData.id, LdContact.data.name);
+            return {
+                data: LdUpdateEventParticipant.data,  // Return the updated event participant data
+            };
+        }
+
+        // If everything is successful, return a success message
+        return {
+            data: "webinar updated successfully",
+        };
+
+    } catch (error: any) {
+        // Handle and log any errors that occur during the process
+        console.error("Client side, update event participant error:", error);
+
+        // Return an error message with title and description for user feedback
+        return {
+            error: error.message || "Something went wrong while submitting the contact form.",
+            title: "Sorry",
+            message: "Something went wrong, please try again sometime later!",
+        };
+    }
+}
+
 /**
  * Submits appointment booking data to the server
  * idFormData - Form data containing appointment details
@@ -478,6 +596,7 @@ function InnerSectionForm({
     className = "",
     defaultValues,
     hideCardHeader = false,
+    data,
 }: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
@@ -594,7 +713,31 @@ function InnerSectionForm({
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.id === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-            } else {
+            }
+            // else if (config.id === "download") {
+            //     const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
+            //     const { pdf } = await import("@react-pdf/renderer")
+
+            //     const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
+            //     // Create a URL and download the PDF
+            //     const url = URL.createObjectURL(blob)
+            //     const link = document.createElement("a")
+            //     link.href = url
+            //     link.download = "download.pdf"
+            //     document.body.appendChild(link)
+            //     link.click()
+            //     document.body.removeChild(link)
+            //     URL.revokeObjectURL(url)
+
+            //     LdResponse = {
+            //         message: "Your file has been downloaded.",
+            //         title: "Download Success",
+            //     }
+            // }
+            else if (config.id === "webinar") {
+                LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)
+            }
+            else {
                 throw new Error("Unsupported form type")
             }
 

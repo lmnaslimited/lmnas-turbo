@@ -1042,6 +1042,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         buttons {
           label
           href
+          icon
         }
       }
     }
@@ -1054,7 +1055,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         subtitle
       }
       image {
-        source
+        svg
         alternate
       }
       category
@@ -1103,6 +1104,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         href
+        icon
       }
     }
   }
