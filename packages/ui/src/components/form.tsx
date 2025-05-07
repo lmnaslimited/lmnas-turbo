@@ -25,7 +25,7 @@ import { sendCommunicationAction } from "@repo/ui/api/communication"
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
 import { ContactApi } from "@repo/ui/api/contact"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot } from "@repo/middleware"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps } from "@repo/middleware"
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
@@ -446,7 +446,7 @@ export const LdWebinarFormConfig: TformConfig = {
  * iRecaptchaToken - ReCaptcha token for verification
  * Object containing response data or error
  */
-export async function fnSubmitWebinar(idFormData: any, idData: any, iRecaptchaToken: string) {
+export async function fnSubmitWebinar(idFormData: any, idData: TtrendCardProps, iRecaptchaToken: string) {
     try {
 
         const LdPayload = {
