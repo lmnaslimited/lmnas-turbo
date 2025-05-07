@@ -1,11 +1,11 @@
-import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
-import { Badge } from "@repo/ui/components/ui/badge";
-import { Youtube, Linkedin, Twitter, Clipboard, ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { TformMode, TtrendCardProps } from "@repo/middleware";
+import Link from "next/link";
 import { ReactElement, ReactNode } from "react";
 import { Button } from "@repo/ui/components/ui/button";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
+import { Youtube, Linkedin, Twitter, Clipboard, ArrowRight } from "lucide-react";
+import { TformMode, TtrendCardProps } from "@repo/middleware";
 
 /**
  * Function to return the appropriate icon based on the source platform.
