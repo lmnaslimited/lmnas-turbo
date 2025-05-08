@@ -986,7 +986,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
 
   getQuery(): string {
     return `
-  query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput) {
+ query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
   ${this.contentType}(locale: $locale, filters: $filters) {
     name
     slug
@@ -1121,6 +1121,26 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       }
     }
   }
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      category
+      image {
+        source
+        alternate
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+  }
 }`}
 }
 
@@ -1171,10 +1191,12 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         subtitle
       }
     }
-      solutionSection {
-      header {
-        title
-        subtitle
+    solutionSection {
+      successCard {
+        header {
+          title
+          subtitle
+        }
       }
       products {
         label
