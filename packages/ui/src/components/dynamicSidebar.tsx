@@ -3,10 +3,10 @@ import Link from "next/link";
 import { ReactElement, useRef } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
-import { Download, CheckCircle2, ArrowRight } from "lucide-react";
-import { TSidebarCardType } from "@repo/ui/type";
+import { Download, CheckCircle2 } from "lucide-react";
+import { TcardProps } from "@repo/middleware";
 
-export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[] }): ReactElement {
+export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TcardProps[] }): ReactElement {
   // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
@@ -18,19 +18,23 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[
         {idCaseStudy.map((idCard, iIndex) => (
           <Card key={iIndex} className="mb-6 overflow-hidden transition-all duration-300">
             <CardContent className="p-6">
-              <h3 className="mb-4 text-xl font-semibold">{idCard.title}</h3>
-              <p className="mb-6 text-muted-foreground">{idCard.content}</p>
+              {idCard.header && (
+                <>
+                  <h3 className="mb-4 text-xl font-semibold">{idCard.header.title}</h3>
+                  <p className="mb-6 text-muted-foreground">{idCard.header.subtitle}</p>
+                </>
+              )}
 
               {/* Render solutions list if available */}
-              {idCard.solutions && (
+              {idCard.list && (
                 <ul className="space-y-4">
-                  {idCard.solutions.map((iSolution, iIndex) => (
+                  {idCard.list.map((iSolution, iIndex) => (
                     <li key={iIndex} className="flex items-start gap-3">
                       <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
                       <div>
-                        <span className="font-medium">{iSolution}</span>
+                        <span className="font-medium">{iSolution.label}</span>
                         <p className="text-sm text-muted-foreground">
-                          {idCard.solutionsDescription?.[iIndex] || ""}
+                          {iSolution.description || ""}
                         </p>
                       </div>
                     </li>
@@ -39,18 +43,18 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[
               )}
 
               {/* Render a button if provided */}
-              {idCard.button && (
-                <Button className="w-full gap-2">
+              {idCard.buttons && idCard.buttons.map((btn, index) => (
+                <Button key={index} className="w-full gap-2">
                   <Download className="h-5 w-5 text-primary" />
-                  {idCard.button.link ? (
-                    <Link href={idCard.button.link}>{idCard.button.label}</Link>
+                  {btn.href ? (
+                    <Link href={btn.href}>{btn.label}</Link>
                   ) : (
-                    idCard.button.label
+                    btn.label
                   )}
                 </Button>
-              )}
+              ))}
 
-              {/* Render a link if available */}
+              {/* Render a link if available
               {idCard.link && (
                 <div className="mt-6">
                   <Link href={idCard.link.href} className="flex items-center gap-2 text-primary hover:underline">
@@ -58,7 +62,7 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TSidebarCardType[
                     <ArrowRight className="h-4 w-4" />
                   </Link>
                 </div>
-              )}
+              )} */}
             </CardContent>
           </Card>
         ))}

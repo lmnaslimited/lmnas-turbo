@@ -1,12 +1,12 @@
 "use client";
-import { useRef, useEffect, useState, ReactElement } from "react";
 import { motion, useInView } from "framer-motion";
-import { Button } from "@repo/ui/components/ui/button";
+import { useRef, useEffect, useState, ReactElement } from "react";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
+import { Button } from "@repo/ui/components/ui/button";
 import { ChevronRight, Download } from "lucide-react";
-import { TproblemSection } from "@repo/ui/type";
+import { TcalloutProps } from "@repo/middleware";
 
-export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection }): ReactElement {
+export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TcalloutProps }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null);
 
   // Checks if the section is in view for triggering animations
@@ -21,12 +21,12 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection 
 
     const Interval = setInterval(() => {
       fnSetActiveChallenge(
-        (prev) => (prev + 1) % idCaseStudy.challenges.length
+        (prev) => (prev + 1) % idCaseStudy.list.length
       );
     }, 3000);
 
     return () => clearInterval(Interval);
-  }, [idCaseStudy.challenges.length, IsInView]);
+  }, [idCaseStudy.list.length, IsInView]);
 
   // Animation variants for smooth fade-in effect
   const ItemVariants = {
@@ -40,10 +40,15 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection 
         <motion.div variants={ItemVariants} className="mb-8">
           {/* Download button for small screens */}
           <div className="mb-6 lg:hidden">
-            <Button className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary">
-              <Download className="h-4 w-4" />
-              {idCaseStudy.button.label}
-            </Button>
+            {idCaseStudy.buttons.map((button, index) => (
+              <Button
+                key={index}
+                className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary"
+              >
+                <Download className="h-4 w-4" />
+                {button.label}
+              </Button>
+            ))}
           </div>
           <TitleSubtitle
             idTitle={{
@@ -57,7 +62,8 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection 
 
         {/* List of challenges with interactive selection */}
         <motion.div variants={ItemVariants} className="mb-12 space-y-6">
-          {idCaseStudy.challenges.map((iChallenge, iIndex) => (
+          {/* challenges */}
+          {idCaseStudy.list.map((iChallenge, iIndex) => (
             <div
               key={iIndex}
               className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${iIndex === ActiveChallenge
@@ -81,16 +87,17 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection 
                   <p
                     className={`text-lg ${iIndex === ActiveChallenge ? "font-medium text-foreground" : "text-muted-foreground"}`}
                   >
-                    {iChallenge}
+                    {iChallenge.label}
                   </p>
                   {/* Additional details for the active challenge */}
                   {iIndex === ActiveChallenge && (
+                    // footer.title
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="mt-2 text-sm text-muted-foreground"
                     >
-                      {idCaseStudy.footer.title}
+                      {idCaseStudy.header.badge}
                       <ChevronRight className="ml-1 inline h-3 w-3" />
                     </motion.p>
                   )}
@@ -102,8 +109,10 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TproblemSection 
 
         <motion.div variants={ItemVariants} className="rounded-lg p-6">
           <TitleSubtitle
+            // fotter header
             idTitle={{
-              ...idCaseStudy.footer.header,
+              highlight: idCaseStudy.title,
+              subtitle: idCaseStudy.subtitle,
               className: "m-0",
               headingClass: "md:text-lg sm:text-lg",
               descripClass: "md:text-base",
