@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -17,6 +17,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     const { data } = await client.query({
       query: gql`${this.query}`,
       variables: this.variables || {},
+      fetchPolicy: 'no-cache',
     });
     return (data) as DynamicSourceType;
   }
@@ -1123,6 +1124,121 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
 }`}
 }
 
+export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+    query CaseStudies($locale: I18NLocaleCode) {
+    ${this.contentType}(locale: $locale) {
+    slug
+    name
+    heroSection {
+      tag
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+      }
+      link {
+        label
+        href
+      }
+      list {
+        label
+        icon
+      }
+    }
+    problemSection {
+      ... on ComponentSharedCallout {
+        header {
+          subtitle
+          title
+          badge
+        }
+        buttons {
+          label
+        }
+        list {
+          label
+        }
+        title
+        subtitle
+      }
+    }
+      solutionSection {
+      header {
+        title
+        subtitle
+      }
+      products {
+        label
+      }
+      details {
+        label
+      }
+      title
+      results {
+        title
+        subtitle
+      }
+      testimonial {
+        author
+        quote
+        verify
+        title
+      }
+      footer {
+        description
+        highlight {
+          label
+          icon
+        }
+        buttons {
+          label
+        }
+      }
+    }
+    sidebarData {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      list {
+        label
+        description
+      }
+      link {
+        label
+        href
+      }
+    }
+    relatedCaseStudies {
+      header {
+        title
+        subtitle
+      }
+      category
+      link {
+        label
+        href
+      }
+    }
+  }
+}
+`}
+}
+
 export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
   constructor(iContentType: string) {
     super(iContentType);
@@ -1209,6 +1325,7 @@ export class clQueryFactory {
     "solution": clQuerySolution,
     "products": clQueryProducts,
     "industries": clQueryIndustries,
+    "caseStudies": clQueryCaseStudies,
     "termsAndCondition": clQueryTermsAndConditions,
     "privacyPolicy": clQueryPrivacyPolicy,
     // Add more mappings here

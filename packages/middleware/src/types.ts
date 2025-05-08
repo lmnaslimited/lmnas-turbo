@@ -127,7 +127,7 @@ type TtechStack = {
 
 export type TcardProps = {
     image?: Timage
-    header: Theader
+    header?: Theader
     buttons?: Tbutton[]
     link?: Tbutton[]
     list?: Titems[];
@@ -216,6 +216,23 @@ export type TtrendCardProps = {
     publishedAt: string;
     formMode?: string
     btnLabel?: string
+}
+
+
+// solution Section
+export type TsolutionSection = {
+    title: string
+    header: Theader
+    products: Titems[]
+    details: Titems[]
+    results: Theader[]
+    testimonial: {
+        title: string
+        quote: string
+        author: string
+        verify: string
+    }
+    footer: TheroSection
 }
 
 // Form Type
@@ -328,7 +345,6 @@ export type ThomePageSource = {
 export type ThomePageTarget = {
     home: Thome
 }
-
 export type Thome = {
     heroSection: TheroSection
     problemSection: TfeatureProps[]
@@ -384,7 +400,6 @@ type Tcareer = {
 export type TtermsAndConditionsPageSource = {
     termsAndCondition: TtermsAndCondition
 }
-
 export type TtermsAndConditionsPageTarget = {
     termsAndCondition: TtermsAndCondition
 }
@@ -456,6 +471,7 @@ export type Tindustries = {
     cta: TcalloutProps
     successStoryHeaderFooter: TcalloutProps
     successStoryCard: TcardProps[]
+    case_study: TcaseStudies
 }
 
 //solutions
@@ -489,6 +505,23 @@ export type Tsolution = {
     calloutFooter: TcalloutProps
 }
 
+// casestudies
+export type TcaseStudiesPageSource = {
+    caseStudies: TcaseStudies[]
+}
+export type TcaseStudiesPageTarget = {
+    caseStudies: TcaseStudies[]
+}
+export type TcaseStudies = {
+    slug: string
+    name: string
+    heroSection: TcardProps
+    problemSection: TcalloutProps
+    solutionSection: TsolutionSection
+    sidebarData: TcardProps[]
+    relatedCaseStudies: TcardProps[]
+}
+
 //products
 export type TproductsPageSource = {
     products: Tproducts[]
@@ -497,7 +530,7 @@ export type TproductsPageTarget = {
     products: Tproducts[]
 }
 export type Tproducts = {
-    slug: string;
+    slug: string
     heroSection: TheroSection
     problemsHeader: Theader
     problemsSection: TcalloutProps

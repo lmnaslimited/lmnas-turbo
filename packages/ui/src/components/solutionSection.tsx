@@ -5,7 +5,7 @@ import { motion } from "framer-motion"
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Button } from "@repo/ui/components/ui/button"
 import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
-import { TsolutionSection } from "@repo/ui/type"
+import { TsolutionSection } from "@repo/middleware"
 
 export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
@@ -25,7 +25,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             <Lightbulb className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold md:text-3xl">
-            {idCaseStudy.header.textWithoutColor}
+            {idCaseStudy.header.title}
           </h2>
         </motion.div>
         <motion.p variants={LdItemVariants} className="mb-8 text-lg text-muted-foreground">
@@ -34,7 +34,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
         <motion.div variants={LdItemVariants} className="mb-8 flex flex-wrap gap-2">
           {idCaseStudy.products.map((iProduct, iIndex) => (
             <Badge key={iIndex} className="text-base">
-              {iProduct}
+              {iProduct.label}
             </Badge>
           ))}
         </motion.div>
@@ -46,7 +46,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
               className="flex items-start gap-3 rounded-lg border border-primary/10 bg-primary/5 p-6 transition-all hover:border-primary/20 hover:shadow-lg"
             >
               <CheckCircle2 className="mt-1 h-5 w-5 shrink-0 text-primary" />
-              <p>{iDetail}</p>
+              <p>{iDetail.label}</p>
             </div>
           ))}
         </motion.div>
@@ -69,7 +69,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             >
               {/* Background decoration */}
               <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
-              <h3 className="mb-2 text-lg font-semibold">{idResult.textWithoutColor}</h3>
+              <h3 className="mb-2 text-lg font-semibold">{idResult.title}</h3>
               <p className="text-3xl font-bold text-primary">{idResult.subtitle}</p>
             </div>
           ))}
@@ -130,7 +130,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
         <div>
           <h3 className="text-lg font-semibold">Share this case study</h3>
           <div className="mt-2 flex gap-2">
-            {idCaseStudy.footer.handles.map((idItem, iIndex) => {
+            {idCaseStudy.footer?.highlight?.map((idItem, iIndex) => {
               const IconComponent = (Icons[idItem.icon as keyof typeof Icons] as LucideIcon) || Icons.Users;
               return (
                 <Button variant="outline" size="icon" className="rounded-full" key={iIndex}>
@@ -141,10 +141,12 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             })}
           </div>
         </div>
-        <Button className="flex items-center gap-2">
-          <Download className="w-5 h-5" />
-          {idCaseStudy.footer.button.label}
-        </Button>
+        {idCaseStudy.footer?.buttons?.map((button, index) => (
+          <Button key={index} className="flex items-center gap-2">
+            <Download className="w-5 h-5" />
+            {button.label}
+          </Button>
+        ))}
       </div>
     </section>
   )

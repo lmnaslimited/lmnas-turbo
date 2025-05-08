@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -161,6 +161,17 @@ export class clIndustriesTransformer extends clTransformer<TindustriesPageSource
   }
 }
 
+export class clCaseStudiesTransformer extends clTransformer<TcaseStudiesPageSource, TcaseStudiesPageTarget> {
+  async performTransformation(idSourceData: TcaseStudiesPageSource): Promise<TcaseStudiesPageTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+
 // TermsandConditions transformer
 export class clTermsandConditionsTransformer extends clTransformer<TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget> {
   async performTransformation(idSourceData: TtermsAndConditionsPageSource): Promise<TtermsAndConditionsPageTarget> {
@@ -195,6 +206,7 @@ interface ITransformerMap {
   solution: clSolutionTransformer;
   products: clProductsTransformer;
   industries: clIndustriesTransformer;
+  caseStudies: clCaseStudiesTransformer;
   privacyPolicy: clPrivacyPolicyTransformer;
   termsAndCondition: clTermsandConditionsTransformer;
   // Add other content types and corresponding transformers
@@ -215,6 +227,7 @@ export class clTransformerFactory {
       solution: clSolutionTransformer,
       products: clProductsTransformer,
       industries: clIndustriesTransformer,
+      caseStudies: clCaseStudiesTransformer,
       privacyPolicy: clPrivacyPolicyTransformer,
       termsAndCondition: clTermsandConditionsTransformer,
       // Add other content types and corresponding transformers

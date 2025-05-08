@@ -170,8 +170,16 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
               {idCardProps.tag}
             </Badge>
           )}
-          <h2 className={cn("text-xl mb-3 font-semibold", idCardProps.header.headingClass)}>{idCardProps.header.title}</h2>
-          <p className={cn("max-w-[700px] text-muted-foreground", idCardProps.header.descripClass)}>{idCardProps.header.subtitle}</p>
+          {idCardProps.header && (
+            <>
+              <h2 className={cn("text-xl mb-3 font-semibold", idCardProps.header.headingClass)}>
+                {idCardProps.header.title}
+              </h2>
+              <p className={cn("max-w-[700px] text-muted-foreground", idCardProps.header.descripClass)}>
+                {idCardProps.header.subtitle}
+              </p>
+            </>
+          )}
 
           {/* Renders a list of items if provided */}
           {idCardProps.list && idCardProps.list.length > 0 && (
