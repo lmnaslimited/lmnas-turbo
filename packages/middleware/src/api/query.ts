@@ -17,6 +17,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     const { data } = await client.query({
       query: gql`${this.query}`,
       variables: this.variables || {},
+      fetchPolicy: 'no-cache',
     });
     return (data) as DynamicSourceType;
   }
