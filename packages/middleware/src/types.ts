@@ -52,13 +52,21 @@ export type Tslug = {
 }
 
 export type Tcontext = {
-    locale: string
+    locale: string;
     filters?: {
         slug: {
-            eq: string
-        }
-    }
-}
+            eq: string;
+        };
+    };
+    caseStudiesFilters2?: {
+        heroSection: {
+            tag: {
+                eq: string;
+            };
+        };
+    };
+};
+
 
 export type Titems = {
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -232,6 +240,7 @@ export type TsolutionSection = {
         author: string
         verify: string
     }
+    successCard: TcardProps[]
     footer: TheroSection
 }
 
@@ -450,28 +459,26 @@ export type Tpricing = {
 }
 
 // industries
-export type TindustriesPageSource = {
-    industries: Tindustries[]
-}
-export type TindustriesPageTarget = {
-    industries: Tindustries[]
-}
+export type TindustriesPageSource = Tindustries
+export type TindustriesPageTarget = Tindustries
 export type Tindustries = {
-    slug: string;
-    heroSection: TheroSection
-    problemSection: TcalloutProps
-    featuresSectionHeader: Theader
-    feature: {
-        header?: Theader;
-        image?: Timage;
-        card?: TcardProps
+    industries: {
+        slug: string
+        heroSection: TheroSection
+        problemSection: TcalloutProps
+        featuresSectionHeader: Theader
+        feature: {
+            header?: Theader
+            image?: Timage
+            card?: TcardProps
+        }[]
+        allFeatureHeader: Theader
+        allFeatureCard: TcardProps[]
+        cta: TcalloutProps
+        successStoryHeaderFooter: TcalloutProps
+        successStoryCard: TcardProps[]
     }[]
-    allFeatureHeader: Theader
-    allFeatureCard: TcardProps[]
-    cta: TcalloutProps
-    successStoryHeaderFooter: TcalloutProps
-    successStoryCard: TcardProps[]
-    case_study: TcaseStudies
+    caseStudies: TcaseStudies[]
 }
 
 //solutions
