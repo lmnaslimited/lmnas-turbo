@@ -71,10 +71,10 @@ export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): Re
         )}
 
         <CardContent className="px-4">
-          {idTrends.description && (<CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>)}
+          <div className="min-h-[80px]">{idTrends.description && (<CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>)}</div>
           {idTrends.author && <p className="mt-2 text-sm font-medium">{idTrends.author}</p>}
           {idTrends.formMode && (
-            <div className="py-2"><Button
+            <div className="py-2 mt-auto"><Button
               size="sm"
               onClick={() => onButtonClick?.(idTrends.formMode as TformMode)}
             >
