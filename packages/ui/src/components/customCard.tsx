@@ -50,7 +50,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
   const ProfileDetail = idCardProps.avatarDetails && (
     <div
       className={cn(
-        "flex items-start gap-2",
+        "flex items-start gap-4 my-auto",
         idCardProps.namePosition === "left" || "bottom" || idCardProps.namePosition === "right"
           ? "flex-row"
           : "flex-col"

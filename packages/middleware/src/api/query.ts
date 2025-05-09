@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -408,6 +408,96 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
     trendingSection {
       title
       subtitle
+    }
+  }
+}`
+  }
+}
+
+export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query AboutUs($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    heroSection {
+      heading {
+        title
+        subtitle
+      }
+      highlight {
+        label
+      }
+    }
+    valuesSectionHeaderFooter {
+      header {
+        title
+        subtitle
+        badge
+      }
+      title
+    }
+    valuesSection {
+      title
+      subtitle
+      highlight
+      badge
+    }
+    previousYears {
+      label
+      icon
+      description
+    }
+    currentAndBeyondYears {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      highlight {
+        label
+      }
+    }
+    timeLineHeader {
+      title
+      subtitle
+    }
+    testimonialHeader {
+      title
+      subtitle
+    }
+    testimonalCard {
+      header {
+        subtitle
+      }
+      image {
+        svg
+        alternate
+      }
+      avatar {
+        svg
+        alternate
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    ctaSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        icon
+        label
+        href
+        formMode
+      }
     }
   }
 }`
@@ -1350,6 +1440,7 @@ export class clQueryFactory {
     "caseStudies": clQueryCaseStudies,
     "termsAndCondition": clQueryTermsAndConditions,
     "privacyPolicy": clQueryPrivacyPolicy,
+    "aboutUs":clQueryAboutUs
     // Add more mappings here
   };
 
