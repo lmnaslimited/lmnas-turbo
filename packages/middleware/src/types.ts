@@ -389,6 +389,25 @@ export type TcareerPageSource = {
 export type TcareerPageTarget = {
     career: Tcareer
 }
+
+// about us
+export type TaboutUsPageSource = {
+    aboutUs: TaboutUs
+}
+export type TaboutUsPageTarget = {
+    aboutUs: TaboutUs
+}
+type TaboutUs = {
+    heroSection: TheroSection
+    valuesSectionHeaderFooter: TcalloutProps
+    valuesSection: Theader[]
+    timeLineHeader: Theader
+    previousYears: Titems[]
+    currentAndBeyondYears: TheroSection
+    testimonialHeader: Theader
+    testimonalCard: TcardProps[]
+    ctaSection: TcalloutProps
+}
 type GuideSection = [
     {
         heading: Theader;

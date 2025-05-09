@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -94,6 +94,16 @@ export class clHomeTransformer extends clTransformer<ThomePageSource, ThomePageT
 
 export class clTrendsTransformer extends clTransformer<TtrendsPageSource, TtrendsPageTarget> {
   async performTransformation(idSourceData: TtrendsPageSource): Promise<TtrendsPageTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+export class clAboutUsTransformer extends clTransformer<TaboutUsPageSource, TaboutUsPageTarget> {
+  async performTransformation(idSourceData: TaboutUsPageSource): Promise<TaboutUsPageTarget> {
     this.targetData = idSourceData
     return this.targetData
   }
@@ -209,6 +219,7 @@ interface ITransformerMap {
   caseStudies: clCaseStudiesTransformer;
   privacyPolicy: clPrivacyPolicyTransformer;
   termsAndCondition: clTermsandConditionsTransformer;
+  aboutUs: clAboutUsTransformer;
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -230,6 +241,7 @@ export class clTransformerFactory {
       caseStudies: clCaseStudiesTransformer,
       privacyPolicy: clPrivacyPolicyTransformer,
       termsAndCondition: clTermsandConditionsTransformer,
+      aboutUs: clAboutUsTransformer,
       // Add other content types and corresponding transformers
     };
 
