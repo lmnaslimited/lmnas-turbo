@@ -26,6 +26,7 @@ import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
 import { ContactApi } from "@repo/ui/api/contact"
 import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps } from "@repo/middleware"
+import Link from "next/link";
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
 export const LdBookingFormConfig: TformConfig = {
@@ -1060,13 +1061,13 @@ function InnerSectionForm({
                             {config.showTerms && (
                                 <p className="text-xs text-center text-muted-foreground">
                                     By submitting, you agree to our{" "}
-                                    <a href="/terms-and-conditions" className="underline">
+                                    <Link href="/terms-and-conditions" className="underline" target="_blank" rel="noopener noreferrer">
                                         {config.termsText || "Terms"}
-                                    </a>{" "}
+                                    </Link>{" "}
                                     and{" "}
-                                    <a href="/privacy-policy" className="underline">
+                                    <Link href="/privacy-policy" className="underline" target="_blank" rel="noopener noreferrer">
                                         {config.privacyText || "Privacy Policy"}
-                                    </a>
+                                    </Link>
                                 </p>
                             )}
                         </div>
