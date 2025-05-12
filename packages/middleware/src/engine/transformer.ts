@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget, TeventPageSource, TeventPageTarget } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -181,6 +181,15 @@ export class clCaseStudiesTransformer extends clTransformer<TcaseStudiesPageSour
   }
 }
 
+export class clEventTransformer extends clTransformer<TeventPageSource, TeventPageTarget> {
+  async performTransformation(idSourceData: TeventPageSource): Promise<TeventPageTarget> {
+    this.targetData = idSourceData;
+    return this.targetData;
+  }
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+}
 
 // TermsandConditions transformer
 export class clTermsandConditionsTransformer extends clTransformer<TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget> {
@@ -220,6 +229,7 @@ interface ITransformerMap {
   privacyPolicy: clPrivacyPolicyTransformer;
   termsAndCondition: clTermsandConditionsTransformer;
   aboutUs: clAboutUsTransformer;
+  event: clEventTransformer;
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -242,6 +252,7 @@ export class clTransformerFactory {
       privacyPolicy: clPrivacyPolicyTransformer,
       termsAndCondition: clTermsandConditionsTransformer,
       aboutUs: clAboutUsTransformer,
+      event: clEventTransformer,
       // Add other content types and corresponding transformers
     };
 

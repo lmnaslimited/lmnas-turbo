@@ -584,6 +584,17 @@ export type Tcontact = {
     header: Theader[]
 }
 
+// Event
+export type TeventPageSource = {
+    event: Tevent
+}
+export type TeventPageTarget = {
+    event: Tevent
+}
+export type Tevent = {
+    heroSection: TheroSection
+}
+
 // -------------------------------------------------------------------------------------------
 
 //job api
