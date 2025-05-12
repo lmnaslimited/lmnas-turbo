@@ -25,7 +25,7 @@ import { sendCommunicationAction } from "@repo/ui/api/communication"
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
 import { ContactApi } from "@repo/ui/api/contact"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps } from "@repo/middleware"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware"
 import Link from "next/link";
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
@@ -582,6 +582,44 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
     }
 }
 
+export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecaptchaToken: string){
+    
+    try {
+        if (idFormData.newsletter) {
+          const LdNewFormData = new FormData();
+          LdNewFormData.append("email", idFormData.email);
+          await subscribeNewsletter({ message: "" }, LdNewFormData);
+        }
+    
+        const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout");
+        const { pdf } = await import("@react-pdf/renderer");
+    
+        const Blob = await pdf(<PdfDocument data={idPdfData} />).toBlob();
+    
+        const Url = URL.createObjectURL(Blob);
+        const Link = document.createElement("a");
+        Link.href = Url;
+        Link.download = "download.pdf";
+        document.body.appendChild(Link);
+        Link.click();
+        document.body.removeChild(Link);
+        URL.revokeObjectURL(Url);
+    
+        return {
+          message: "Your file has been downloaded.",
+          title: "Download Success",
+        };
+      } catch (error) {
+        console.error("Download failed:", error);
+        return {
+          message: "Failed to download the file.",
+          title: "Download Failed",
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
+}
+
+
 /**
  * Main form component that renders dynamic form fields based on configuration
  * config - Form configuration object defining fields and validation
@@ -598,6 +636,7 @@ function InnerSectionForm({
     defaultValues,
     hideCardHeader = false,
     data,
+    pdfData
 }: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
@@ -715,26 +754,27 @@ function InnerSectionForm({
             } else if (config.id === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
             }
-            // else if (config.id === "download") {
-            //     const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
-            //     const { pdf } = await import("@react-pdf/renderer")
+            else if (config.id === "download") {
+                // const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
+                // const { pdf } = await import("@react-pdf/renderer")
 
-            //     const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
-            //     // Create a URL and download the PDF
-            //     const url = URL.createObjectURL(blob)
-            //     const link = document.createElement("a")
-            //     link.href = url
-            //     link.download = "download.pdf"
-            //     document.body.appendChild(link)
-            //     link.click()
-            //     document.body.removeChild(link)
-            //     URL.revokeObjectURL(url)
+                // const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
+                // // Create a URL and download the PDF
+                // const url = URL.createObjectURL(blob)
+                // const link = document.createElement("a")
+                // link.href = url
+                // link.download = "download.pdf"
+                // document.body.appendChild(link)
+                // link.click()
+                // document.body.removeChild(link)
+                // URL.revokeObjectURL(url)
+                LdResponse = await fnDownload(idFormData,  pdfData, LdRecaptchaToken)
 
-            //     LdResponse = {
-            //         message: "Your file has been downloaded.",
-            //         title: "Download Success",
-            //     }
-            // }
+                // LdResponse = {
+                //     message: "Your file has been downloaded.",
+                //     title: "Download Success",
+                // }
+            }
             else if (config.id === "webinar") {
                 LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)
             }

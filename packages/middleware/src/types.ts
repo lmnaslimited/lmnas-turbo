@@ -546,6 +546,14 @@ export type TcaseStudies = {
     solutionSection: TsolutionSection
     sidebarData: TcardProps[]
     relatedCaseStudies: TcardProps[]
+    ctaSection?:TcalloutProps[]
+    conclusion?:{
+        title: string
+    }
+    contact:{
+        connect: Tbutton[]
+        social: Titems[]
+    }
 }
 
 //products
