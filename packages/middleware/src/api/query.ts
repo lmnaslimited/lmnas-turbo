@@ -524,6 +524,7 @@ query Pricing($locale: I18NLocaleCode) {
         href
         variant
         icon
+        formMode
       }
     }
     problemSection {
