@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource, TeventPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -679,6 +679,29 @@ export class clQueryContact extends clQuery<TcontactSource> {
       highlight
       title
       subtitle
+    }
+  }
+}`
+  }
+}
+
+export class clQueryEvent extends clQuery<TeventPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query Event($locale: I18NLocaleCode) {
+  ${this.contentType}(locale: $locale) {
+    heroSection {
+      heading {
+        highlight
+        title
+      }
+      buttons {
+        label
+      }
     }
   }
 }`
@@ -1440,7 +1463,8 @@ export class clQueryFactory {
     "caseStudies": clQueryCaseStudies,
     "termsAndCondition": clQueryTermsAndConditions,
     "privacyPolicy": clQueryPrivacyPolicy,
-    "aboutUs":clQueryAboutUs
+    "aboutUs": clQueryAboutUs,
+    "event": clQueryEvent
     // Add more mappings here
   };
 
