@@ -86,7 +86,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
               <li className="flex items-center">
                 <Phone className="h-5 w-5 text-primary/70 mr-2" />
                 <Link
-                  href={idFooter.footer.contact.phoneHref}
+                  href={`tel:${idFooter.footer.contact.phoneHref}`}
                   className="text-primary/70 hover:text-primary transition-colors"
                 >
                   {idFooter.footer.contact.phoneLabel}
