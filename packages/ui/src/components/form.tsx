@@ -582,35 +582,59 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
     }
 }
 
+/**
+ * Handles the download process of a Case Study PDF file.
+ * 
+ * Steps performed:
+ * 1. Subscribes the user to the newsletter if the option is selected.
+ * 2. Dynamically imports the PDF layout component and React PDF renderer.
+ * 3. Generates a PDF blob from the `PdfDocument` React component.
+ * 4. Triggers a browser download of the generated PDF file.
+ * 
+ * idFormData - Form data object, including email and newsletter preference.
+ * idPdfData - Case study data to be passed to the PDF layout.
+ * iRecaptchaToken - reCAPTCHA token (currently unused, but can be integrated for validation).
+ * An object with a message and title indicating success or failure.
+ */
+
 export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecaptchaToken: string){
     
     try {
+         // Check if the user opted in for the newsletter
         if (idFormData.newsletter) {
+          // Prepare a FormData object with the user's email
           const LdNewFormData = new FormData();
           LdNewFormData.append("email", idFormData.email);
+           // Subscribe the user to the newsletter
           await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
-    
+
+        // Dynamically import the Case Study PDF layout component(nextjs feature)
+        // Dynamically import the React PDF renderer(nextjs feature)
         const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout");
         const { pdf } = await import("@react-pdf/renderer");
     
-        const Blob = await pdf(<PdfDocument data={idPdfData} />).toBlob();
-    
+        // Generate a PDF blob from the PdfDocument component with provided case study data
+        const Blob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
+        // Create a temporary object URL from the Blob
         const Url = URL.createObjectURL(Blob);
+        // Create a hidden anchor element to trigger the download
         const Link = document.createElement("a");
-        Link.href = Url;
-        Link.download = "download.pdf";
+        Link.href = Url;  // Set the href to the Blob URL
+        Link.download = "lmnas-casestudy.pdf";  // Set the desired filename {can make it automated using the idPdfData}
         document.body.appendChild(Link);
-        Link.click();
+        Link.click();  // Programmatically click the link to trigger the download
         document.body.removeChild(Link);
-        URL.revokeObjectURL(Url);
+        URL.revokeObjectURL(Url);   // Clean up the object URL
     
+        // Return a success message
         return {
           message: "Your file has been downloaded.",
           title: "Download Success",
         };
       } catch (error) {
         console.error("Download failed:", error);
+        // Return a failure message and error info
         return {
           message: "Failed to download the file.",
           title: "Download Failed",

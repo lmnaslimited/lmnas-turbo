@@ -95,7 +95,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
               <li className="flex items-center">
                 <Mail className="h-5 w-5 text-primary/70 mr-2" />
                 <Link
-                  href={idFooter.footer.contact.emailHref}
+                  href={`mailto:${idFooter.footer.contact.emailHref}`}
                   className="text-primary/70 hover:text-primary transition-colors"
                 >
                   {idFooter.footer.contact.emailLabel}
