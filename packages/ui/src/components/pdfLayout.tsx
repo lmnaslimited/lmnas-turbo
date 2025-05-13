@@ -26,7 +26,8 @@
 
 import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer';
 
-const styles = StyleSheet.create({
+//custom css styles
+const LdStyles = StyleSheet.create({
   page: {
     padding: 30,
     fontSize: 12,
@@ -57,7 +58,8 @@ const styles = StyleSheet.create({
   },
 });
 
-type PdfProps = {
+//types
+type TpdfProps = {
   heading: {
     textWithoutColor: string;
     text: string;
@@ -69,13 +71,13 @@ type PdfProps = {
   };
 };
 
-export const PdfDocument = ({ data }: {data:PdfProps}) => (
+export const PdfDocument = ({ idData }: {idData:TpdfProps}) => (
   <Document>
-    <Page style={styles.page}>
-      <View style={styles.headingSection}>
-        <Text style={styles.textWithoutColor}>{data.heading.textWithoutColor}</Text>
-        <Text style={styles.text}>{data.heading.text}</Text>
-        <Text style={styles.subtitle}>{data.heading.subtitle}</Text>
+    <Page style={LdStyles.page}>
+      <View style={LdStyles.headingSection}>
+        <Text style={LdStyles.textWithoutColor}>{idData.heading.textWithoutColor}</Text>
+        <Text style={LdStyles.text}>{idData.heading.text}</Text>
+        <Text style={LdStyles.subtitle}>{idData.heading.subtitle}</Text>
       </View>
       <Image src={data.image.src} style={styles.image} />
     </Page>
