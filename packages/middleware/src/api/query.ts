@@ -200,6 +200,8 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       subtitle
       list {
         label
+        icon
+        description
       }
     }
     socialSection {
@@ -216,6 +218,46 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         label
         href
       }
+    }
+    trendingNowSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        description
+        icon
+        variant
+      }
+    }
+    testimonials {
+      header {
+        title
+        subtitle
+      }
+      avatar {
+        svg
+        alternate
+      }
+      avatarDetails {
+        icon
+        label
+        description
+      }
+      image {
+        svg
+        alternate
+        source
+      }
+    }
+    successClients {
+      svg
+      source
+      alternate
     }
   }
 }`
