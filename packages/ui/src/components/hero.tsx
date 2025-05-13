@@ -26,7 +26,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   * Typically used for highlighting a special feature or status.
   */
   const Badge = ({ iText }: { iText: string }): ReactElement => (
-    <div className="inline-flex w-fit items-center rounded-full border border-primary/60 bg-slate px-3 py-1 text-sm text-primary/70">
+    <div className="inline-flex w-fit items-center rounded-full border bg-accent px-3 py-1 text-sm text-primary/70">
       <Zap className="mr-1 h-3.5 w-3.5" />
       <span>{iText}</span>
     </div>

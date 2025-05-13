@@ -6,7 +6,7 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-6 h-6 text-black" />;
+  return <IconComponent className="w-6 h-6" />;
 };
 
 // PainPoints Component: Displays a list of pain points with a smooth fade-in animation when they enter the viewport.

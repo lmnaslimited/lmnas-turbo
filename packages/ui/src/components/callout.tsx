@@ -8,7 +8,7 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-5 h-5 text-black" />;
+  return <IconComponent className="w-5 h-5" />;
 };
 
 export default function Callout({
