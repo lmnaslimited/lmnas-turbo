@@ -29,8 +29,8 @@ export default function Callout({
       {/* Render callout header with different styling based on layout */}
       {Layout === "classic" ? (
         <h2 className={cn("text-3xl font-extrabold sm:text-4xl", idCallout.variant || "text-secondary")}>
-          <span className="block">{idCallout.header?.title}</span>
-          <span className="block">{idCallout.header?.subtitle}</span>
+          <span className="block text-primary">{idCallout.header?.title}</span>
+          <span className="block text-primary">{idCallout.header?.subtitle}</span>
         </h2>
       ) : (
         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
