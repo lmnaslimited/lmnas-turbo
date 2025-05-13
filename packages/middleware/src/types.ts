@@ -360,6 +360,9 @@ export type Thome = {
     calloutSection: TcalloutProps[]
     faqSection: TcalloutProps
     socialSection: TheroSection
+    trendingNowSection: TcalloutProps
+    testimonials: TcardProps[]
+    successClients: Timage[]
 }
 
 // trending now
@@ -546,6 +549,14 @@ export type TcaseStudies = {
     solutionSection: TsolutionSection
     sidebarData: TcardProps[]
     relatedCaseStudies: TcardProps[]
+    ctaSection?:TcalloutProps[]
+    conclusion?:{
+        title: string
+    }
+    contact:{
+        connect: Tbutton[]
+        social: Titems[]
+    }
 }
 
 //products
