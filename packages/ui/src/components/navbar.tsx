@@ -1,6 +1,7 @@
 "use client"
 import * as React from "react"
 import Link from "next/link"
+import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
 import { Button } from "@repo/ui/components/ui/button"
 import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@repo/ui/components/ui/navigation-menu"
@@ -17,6 +18,28 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
   const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
   const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
   const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const renderIcon = (icon: Tbutton['icon']) => {
+    const iconName = typeof icon === "string" ? icon : "HelpCircle";
+    const IconComponent = getIconComponent(iconName);
+    return <IconComponent className="w-6 h-6" />;
+  };
+
+  //middleware
+  React.useEffect(() => {
+    const currentLang = pathname.split('/')[1]; // get "en" from /en/trending-now
+    fnSetLanguage(currentLang ?? "EN");
+  }, [pathname]);
+
+  const handleLanguageChange = (newLang: string) => {
+    const segments = pathname.split('/');
+    segments[1] = newLang; // replace language segment
+    const newPath = segments.join('/');
+    fnSetLanguage(newLang);
+    router.push(newPath); // navigate to new lang route
+  };
 
   React.useEffect(() => {
     const fnHandleScroll = (): void => {
@@ -33,12 +56,6 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
     }
   }, [])
 
-  const renderIcon = (icon: Tbutton['icon']) => {
-    const iconName = typeof icon === "string" ? icon : "HelpCircle";
-    const IconComponent = getIconComponent(iconName);
-    return <IconComponent className="w-6 h-6 text-black" />;
-  };
-
   const fnGetCurrentLanguageDisplay = (): string => {
     const CurrentLang = idNavbar.navbar.language.find((idLang) => idLang.label === Language)
     return CurrentLang && CurrentLang.label ? CurrentLang.label.toUpperCase() : "EN";
@@ -47,7 +64,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 w-full border-b border-border ",
+          "sticky top-0 z-50 w-full",
           IsScrolled ? "bg-background/80 backdrop-blur-md " : "bg-transparent ",
         )}
       >
@@ -55,7 +72,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
           <div className="flex items-center gap-6">
             {/* Logo and Brand */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-dark rounded-md flex items-center justify-center text-primary-foreground">
+              <div className="w-12 h-12 bg-foreground rounded-sm flex items-center justify-center text-primary-foreground">
                 <SVGComponent />
               </div>
               <span className="text-lg font-bold tracking-tight ">LMNAs</span>
@@ -200,7 +217,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                   {idNavbar.navbar.language.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
-                      onClick={() => fnSetLanguage(idLang.label ?? "EN")}
+                      // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
+                      onClick={() => handleLanguageChange(idLang.label ?? "EN")}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.label === Language ? "bg-muted " : "",
@@ -254,7 +272,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                   {idNavbar.navbar.language.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
-                      onClick={() => fnSetLanguage(idLang.label ?? "EN")}
+                      // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
+                      onClick={() => handleLanguageChange(idLang.label ?? "EN")}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.label === Language ? "bg-muted " : "",

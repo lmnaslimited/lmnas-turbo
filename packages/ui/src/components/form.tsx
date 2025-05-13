@@ -996,16 +996,30 @@ function InnerSectionForm({
                                             const formattedValue = `${fromTime}:00`
 
                                             return (
+                                                // <Button
+                                                //     key={time}
+                                                //     type="button"
+                                                //     variant={availability ? (iField.value === formattedValue ? "default" : "outline") : "outline"}
+                                                //     className={`h-10 ${iField.value === formattedValue
+                                                //         ? "bg-foreground text-foreground hover:bg-accent"
+                                                //         : !availability
+                                                //             ? "bg-foreground text-accent hover:bg-accent hover:text-muted cursor-not-allowed"
+                                                //             : ""
+                                                //         }`}
+                                                //     onClick={() => iField.onChange(formattedValue)}
+                                                //     disabled={!availability}
+                                                // >
+                                                //     {slotLabel}
+                                                // </Button>
                                                 <Button
                                                     key={time}
                                                     type="button"
-                                                    variant={availability ? (iField.value === formattedValue ? "default" : "outline") : "outline"}
-                                                    className={`h-10 ${iField.value === formattedValue
-                                                        ? "bg-dark text-secondary hover:bg-dark"
-                                                        : !availability
-                                                            ? "bg-grayBackground text-muted hover:bg-grayBackground hover:text-muted cursor-not-allowed"
-                                                            : ""
-                                                        }`}
+                                                    variant="default"
+                                                    className={`h-10
+                                                            ${!availability ? "bg-accent text-foreground cursor-not-allowed" : ""}
+                                                            ${availability && iField.value !== formattedValue ? "bg-accent text-foreground hover:border hover:ring-2 hover:ring-ring hover:bg-foreground hover:text-background" : ""}
+                                                            ${iField.value === formattedValue ? "border ring-2 ring-ring" : ""}
+                                                        `}
                                                     onClick={() => iField.onChange(formattedValue)}
                                                     disabled={!availability}
                                                 >
@@ -1038,18 +1052,17 @@ function InnerSectionForm({
                         )}
                     />
                 )
-
             default:
                 return null
         }
     }
 
     return (
-        <div ref={FormRef} className={cn("w-full max-w-xl mx-auto bg-background rounded-lg shadow-md", className)}>
+        <div ref={FormRef} className={cn("w-full max-w-xl mx-auto shadow-md border border-border", className)}>
             {!hideCardHeader && (
-                <div className="bg-primary text-border p-4">
+                <div className="bg-foreground text-background p-4">
                     <h2 className="text-2xl font-bold">{config.title}</h2>
-                    {config.description && <p className="mt-2 text-border">{config.description}</p>}
+                    {config.description && <p className="mt-2  text-background">{config.description}</p>}
                 </div>
             )}
             <div className="p-6">

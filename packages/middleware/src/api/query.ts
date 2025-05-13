@@ -972,6 +972,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       heading {
         title
         subtitle
+        badge
       }
       buttons {
         label

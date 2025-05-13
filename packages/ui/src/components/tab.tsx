@@ -27,10 +27,10 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
   return (
     <section className="py-10">
       <Tabs defaultValue="all" className="w-full">
-        <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(Lacategories.length + 1, 6)} mb-8 md:gap-0 gap-4`}>
-          <TabsTrigger value="all">{idTab.TabDefault.text}</TabsTrigger>
+        <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(Lacategories.length + 1, 6)} mb-8 md:gap-0 gap-4 rounded-none bg-accent`}>
+          <TabsTrigger className="rounded-none" value="all">{idTab.TabDefault.text}</TabsTrigger>
           {Lacategories.map((iCategory) => (
-            <TabsTrigger key={iCategory} value={iCategory}>
+            <TabsTrigger className="rounded-none" key={iCategory} value={iCategory}>
               {iCategory.charAt(0).toUpperCase() + iCategory.slice(1)}
             </TabsTrigger>
           ))}

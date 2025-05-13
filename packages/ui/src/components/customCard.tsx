@@ -11,7 +11,7 @@ import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
 import { TcardProps, Tbutton } from "@repo/middleware";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
-const renderIcon = (icon: Tbutton['icon'], classname: string = "w-6 h-6 text-black") => {
+const renderIcon = (icon: Tbutton['icon'], classname: string = "w-6 h-6") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
 
