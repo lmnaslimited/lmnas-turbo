@@ -4,9 +4,9 @@ import { useRef, useEffect, useState, ReactElement } from "react";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 import { Button } from "@repo/ui/components/ui/button";
 import { ChevronRight, Download } from "lucide-react";
-import { TcalloutProps } from "@repo/middleware";
+import { TcalloutProps, TformMode } from "@repo/middleware";
 
-export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TcalloutProps }): ReactElement {
+export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: TcalloutProps, onButtonClick?: (mode: TformMode) => void }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null);
 
   // Checks if the section is in view for triggering animations
@@ -40,13 +40,18 @@ export function ProblemSection({ idCaseStudy, }: { idCaseStudy: TcalloutProps })
         <motion.div variants={ItemVariants} className="mb-8">
           {/* Download button for small screens */}
           <div className="mb-6 lg:hidden">
-            {idCaseStudy.buttons.map((button, index) => (
+            {idCaseStudy.buttons.map((idButton, index) => (
               <Button
                 key={index}
                 className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary"
+                onClick={() => {
+                  if (onButtonClick && idButton.formMode) {
+                    onButtonClick(idButton.formMode)
+                  }
+                }}
               >
                 <Download className="h-4 w-4" />
-                {button.label}
+                {idButton.label}
               </Button>
             ))}
           </div>

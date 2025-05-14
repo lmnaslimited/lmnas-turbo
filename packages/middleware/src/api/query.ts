@@ -1345,6 +1345,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         }
         buttons {
           label
+          formMode
         }
         list {
           label
