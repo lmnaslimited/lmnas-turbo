@@ -212,24 +212,24 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
 
       <View style={LdStyles.leftColumn}>
         {/* image */}
-        <Image style={LdStyles.image} src={idData.heroSection.image?.source} />
+        <Image style={LdStyles.image} src={idData.caseStudies[0]?.heroSection.image?.source} />
 
         {/* title */}
         <Text style={LdStyles.sectionTitle}>
-          {idData.problemSection.header.title}
+          {idData.caseStudies[0]?.problemSection.header.title}
         </Text>
 
         {/* Business Challenge */}
         <Text style={LdStyles.heading}>BUSINESS CHALLENGES</Text>
-        {idData.problemSection.header.subtitle && (
+        {idData.caseStudies[0]?.problemSection.header.subtitle && (
           <View>
             <Text style={LdStyles.paragraph}>
-              {idData.problemSection.header.subtitle}
+              {idData.caseStudies[0]?.problemSection.header.subtitle}
             </Text>
           </View>
         )}
         <View style={LdStyles.bulletList}>
-          {idData.problemSection.list.map(
+          {idData.caseStudies[0]?.problemSection.list.map(
             (idItem, iIdx) => (
               <View style={LdStyles.bulletItem} key={iIdx}>
                 <Text style={LdStyles.bulletPoint}>•</Text>
@@ -240,15 +240,15 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         </View>
 
         {/* CTA */}
-        {idData?.ctaSection?.[0] && (
+        {idData.caseStudies[0]?.ctaSection?.[0] && (
           <View style={LdStyles.ctaSection}>
             <Text style={LdStyles.ctaHeading}>
-              {idData.ctaSection[0].header?.title}
+              {idData.caseStudies[0]?.ctaSection[0]?.header?.title}
             </Text>
 
             {(() => {
-              const Subtitle = idData.ctaSection[0].header?.subtitle || "";
-              const Badge = idData.ctaSection[0].header?.badge || "";
+              const Subtitle = idData.caseStudies[0]?.ctaSection[0]?.header?.subtitle || "";
+              const Badge = idData.caseStudies[0]?.ctaSection[0]?.header?.badge || "";
               const [before, after] = Subtitle.split("{badge}");
 
               return (
@@ -260,10 +260,10 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
               );
             })()}
 
-            <Link src={idData.ctaSection[0].buttons[0]?.href} style={LdStyles.cta}>
+            <Link src={idData.caseStudies[0]?.ctaSection[0]?.buttons[0]?.href} style={LdStyles.cta}>
               <CalendarIcon />
               <Text style={LdStyles.ctaButtonText}>
-                {idData.ctaSection[0].buttons[0]?.label}
+                {idData.caseStudies[0]?.ctaSection[0]?.buttons[0]?.label}
               </Text>
             </Link>
           </View>
@@ -273,31 +273,30 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
       <View style={LdStyles.rightColumn}>
         {/* objective */}
         <Text style={LdStyles.heading}>OBJECTIVES</Text>
-        {idData.solutionSection.products.map((idItem, iIdx) => (
+        {idData.caseStudies[0]?.solutionSection.products.map((idItem, iIdx) => (
           <View style={LdStyles.bulletItem} key={iIdx}>
-            {/* <Text style={styles.subheading}>{obj.title}</Text> */}
             <Text style={LdStyles.bulletPoint}>•</Text>
             <Text style={LdStyles.paragraph}>{idItem.label}</Text>
           </View>
         ))}
 
         {/* CTA + Discount Code Section */}
-        {idData?.ctaSection?.[1] && (<View
+        {idData.caseStudies[0]?.ctaSection?.[1] && (<View
           style={LdStyles.ctaSection}
         >
           <Text
             style={LdStyles.ctaHeading}
           >
-           {idData.ctaSection[1].header?.title} 
+           {idData.caseStudies[0]?.ctaSection[1].header?.title} 
           </Text>
 
           <Link
-            src={idData.ctaSection[1].buttons[0]?.href}
+            src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
             style={LdStyles.cta}
           >
             <CallIcon />
             <Text style={LdStyles.ctaButtonText}>
-              {idData.ctaSection[1].buttons[0]?.label}
+              {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
             </Text>
           </Link>
         </View>)}
@@ -307,7 +306,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         {/* result */}
         <Text style={LdStyles.heading}>RESULT AND BENEFITS</Text>
         <View style={LdStyles.bulletList}>
-          {idData.solutionSection.results.map((idItem, iIdx) => (
+          {idData.caseStudies[0]?.solutionSection.results.map((idItem, iIdx) => (
             <View style={LdStyles.bulletItem} key={iIdx}>
               <Text style={LdStyles.bulletPoint}>•</Text>
               <Text>
@@ -318,18 +317,18 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         </View>
 
         {/* cta */}
-        {idData?.ctaSection?.[0] && (<View
+        {idData.caseStudies[0]?.ctaSection?.[0] && (<View
           style={LdStyles.ctaSection}
         >
           <Text
             style={LdStyles.ctaHeading}
           >
-            {idData.ctaSection[0].title}
+            {idData.caseStudies[0]?.ctaSection[0].title}
           </Text>
 
           {(() => {
-      const Subtitle = idData.ctaSection[0].header?.subtitle || "";
-      const Badge = idData.ctaSection[0].header?.badge || "";
+      const Subtitle = idData.caseStudies[0]?.ctaSection[0].header?.subtitle || "";
+      const Badge = idData.caseStudies[0]?.ctaSection[0].header?.badge || "";
       const [before, after] = Subtitle.split("{badge}");
 
       return (
@@ -343,12 +342,12 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
 
 
           <Link
-            src={idData.ctaSection[0].buttons[0]?.href}
+            src={idData.caseStudies[0]?.ctaSection[0].buttons[0]?.href}
             style={LdStyles.cta}
           >
             <CalendarIcon />
             <Text style={LdStyles.ctaButtonText}>
-              {idData.ctaSection[0].buttons[0]?.label}
+              {idData.caseStudies[0]?.ctaSection[0].buttons[0]?.label}
             </Text>
           </Link>
         </View>)}
@@ -357,7 +356,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
 
         {/* conclusion */}
         <Text style={LdStyles.heading}>CONCLUSION</Text>
-        <Text style={LdStyles.paragraph}>{idData.conclusion?.title}</Text>
+        <Text style={LdStyles.paragraph}>{idData.caseStudies[0]?.conclusion?.title}</Text>
       </View>
     </Page>
 
@@ -367,30 +366,39 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         {/* contact */}
         <Text style={LdStyles.heading}>CONTACT</Text>
         <View style={LdStyles.contact}>
-        {idData.contact.connect.map((idItem, iIndex) => (
-            <Link key={iIndex} src={idItem.href} style={LdStyles.contactLink}>
-              {idItem.label}
+        
+            <Link src={`tel:${idData.footer.contact.phoneHref}`} style={LdStyles.contactLink}>
+              {idData.footer.contact.phoneHref}
             </Link>
-          ))}
+            <Link src={idData.footer.contact.address} style={LdStyles.contactLink}>
+              {idData.footer.contact.address}
+            </Link>
+            <Link src={`mailto:${idData.footer.contact.emailHref}`} style={LdStyles.contactLink}>
+              {idData.footer.contact.emailHref              }
+            </Link>
+            <Link src={idData.footer.contact.websiteHref} style={LdStyles.contactLink}>
+              {idData.footer.contact.websiteHref}
+            </Link>
+          
           {/* Social Icons Row */}
           <View style={LdStyles.socialRow}>
-          {idData.contact.social.map((idItem, iIndex) => {
+          {idData.footer.social.map((idItem, iIndex) => {
             let IconComponent = null;
 
             switch (idItem.icon) {
-              case "LinkedIn":
+              case "Linkedin":
                 IconComponent = <LinkedInIcon />;
                 break;
               case "Youtube":
                 IconComponent = <YouTubeIcon />;
                 break;
-              case "X":
+              case "Twitter":
                 IconComponent = <TwitterIcon />;
                 break;
             }
 
             return IconComponent && (
-              <Link key={iIndex} src={idItem.label} style={LdStyles.iconLink}>
+              <Link key={iIndex} src={idItem.href} style={LdStyles.iconLink}>
                 {IconComponent}
               </Link>
             );
@@ -400,18 +408,18 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
       </View>
 
       <View style={LdStyles.rightColumn}>
-      {idData?.ctaSection?.[1] && (<View style={LdStyles.ctaSection}>
+      {idData.caseStudies[0]?.ctaSection?.[1] && (<View style={LdStyles.ctaSection}>
           <Text style={LdStyles.ctaHeading}>
-            {idData.ctaSection[1].title}
+            {idData.caseStudies[0]?.ctaSection[1].title}
           </Text>
 
           <Link
-            src={idData.ctaSection[1].buttons[0]?.href}
+            src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
             style={LdStyles.cta}
           >
             <CallIcon />
             <Text style={LdStyles.ctaButtonText}>
-              {idData.ctaSection[1].buttons[0]?.label}
+              {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
             </Text>
           </Link>
         </View>)}
