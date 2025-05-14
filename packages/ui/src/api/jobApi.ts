@@ -35,7 +35,7 @@ export async function JobApi(): Promise<MappedResult> {
       location: item.custom_job_location || "",
       role: item.designation,
       description: item.custom_excerpt_description || "",
-      applyUrl: `${process.env.SUBSCRIBE_URL}/${item.job_title}`
+      applyUrl: `${process.env.SUBSCRIBE_URL}/${item.name}`
     }));
     return {
       filters: {
