@@ -230,7 +230,7 @@ export type TtrendCardProps = {
 // solution Section
 export type TsolutionSection = {
     title: string
-    header: Theader
+    // header: Theader
     products: Titems[]
     details: Titems[]
     results: Theader[]
@@ -240,7 +240,7 @@ export type TsolutionSection = {
         author: string
         verify: string
     }
-    successCard: TcardProps[]
+    successCard: TcardProps
     footer: TheroSection
 }
 
@@ -302,6 +302,7 @@ export type TslotResponse = {
     error?: string
 }
 
+//API
 export type TcontactApi = {
     formData: {
         name: string
@@ -310,6 +311,12 @@ export type TcontactApi = {
         email: string
         phone: string
     }
+    recaptchaToken: string
+}
+
+export type TleadApi = {
+    name: string
+    email: string
     recaptchaToken: string
 }
 
@@ -500,7 +507,7 @@ export type Tindustries = {
         successStoryHeaderFooter: TcalloutProps
         successStoryCard: TcardProps[]
     }[]
-    caseStudies: TcaseStudies[]
+    caseStudies: TcaseStudies
 }
 
 //solutions
@@ -535,28 +542,24 @@ export type Tsolution = {
 }
 
 // casestudies
-export type TcaseStudiesPageSource = {
-    caseStudies: TcaseStudies[]
-}
-export type TcaseStudiesPageTarget = {
-    caseStudies: TcaseStudies[]
-}
+export type TcaseStudiesPageSource = TcaseStudies
+
+export type TcaseStudiesPageTarget =  TcaseStudies
+
 export type TcaseStudies = {
+    caseStudies:{
     slug: string
     name: string
+    pdfName: string
     heroSection: TcardProps
     problemSection: TcalloutProps
     solutionSection: TsolutionSection
     sidebarData: TcardProps[]
     relatedCaseStudies: TcardProps[]
     ctaSection?:TcalloutProps[]
-    conclusion?:{
-        title: string
-    }
-    contact:{
-        connect: Tbutton[]
-        social: Titems[]
-    }
+    conclusion?:Theader
+    }[]
+    footer: Tfooter
 }
 
 //products
@@ -614,8 +617,8 @@ export type JobOpening = {
     job_title: string;
     status: string;
     designation: string;
-    custom_exert_description: string;
-    location?: string;
+    custom_excerpt_description: string;
+    custom_job_location?: string;
     _user_tags: string[];
     creation: string;
 };
@@ -631,6 +634,7 @@ export type JobData = {
     location: string;
     role: string;
     description: string;
+    applyUrl:string
 };
 
 export type MappedResult = {

@@ -5,9 +5,9 @@ import { motion } from "framer-motion"
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Button } from "@repo/ui/components/ui/button"
 import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
-import { TsolutionSection } from "@repo/middleware"
+import { TsolutionSection, TformMode } from "@repo/middleware"
 
-export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection }): ReactElement {
+export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode) => void }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
 
   // Animation variants for fade-in effect.
@@ -25,11 +25,11 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             <Lightbulb className="h-5 w-5 text-primary" />
           </div>
           <h2 className="text-2xl font-bold md:text-3xl">
-            {idCaseStudy.header.title}
+            {idCaseStudy.successCard?.header?.title}
           </h2>
         </motion.div>
         <motion.p variants={LdItemVariants} className="mb-8 text-lg text-muted-foreground">
-          {idCaseStudy.header.subtitle}
+          {idCaseStudy.successCard?.header?.subtitle}
         </motion.p>
         <motion.div variants={LdItemVariants} className="mb-8 flex flex-wrap gap-2">
           {idCaseStudy.products.map((iProduct, iIndex) => (
@@ -98,7 +98,7 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             </div>
 
             {/* Quote */}
-            <div className="relative">
+            <div className="relative" id="casestudy-download">
               <svg
                 className="absolute -left-2 -top-2 h-8 w-8 text-primary/30"
                 fill="currentColor"
@@ -141,10 +141,15 @@ export function SolutionSection({ idCaseStudy }: { idCaseStudy: TsolutionSection
             })}
           </div>
         </div>
-        {idCaseStudy.footer?.buttons?.map((button, index) => (
-          <Button key={index} className="flex items-center gap-2">
+        {idCaseStudy.footer?.buttons?.map((idButton, index) => (
+          <Button key={index} className="flex items-center gap-2"
+          onClick={() => {
+            if (onButtonClick && idButton.formMode) {
+              onButtonClick(idButton.formMode)
+            }
+          }}>
             <Download className="w-5 h-5" />
-            {button.label}
+            {idButton.label}
           </Button>
         ))}
       </div>
