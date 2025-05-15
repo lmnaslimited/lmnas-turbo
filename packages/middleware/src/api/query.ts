@@ -1309,19 +1309,24 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
 
   getQuery(): string {
     return `
-    query CaseStudies($locale: I18NLocaleCode) {
-    ${this.contentType}(locale: $locale) {
+    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode) {
+    ${this.contentType}(locale: $locale, filters: $filters) {
     slug
     name
+    pdfName
     heroSection {
       tag
       header {
         title
         subtitle
       }
+      image{
+        source
+        }
       buttons {
         label
         href
+        formMode
       }
       link {
         label
@@ -1341,6 +1346,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         }
         buttons {
           label
+          formMode
         }
         list {
           label
@@ -1381,6 +1387,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         }
         buttons {
           label
+          formMode
         }
       }
     }
@@ -1393,6 +1400,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         label
         href
         icon
+        formMode
       }
       list {
         label
@@ -1414,6 +1422,37 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         href
       }
     }
+    ctaSection {
+      header {
+        title
+        subtitle
+        badge
+      }
+        title
+      buttons {
+        label
+        href
+      }
+    }
+    conclusion {
+      subtitle
+    }
+  }
+  footer(locale: $footerLocale2) {
+      contact {
+        address
+        phoneLabel
+        phoneHref
+        emailLabel
+        emailHref
+        websiteLabel
+        websiteHref
+      }
+      social {
+        label
+        href
+        icon
+      }
   }
 }
 `}
@@ -1426,7 +1465,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode) {
+  query Query($locale: I18NLocaleCode, $footerLocale2: I18NLocaleCode) {
   ${this.contentType}(locale: $locale) {
     header {
       title

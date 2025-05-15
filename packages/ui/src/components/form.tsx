@@ -25,6 +25,7 @@ import { sendCommunicationAction } from "@repo/ui/api/communication"
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
 import { ContactApi } from "@repo/ui/api/contact"
+import { LeadApi } from "@repo/ui/api/leadApi"
 import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware"
 import Link from "next/link";
 
@@ -600,6 +601,15 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
 export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecaptchaToken: string){
     
     try {
+        //payload to be passed on LeadApi
+        const LdPayload = {
+            name: idFormData.name,
+            email: idFormData.email,
+            recaptchaToken: iRecaptchaToken,
+        }
+        //call the LeadApi, which is check if lead with the incoming email
+        //exist, if not create a new Lead with the incoming name and email
+        const LdResponse = await LeadApi(LdPayload)
          // Check if the user opted in for the newsletter
         if (idFormData.newsletter) {
           // Prepare a FormData object with the user's email
@@ -608,7 +618,12 @@ export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecapt
            // Subscribe the user to the newsletter
           await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
-
+        if (LdResponse.message === 'error') {
+            return {
+              message: "Something went wrong, please try again later",
+              title: "Download Fail",
+            };
+          }
         // Dynamically import the Case Study PDF layout component(nextjs feature)
         // Dynamically import the React PDF renderer(nextjs feature)
         const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout");
@@ -621,7 +636,7 @@ export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecapt
         // Create a hidden anchor element to trigger the download
         const Link = document.createElement("a");
         Link.href = Url;  // Set the href to the Blob URL
-        Link.download = "lmnas-casestudy.pdf";  // Set the desired filename {can make it automated using the idPdfData}
+        Link.download = `${idPdfData?.caseStudies[0]?.pdfName}.pdf`;  // Set the desired filename {can make it automated using the idPdfData}
         document.body.appendChild(Link);
         Link.click();  // Programmatically click the link to trigger the download
         document.body.removeChild(Link);
@@ -779,25 +794,7 @@ function InnerSectionForm({
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
             }
             else if (config.id === "download") {
-                // const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout")
-                // const { pdf } = await import("@react-pdf/renderer")
-
-                // const blob = await pdf(<PdfDocument data={pdfData} />).toBlob()
-                // // Create a URL and download the PDF
-                // const url = URL.createObjectURL(blob)
-                // const link = document.createElement("a")
-                // link.href = url
-                // link.download = "download.pdf"
-                // document.body.appendChild(link)
-                // link.click()
-                // document.body.removeChild(link)
-                // URL.revokeObjectURL(url)
                 LdResponse = await fnDownload(idFormData,  pdfData, LdRecaptchaToken)
-
-                // LdResponse = {
-                //     message: "Your file has been downloaded.",
-                //     title: "Download Success",
-                // }
             }
             else if (config.id === "webinar") {
                 LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)

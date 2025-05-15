@@ -109,9 +109,12 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             <Image
               src={idHero.image?.source || "/placeholder.svg"}
               alt={idHero?.image?.alternate || ""}
-              className={cn("h-full w-full object-cover")}
-              width={100}
-              height={100}
+              // className={cn("h-full w-full object-cover")}
+              // fill
+              // width={100}
+              // height={100}
+              fill
+              className="object-fill"
             />
           </div>
         </div>

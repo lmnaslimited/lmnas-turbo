@@ -4,9 +4,9 @@ import { ReactElement, useRef } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Download, CheckCircle2 } from "lucide-react";
-import { TcardProps } from "@repo/middleware";
+import { TcardProps, TformMode } from "@repo/middleware";
 
-export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TcardProps[] }): ReactElement {
+export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode) => void }): ReactElement {
   // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
@@ -43,16 +43,31 @@ export function DynamicSidebar({ idCaseStudy }: { idCaseStudy: TcardProps[] }): 
               )}
 
               {/* Render a button if provided */}
-              {idCard.buttons && idCard.buttons.map((btn, index) => (
-                <Button key={index} className="w-full gap-2">
-                  <Download className="h-5 w-5 text-primary" />
-                  {btn.href ? (
-                    <Link href={btn.href}>{btn.label}</Link>
-                  ) : (
-                    btn.label
-                  )}
-                </Button>
-              ))}
+              {idCard.buttons && idCard.buttons.map((idButton, index) => {
+                 // Construct button content, including an optional icon
+                         
+                return idButton.href ? (
+                  <Link href={idButton.href} key={`btn-${index}`}>
+                    <Button
+                    >
+                      {idButton.label}
+                    </Button>
+                  </Link>
+                ) : (
+      
+                  // Render a standard button with an event handler if no href is provided
+                  <Button
+                    key={`btn-${index}`}
+                    onClick={() => {
+                      if (onButtonClick && idButton.formMode) {
+                        onButtonClick(idButton.formMode)
+                      }
+                    }}
+                  >
+                    {idButton.label}
+                  </Button>
+                );
+              })}
 
               {/* Render a link if available
               {idCard.link && (

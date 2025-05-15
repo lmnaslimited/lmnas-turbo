@@ -9,7 +9,7 @@ export async function JobApi(): Promise<MappedResult> {
   }
   try {
     const LdJobResponse = await fetch(
-      `${LUrl}/api/resource/Job Opening?fields=["name","job_title","status","designation","description","location","_user_tags","creation", "custom_exert_description"]&limit_page_length=0`,
+      `${LUrl}/api/resource/Job Opening?fields=["name","job_title","status","designation","custom_job_location","description","_user_tags","creation", "custom_excerpt_description"]&limit_page_length=0`,
       {
         method: "GET",
         headers: LdHeaders,
@@ -26,17 +26,17 @@ export async function JobApi(): Promise<MappedResult> {
     )];
 
     const LaUniqueLocations = [...new Set(
-      LaRawData.map(idItem => idItem.location).filter((iLocation): iLocation is string => Boolean(iLocation))
+      LaRawData.map(idItem => idItem.custom_job_location).filter((iLocation): iLocation is string => Boolean(iLocation))
     )];
 
     const LaMappedData: JobData[] = LaRawData.map(item => ({
       id: item.name,
       title: item.job_title,
-      location: item.location || "",
+      location: item.custom_job_location || "",
       role: item.designation,
-      description: item.custom_exert_description || "",
+      description: item.custom_excerpt_description || "",
+      applyUrl: `${process.env.SUBSCRIBE_URL}/${item.name}`
     }));
-
     return {
       filters: {
         role: LaUniqueRoles,
