@@ -3,7 +3,14 @@ import Image from "next/image"
 import { cn } from "@repo/ui/lib/utils"
 import { ReactElement } from "react"
 import { motion, useAnimation } from "framer-motion"
-import { TlogoShowcaseProps, Timage } from "@repo/middleware"
+import { TlogoShowcaseProps, Timage, Tbutton } from "@repo/middleware"
+import { getIconComponent } from "@repo/ui/lib/icon";
+
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-5 h-5" />;
+};
 
 /**
  * LogoShowcase Component
@@ -194,7 +201,7 @@ function LogoItem(idLogo: { logo: Timage; dimensions: { width: number; height: n
           className={cn("flex items-center justify-center")}
           style={{ width: width, height: height }}
         >
-          {idLogo.logo.svg}
+          {renderIcon(idLogo.logo.svg)}
         </div>
       )
 

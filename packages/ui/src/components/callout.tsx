@@ -66,13 +66,11 @@ export default function Callout({
           // Construct button content, including an optional icon
           const ButtonContent = (
             <>
-              {idButton.icon && idButton.iconPosition === "before" && (
-                <span className="mr-2">{renderIcon(idButton.icon)}</span>
-              )}
+              
               {idButton.label}
-              {idButton.icon && idButton.iconPosition === "after" && (
+              
                 <span className="ml-2">{renderIcon(idButton.icon)}</span>
-              )}
+              
             </>
           );
 

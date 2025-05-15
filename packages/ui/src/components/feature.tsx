@@ -3,8 +3,14 @@ import * as LucideIcons from "lucide-react"
 import { cva } from "class-variance-authority"
 import { ReactElement } from "react"
 import { Button } from "@repo/ui/components/ui/button"
-import { TfeatureProps, Titems } from "@repo/middleware"
+import { TfeatureProps, Titems,Tbutton } from "@repo/middleware"
+import { getIconComponent } from "@repo/ui/lib/icon";
 
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-5 h-5" />;
+};
 /**
  * Utility function to define the button container styles based on position.
  * Uses `cva` (Class Variance Authority) to generate responsive styles dynamically.
@@ -55,11 +61,14 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
                   <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
               </Button> */}
               {idFeature.buttons?.[0]?.href && (
-                <Button asChild size="lg">
-                  <Link href={idFeature.buttons[0].href}>
-                    {idFeature.buttons[0].label}
-                  </Link>
+                <Link href={idFeature.buttons[0].href}>
+                <Button size="lg">
+                  
+                    {idFeature.buttons[0].label} {" "}
+                    {renderIcon(idFeature.buttons[0].icon)}
+                  
                 </Button>
+                </Link>
               )}
             </div>
           )}
@@ -84,11 +93,14 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
                 <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
             </Button> */}
             {idFeature.buttons?.[0]?.href && (
-              <Button asChild size="lg">
                 <Link href={idFeature.buttons[0].href}>
-                  {idFeature.buttons[0].label}
+                    <Button size="lg">
+
+                  {idFeature.buttons[0].label}{" "}
+                  {renderIcon(idFeature.buttons[0].icon)}
+                  </Button>
+
                 </Link>
-              </Button>
             )}
           </div>
         )}
