@@ -1,40 +1,15 @@
 export function SVGComponent() {
     return(
 <svg
-  className="w-9 rounded-lg"
-  id="Layer_1"
-  x="0px"
-  y="0px"
+  className="w-7"
   viewBox="0 0 1000 1000"
-  fill="currentColor"
+  xmlns="http://www.w3.org/2000/svg"
 >
-  <rect
-    x={200}
-    y={100}
-    width={200}
-    height={500}
-    className="text-secondary"
-  />
-  <rect
-    x={400}
-    y={600}
-    width={400}
-    height={200}
-    className="text-secondary"
-  />
-  <rect
-    x={600}
-    y={200}
-    width={200}
-    height={200}
-    className="text-secondary"
-  />
-  <polygon
-    points="400,600 200,600 400,800"
-    className="text-secondary"
-  />
+  <rect x="112.4" y="12.6" width="285.9" height="670.8" fill="#ffffff" />
+  <rect x="398.3" y="680.9" width="490.2" height="301.5" fill="#ffffff" />
+  <polygon points="412.3,680.5 126.4,680.5 412.3,982.4" fill="#ffffff" transform="translate(-14)" />
+  <rect x="606.2" y="215.3" width="282.3" height="282.3" fill="#ffffff" />
 </svg>
 
-    
     )
   }

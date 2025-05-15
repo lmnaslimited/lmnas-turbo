@@ -72,7 +72,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
           <div className="flex items-center gap-6">
             {/* Logo and Brand */}
             <Link href="/" className="flex items-center gap-2">
-              <div className="w-12 h-12 bg-foreground rounded-sm flex items-center justify-center text-primary-foreground">
+              <div className="w-10 h-10 bg-black rounded-sm flex items-center justify-center text-white">
                 <SVGComponent />
               </div>
               <span className="text-lg font-bold tracking-tight ">LMNAs</span>
