@@ -273,7 +273,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
       <View style={LdStyles.rightColumn}>
         {/* objective */}
         <Text style={LdStyles.heading}>OBJECTIVES</Text>
-        {idData.caseStudies[0]?.solutionSection.products.map((idItem, iIdx) => (
+        {idData.caseStudies[0]?.solutionSection.details.map((idItem, iIdx) => (
           <View style={LdStyles.bulletItem} key={iIdx}>
             <Text style={LdStyles.bulletPoint}>•</Text>
             <Text style={LdStyles.paragraph}>{idItem.label}</Text>
@@ -356,7 +356,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
 
         {/* conclusion */}
         <Text style={LdStyles.heading}>CONCLUSION</Text>
-        <Text style={LdStyles.paragraph}>{idData.caseStudies[0]?.conclusion?.title}</Text>
+        <Text style={LdStyles.paragraph}>{idData.caseStudies[0]?.conclusion?.subtitle}</Text>
       </View>
     </Page>
 
