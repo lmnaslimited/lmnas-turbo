@@ -790,7 +790,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       buttons {
         label
         variant
-        formMode
+        href
         icon
       }
     }

@@ -34,8 +34,8 @@ export default function Callout({
         </h2>
       ) : (
         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          <span className="block">{idCallout.header.title}</span>
-          <span className="block text-primary/70">
+          <span className="block text-foreground">{idCallout.header.title}</span>
+          <span className="block text-foreground">
             {idCallout.header.subtitle}
           </span>
         </h2>

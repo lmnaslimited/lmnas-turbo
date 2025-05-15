@@ -491,24 +491,25 @@ export type Tpricing = {
 // industries
 export type TindustriesPageSource = Tindustries
 export type TindustriesPageTarget = Tindustries
-export type Tindustries = {
-    industries: {
-        slug: string
-        heroSection: TheroSection
-        problemSection: TcalloutProps
-        featuresSectionHeader: Theader
-        feature: {
-            header?: Theader
-            image?: Timage
-            card?: TcardProps
-        }[]
-        allFeatureHeader: Theader
-        allFeatureCard: TcardProps[]
-        cta: TcalloutProps
-        successStoryHeaderFooter: TcalloutProps
-        successStoryCard: TcardProps[]
+export type Tindustry = {
+    slug: string
+    heroSection: TheroSection
+    problemSection: TcalloutProps
+    featuresSectionHeader: Theader
+    feature: {
+        header?: Theader
+        image?: Timage
+        card?: TcardProps
     }[]
-    caseStudies: TcaseStudies
+    allFeatureHeader: Theader
+    allFeatureCard: TcardProps[]
+    cta: TcalloutProps
+    successStoryHeaderFooter: TcalloutProps
+    successStoryCard: TcardProps[]
+}
+export type Tindustries = {
+    industries: Tindustry[]
+    caseStudies: TcaseStudy[]
 }
 
 //solutions
@@ -544,22 +545,21 @@ export type Tsolution = {
 
 // casestudies
 export type TcaseStudiesPageSource = TcaseStudies
-
 export type TcaseStudiesPageTarget = TcaseStudies
-
+export type TcaseStudy = {
+    slug: string
+    name: string
+    pdfName: string
+    heroSection: TcardProps
+    problemSection: TcalloutProps
+    solutionSection: TsolutionSection
+    sidebarData: TcardProps[]
+    relatedCaseStudies: TcardProps[]
+    ctaSection?: TcalloutProps[]
+    conclusion?: Theader
+}
 export type TcaseStudies = {
-    caseStudies: {
-        slug: string
-        name: string
-        pdfName: string
-        heroSection: TcardProps
-        problemSection: TcalloutProps
-        solutionSection: TsolutionSection
-        sidebarData: TcardProps[]
-        relatedCaseStudies: TcardProps[]
-        ctaSection?: TcalloutProps[]
-        conclusion?: Theader
-    }[]
+    caseStudies: TcaseStudy[]
     footer: Tfooter
 }
 
