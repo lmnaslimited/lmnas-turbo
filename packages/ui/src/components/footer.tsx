@@ -130,7 +130,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
               {idFooter.footer.policies.map((item) => (
                 <Link
                   key={item.label}
-                  href={`/${item.href!}`}
+                  href={`${item.href!}`}
                   className="text-sm text-primary/70 hover:text-primary transition-colors"
                 >
                   {item.label}
