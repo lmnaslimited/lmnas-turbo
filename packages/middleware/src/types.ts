@@ -392,6 +392,22 @@ export type TcareerPageSource = {
 export type TcareerPageTarget = {
     career: Tcareer
 }
+type GuideSection = [
+    {
+        heading: Theader;
+        point: Titems[];
+    },
+    Tbutton
+];
+type Tcareer = {
+    heroSection: TheroSection
+    challengeSection: TheroSection
+    guideSection: GuideSection
+    jobsSection: TcalloutProps
+    planSection: TheroSection
+    trendingSection: Theader
+}
+
 
 // about us
 export type TaboutUsPageSource = {
@@ -410,21 +426,6 @@ type TaboutUs = {
     testimonialHeader: Theader
     testimonalCard: TcardProps[]
     ctaSection: TcalloutProps
-}
-type GuideSection = [
-    {
-        heading: Theader;
-        point: Titems[];
-    },
-    Tbutton
-];
-type Tcareer = {
-    heroSection: TheroSection
-    challengeSection: TheroSection
-    guideSection: GuideSection
-    jobsSection: TcalloutProps
-    planSection: TheroSection
-    trendingSection: Theader
 }
 
 // terms and conditions
@@ -549,11 +550,11 @@ export type TcaseStudies = {
     solutionSection: TsolutionSection
     sidebarData: TcardProps[]
     relatedCaseStudies: TcardProps[]
-    ctaSection?:TcalloutProps[]
-    conclusion?:{
+    ctaSection?: TcalloutProps[]
+    conclusion?: {
         title: string
     }
-    contact:{
+    contact: {
         connect: Tbutton[]
         social: Titems[]
     }

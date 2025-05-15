@@ -1016,6 +1016,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         label
         href
         variant
+        formMode
       }
     }
     solutionsCard {

@@ -28,7 +28,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
             <Link href="/" className="flex items-center space-x-2 mb-6">
-              <span className="font-bold text-2xl bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+              <span className="font-bold text-2xl text-foreground">
                 {idFooter.footer.companyName}
               </span>
             </Link>
