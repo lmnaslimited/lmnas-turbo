@@ -148,6 +148,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         title
         subtitle
         highlight
+        badge
       }
       description
       buttons {
@@ -242,6 +243,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       avatar {
         svg
         alternate
+        source
       }
       avatarDetails {
         icon

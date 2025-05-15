@@ -93,6 +93,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
       )}
       onClick={idCardProps.onClick}
     >
+       <div className={cn("flex flex-col justify-between h-full", idCardProps.layout === "horizontal" && "md:flex-1")}>
       {/* Renders image or SVG if available, with an optional tag badge */}
       {idCardProps.image && (
         <div className={cn("w-full overflow-hidden relative", fnGetAspectRatioClass())}>
@@ -123,8 +124,6 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
           )}
         </div>
       )}
-
-      <div className={cn("flex flex-col", idCardProps.layout === "horizontal" && "md:flex-1")}>
 
         {/* Horizontal layout: Renders image on the side if applicable */}
         {idCardProps.image?.alternate && idCardProps.layout === "horizontal" && (
@@ -161,7 +160,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
         )}
 
         {/* Card Header: Displays title, subtitle, and optional tag if no image is present */}
-        <CardHeader>
+        <CardHeader className="flex-grow">
           {idCardProps.tag && !idCardProps.image && (
             <Badge
               variant="default"
@@ -202,7 +201,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
         {/* Card Footer: Renders buttons, links, and profile details if positioned at the bottom */}
         <CardFooter
           className={cn(
-            "flex",
+            "flex mt-auto",
             idCardProps.namePosition === "bottom" ? "flex-col" : "flex-row",
             idCardProps.footerClassName
           )}
