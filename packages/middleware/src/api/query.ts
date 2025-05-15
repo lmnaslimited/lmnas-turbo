@@ -790,7 +790,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       buttons {
         label
         variant
-        formMode
+        href
         icon
       }
     }
@@ -1016,6 +1016,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         label
         href
         variant
+        formMode
       }
     }
     solutionsCard {
