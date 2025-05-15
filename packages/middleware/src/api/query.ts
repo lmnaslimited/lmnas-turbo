@@ -1421,7 +1421,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         href
       }
     }
-      ctaSection {
+    ctaSection {
       header {
         title
         subtitle
@@ -1434,7 +1434,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       }
     }
     conclusion {
-      title
+      subtitle
     }
   }
   footer(locale: $footerLocale2) {
