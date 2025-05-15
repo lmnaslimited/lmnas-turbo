@@ -171,6 +171,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       buttons {
         label
         href
+        icon  
       }
       heading {
         title
@@ -195,6 +196,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         label
         formMode
         variant
+        icon
       }
       title
       subtitle
@@ -217,6 +219,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       buttons {
         label
         href
+        icon
       }
     }
     trendingNowSection {
@@ -1465,7 +1468,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode, $footerLocale2: I18NLocaleCode) {
+  query Query($locale: I18NLocaleCode) {
   ${this.contentType}(locale: $locale) {
     header {
       title
