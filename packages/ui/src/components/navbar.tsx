@@ -71,11 +71,11 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-6">
             {/* Logo and Brand */}
-            <Link href="/" className="flex items-center gap-2">
+            <Link href={idNavbar.navbar.logo.href ?? "/"} className="flex items-center gap-2">
               <div className="w-10 h-10 bg-black rounded-sm flex items-center justify-center text-white">
                 <SVGComponent />
               </div>
-              <span className="text-lg font-bold tracking-tight ">LMNAs</span>
+              <span className="text-lg font-bold tracking-tight ">{idNavbar.navbar.logo.label}</span>
             </Link>
 
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}

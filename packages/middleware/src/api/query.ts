@@ -328,6 +328,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     }
     showAll {
       label
+      description
     }
     calloutSection {
       header {
