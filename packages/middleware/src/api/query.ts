@@ -1061,6 +1061,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       }
       image {
         svg
+        source
+        alternate
       }
     }
     successStoryHeaderFooter {
