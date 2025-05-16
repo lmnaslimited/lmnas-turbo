@@ -393,6 +393,7 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       buttons {
         label
         href
+        icon
       }
     }
     guideSection {
@@ -451,11 +452,17 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
         label
         href
         variant
+        icon
       }
     }
     trendingSection {
       title
+      highlight
       subtitle
+    }
+         trendingFooter {
+      label
+      description
     }
   }
 }`
