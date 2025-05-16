@@ -28,7 +28,7 @@ const fnGetIcon = (iSource: string): ReactNode => {
 const fnGetPlatformUrl = (iSource: string, iId: string): string => {
   switch (iSource) {
     case "LinkedIn":
-      return `https://www.linkedin.com/posts/${iId}`;
+      return `https://www.linkedin.com/feed/update/${iId}`;
     case "YouTube":
       return `https://www.youtube.com/watch?v=${iId}`;
     case "Twitter":
@@ -45,7 +45,7 @@ type TtrendsProps = {
 export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
-    <Link href={LPlatformUrl} >
+    <Link href={LPlatformUrl} target="_blank" >
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">

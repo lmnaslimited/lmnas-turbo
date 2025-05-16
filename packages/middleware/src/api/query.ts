@@ -328,6 +328,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     }
     showAll {
       label
+      description
     }
     calloutSection {
       header {
@@ -525,7 +526,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
         alternate
       }
       avatar {
-        svg
+        source
         alternate
       }
       avatarDetails {
