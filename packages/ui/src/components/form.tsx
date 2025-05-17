@@ -443,40 +443,25 @@ import Link from "next/link";
 // https://github.com/strapi/strapi/issues/7904
 //this is the helper function to map the user friently style name to tailwind css
 function fnGetClassNameFromFriendlyName(iStrapiValue: string) {
-    switch (iStrapiValue) {
-      case "Half_Width_Right_Padding":
-        return "w-1/2 pr-2 mb-3";
-      case "Half_Width_Left_Padding":
-        return "w-1/2 pl-2 mb-3";
-      case "Full_Width_Small_Bottom_Space":
-        return "w-full mb-3";
-      case "Half_Width_on_Tablet_Right_Padding":
-        return "md:w-1/2 w-full md:pr-2 mb-3";
-      case "Half_Width_on_Tablet_Left_Padding":
-        return "md:w-1/2 w-full md:pl-2 mb-3";
-      case "Full_Width_Larger_Bottom_Space":
-        return "w-full mb-4";
-      case "Half_Width_on_Tablet_Right_Padding_Medium_2_5":
-        return "w-full md:w-1/2 md:pr-2.5 mb-3";
-      case "Half_Width_on_Tablet_Left_Padding_Medium_2_5":
-        return "w-full md:w-1/2 md:pl-2.5 mb-3";
-      case "Half_Width_on_Tablet_Right_Padding_Small":
-        return "w-full md:w-1/2 md:pr-2 mb-3";
-      case "Half_Width_on_Tablet_Left_Padding_Small":
-        return "w-full md:w-1/2 md:pl-2 mb-3";
-      case "Half_Width_on_Tablet_Small_Bottom_Space":
-        return "w-full md:w-1/2 mb-3";
-      case "Full_Width_Medium_Right_Padding_2_5":
-        return "w-full md:pr-2.5 mb-3";
-      case "Full_Width_Medium_Left_Padding_2_5":
-        return "w-full md:pl-2.5 mb-3";
-      case "Half_Width_on_Tablet_No_Margin":
-        return "w-full md:w-1/2";
-      case "Full_Width_No_Margin":
-        return "w-full";
-      default:
-        return "w-full mb-3";
-    }
+    //object mapping is much faster than switch
+    const LdClassNameMap: Record<string, string> = {
+        Half_Width_Right_Padding: "w-1/2 pr-2 mb-3",
+        Half_Width_Left_Padding: "w-1/2 pl-2 mb-3",
+        Full_Width_Small_Bottom_Space: "w-full mb-3",
+        Half_Width_on_Tablet_Right_Padding: "md:w-1/2 w-full md:pr-2 mb-3",
+        Half_Width_on_Tablet_Left_Padding: "md:w-1/2 w-full md:pl-2 mb-3",
+        Full_Width_Larger_Bottom_Space: "w-full mb-4",
+        Half_Width_on_Tablet_Right_Padding_Medium_2_5: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        Half_Width_on_Tablet_Left_Padding_Medium_2_5: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        Half_Width_on_Tablet_Right_Padding_Small: "w-full md:w-1/2 md:pr-2 mb-3",
+        Half_Width_on_Tablet_Left_Padding_Small: "w-full md:w-1/2 md:pl-2 mb-3",
+        Half_Width_on_Tablet_Small_Bottom_Space: "w-full md:w-1/2 mb-3",
+        Full_Width_Medium_Right_Padding_2_5: "w-full md:pr-2.5 mb-3",
+        Full_Width_Medium_Left_Padding_2_5: "w-full md:pl-2.5 mb-3",
+        Half_Width_on_Tablet_No_Margin: "w-full md:w-1/2",
+        Full_Width_No_Margin: "w-full",
+      }
+      return LdClassNameMap[iStrapiValue] || "w-full mb-3"
   }
   
   
