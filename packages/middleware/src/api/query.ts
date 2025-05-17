@@ -1,33 +1,56 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource, TeventPageSource, TformsPageSource } from "../types";
-import { client } from '../lib/apollo-client';
+import {
+  IQuery,
+  TpricingPageSource,
+  TproductsPageSource,
+  TcareerPageSource,
+  TtrendsPageSource,
+  TindustriesPageSource,
+  TtermsAndConditionsPageSource,
+  TprivacyPolicyPageSource,
+  TslugsSource,
+  ThomePageSource,
+  TnavbarSource,
+  TfooterSource,
+  TcontactSource,
+  TsolutionPageSource,
+  TcaseStudiesPageSource,
+  TaboutUsPageSource,
+  TeventPageSource,
+  TformsPageSource,
+} from "../types";
+import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
-export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSourceType> {
+export abstract class clQuery<DynamicSourceType>
+  implements IQuery<DynamicSourceType>
+{
   query: string;
   contentType: string;
   locale: string;
   variables?: Record<string, any>;
-  // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string. 
+  // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
 
   async executeQuery(): Promise<DynamicSourceType> {
     // Set params of the query
     // this.setVariables({locale: this.locale})
     const { data } = await client.query({
-      query: gql`${this.query}`,
+      query: gql`
+        ${this.query}
+      `,
       variables: this.variables || {},
-      fetchPolicy: 'no-cache',
+      fetchPolicy: "no-cache",
     });
-    return (data) as DynamicSourceType;
+    return data as DynamicSourceType;
   }
   setVariables(variables: Record<string, any>): void {
     this.variables = variables;
   }
   constructor(iContentType: string) {
-    this.contentType = iContentType
-    this.locale = 'en'
-    this.query = this.getQuery()
+    this.contentType = iContentType;
+    this.locale = "en";
+    this.query = this.getQuery();
   }
 }
 
@@ -42,7 +65,7 @@ export class clQuerySlug extends clQuery<TslugsSource> {
       ${this.contentType} {
         slug
       }
-    }`
+    }`;
   }
 }
 
@@ -87,7 +110,7 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       icon
     }
   }
-}`
+}`;
   }
 }
 
@@ -130,7 +153,7 @@ export class clQueryFooter extends clQuery<TfooterSource> {
         href
       }
     }
-  }`
+  }`;
   }
 }
 
@@ -265,7 +288,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       alternate
     }
   }
-}`
+}`;
   }
 }
 
@@ -343,7 +366,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
       }
     }
   }
-}`
+}`;
   }
 }
 
@@ -465,7 +488,7 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       description
     }
   }
-}`
+}`;
   }
 }
 
@@ -555,7 +578,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
       }
     }
   }
-}`
+}`;
   }
 }
 
@@ -633,6 +656,9 @@ query Pricing($locale: I18NLocaleCode) {
         variant
         formMode
         icon
+      }
+      list {
+        label
       }
     }
     testimonialHeader {
@@ -722,7 +748,7 @@ query Pricing($locale: I18NLocaleCode) {
     }
   }
 }
-}`
+}`;
   }
 }
 
@@ -801,7 +827,7 @@ export class clQueryContact extends clQuery<TcontactSource> {
     }
     policyDescription
   }
-}`
+}`;
   }
 }
 
@@ -824,7 +850,7 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
       }
     }
   }
-}`
+}`;
   }
 }
 
@@ -1433,7 +1459,8 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       }
     }
   }
-}`}
+}`;
+  }
 }
 
 export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
@@ -1589,7 +1616,8 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       }
   }
 }
-`}
+`;
+  }
 }
 
 export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
@@ -1625,7 +1653,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
       emailHref
     }
   }
-}`
+}`;
   }
 }
 
@@ -1662,28 +1690,30 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
       emailHref
     }
   }
-}`
+}`;
   }
 }
 
 export class clQueryFactory {
-  private static queryMap: { [key: string]: new (icontentType: string) => IQuery<any> } = {
-    "navbar": clQueryNavbar,
-    "footer": clQueryFooter,
-    "home": clQueryHome,
-    "trend": clQueryTrends,
-    "career": clQueryCareer,
-    "contact": clQueryContact,
-    "pricing": clQueryPricing,
-    "solution": clQuerySolution,
-    "products": clQueryProducts,
-    "industries": clQueryIndustries,
-    "caseStudies": clQueryCaseStudies,
-    "termsAndCondition": clQueryTermsAndConditions,
-    "privacyPolicy": clQueryPrivacyPolicy,
-    "aboutUs": clQueryAboutUs,
-    "event": clQueryEvent,
-    "forms" :clQueryForms
+  private static queryMap: {
+    [key: string]: new (icontentType: string) => IQuery<any>;
+  } = {
+    navbar: clQueryNavbar,
+    footer: clQueryFooter,
+    home: clQueryHome,
+    trend: clQueryTrends,
+    career: clQueryCareer,
+    contact: clQueryContact,
+    pricing: clQueryPricing,
+    solution: clQuerySolution,
+    products: clQueryProducts,
+    industries: clQueryIndustries,
+    caseStudies: clQueryCaseStudies,
+    termsAndCondition: clQueryTermsAndConditions,
+    privacyPolicy: clQueryPrivacyPolicy,
+    aboutUs: clQueryAboutUs,
+    event: clQueryEvent,
+    forms: clQueryForms,
     // Add more mappings here
   };
 
