@@ -43,7 +43,7 @@ export function CarrerChart() {
                         <ChartTooltip
                             content={
                                 <ChartTooltipContent
-                                    labelKey="question"
+                                    labelKey="Question"
                                     indicator="line"
                                 />
                             }
@@ -51,7 +51,7 @@ export function CarrerChart() {
                         <Pie
                             data={LaChartData}
                             dataKey="value"
-                            nameKey="question"
+                            nameKey="Question"
                             innerRadius={60}
                             strokeWidth={5}
                             activeIndex={0}
