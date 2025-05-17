@@ -598,6 +598,7 @@ query Pricing($locale: I18NLocaleCode) {
         href
         formMode
         variant
+        icon
       }
     }
     planHeader {
@@ -631,6 +632,7 @@ query Pricing($locale: I18NLocaleCode) {
         href
         variant
         formMode
+        icon
       }
     }
     testimonialHeader {
@@ -640,6 +642,7 @@ query Pricing($locale: I18NLocaleCode) {
       buttons {
         label
         href
+        icon
       }
     }
     testimonialSection {
@@ -715,6 +718,7 @@ query Pricing($locale: I18NLocaleCode) {
         href
         formMode
         variant
+        icon
     }
   }
 }
