@@ -4,7 +4,7 @@ import { Card, CardContent,  CardFooter } from "@repo/ui/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
 
 // Updated chart data based on your new percentages and categories
-const LdChartData = [
+const LaChartData = [
     { Question: "I have the skills, but where do I start?", value: 40, fill: "var(--chart-5)" },
     { Question: `Can I switch fields and be valued?`, value: 25, fill: "var(--chart-4)" },
     { Question: "How do I restart my career?", value: 15, fill: "var(--chart-3)" },
@@ -49,7 +49,7 @@ export function CarrerChart() {
                             }
                         />
                         <Pie
-                            data={LdChartData}
+                            data={LaChartData}
                             dataKey="value"
                             nameKey="question"
                             innerRadius={60}
@@ -65,7 +65,7 @@ export function CarrerChart() {
             <CardFooter className="flex flex-col gap-2 text-sm">
                 {/* Legend */}
                 <div className="grid grid-cols-2 gap-4">
-                    {LdChartData.map(({ Question, fill }) => (
+                    {LaChartData.map(({ Question, fill }) => (
                         <div key={Question} className="flex items-center gap-2">
                             <span
                                 className="block w-4 h-4 rounded-full"
