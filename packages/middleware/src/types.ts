@@ -100,7 +100,7 @@ export type TcalloutProps = {
 export type Tbutton = {
     label?: string;
     href?: string;
-    variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link" | "pricing";
+    variant?: "default" | "outline" | "ghost" | "secondary" | "destructive" | "link";
     size?: "default" | "sm" | "lg" | "icon"
     icon?: React.ReactNode | keyof typeof LucideIcons | string
     iconPosition?: "before" | "after";
