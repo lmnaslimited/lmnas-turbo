@@ -420,6 +420,7 @@ type Tcareer = {
     jobsSection: TcalloutProps
     planSection: TheroSection
     trendingSection: Theader
+    trendingFooter: Tbutton[]
 }
 
 
