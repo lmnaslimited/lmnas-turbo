@@ -6,7 +6,7 @@ import { Card, CardContent } from "@repo/ui/components/ui/card";
 import { Download, CheckCircle2 } from "lucide-react";
 import { TcardProps, TformMode } from "@repo/middleware";
 
-export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode) => void }): ReactElement {
+export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
   // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
@@ -60,7 +60,7 @@ export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: T
                     key={`btn-${index}`}
                     onClick={() => {
                       if (onButtonClick && idButton.formMode) {
-                        onButtonClick(idButton.formMode)
+                        onButtonClick(idButton.formMode, idButton.label)
                       }
                     }}
                   >

@@ -6,7 +6,7 @@ import { Button } from "@repo/ui/components/ui/button";
 import { ChevronRight, Download } from "lucide-react";
 import { TcalloutProps, TformMode } from "@repo/middleware";
 
-export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: TcalloutProps, onButtonClick?: (mode: TformMode) => void }): ReactElement {
+export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: TcalloutProps, onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null);
 
   // Checks if the section is in view for triggering animations
@@ -46,7 +46,7 @@ export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: Tca
                 className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary"
                 onClick={() => {
                   if (onButtonClick && idButton.formMode) {
-                    onButtonClick(idButton.formMode)
+                    onButtonClick(idButton.formMode, idButton.label)
                   }
                 }}
               >

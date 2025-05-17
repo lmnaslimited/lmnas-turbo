@@ -16,7 +16,7 @@ export default function Callout({
   onButtonClick,
 }: {
   idCallout: TcalloutProps
-  onButtonClick?: (mode: TformMode) => void
+  onButtonClick?: (mode: TformMode, formTitle?:string) => void
 }): ReactElement {
 
   // Determine the layout type, defaulting to "classic" if not provided
@@ -92,7 +92,7 @@ export default function Callout({
               size={idButton.size || "lg"}
               onClick={() => {
                 if (onButtonClick && idButton.formMode) {
-                  onButtonClick(idButton.formMode)
+                  onButtonClick(idButton.formMode, idButton.label)
                 }
               }}
             >

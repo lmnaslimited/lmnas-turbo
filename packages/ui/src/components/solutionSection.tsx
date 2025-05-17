@@ -7,7 +7,7 @@ import { Button } from "@repo/ui/components/ui/button"
 import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
 import { TsolutionSection, TformMode } from "@repo/middleware"
 
-export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode) => void }): ReactElement {
+export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
 
   // Animation variants for fade-in effect.
@@ -145,7 +145,7 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
           <Button key={index} className="flex items-center gap-2"
           onClick={() => {
             if (onButtonClick && idButton.formMode) {
-              onButtonClick(idButton.formMode)
+              onButtonClick(idButton.formMode, idButton.label)
             }
           }}>
             <Download className="w-5 h-5" />
