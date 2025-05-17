@@ -14,7 +14,6 @@ import { MoreHorizontal, Globe } from "lucide-react"
 
 export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
-  const [IsScrolled, fnSetIsScrolled] = React.useState(false)
   const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
   const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
   const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
@@ -33,38 +32,38 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
     fnSetLanguage(currentLang ?? "EN");
   }, [pathname]);
 
-  const handleLanguageChange = (newLang: string) => {
-    const segments = pathname.split('/');
-    segments[1] = newLang; // replace language segment
-    const newPath = segments.join('/');
+  const fnHandleLanguageChange = (newLang: string) => {
+    const Segments = pathname.split('/');
+    Segments[1] = newLang; // replace language segment
+    const NewPath = Segments.join('/');
     fnSetLanguage(newLang);
-    router.push(newPath); // navigate to new lang route
+    router.push(NewPath); // navigate to new lang route
   };
 
   React.useEffect(() => {
-    const handleScroll = () => {
+    const fnHandleScroll = () => {
       fnSetMobileProductsOpen(false)
       fnSetMobileIndustriesOpen(false)
       fnSetMobileModeDropdownOpen(false)
     }
 
-    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
-      const target = event.target as HTMLElement
-      if (!target.closest('.mobile-dropdown')) {
+    const fnHandleClickOutside = (event: MouseEvent | TouchEvent) => {
+      const Target = event.target as HTMLElement
+      if (!Target.closest('.mobile-dropdown')) {
         fnSetMobileProductsOpen(false)
         fnSetMobileIndustriesOpen(false)
         fnSetMobileModeDropdownOpen(false)
       }
     }
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    window.addEventListener('click', handleClickOutside)
-    window.addEventListener('touchstart', handleClickOutside)
+    window.addEventListener('scroll', fnHandleScroll, { passive: true })
+    window.addEventListener('click', fnHandleClickOutside)
+    window.addEventListener('touchstart', fnHandleClickOutside)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('click', handleClickOutside)
-      window.removeEventListener('touchstart', handleClickOutside)
+      window.removeEventListener('scroll', fnHandleScroll)
+      window.removeEventListener('click', fnHandleClickOutside)
+      window.removeEventListener('touchstart', fnHandleClickOutside)
     }
   }, [])
 
@@ -231,7 +230,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
                       // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() => handleLanguageChange(idLang.label ?? "EN")}
+                      onClick={() => fnHandleLanguageChange(idLang.label ?? "EN")}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.label === Language ? "bg-muted " : "",
@@ -286,7 +285,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
                       // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() => handleLanguageChange(idLang.label ?? "EN")}
+                      onClick={() => fnHandleLanguageChange(idLang.label ?? "EN")}
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
                         idLang.label === Language ? "bg-muted " : "",
