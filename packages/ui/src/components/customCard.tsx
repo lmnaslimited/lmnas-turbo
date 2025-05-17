@@ -238,7 +238,7 @@ export default function CustomCard({ idCardProps }: { idCardProps: TcardProps })
                   key={`btn-${iIndex}`}
                   variant={idBtn.variant || "default"}
                   size={idBtn.size || "default"}
-                  onClick={() => idCardProps.onButtonClick?.(idBtn.formMode)}
+                  onClick={() => idCardProps.onButtonClick?.(idBtn.formMode, idBtn.label)}
                 >
                   {/* If iconPosition is 'before', render icon first */}
                   {idBtn.icon && idBtn.iconPosition === "before" && (
