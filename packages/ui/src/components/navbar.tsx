@@ -47,8 +47,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
       fnSetMobileModeDropdownOpen(false)
     }
 
-    const fnHandleClickOutside = (event: MouseEvent | TouchEvent) => {
-      const Target = event.target as HTMLElement
+    const fnHandleClickOutside = (idevent: MouseEvent | TouchEvent) => {
+      const Target = idevent.target as HTMLElement
       if (!Target.closest('.mobile-dropdown')) {
         fnSetMobileProductsOpen(false)
         fnSetMobileIndustriesOpen(false)
@@ -66,8 +66,6 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
       window.removeEventListener('touchstart', fnHandleClickOutside)
     }
   }, [])
-
-
 
   const fnGetCurrentLanguageDisplay = (): string => {
     const CurrentLang = idNavbar.navbar.language.find((idLang) => idLang.label === Language)
