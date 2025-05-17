@@ -16,7 +16,7 @@ import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { PhoneInput } from "react-international-phone"
 import "react-international-phone/style.css"
-import { isValidPhoneNumber } from "libphonenumber-js"
+// import { isValidPhoneNumber } from "libphonenumber-js"
 import { fetchTimezones } from "@repo/ui/api/getTimeZone"
 import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
 import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
@@ -30,415 +30,441 @@ import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCar
 import Link from "next/link";
 
 // These form configuration objects define the structure, validation rules, and fields for different form types.
-export const LdBookingFormConfig: TformConfig = {
-    id: "appointment",
-    title: "Book an Appointment",
-    description: "Fill out the form below to schedule a meeting with us.",
-    submitText: "Book Now",
-    successTitle: "Thank You!",
-    successMessage: "Your booking has been confirmed successfully!",
-    showTerms: true,
-    termsText: "Terms of Service",
-    privacyText: "Privacy Policy",
-    // The schema defines validation rules using Zod for each field in the form
-    schema: z.object({
-        date: z.date({ required_error: "Please select a date." }),
-        timezone: z.string({ required_error: "Please select a timezone." }),
-        timeSlot: z.string({ required_error: "Please select a time slot." }),
-        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-            message: "Invalid phone number",
-        }),
-        email: z.string().email("Please enter a valid email"),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
-    }),
-    // Field configurations define the UI and behavior of each form field
-    fields: [
-        {
-            name: "date",
-            type: "date",
-            placeholder: "Select date",
-            required: true,
-            className: "w-1/2 pr-2 mb-3",
-        },
-        {
-            name: "timezone",
-            type: "timezone",
-            placeholder: "Select timezone",
-            required: true,
-            className: "w-1/2 pl-2 mb-3",
-        },
-        {
-            name: "timeSlot",
-            type: "timeslot",
-            placeholder: "Select time slot",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "name",
-            type: "text",
-            placeholder: "Enter your full name *",
-            required: true,
-            className: "md:w-1/2 w-full md:pr-2 mb-3",
-        },
-        {
-            name: "phone",
-            type: "phone",
-            required: true,
-            className: "md:w-1/2 w-full md:pl-2 mb-3",
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address *",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "message",
-            type: "textarea",
-            required: true,
-            placeholder: "Your message",
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to newsletter",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdBookingFormConfig: TformConfig = {
+//     id: "booking",
+//     title: "Book an Appointment",
+//     description: "Fill out the form below to schedule a meeting with us.",
+//     submitText: "Book Now",
+//     successTitle: "Thank You!",
+//     successMessage: "Your booking has been confirmed successfully!",
+//     showTerms: true,
+//     termsText: "Terms of Service",
+//     privacyText: "Privacy Policy",
+//     // The schema defines validation rules using Zod for each field in the form
+//     schema: z.object({
+//         date: z.date({ required_error: "Please select a date." }),
+//         timezone: z.string({ required_error: "Please select a timezone." }),
+//         timeSlot: z.string({ required_error: "Please select a time slot." }),
+//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+//         phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+//             message: "Invalid phone number",
+//         }),
+//         email: z.string().email("Please enter a valid email"),
+//         message: z.string().optional(),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     // Field configurations define the UI and behavior of each form field
+//     fields: [
+//         {
+//             name: "date",
+//             type: "date",
+//             placeholder: "Select date",
+//             required: true,
+//             className: "w-1/2 pr-2 mb-3",
+//         },
+//         {
+//             name: "timezone",
+//             type: "timezone",
+//             placeholder: "Select timezone",
+//             required: true,
+//             className: "w-1/2 pl-2 mb-3",
+//         },
+//         {
+//             name: "timeSlot",
+//             type: "timeslot",
+//             placeholder: "Select time slot",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "name",
+//             type: "text",
+//             placeholder: "Enter your full name *",
+//             required: true,
+//             className: "md:w-1/2 w-full md:pr-2 mb-3",
+//         },
+//         {
+//             name: "phone",
+//             type: "phone",
+//             required: true,
+//             className: "md:w-1/2 w-full md:pl-2 mb-3",
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address *",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "message",
+//             type: "textarea",
+//             required: true,
+//             placeholder: "Your message",
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to newsletter",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
-export const LdContactFormConfig: TformConfig = {
-    id: "contact",
-    title: "Contact Us",
-    description: "Get in touch with our team",
-    submitText: "Send Message",
-    successTitle: "Thank You!",
-    successMessage: "Your message has been sent!",
-    showTerms: true,
-    schema: z.object({
-        enquiryType: z.string().default("Free Trial"),
-        email: z.string().email("Please enter a valid email"),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
-    }),
-    fields: [
-        {
-            name: "enquiryType",
-            type: "select",
-            placeholder: "Select an option",
-            required: true,
-            className: "w-full mb-3",
-            options: [
-                { value: "Free Trial", label: "Free Trial" },
-                { value: "Demo", label: "Demo" },
-                { value: "Pricing", label: "Pricing" },
-                { value: "Support", label: "Support" },
-            ],
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address *",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "message",
-            type: "textarea",
-            placeholder: "Your message",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to newsletter",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdContactFormConfig: TformConfig = {
+//     id: "contact",
+//     title: "Contact Us",
+//     description: "Get in touch with our team",
+//     submitText: "Send Message",
+//     successTitle: "Thank You!",
+//     successMessage: "Your message has been sent!",
+//     showTerms: true,
+//     schema: z.object({
+//         enquiryType: z.string().default("Free Trial"),
+//         email: z.string().email("Please enter a valid email"),
+//         message: z.string().optional(),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     fields: [
+//         {
+//             name: "enquiryType",
+//             type: "select",
+//             placeholder: "Select an option",
+//             required: true,
+//             className: "w-full mb-3",
+//             options: [
+//                 { value: "Free Trial", label: "Free Trial" },
+//                 { value: "Demo", label: "Demo" },
+//                 { value: "Pricing", label: "Pricing" },
+//                 { value: "Support", label: "Support" },
+//             ],
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address *",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "message",
+//             type: "textarea",
+//             placeholder: "Your message",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to newsletter",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
-export const LdDownloadFormConfig: TformConfig = {
-    id: "download",
-    title: "Download Resources",
-    description: "Fill out the form to access our content",
-    submitText: "Download Now",
-    successTitle: "Happy Reading!",
-    successMessage: "Your download will start shortly!",
-    showTerms: true,
-    schema: z.object({
-        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        email: z.string().email("Please enter a valid email"),
-        newsletter: z.boolean().default(true),
-    }),
-    fields: [
-        {
-            name: "name",
-            type: "text",
-            placeholder: "Enter your full name *",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address*",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to newsletter",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdDownloadFormConfig: TformConfig = {
+//     id: "download",
+//     title: "Download Resources",
+//     description: "Fill out the form to access our content",
+//     submitText: "Download Now",
+//     successTitle: "Happy Reading!",
+//     successMessage: "Your download will start shortly!",
+//     showTerms: true,
+//     schema: z.object({
+//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+//         email: z.string().email("Please enter a valid email"),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     fields: [
+//         {
+//             name: "name",
+//             type: "text",
+//             placeholder: "Enter your full name *",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address*",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to newsletter",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
-export const LdContactPageFormConfig: TformConfig = {
-    id: "contact",
-    title: "Contact Us",
-    description: "Get in touch with our team",
-    submitText: "Send Message",
-    successTitle: "Thank You!",
-    successMessage: "Your message has been sent successfully!",
-    showTerms: true,
-    termsText: "Terms of Service",
-    privacyText: "Privacy Policy",
-    schema: z.object({
-        name: z
-            .string()
-            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        email: z.string().email("Please enter a valid email"),
-        company: z.string().optional(),
-        phone: z
-            .string()
-            .refine((iVal) => isValidPhoneNumber(iVal), {
-                message: "Invalid phone number",
-            })
-            .optional(),
-        product: z.string().optional(),
-        enquiryType: z.string().optional(),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
-    }),
-    fields: [
-        {
-            name: "name",
-            type: "text",
-            placeholder: "Enter your full name *",
-            required: true,
-            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address*",
-            required: true,
-            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-        },
-        {
-            name: "company",
-            type: "text",
-            placeholder: "Enter your company name",
-            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-        },
-        {
-            name: "phone",
-            type: "phone",
-            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-        },
-        {
-            name: "product",
-            type: "select",
-            placeholder: "Select product",
-            className: "w-full md:w-1/2 md:pr-2 mb-3",
-            options: [
-                { value: "LENS ERP", label: "LENS ERP" },
-                { value: "CRM", label: "CRM" },
-                { value: "Analytics", label: "Analytics" },
-            ],
-        },
-        {
-            name: "enquiryType",
-            type: "select",
-            placeholder: "Select enquiry type",
-            className: "w-full md:w-1/2 md:pl-2 mb-3",
-            options: [
-                { value: "Free Trial", label: "Free Trial" },
-                { value: "Demo", label: "Demo" },
-                { value: "Pricing", label: "Pricing" },
-                { value: "Support", label: "Support" },
-            ],
-        },
-        {
-            name: "message",
-            type: "textarea",
-            placeholder: "Your message",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to our newsletter for updates and offers",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdContactPageFormConfig: TformConfig = {
+//     id: "contact",
+//     title: "Contact Us",
+//     description: "Get in touch with our team",
+//     submitText: "Send Message",
+//     successTitle: "Thank You!",
+//     successMessage: "Your message has been sent successfully!",
+//     showTerms: true,
+//     termsText: "Terms of Service",
+//     privacyText: "Privacy Policy",
+//     schema: z.object({
+//         name: z
+//             .string()
+//             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+//         email: z.string().email("Please enter a valid email"),
+//         company: z.string().optional(),
+//         phone: z
+//             .string()
+//             .refine((iVal) => isValidPhoneNumber(iVal), {
+//                 message: "Invalid phone number",
+//             })
+//             .optional(),
+//         product: z.string().optional(),
+//         enquiryType: z.string().optional(),
+//         message: z.string().optional(),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     fields: [
+//         {
+//             name: "name",
+//             type: "text",
+//             placeholder: "Enter your full name *",
+//             required: true,
+//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address*",
+//             required: true,
+//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+//         },
+//         {
+//             name: "company",
+//             type: "text",
+//             placeholder: "Enter your company name",
+//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+//         },
+//         {
+//             name: "phone",
+//             type: "phone",
+//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+//         },
+//         {
+//             name: "product",
+//             type: "select",
+//             placeholder: "Select product",
+//             className: "w-full md:w-1/2 md:pr-2 mb-3",
+//             options: [
+//                 { value: "LENS ERP", label: "LENS ERP" },
+//                 { value: "CRM", label: "CRM" },
+//                 { value: "Analytics", label: "Analytics" },
+//             ],
+//         },
+//         {
+//             name: "enquiryType",
+//             type: "select",
+//             placeholder: "Select enquiry type",
+//             className: "w-full md:w-1/2 md:pl-2 mb-3",
+//             options: [
+//                 { value: "Free Trial", label: "Free Trial" },
+//                 { value: "Demo", label: "Demo" },
+//                 { value: "Pricing", label: "Pricing" },
+//                 { value: "Support", label: "Support" },
+//             ],
+//         },
+//         {
+//             name: "message",
+//             type: "textarea",
+//             placeholder: "Your message",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to our newsletter for updates and offers",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
-export const LdBookingPageFormConfig: TformConfig = {
-    id: "appointment",
-    title: "Book Appointment",
-    description: "Fill out the form below to schedule a meeting with us.",
-    submitText: "Book Now",
-    successTitle: "Thank You!",
-    successMessage: "Your booking has been confirmed successfully!",
-    showTerms: true,
-    termsText: "Terms of Service",
-    privacyText: "Privacy Policy",
-    schema: z.object({
-        date: z.date({ required_error: "Please select a date." }),
-        timezone: z.string({ required_error: "Please select a timezone." }),
-        timeSlot: z.string({ required_error: "Please select a time slot." }),
-        name: z
-            .string()
-            .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        email: z.string().email("Please enter a valid email"),
-        company: z.string().optional(),
-        phone: z
-            .string()
-            .refine((iVal) => isValidPhoneNumber(iVal), {
-                message: "Invalid phone number",
-            })
-            .optional(),
-        message: z.string().optional(),
-        newsletter: z.boolean().default(true),
-    }),
-    fields: [
-        {
-            name: "date",
-            type: "date",
-            placeholder: "Select date",
-            required: true,
-            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-        },
-        {
-            name: "timezone",
-            type: "timezone",
-            placeholder: "Select timezone",
-            required: true,
-            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-        },
-        {
-            name: "timeSlot",
-            type: "timeslot",
-            placeholder: "Select time slot",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "name",
-            type: "text",
-            placeholder: "Enter your full name *",
-            required: true,
-            className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-        },
-        {
-            name: "phone",
-            type: "phone",
-            className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address *",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "message",
-            type: "textarea",
-            placeholder: "Your message",
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to our newsletter for updates and offers",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdBookingPageFormConfig: TformConfig = {
+//     id: "appointment",
+//     title: "Book Appointment",
+//     description: "Fill out the form below to schedule a meeting with us.",
+//     submitText: "Book Now",
+//     successTitle: "Thank You!",
+//     successMessage: "Your booking has been confirmed successfully!",
+//     showTerms: true,
+//     termsText: "Terms of Service",
+//     privacyText: "Privacy Policy",
+//     schema: z.object({
+//         date: z.date({ required_error: "Please select a date." }),
+//         timezone: z.string({ required_error: "Please select a timezone." }),
+//         timeSlot: z.string({ required_error: "Please select a time slot." }),
+//         name: z
+//             .string()
+//             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+//         email: z.string().email("Please enter a valid email"),
+//         company: z.string().optional(),
+//         phone: z
+//             .string()
+//             .refine((iVal) => isValidPhoneNumber(iVal), {
+//                 message: "Invalid phone number",
+//             })
+//             .optional(),
+//         message: z.string().optional(),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     fields: [
+//         {
+//             name: "date",
+//             type: "date",
+//             placeholder: "Select date",
+//             required: true,
+//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+//         },
+//         {
+//             name: "timezone",
+//             type: "timezone",
+//             placeholder: "Select timezone",
+//             required: true,
+//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+//         },
+//         {
+//             name: "timeSlot",
+//             type: "timeslot",
+//             placeholder: "Select time slot",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "name",
+//             type: "text",
+//             placeholder: "Enter your full name *",
+//             required: true,
+//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
+//         },
+//         {
+//             name: "phone",
+//             type: "phone",
+//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address *",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "message",
+//             type: "textarea",
+//             placeholder: "Your message",
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to our newsletter for updates and offers",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
-export const LdWebinarFormConfig: TformConfig = {
-    id: "webinar",
-    title: "Join Our Webinar – Register Now",
-    description: "Fill out the form to receive your webinar access link.",
-    submitText: "Register",
-    successTitle: "Thank You!",
-    successMessage: "Thank you for registering! A confirmation email has been sent to your inbox",
-    showTerms: true,
-    termsText: "Terms of Service",
-    privacyText: "Privacy Policy",
-    // The schema defines validation rules using Zod for each field in the form
-    schema: z.object({
-        name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-        phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-            message: "Invalid phone number",
-        }).optional(),
-        email: z.string().email("Please enter a valid email"),
-        company: z.string().optional(),
-        job: z.string().optional(),
-        newsletter: z.boolean().default(true),
-    }),
-    // Field configurations define the UI and behavior of each form field
-    fields: [
-        {
-            name: "name",
-            type: "text",
-            placeholder: "Enter your full name *",
-            required: true,
-            className: "md:w-1/2 w-full md:pr-2 mb-3",
-        },
-        {
-            name: "phone",
-            type: "phone",
-            className: "md:w-1/2 w-full md:pl-2 mb-3",
-        },
-        {
-            name: "email",
-            type: "email",
-            placeholder: "Enter your email address *",
-            required: true,
-            className: "w-full mb-3",
-        },
-        {
-            name: "company",
-            type: "text",
-            placeholder: "Enter your Company Name",
-            className: "w-full mb-3",
-        },
-        {
-            name: "job",
-            type: "text",
-            placeholder: "Enter your Job Title",
-            className: "w-full mb-3",
-        },
-        {
-            name: "newsletter",
-            type: "checkbox",
-            placeholder: "Subscribe to newsletter",
-            className: "w-full mb-4",
-        },
-    ],
-}
+// export const LdWebinarFormConfig: TformConfig = {
+//     id: "webinar",
+//     title: "Join Our Webinar – Register Now",
+//     description: "Fill out the form to receive your webinar access link.",
+//     submitText: "Register",
+//     successTitle: "Thank You!",
+//     successMessage: "Thank you for registering! A confirmation email has been sent to your inbox",
+//     showTerms: true,
+//     termsText: "Terms of Service",
+//     privacyText: "Privacy Policy",
+//     // The schema defines validation rules using Zod for each field in the form
+//     schema: z.object({
+//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
+//         phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
+//             message: "Invalid phone number",
+//         }).optional(),
+//         email: z.string().email("Please enter a valid email"),
+//         company: z.string().optional(),
+//         job: z.string().optional(),
+//         newsletter: z.boolean().default(true),
+//     }),
+//     // Field configurations define the UI and behavior of each form field
+//     fields: [
+//         {
+//             name: "name",
+//             type: "text",
+//             placeholder: "Enter your full name *",
+//             required: true,
+//             className: "md:w-1/2 w-full md:pr-2 mb-3",
+//         },
+//         {
+//             name: "phone",
+//             type: "phone",
+//             className: "md:w-1/2 w-full md:pl-2 mb-3",
+//         },
+//         {
+//             name: "email",
+//             type: "email",
+//             placeholder: "Enter your email address *",
+//             required: true,
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "company",
+//             type: "text",
+//             placeholder: "Enter your Company Name",
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "job",
+//             type: "text",
+//             placeholder: "Enter your Job Title",
+//             className: "w-full mb-3",
+//         },
+//         {
+//             name: "newsletter",
+//             type: "checkbox",
+//             placeholder: "Subscribe to newsletter",
+//             className: "w-full mb-4",
+//         },
+//     ],
+// }
 
+//till now the strapi's enumerate field value is return with uderscore(incase of space)
+// https://github.com/strapi/strapi/issues/7904
+//this is the helper function to map the user friently style name to tailwind css
+function fnGetClassNameFromFriendlyName(iStrapiValue: string) {
+    //object mapping is much faster than switch
+    const LdClassNameMap: Record<string, string> = {
+        Half_Width_Right_Padding: "w-1/2 pr-2 mb-3",
+        Half_Width_Left_Padding: "w-1/2 pl-2 mb-3",
+        Full_Width_Small_Bottom_Space: "w-full mb-3",
+        Half_Width_on_Tablet_Right_Padding: "md:w-1/2 w-full md:pr-2 mb-3",
+        Half_Width_on_Tablet_Left_Padding: "md:w-1/2 w-full md:pl-2 mb-3",
+        Full_Width_Larger_Bottom_Space: "w-full mb-4",
+        Half_Width_on_Tablet_Right_Padding_Medium_2_5: "w-full md:w-1/2 md:pr-2.5 mb-3",
+        Half_Width_on_Tablet_Left_Padding_Medium_2_5: "w-full md:w-1/2 md:pl-2.5 mb-3",
+        Half_Width_on_Tablet_Right_Padding_Small: "w-full md:w-1/2 md:pr-2 mb-3",
+        Half_Width_on_Tablet_Left_Padding_Small: "w-full md:w-1/2 md:pl-2 mb-3",
+        Half_Width_on_Tablet_Small_Bottom_Space: "w-full md:w-1/2 mb-3",
+        Full_Width_Medium_Right_Padding_2_5: "w-full md:pr-2.5 mb-3",
+        Full_Width_Medium_Left_Padding_2_5: "w-full md:pl-2.5 mb-3",
+        Half_Width_on_Tablet_No_Margin: "w-full md:w-1/2",
+        Full_Width_No_Margin: "w-full",
+      }
+      return LdClassNameMap[iStrapiValue] || "w-full mb-3"
+  }
+  
+  
 /**
  * Checks if the contact exists or creates a new one.
  * Adds the participant to the corresponding event.
@@ -496,12 +522,15 @@ export async function fnSubmitWebinar(idFormData: any, idData: TtrendCardProps, 
  * Submits appointment booking data to the server
  * idFormData - Form data containing appointment details
  * iRecaptchaToken - ReCaptcha token for verification
+ * idConfig - form configuration from strapi
  * returns Object containing response data or error
  */
-export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string) {
+export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string, idConfig:TformConfig) {
     try {
+        // Format the date into 'yyyy-MM-dd' string format for the backend
         const LFormattedDate = format(new Date(idFormData.date), "yyyy-MM-dd")
 
+        // Construct payload to be sent to the booking API
         const LdPayload = {
             date: LFormattedDate,
             time: idFormData.timeSlot,
@@ -515,26 +544,32 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
             recaptchaToken: iRecaptchaToken,
         }
 
+        // Send the booking request to the server
         const LdResponse = await bookAppointmentAction(LdPayload)
 
+        // If user opted into the newsletter, submit their email
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
             await subscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
+        // Handle errors returned by the booking API
         if (LdResponse.error) {
             return { error: LdResponse.error }
         }
+        // Determine the booking status (e.g., Unverified vs Verified)
         const LStatus = LdResponse?.data?.message?.status
 
-        const LTitle = LStatus === "Unverified" ? "Welcome To Our Family!" : "Thank You!"
+         // Determine title and message to show based on verification status
+        const LTitle = LStatus === "Unverified" ? idConfig.unVerifiedMessage?.label ?? "Welcome To Our Family!" : idConfig.verifiedMessage?.label ?? "Thank You!"
 
         const LMessage =
             LStatus === "Unverified"
-                ? "Please check your email to confirm the appointment"
-                : "Booking confirmed successfully"
+                ? idConfig.unVerifiedMessage?.description ?? "Please check your email to confirm the appointment"
+                : idConfig.verifiedMessage?.description ?? "Booking confirmed successfully"
 
+        // Return the final formatted result to the UI
         return {
             data: LdResponse.data,
             title: LTitle,
@@ -554,24 +589,29 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
  */
 export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) {
     try {
+        // Prepare payload to be sent to the server for sending communication
         const LdPayload = {
             email: idFormData.email,
             notes: idFormData.message || "",
             option: idFormData.enquiryType || "Free Trial",
             recaptchaToken: iRecaptchaToken,
         }
+        // Send the contact details to the backend communication handler
         const LdResponse = await sendCommunicationAction(LdPayload)
 
+        // If the user opted in to the newsletter, add them to the subscription list
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
             await subscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
+        // If server responded with an error, return it
         if (LdResponse.error) {
             return { error: LdResponse.error }
         }
 
+        // Return success response with any provided message and data
         return {
             data: LdResponse.data,
             message: LdResponse.message,
@@ -786,17 +826,17 @@ function InnerSectionForm({
             const LdRecaptchaToken = await executeRecaptcha("submit")
             let LdResponse
 
-            if (config.id === "appointment") {
-                LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken)
+            if (config.formId === "booking") {
+                LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
                 config.successMessage = LdResponse.message ? LdResponse.message : ""
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
-            } else if (config.id === "contact") {
+            } else if (config.formId === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
             }
-            else if (config.id === "download") {
+            else if (config.formId === "download") {
                 LdResponse = await fnDownload(idFormData,  pdfData, LdRecaptchaToken)
             }
-            else if (config.id === "webinar") {
+            else if (config.formId === "webinar") {
                 LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)
             }
             else {
@@ -836,7 +876,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <FormControl>
                                     <FloatingLabelInput
                                         label={idField.label || idField.placeholder || ""}
@@ -859,7 +899,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <FormControl>
                                     <PhoneInput
                                         defaultCountry="de"
@@ -886,8 +926,8 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={idField.className}>
-                                <Select onValueChange={iField.onChange} value={iField.value || ""}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                                <Select onValueChange={iField.onChange} value={iField.value || idField.defaultValue}>
                                     <FormControl>
                                         <SelectTrigger className="h-12">
                                             <SelectValue placeholder={idField.placeholder} />
@@ -914,7 +954,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField, fieldState: iFieldState }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <FormControl>
                                     <Textarea
                                         placeholder={idField.placeholder}
@@ -936,7 +976,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Popover>
                                     <PopoverTrigger asChild>
                                         <FormControl>
@@ -972,7 +1012,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Select onValueChange={iField.onChange} value={iField.value || ""} disabled={IsLoadingTimezones}>
                                     <FormControl>
                                         <SelectTrigger className="h-12">
@@ -1001,13 +1041,13 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={idField.className}>
+                            <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <div className="grid grid-cols-3 gap-2">
                                     {IsLoadingSlots ? (
-                                        <p className="col-span-3 text-muted-foreground text-sm">Loading slots...</p>
+                                        <p className="col-span-3 text-muted-foreground text-sm">{idField.loading.label ?? "Loading slots..."}</p>
                                     ) : TimeSlots.length === 0 ? (
-                                        <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">No slots available</p>
+                                        <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">{idField.loading.description ?? "No slots available"}</p>
                                     ) : (
                                         TimeSlots.map(({ time, availability }) => { //here the variable is destructure from response
                                             const fromTime = time.slice(11, 16)
@@ -1017,21 +1057,6 @@ function InnerSectionForm({
                                             const formattedValue = `${fromTime}:00`
 
                                             return (
-                                                // <Button
-                                                //     key={time}
-                                                //     type="button"
-                                                //     variant={availability ? (iField.value === formattedValue ? "default" : "outline") : "outline"}
-                                                //     className={`h-10 ${iField.value === formattedValue
-                                                //         ? "bg-foreground text-foreground hover:bg-accent"
-                                                //         : !availability
-                                                //             ? "bg-foreground text-accent hover:bg-accent hover:text-muted cursor-not-allowed"
-                                                //             : ""
-                                                //         }`}
-                                                //     onClick={() => iField.onChange(formattedValue)}
-                                                //     disabled={!availability}
-                                                // >
-                                                //     {slotLabel}
-                                                // </Button>
                                                 <Button
                                                     key={time}
                                                     type="button"
@@ -1063,7 +1088,7 @@ function InnerSectionForm({
                         control={LdForm.control}
                         name={idField.name}
                         render={({ field: iField }) => (
-                            <FormItem className={cn(idField.className, "flex flex-row items-center justify-start space-x-2")}>
+                            <FormItem className={cn(fnGetClassNameFromFriendlyName(idField.fieldDisplay), "flex flex-row items-center justify-start space-x-2")}>
                                 <FormControl>
                                     <Checkbox checked={iField.value || false} onCheckedChange={iField.onChange} className="mt-1.5" />
                                 </FormControl>
@@ -1125,8 +1150,7 @@ function InnerSectionForm({
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                             ></path>
                                         </svg>
-                                        Processing...
-                                    </span>
+                                </span>
                                 ) : (
                                     config.submitText
                                 )}
@@ -1134,13 +1158,13 @@ function InnerSectionForm({
 
                             {config.showTerms && (
                                 <p className="text-xs text-center text-muted-foreground">
-                                    By submitting, you agree to our{" "}
-                                    <Link href="/terms-and-conditions" className="underline" target="_blank" rel="noopener noreferrer">
-                                        {config.termsText || "Terms"}
+                                    {config.policyDescription ?? "By submitting, you agree to our"}{" "}
+                                    <Link href={`/${config.terms?.href ?? "terms-and-conditions"}`} className="underline" target="_blank" rel="noopener noreferrer">
+                                        {config.terms?.label ?? "Terms"}
                                     </Link>{" "}
-                                    and{" "}
-                                    <Link href="/privacy-policy" className="underline" target="_blank" rel="noopener noreferrer">
-                                        {config.privacyText || "Privacy Policy"}
+                                    &{" "}
+                                    <Link href={`/${config.privacy?.href ?? "privacy-policy"}`} className="underline" target="_blank" rel="noopener noreferrer">
+                                        {config.privacy?.label ?? "Privacy Policy"}
                                     </Link>
                                 </p>
                             )}

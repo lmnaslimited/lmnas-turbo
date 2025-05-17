@@ -11,7 +11,7 @@ import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
 
 type THeroProps = {
   idHero: TheroSection;
-  onButtonClick?: (mode: TformMode) => void;
+  onButtonClick?: (mode: TformMode, formTitle?:string) => void;
 }
 
 const renderIcon = (icon: Tbutton['icon']) => {
@@ -76,7 +76,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             variant={idButton.variant || "default"}
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
-            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode) : undefined}
+            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode, idButton.label) : undefined}
           >
             {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>

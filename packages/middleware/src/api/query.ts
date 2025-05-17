@@ -1,4 +1,4 @@
-import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource, TeventPageSource } from "../types";
+import { IQuery, TpricingPageSource, TproductsPageSource, TcareerPageSource, TtrendsPageSource, TindustriesPageSource, TtermsAndConditionsPageSource, TprivacyPolicyPageSource, TslugsSource, ThomePageSource, TnavbarSource, TfooterSource, TcontactSource, TsolutionPageSource, TcaseStudiesPageSource, TaboutUsPageSource, TeventPageSource, TformsPageSource } from "../types";
 import { client } from '../lib/apollo-client';
 import { gql } from "@apollo/client";
 
@@ -729,13 +729,73 @@ export class clQueryContact extends clQuery<TcontactSource> {
 
   getQuery(): string {
     return `
-  query Contact($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput) {
+  ${this.contentType}(locale: $locale)  {
     header {
-      highlight
       title
       subtitle
+      highlight
     }
+    contactForm {
+      fieldDisplay
+      defaultValue
+      loading {
+        label
+        description
+      }
+      name
+      options {
+        label
+        value
+      }
+      placeholder
+      required
+      type
+      validationMessage
+    }
+    bookingForm {
+      fieldDisplay
+      defaultValue
+      loading {
+        label
+        description
+      }
+      name
+      options {
+        label
+        value
+      }
+      placeholder
+      required
+      type
+      validationMessage
+    }
+  }
+  forms(filters: $filters) {
+    title
+    terms {
+      label
+      href
+    }
+    successTitle
+    successMessage
+    submitText
+    showTerms
+    privacy {
+      label
+      href
+    }
+    description
+    formId
+    verifiedMessage {
+      label
+      description
+    }
+    unVerifiedMessage {
+      label
+      description
+    }
+    policyDescription
   }
 }`
   }
@@ -1069,6 +1129,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       }
       image {
         svg
+        source
+        alternate
       }
     }
     successStoryHeaderFooter {
@@ -1144,6 +1206,61 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         variant
         formMode
       }
+    }
+  }
+}`;
+  }
+}
+
+export class clQueryForms extends clQuery<TformsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+ query Forms($locale: I18NLocaleCode) {
+   ${this.contentType}(locale: $locale) {
+     formId
+    title
+    description
+    submitText
+    showTerms
+    successMessage
+    successTitle
+    verifiedMessage {
+      label
+      description
+    }
+    unVerifiedMessage {
+      label
+      description
+    }
+    privacy {
+      href
+      label
+    }
+    terms {
+      href
+      label
+    }
+    policyDescription
+    fields {
+      fieldDisplay
+      defaultValue
+      loading {
+        label
+        description
+      }
+      name
+      options {
+        label
+        value
+      }
+      placeholder
+      required
+      type
+      validationMessage
     }
   }
 }`;
@@ -1561,7 +1678,8 @@ export class clQueryFactory {
     "termsAndCondition": clQueryTermsAndConditions,
     "privacyPolicy": clQueryPrivacyPolicy,
     "aboutUs": clQueryAboutUs,
-    "event": clQueryEvent
+    "event": clQueryEvent,
+    "forms" :clQueryForms
     // Add more mappings here
   };
 

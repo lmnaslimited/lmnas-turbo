@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget, TeventPageSource, TeventPageTarget } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget, TeventPageSource, TeventPageTarget, TformsPageTarget, TformsPageSource } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -151,6 +151,15 @@ export class clProductsTransformer extends clTransformer<TproductsPageSource, Tp
     super(iContentType)
   }
 }
+export class clFormsTransformer extends clTransformer<TformsPageSource, TformsPageTarget> {
+  async performTransformation(idSourceData: TformsPageSource): Promise<TformsPageTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
 export class clCareerTransformer extends clTransformer<TcareerPageSource, TcareerPageTarget> {
   async performTransformation(idSourceData: TcareerPageSource): Promise<TcareerPageTarget> {
     this.targetData = idSourceData
@@ -230,6 +239,7 @@ interface ITransformerMap {
   termsAndCondition: clTermsandConditionsTransformer;
   aboutUs: clAboutUsTransformer;
   event: clEventTransformer;
+  forms: clFormsTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -253,6 +263,7 @@ export class clTransformerFactory {
       termsAndCondition: clTermsandConditionsTransformer,
       aboutUs: clAboutUsTransformer,
       event: clEventTransformer,
+      forms: clFormsTransformer
       // Add other content types and corresponding transformers
     };
 
