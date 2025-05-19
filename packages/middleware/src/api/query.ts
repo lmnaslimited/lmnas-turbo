@@ -132,6 +132,8 @@ export class clQueryFooter extends clQuery<TfooterSource> {
       }
       menu {
         label
+        description
+        icon
       }
       product {
         label

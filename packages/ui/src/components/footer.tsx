@@ -108,12 +108,12 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
                 <Input
                   type="email"
                   name="email"
-                  placeholder="Enter your email"
+                  placeholder={idFooter.footer.menu[4]?.label}
                   required
                   className="max-w-xs"
                 />
                 <Button type="submit" size="sm" disabled={pending}>
-                  {pending ? "Subscribing..." : "Subscribe"}
+                  {pending ? idFooter.footer.menu[4]?.description : idFooter.footer.menu[4]?.icon}
                 </Button>
               </form>
               {state?.message && <p className="text-sm mt-2 text-primary">{state.message}</p>}
@@ -124,7 +124,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
         <div className="border-t border-border pt-8 pb-16 sm:pb-0">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-sm text-primary/70 mb-4 md:mb-0">
-              &copy; {new Date().getFullYear()} {idFooter.footer.companyName}. {idFooter.footer.menu[4]?.label}
+              &copy; {new Date().getFullYear()} {idFooter.footer.companyName}. {idFooter.footer.menu[5]?.label}
             </p>
             <div className="flex space-x-6">
               {idFooter.footer.policies.map((item) => (
