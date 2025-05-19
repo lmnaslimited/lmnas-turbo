@@ -1182,7 +1182,8 @@ function InnerSectionForm({
 * returns React element with ReCaptcha provider and inner form
 */
 export const SectionForm = (props: TdynamicFormProps): ReactElement => {
-    const {locale} = useParams()
+    const LdParams = useParams();
+    const Locale = LdParams.locale as string;
     /*
     on switching the language using useRouter will remount the client component 
     which include Form component too in app router, but the recaptchaProvider will not re render due
@@ -1207,8 +1208,8 @@ export const SectionForm = (props: TdynamicFormProps): ReactElement => {
       const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
   useEffect(() => {
-    fnReloadRecaptchaScript(LRecaptchaSiteKey, locale);
-  }, [locale, LRecaptchaSiteKey]);
+    fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
+  }, [Locale, LRecaptchaSiteKey]);
     /**
      * Inner component that wraps the form with ReCaptcha provider
      * innerProps - Props passed to the inner form component
