@@ -19,6 +19,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
   const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
   const router = useRouter();
   const pathname = usePathname();
+  const [desktopMenuOpen, setDesktopMenuOpen] = React.useState<string | undefined>(undefined)
+
 
   const renderIcon = (icon: Tbutton['icon']) => {
     const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -90,9 +92,10 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
             <div className="hidden lg:flex lg:items-center">
-              <NavigationMenu className="md:justify-center">
+              <NavigationMenu  value={desktopMenuOpen}
+  onValueChange={setDesktopMenuOpen} className="md:justify-center">
                 <NavigationMenuList className="flex items-center">
-                  <NavigationMenuItem>
+                  <NavigationMenuItem value="products"  >
                     <NavigationMenuTrigger className="text-md flex items-center transition-transform duration-200 hover:scale-105">
                       {idNavbar.navbar.menu[0]?.label}
                     </NavigationMenuTrigger>
@@ -100,7 +103,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       <div className="p-5 w-[500px]">
                         <div className="grid grid-cols-2 gap-2">
                           {idNavbar.navbar.product.map((idProduct) => (
-                            <Link href={idProduct.href!} key={idProduct.label}>
+                            <Link href={idProduct.href!} key={idProduct.label} onClick={() => setDesktopMenuOpen(undefined)}>
                               <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
                                   <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idProduct.icon)}</div>
@@ -117,7 +120,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     </NavigationMenuContent>
                   </NavigationMenuItem>
 
-                  <NavigationMenuItem>
+                  <NavigationMenuItem value="industries">
                     <NavigationMenuTrigger className="text-md flex items-center h-10  transition-transform duration-200 hover:scale-105">
                       {idNavbar.navbar.menu[1]?.label}
                     </NavigationMenuTrigger>
@@ -125,7 +128,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       <div className="p-5 w-[500px]">
                         <div className="grid grid-cols-2 gap-2">
                           {idNavbar.navbar.industry.map((idIndustry) => (
-                            <Link href={idIndustry.href!} key={idIndustry.label}>
+                            <Link href={idIndustry.href!} key={idIndustry.label} onClick={() => setDesktopMenuOpen(undefined)}>
                               <div
                                 key={idIndustry.label}
                                 className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
@@ -352,6 +355,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     <Link
                       key={idProduct.label}
                       href={idProduct.href!}
+                      onClick={() => fnSetMobileProductsOpen(false)}
                       className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
@@ -438,7 +442,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       iIndex === 1 ? "border-b border-border pb-2 mb-1" : ""
                     )}
                   >
-                    <Link href={idItem.href!} className="block w-full text-primary">
+                    <Link href={idItem.href!} onClick={() => fnSetMobileModeDropdownOpen(false)} className="block w-full text-primary">
                       {idItem.label}
                     </Link>
                   </div>
