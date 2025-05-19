@@ -5,6 +5,8 @@ import { ReactElement } from "react"
 import { motion, useAnimation } from "framer-motion"
 import { TlogoShowcaseProps, Timage, Tbutton } from "@repo/middleware"
 import { getIconComponent } from "@repo/ui/lib/icon";
+import GetIcon from "@repo/ui/components/getIcon"
+
 
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -198,10 +200,11 @@ function LogoItem(idLogo: { logo: Timage; dimensions: { width: number; height: n
       {idLogo.logo.svg ? (
 
         <div
-          className={cn("flex items-center justify-center")}
+          className={cn("flex items-center justify-center text-muted-foreground hover:text-chart5")}
           style={{ width: width, height: height }}
         >
-          {renderIcon(idLogo.logo.svg)}
+          {/* {renderIcon(idLogo.logo.svg)} */}
+          <GetIcon iconName={idLogo.logo.svg} />
         </div>
       )
 
