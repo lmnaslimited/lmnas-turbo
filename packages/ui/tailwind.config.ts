@@ -29,6 +29,7 @@ export default {
 				slate: 'var(--slate)',
 				grayBackground: 'var(--gray-background)',
 				dark: 'var(--always-primary)',
+				chart5: 'var(--chart5)',
 				primary: {
 					DEFAULT: 'var(--primary)',
 					foreground: 'var(--primary-foreground)'
