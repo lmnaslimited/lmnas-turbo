@@ -1,22 +1,18 @@
+"use client"
 import { cn } from "@repo/ui/lib/utils";
-import { Theader } from "@repo/ui/type";
-import clsx from "clsx";
-import { motion } from "framer-motion";
+import { ReactElement } from "react";
+import { Theader } from "@repo/middleware";
 
-export default function TitleSubtitle({iTitle}:{iTitle:Theader}) {
+export default function TitleSubtitle({ idTitle }: { idTitle: Theader }): ReactElement {
     return (
-        <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }} className={clsx("w-full flex flex-col space-y-4 mb-10", iTitle.className)}>
-            <h2 className={cn("text-3xl font-bold tracking-tighter sm:text-4xl", iTitle.headingClass)}>
-                <span >{iTitle.textWithoutColor}</span>
-                <span className="text-primary">{iTitle.text}</span>
+        <div className={cn("w-full flex flex-col space-y-4 mb-10", idTitle.className)}>
+            <h2 className={cn("text-3xl font-bold tracking-tighter sm:text-4xl", idTitle.headingClass)}>
+                <span>{idTitle.title}</span>{" "}
+                <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">{idTitle.highlight}</span>
             </h2>
-            <p className={clsx("max-w-[700px] text-muted-foreground md:text-xl", iTitle.descripClass)}>
-                {iTitle.subtitle}
+            <p className={cn("max-w-[700px] text-muted-foreground md:text-xl", idTitle.descripClass)}>
+                {idTitle.subtitle}
             </p>
-        </motion.div>
+        </div>
     )
 }

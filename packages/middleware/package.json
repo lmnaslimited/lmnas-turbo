@@ -1,0 +1,17 @@
+{
+    "name": "@repo/middleware",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "main": "./src/index.ts",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "dependencies": {
+        "@apollo/client": "^3.13.7",
+        "@types/node": "^22.12.0",
+        "graphql": "^16.10.0",
+        "lucide-react": "^0.474.0",
+        "zod": "^3.24.2"
+    }
+}

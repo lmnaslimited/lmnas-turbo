@@ -1,77 +1,147 @@
-"use client"
-
+import * as Icons from "lucide-react";
 import Image from "next/image";
-import Link from "next/link"
-import { Button } from "@repo/ui/components/ui/button"
+import Link from "next/link";
 import { Zap } from "lucide-react";
-import { TheroProps } from "../type.js"
+import { ReactElement } from "react";
+import { cn } from "@repo/ui/lib/utils";
+import { Button } from "@repo/ui/components/ui/button";
+import TitleSubtitle from "@repo/ui/components/titleSubtitle";
+import { getIconComponent } from "@repo/ui/lib/icon";
+import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
 
+type THeroProps = {
+  idHero: TheroSection;
+  onButtonClick?: (mode: TformMode, formTitle?:string) => void;
+}
 
-export default function Hero({ iHero }: { iHero: TheroProps }) {
-  return (
-    <div className="container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center md:py-24 lg:py-32 py-20">
-      <div className="flex flex-col justify-center space-y-8">
-        {/* Badge */}
-        {iHero.heading.badge && (
-          <div className="inline-flex w-fit items-center rounded-full border border-primary/60 bg-slate px-3 py-1 text-sm text-primary/70">
-            <Zap className="mr-1 h-3.5 w-3.5" />
-            <span>{iHero.heading.badge}</span>
+const renderIcon = (icon: Tbutton['icon']) => {
+  const iconName = typeof icon === "string" ? icon : "HelpCircle";
+  const IconComponent = getIconComponent(iconName);
+  return <IconComponent className="w-5 h-5" />;
+};
+
+export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
+  /**
+  * Renders a badge with an icon and text.
+  * Typically used for highlighting a special feature or status.
+  */
+  const Badge = ({ iText }: { iText: string }): ReactElement => (
+    <div className="inline-flex w-fit items-center rounded-full border bg-accent px-3 py-1 text-sm text-primary/70">
+      <Zap className="mr-1 h-3.5 w-3.5" />
+      <span>{iText}</span>
+    </div>
+  );
+
+  /**
+  * Displays a list of features, each represented by an icon and text.
+  * This section helps in showcasing key benefits or highlights of the hero section.
+  */
+
+  const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+      {iaItems?.map((idItem, iIndex) => {
+        return (
+          <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
+            {renderIcon(idItem?.icon)}
+            <span>{idItem?.label}</span>
           </div>
-        )}
+        );
+      })}
+    </div>
+  );
 
-        {/* Headline */}
-        <div className="space-y-4">
-          <h1 className={`text-4xl font-bold tracking-tight text-primary sm:text-5xl md:text-6xl lg:text-7xl ${iHero.heading.headingClass}`}>
-            {iHero.heading.textWithoutColor} {" "}
-            <span className="bg-gradient-to-r from-primary to-muted-foreground bg-clip-text text-transparent">
-              {iHero.heading.text}
-            </span>
-          </h1>
-          {iHero.heading.subtitle && (
-            <p className={`max-w-xl text-xl text-primary/70 md:text-2xl ${iHero.heading.descripClass}`}>
-              {iHero.heading.subtitle}
-            </p>
-          )}
-        </div>
+  /**
+  * Renders a list of call-to-action (CTA) buttons.
+  * Supports both internal navigation (via Link) and functional actions.
+  */
+  const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton[] }): ReactElement => (
+    <div className="flex flex-col gap-4 sm:flex-row">
+      {iaButtons.map((idButton, iIndex) => {
+        const iconElement = (
+          <span className="h-4 w-4 transition-transform group-hover:translate-x-1">
+            {renderIcon(idButton.icon)}
+          </span>
+        );
+        const buttonContent = (
+          <span className="flex items-center justify-center gap-2">
+            {idButton.iconPosition === "before" && iconElement}
+            <span>{idButton.label}</span>
+            {idButton.iconPosition === "after" && iconElement}
+          </span>
+        );
+        return (
+          <Button
+            key={iIndex}
+            size={idButton.size || "lg"}
+            variant={idButton.variant || "default"}
+            className={cn("sm:w-auto sm:flex-1", idButton.className)}
+            asChild={!!idButton.href}
+            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode, idButton.label) : undefined}
+          >
+            {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
+          </Button>
+        );
+      })}
+    </div>
+  );
 
-        {/* Feature highlights */}
-        {iHero.items && (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-            {iHero.items.map((idItem, iIndex) => (
-              <div className="flex items-center gap-2 text-primary/80" key={iIndex}>
-                {idItem.icon}
-                <span>{idItem.item}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* CTA Buttons */}
-        <div className="flex flex-col gap-4 sm:flex-row">
-          {iHero.buttons.map((button, index) => (
-            <Button key={index} size={button.size || "lg"} variant={button.variant || "default"} className={button.className}>
-              {button.iconPosition === "before" && button.icon}
-            {button.href && (<Link href={button.href} > {button.label} </Link> )}
-              {button.iconPosition === "after" && button.icon}
-            </Button>
-          ))}
-        </div>
+  return idHero.image?.source ? (
+    /**
+    * Hero section variant with an image.
+    * Displays content alongside a visual representation for better engagement.
+    */
+    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 md:py-24 lg:py-32")}>
+      <div className={cn("flex flex-col justify-center space-y-8")}>
+        {idHero.heading.badge && <Badge iText={idHero.heading.badge} />}
+        <TitleSubtitle idTitle={{
+          ...idHero.heading,
+          className: "m-0",
+          headingClass: "md:text-6xl lg:text-7xl tracking-tight",
+          descripClass: "max-w-xl md:text-2xl"
+        }} />
+        {idHero.highlight && <FeatureList iaItems={idHero.highlight} />}
+        <CTAButtons iaButtons={idHero.buttons} />
       </div>
-
       {/* Image part */}
-      <div className="flex items-center justify-center">
-        <div className="relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1">
+      <div className={cn("flex items-center justify-center")}>
+        <div className={cn("relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1")}>
           <div className="absolute inset-0 flex items-center justify-center">
             <Image
-              src={iHero.image?.src || "/placeholder.svg"}
-              alt={iHero.image.alt}
-              className="h-full w-full object-cover"
-              width={100}
-              height={100}
+              src={idHero.image?.source || "/placeholder.svg"}
+              alt={idHero?.image?.alternate || ""}
+              // className={cn("h-full w-full object-cover")}
+              // fill
+              // width={100}
+              // height={100}
+              fill
+              className="object-fill"
             />
           </div>
         </div>
       </div>
     </div>
+  ) : (
+    /**
+    * Hero section variant without an image.
+    * This version focuses entirely on the textual content and call-to-action elements.
+    */
+    <section className={cn("relative overflow-hidden py-16 md:py-24 lg:py-32")}>
+      <div className={cn("container relative z-10 mx-auto px-4 md:px-6")}>
+        <div
+          className={cn("mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center")}
+        >
+          <TitleSubtitle idTitle={{
+            ...idHero.heading,
+            className: "mx-auto flex max-w-[58rem] flex-col items-center justify-center mb-4 text-center m-0",
+            headingClass: "sm:text-4xl md:text-5xl lg:text-6xl",
+            descripClass: "max-w-[85%] md:text-xl/relaxed mx-auto"
+          }} />
+          <p className={cn("max-w-[85%] text-muted-foreground md:text-xl/relaxed mx-auto mb-2")}>
+            {idHero.description}
+          </p>
+          <CTAButtons iaButtons={idHero.buttons} />
+        </div>
+      </div>
+    </section>
   );
 }

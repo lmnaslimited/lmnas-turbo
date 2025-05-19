@@ -3,27 +3,50 @@ on:
   push:
     branches:
       - main
+      - develop
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout 
+
+      - name: Checkout 
         uses: actions/checkout@v4
-      -
-        name: Login to Docker Hub
+
+      - name: Read sampleenv and generate .env dynamically
+        id: generate_env
+        env:
+          SUBSCRIBE_URL: ${{ github.ref_name == 'main' && secrets.MAIN_SUBSCRIBE_URL || secrets.DEVELOP_SUBSCRIBE_URL }}
+          AUTH_BASE_64: ${{ github.ref_name == 'main' && secrets.MAIN_AUTH_BASE_64 || secrets.DEVELOP_AUTH_BASE_64 }}
+          RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'main' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
+          YOUTUBE: ${{ secrets.YOUTUBE }}
+          TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          TWITTER_USER_NAME: ${{ secrets.TWITTER_USER_NAME }}
+          YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+        run: |
+          cp sampleenv build.env
+          while IFS='=' read -r key _; do
+            value="${!key}"
+            sed -i "s|^$key=.*|$key=$value|" build.env
+          done < build.env
+          ENCODED=$(cat build.env | sed ':a;N;$!ba;s/\n/\\n/g')
+          echo "BUILD_ENV_CONTENT=$ENCODED" >> $GITHUB_ENV
+      
+      - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      -
-        name: Set up Docker Buildx
+      
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Build and push
+      
+      - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           dockerfile: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:v1
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v1' }}
+          build-args: |
+            BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
