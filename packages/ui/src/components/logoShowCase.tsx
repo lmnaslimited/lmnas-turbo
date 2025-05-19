@@ -8,12 +8,6 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 import GetIcon from "@repo/ui/components/getIcon"
 
 
-const renderIcon = (icon: Tbutton['icon']) => {
-  const iconName = typeof icon === "string" ? icon : "HelpCircle";
-  const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-5 h-5" />;
-};
-
 /**
  * LogoShowcase Component
  * Purpose: Displays a collection of logos in either a grid layout or a marquee (scrolling ticker) layout.
