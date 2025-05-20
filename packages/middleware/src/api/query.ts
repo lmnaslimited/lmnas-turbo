@@ -1451,6 +1451,8 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
     }
     allFeatureHeader {
       title
+      highlight
+      badge
     }
     allFeatureCard {
       header {
@@ -1481,6 +1483,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         formMode
+        icon
       }
     }
     successStoryHeaderFooter {
@@ -1492,6 +1495,10 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         formMode
+      }
+      list {
+        label
+        description
       }
     }
     successStoryCard {

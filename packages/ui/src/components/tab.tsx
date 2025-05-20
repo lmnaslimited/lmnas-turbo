@@ -8,7 +8,7 @@ import { TcardProps } from "@repo/middleware";
 
 type TtabProps = {
   data: TcardProps[]
-  TabDefault: { text: string, label: string }
+  TabDefault: { text: string, AllLabel: string, LessLabel: string }
 }
 
 export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
@@ -43,13 +43,19 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
               <CustomCard key={iIndex} idCardProps={idItem} />
             ))}
           </div>
-          {VisibleCount < idTab.data.length && (
-            <div className="mt-8 text-center">
-              <Button onClick={fnShowMoreItems} size="lg" variant="outline">
-                {idTab.TabDefault.label} <ArrowRight className="size-5" />
-              </Button>
-            </div>
+          <div className="mt-8 text-center">
+          {VisibleCount < idTab.data.length ? (
+            <Button onClick={fnShowMoreItems} size="lg" variant="outline">
+              {idTab.TabDefault.AllLabel} <ArrowRight className="size-5" />
+            </Button>
+          ) : (
+            <Button onClick={() => fnSetVisibleCount(4)} size="lg" variant="outline">
+              {idTab.TabDefault.LessLabel}
+              <ArrowRight className="size-5" />
+            </Button>
           )}
+        </div>
+
         </TabsContent>
 
         {/* Generate content for each category tab */}
