@@ -46,6 +46,49 @@ export class clQuerySlug extends clQuery<TslugsSource> {
   }
 }
 
+export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query GlobalMeta {
+  globalMeta {
+      metadataBase
+      robotsIndex
+      robotsFollow
+      robotsNocache
+      googleBotIndex
+      googleBotFollow
+      googleBotMaxSnippet
+      googleBotMaxImagePreview
+      googleBotMaxVideoPreview
+      authorsName
+      authorsURL
+      creator
+      publisher
+      applicationName
+      icons {
+        url
+        type
+        sizes
+      }
+      apple {
+        url
+        type
+        sizes
+      }
+      shortcut
+      appleWebAppCapable
+      appleWebAppTitle
+      appleWebAppStatusBarStyle
+      manifest
+  }
+}`
+  }
+}
+
 export class clQueryNavbar extends clQuery<TnavbarSource> {
   constructor(iContentType: string) {
     super(iContentType);
@@ -263,6 +306,34 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       svg
       source
       alternate
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`
@@ -1553,7 +1624,8 @@ export class clQueryFactory {
     "termsAndCondition": clQueryTermsAndConditions,
     "privacyPolicy": clQueryPrivacyPolicy,
     "aboutUs": clQueryAboutUs,
-    "event": clQueryEvent
+    "event": clQueryEvent,
+    "globalMeta": clQueryGlobalMeta,
     // Add more mappings here
   };
 
