@@ -23,8 +23,7 @@ import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType>
-{
+  implements IQuery<DynamicSourceType> {
   query: string;
   contentType: string;
   locale: string;
@@ -66,6 +65,49 @@ export class clQuerySlug extends clQuery<TslugsSource> {
         slug
       }
     }`;
+  }
+}
+
+export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query GlobalMeta {
+  globalMeta {
+      metadataBase
+      robotsIndex
+      robotsFollow
+      robotsNocache
+      googleBotIndex
+      googleBotFollow
+      googleBotMaxSnippet
+      googleBotMaxImagePreview
+      googleBotMaxVideoPreview
+      authorsName
+      authorsURL
+      creator
+      publisher
+      applicationName
+      icons {
+        url
+        type
+        sizes
+      }
+      apple {
+        url
+        type
+        sizes
+      }
+      shortcut
+      appleWebAppCapable
+      appleWebAppTitle
+      appleWebAppStatusBarStyle
+      manifest
+  }
+}`
   }
 }
 
@@ -288,6 +330,34 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       svg
       source
       alternate
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
@@ -1700,24 +1770,25 @@ export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
   } = {
-    navbar: clQueryNavbar,
-    footer: clQueryFooter,
-    home: clQueryHome,
-    trend: clQueryTrends,
-    career: clQueryCareer,
-    contact: clQueryContact,
-    pricing: clQueryPricing,
-    solution: clQuerySolution,
-    products: clQueryProducts,
-    industries: clQueryIndustries,
-    caseStudies: clQueryCaseStudies,
-    termsAndCondition: clQueryTermsAndConditions,
-    privacyPolicy: clQueryPrivacyPolicy,
-    aboutUs: clQueryAboutUs,
-    event: clQueryEvent,
-    forms: clQueryForms,
-    // Add more mappings here
-  };
+      navbar: clQueryNavbar,
+      footer: clQueryFooter,
+      home: clQueryHome,
+      trend: clQueryTrends,
+      career: clQueryCareer,
+      contact: clQueryContact,
+      pricing: clQueryPricing,
+      solution: clQuerySolution,
+      products: clQueryProducts,
+      industries: clQueryIndustries,
+      caseStudies: clQueryCaseStudies,
+      termsAndCondition: clQueryTermsAndConditions,
+      privacyPolicy: clQueryPrivacyPolicy,
+      aboutUs: clQueryAboutUs,
+      event: clQueryEvent,
+      forms: clQueryForms,
+      globalMeta: clQueryGlobalMeta,
+      // Add more mappings here
+    };
 
   static createQuery<T extends object>(iContentType: string): IQuery<T> {
     const QueryClass = this.queryMap[iContentType];

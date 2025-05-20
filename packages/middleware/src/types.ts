@@ -67,6 +67,85 @@ export type Tcontext = {
     };
 };
 
+export type TglobalMetaSource = TglobalMeta
+
+export type TglobalMetaTarget = TglobalMeta
+
+export type TglobalMeta = {
+    globalMeta: {
+        metadataBase?: string;
+        robotsIndex?: boolean;
+        robotsFollow?: boolean;
+        robotsNocache?: boolean;
+        googleBotIndex?: boolean;
+        googleBotFollow?: boolean;
+        googleBotMaxSnippet?: number;
+        googleBotMaxImagePreview?: 'none' | 'standard' | 'large';
+        googleBotMaxVideoPreview?: number;
+        authorsName?: string;
+        authorsURL?: string;
+        creator?: string;
+        publisher?: string;
+        applicationName?: string;
+        icons?: {
+            url: string;
+            sizes: string;
+            type: string;
+        }[];
+        apple?: {
+            url: string;
+            sizes: string;
+            type: string;
+        }[];
+        shortcut?: string;
+        appleWebAppCapable?: boolean;
+        appleWebAppTitle?: string;
+        appleWebAppStatusBarStyle?: 'default' | 'black' | 'black-translucent';
+        manifest?: string;
+    }
+}
+
+export type TpageMetadata = {
+    title: string;
+    description: string;
+    keywords: { description: string }[];
+    canonical: string;
+    ogTitle: string;
+    ogDescription: string;
+    ogUrl: string;
+    ogType:
+    | "website"
+    | "article"
+    | "book"
+    | "profile"
+    | "music.song"
+    | "music.album"
+    | "music.playlist"
+    | "music.radio_station"
+    | "video.movie"
+    | "video.episode"
+    | "video.tv_show"
+    | "video.other";
+    ogSiteName: string;
+    ogLocale: string;
+    ogImages: {
+        url: string;
+        width: number;
+        height: number;
+        alt: string;
+    }[];
+    twitterCard: "summary" | "summary_large_image" | "player" | "app";
+    twitterTitle: string;
+    twitterDescription: string;
+    twitterImage: {
+        url: string;
+        width: number;
+        height: number;
+        alt: string;
+    }[];
+    twitterCreator: string;
+    category: string;
+};
 
 export type Titems = {
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -377,6 +456,7 @@ export type Thome = {
     trendingNowSection: TcalloutProps
     testimonials: TcardProps[]
     successClients: Timage[]
+    metaData: TpageMetadata
 }
 
 // trending now
