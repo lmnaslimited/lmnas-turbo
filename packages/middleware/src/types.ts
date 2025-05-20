@@ -87,16 +87,8 @@ export type TglobalMeta = {
         creator?: string;
         publisher?: string;
         applicationName?: string;
-        icons?: {
-            url: string;
-            sizes: string;
-            type: string;
-        }[];
-        apple?: {
-            url: string;
-            sizes: string;
-            type: string;
-        }[];
+        icons?: TseoIcons[];
+        apple?: TseoIcons[];
         shortcut?: string;
         appleWebAppCapable?: boolean;
         appleWebAppTitle?: string;
@@ -128,24 +120,23 @@ export type TpageMetadata = {
     | "video.other";
     ogSiteName: string;
     ogLocale: string;
-    ogImages: {
-        url: string;
-        width: number;
-        height: number;
-        alt: string;
-    }[];
+    ogImages: TseoIcons[];
     twitterCard: "summary" | "summary_large_image" | "player" | "app";
     twitterTitle: string;
     twitterDescription: string;
-    twitterImage: {
-        url: string;
-        width: number;
-        height: number;
-        alt: string;
-    }[];
+    twitterImage: TseoIcons[];
     twitterCreator: string;
     category: string;
 };
+
+export type TseoIcons = {
+    url: string
+    alt?: string
+    type?: string
+    sizes?: string
+    width?: number
+    height?: number
+}
 
 export type Titems = {
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -237,7 +228,7 @@ export type TcardProps = {
     buttonPosition?: string
     cardPosition?: string
     category?: string
-    onButtonClick?: (mode: TformMode, formTitle?:string) => void
+    onButtonClick?: (mode: TformMode, formTitle?: string) => void
 }
 
 export type TcontactData = {
@@ -338,9 +329,9 @@ export type TformFieldConfig = {
     className?: string
     fieldDisplay: string
     inputClassName?: string
-    validationMessage?:string
+    validationMessage?: string
     defaultValue?: string
-    loading:Titems 
+    loading: Titems
 }
 
 export type TformConfig = {
@@ -353,11 +344,11 @@ export type TformConfig = {
     successTitle: string
     successMessage: string
     verifiedMessage?: Titems
-    unVerifiedMessage?:Titems
+    unVerifiedMessage?: Titems
     showTerms?: boolean
     terms?: Tbutton
     privacy?: Tbutton
-    policyDescription?:string
+    policyDescription?: string
 }
 
 export type TdynamicFormProps = {
@@ -523,10 +514,10 @@ type TaboutUs = {
     ctaSection: TcalloutProps
 }
 
-export type TformsPageSource ={
+export type TformsPageSource = {
     forms: TformConfig[]
 }
-export type TformsPageTarget ={
+export type TformsPageTarget = {
     forms: TformConfig[]
 }
 
