@@ -28,7 +28,7 @@ const fnGetIcon = (iSource: string): ReactNode => {
 const fnGetPlatformUrl = (iSource: string, iId: string): string => {
   switch (iSource) {
     case "LinkedIn":
-      return `https://www.linkedin.com/posts/${iId}`;
+      return `https://www.linkedin.com/feed/update/${iId}`;
     case "YouTube":
       return `https://www.youtube.com/watch?v=${iId}`;
     case "Twitter":
@@ -40,12 +40,13 @@ const fnGetPlatformUrl = (iSource: string, iId: string): string => {
 
 type TtrendsProps = {
   idTrends: TtrendCardProps
-  onButtonClick?: (mode: TformMode) => void
+  onButtonClick?: (mode: TformMode, formTitle?:string) => void
 }
 export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
-    <Link href={LPlatformUrl} >
+    <Link href={LPlatformUrl} 
+    {...(LPlatformUrl !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})} >
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">
@@ -76,7 +77,7 @@ export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): Re
           {idTrends.formMode && (
             <div className="py-2 mt-auto"><Button
               size="sm"
-              onClick={() => onButtonClick?.(idTrends.formMode as TformMode)}
+              onClick={() => onButtonClick?.(idTrends.formMode as TformMode, idTrends.title)}
             >
               {idTrends.btnLabel}
               <ArrowRight />

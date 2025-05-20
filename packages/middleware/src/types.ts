@@ -237,7 +237,7 @@ export type TcardProps = {
     buttonPosition?: string
     cardPosition?: string
     category?: string
-    onButtonClick?: (mode: TformMode) => void
+    onButtonClick?: (mode: TformMode, formTitle?:string) => void
 }
 
 export type TcontactData = {
@@ -336,11 +336,15 @@ export type TformFieldConfig = {
     required?: boolean
     options?: { value: string; label: string }[]
     className?: string
+    fieldDisplay: string
     inputClassName?: string
+    validationMessage?:string
+    defaultValue?: string
+    loading:Titems 
 }
 
 export type TformConfig = {
-    id: string
+    formId: string
     title: string
     description?: string
     fields: TformFieldConfig[]
@@ -348,9 +352,12 @@ export type TformConfig = {
     schema: z.ZodObject<any>
     successTitle: string
     successMessage: string
+    verifiedMessage?: Titems
+    unVerifiedMessage?:Titems
     showTerms?: boolean
-    termsText?: string
-    privacyText?: string
+    terms?: Tbutton
+    privacy?: Tbutton
+    policyDescription?:string
 }
 
 export type TdynamicFormProps = {
@@ -493,6 +500,7 @@ type Tcareer = {
     jobsSection: TcalloutProps
     planSection: TheroSection
     trendingSection: Theader
+    trendingFooter: Tbutton[]
 }
 
 
@@ -513,6 +521,13 @@ type TaboutUs = {
     testimonialHeader: Theader
     testimonalCard: TcardProps[]
     ctaSection: TcalloutProps
+}
+
+export type TformsPageSource ={
+    forms: TformConfig[]
+}
+export type TformsPageTarget ={
+    forms: TformConfig[]
 }
 
 // terms and conditions
@@ -671,12 +686,16 @@ export type Tproducts = {
 // Contact
 export type TcontactSource = {
     contact: Tcontact
+    forms: TformConfig[]
 }
 export type TcontactTarget = {
     contact: Tcontact
+    forms: TformConfig[]
 }
 export type Tcontact = {
     header: Theader[]
+    contactForm: TformFieldConfig[]
+    bookingForm: TformFieldConfig[]
 }
 
 // Event

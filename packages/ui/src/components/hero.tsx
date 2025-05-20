@@ -11,7 +11,7 @@ import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
 
 type THeroProps = {
   idHero: TheroSection;
-  onButtonClick?: (mode: TformMode) => void;
+  onButtonClick?: (mode: TformMode, formTitle?:string) => void;
 }
 
 const renderIcon = (icon: Tbutton['icon']) => {
@@ -76,7 +76,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             variant={idButton.variant || "default"}
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
-            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode) : undefined}
+            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode, idButton.label) : undefined}
           >
             {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>
@@ -104,21 +104,22 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
       </div>
       {/* Image part */}
       <div className={cn("flex items-center justify-center")}>
-        <div className={cn("relative h-[400px] w-full max-w-[500px] overflow-hidden rounded-lg p-1")}>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <Image
-              src={idHero.image?.source || "/placeholder.svg"}
-              alt={idHero?.image?.alternate || ""}
-              // className={cn("h-full w-full object-cover")}
-              // fill
-              // width={100}
-              // height={100}
-              fill
-              className="object-fill"
-            />
-          </div>
-        </div>
-      </div>
+  <div
+    className={cn(
+      // Increased max width, taller aspect ratio, removed padding
+      "relative w-full max-w-[700px] aspect-[3/2] overflow-hidden rounded-lg min-w-[300px] md:mt-16"
+    )}
+  >
+    <Image
+      src={idHero.image?.source || "/placeholder.svg"}
+      alt={idHero?.image?.alternate || ""}
+      fill
+      className="object-contain"
+    />
+  </div>
+</div>
+
+
     </div>
   ) : (
     /**
