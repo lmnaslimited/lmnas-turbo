@@ -1154,6 +1154,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
       image {
         source
@@ -1180,6 +1181,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         label
         href
         formMode
+        icon
       }
     }
     solutionsHeaderFooter {
@@ -1214,6 +1216,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     guideFeature {
@@ -1246,6 +1249,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     successStoryCard {
@@ -1277,6 +1281,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     pricingHighlight {
@@ -1307,6 +1312,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         variant
         formMode
+        icon
       }
     }
   }
