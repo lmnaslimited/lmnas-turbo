@@ -23,7 +23,8 @@ import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType> {
+  implements IQuery<DynamicSourceType>
+{
   query: string;
   contentType: string;
   locale: string;
@@ -107,7 +108,7 @@ export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
       appleWebAppStatusBarStyle
       manifest
   }
-}`
+}`;
   }
 }
 
@@ -933,7 +934,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
   getQuery(): string {
     return `
-  query Solution($locale: I18NLocaleCode) {
+query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
   solution(locale: $locale) {
   heroSection {
       heading {
@@ -1127,6 +1128,35 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
         label
         icon
       }
+    }
+  }
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+    heroSection {
+      tag
+      image {
+        source
+        alternate
+      }
+    }
+  }
+  home {
+    successClients {
+      svg
+      source
+      alternate
     }
   }
 }`;
@@ -1555,8 +1585,8 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
 
   getQuery(): string {
     return `
-    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode) {
-    ${this.contentType}(locale: $locale, filters: $filters) {
+      query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
+     ${this.contentType}(locale: $locale, filters: $filters) {
     slug
     name
     pdfName
@@ -1657,17 +1687,6 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         href
       }
     }
-    relatedCaseStudies {
-      header {
-        title
-        subtitle
-      }
-      category
-      link {
-        label
-        href
-      }
-    }
     ctaSection {
       header {
         title
@@ -1682,6 +1701,28 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
     }
     conclusion {
       subtitle
+    }
+  }
+    allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+    heroSection {
+      tag
+      image {
+        source
+        alternate
+      }
     }
   }
   footer(locale: $footerLocale2) {
@@ -1783,25 +1824,25 @@ export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
   } = {
-      navbar: clQueryNavbar,
-      footer: clQueryFooter,
-      home: clQueryHome,
-      trend: clQueryTrends,
-      career: clQueryCareer,
-      contact: clQueryContact,
-      pricing: clQueryPricing,
-      solution: clQuerySolution,
-      products: clQueryProducts,
-      industries: clQueryIndustries,
-      caseStudies: clQueryCaseStudies,
-      termsAndCondition: clQueryTermsAndConditions,
-      privacyPolicy: clQueryPrivacyPolicy,
-      aboutUs: clQueryAboutUs,
-      event: clQueryEvent,
-      forms: clQueryForms,
-      globalMeta: clQueryGlobalMeta,
-      // Add more mappings here
-    };
+    navbar: clQueryNavbar,
+    footer: clQueryFooter,
+    home: clQueryHome,
+    trend: clQueryTrends,
+    career: clQueryCareer,
+    contact: clQueryContact,
+    pricing: clQueryPricing,
+    solution: clQuerySolution,
+    products: clQueryProducts,
+    industries: clQueryIndustries,
+    caseStudies: clQueryCaseStudies,
+    termsAndCondition: clQueryTermsAndConditions,
+    privacyPolicy: clQueryPrivacyPolicy,
+    aboutUs: clQueryAboutUs,
+    event: clQueryEvent,
+    forms: clQueryForms,
+    globalMeta: clQueryGlobalMeta,
+    // Add more mappings here
+  };
 
   static createQuery<T extends object>(iContentType: string): IQuery<T> {
     const QueryClass = this.queryMap[iContentType];

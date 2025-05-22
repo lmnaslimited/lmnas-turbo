@@ -59,11 +59,14 @@ export type Tcontext = {
         };
     };
     caseStudiesFilters2?: {
-        heroSection: {
+        heroSection?: {
             tag: {
                 eq: string;
             };
         };
+         slug?: {
+                ne: string;
+            };
     };
 };
 
@@ -601,9 +604,18 @@ export type Tindustries = {
 //solutions
 export type TsolutionPageSource = {
     solution: Tsolution
+    caseStudies: TcaseStudy[]
+       home: {
+        successClients:Timage[]
+    }
 }
 export type TsolutionPageTarget = {
     solution: Tsolution
+    caseStudies: TcaseStudy[]
+    home: {
+        successClients:Timage[]
+    }
+
 }
 export type Tsolution = {
     heroSection: TheroSection
@@ -643,10 +655,12 @@ export type TcaseStudy = {
     relatedCaseStudies: TcardProps[]
     ctaSection?: TcalloutProps[]
     conclusion?: Theader
+    moreCaseStudies?: Theader
 }
 export type TcaseStudies = {
     caseStudies: TcaseStudy[]
     footer: Tfooter
+    allCaseStudies: TcaseStudy[]
 }
 
 //products
