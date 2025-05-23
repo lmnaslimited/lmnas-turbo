@@ -59,14 +59,87 @@ export type Tcontext = {
         };
     };
     caseStudiesFilters2?: {
-        heroSection: {
+        heroSection?: {
             tag: {
                 eq: string;
             };
         };
+         slug?: {
+                ne: string;
+            };
     };
 };
 
+export type TglobalMetaSource = TglobalMeta
+
+export type TglobalMetaTarget = TglobalMeta
+
+export type TglobalMeta = {
+    globalMeta: {
+        metadataBase?: string;
+        robotsIndex?: boolean;
+        robotsFollow?: boolean;
+        robotsNocache?: boolean;
+        googleBotIndex?: boolean;
+        googleBotFollow?: boolean;
+        googleBotMaxSnippet?: number;
+        googleBotMaxImagePreview?: 'none' | 'standard' | 'large';
+        googleBotMaxVideoPreview?: number;
+        authorsName?: string;
+        authorsURL?: string;
+        creator?: string;
+        publisher?: string;
+        applicationName?: string;
+        icons?: TseoIcons[];
+        apple?: TseoIcons[];
+        shortcut?: string;
+        appleWebAppCapable?: boolean;
+        appleWebAppTitle?: string;
+        appleWebAppStatusBarStyle?: 'default' | 'black' | 'black-translucent';
+        manifest?: string;
+    }
+}
+
+export type TpageMetadata = {
+    title: string;
+    description: string;
+    keywords: { description: string }[];
+    canonical: string;
+    ogTitle: string;
+    ogDescription: string;
+    ogUrl: string;
+    ogType:
+    | "website"
+    | "article"
+    | "book"
+    | "profile"
+    | "music.song"
+    | "music.album"
+    | "music.playlist"
+    | "music.radio_station"
+    | "video.movie"
+    | "video.episode"
+    | "video.tv_show"
+    | "video.other";
+    ogSiteName: string;
+    ogLocale: string;
+    ogImages: TseoIcons[];
+    twitterCard: "summary" | "summary_large_image" | "player" | "app";
+    twitterTitle: string;
+    twitterDescription: string;
+    twitterImage: TseoIcons[];
+    twitterCreator: string;
+    category: string;
+};
+
+export type TseoIcons = {
+    url: string
+    alt?: string
+    type?: string
+    sizes?: string
+    width?: number
+    height?: number
+}
 
 export type Titems = {
     icon?: React.ReactNode | keyof typeof LucideIcons | string
@@ -158,7 +231,7 @@ export type TcardProps = {
     buttonPosition?: string
     cardPosition?: string
     category?: string
-    onButtonClick?: (mode: TformMode, formTitle?:string) => void
+    onButtonClick?: (mode: TformMode, formTitle?: string) => void
 }
 
 export type TcontactData = {
@@ -259,9 +332,9 @@ export type TformFieldConfig = {
     className?: string
     fieldDisplay: string
     inputClassName?: string
-    validationMessage?:string
+    validationMessage?: string
     defaultValue?: string
-    loading:Titems 
+    loading: Titems
 }
 
 export type TformConfig = {
@@ -274,11 +347,11 @@ export type TformConfig = {
     successTitle: string
     successMessage: string
     verifiedMessage?: Titems
-    unVerifiedMessage?:Titems
+    unVerifiedMessage?: Titems
     showTerms?: boolean
     terms?: Tbutton
     privacy?: Tbutton
-    policyDescription?:string
+    policyDescription?: string
 }
 
 export type TdynamicFormProps = {
@@ -377,6 +450,7 @@ export type Thome = {
     trendingNowSection: TcalloutProps
     testimonials: TcardProps[]
     successClients: Timage[]
+    metaData: TpageMetadata
 }
 
 // trending now
@@ -443,10 +517,10 @@ type TaboutUs = {
     ctaSection: TcalloutProps
 }
 
-export type TformsPageSource ={
+export type TformsPageSource = {
     forms: TformConfig[]
 }
-export type TformsPageTarget ={
+export type TformsPageTarget = {
     forms: TformConfig[]
 }
 
@@ -530,9 +604,18 @@ export type Tindustries = {
 //solutions
 export type TsolutionPageSource = {
     solution: Tsolution
+    caseStudies: TcaseStudy[]
+       home: {
+        successClients:Timage[]
+    }
 }
 export type TsolutionPageTarget = {
     solution: Tsolution
+    caseStudies: TcaseStudy[]
+    home: {
+        successClients:Timage[]
+    }
+
 }
 export type Tsolution = {
     heroSection: TheroSection
@@ -572,10 +655,12 @@ export type TcaseStudy = {
     relatedCaseStudies: TcardProps[]
     ctaSection?: TcalloutProps[]
     conclusion?: Theader
+    moreCaseStudies?: Theader
 }
 export type TcaseStudies = {
     caseStudies: TcaseStudy[]
     footer: Tfooter
+    allCaseStudies: TcaseStudy[]
 }
 
 //products

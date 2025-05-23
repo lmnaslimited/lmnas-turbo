@@ -69,6 +69,49 @@ export class clQuerySlug extends clQuery<TslugsSource> {
   }
 }
 
+export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+  query GlobalMeta {
+  globalMeta {
+      metadataBase
+      robotsIndex
+      robotsFollow
+      robotsNocache
+      googleBotIndex
+      googleBotFollow
+      googleBotMaxSnippet
+      googleBotMaxImagePreview
+      googleBotMaxVideoPreview
+      authorsName
+      authorsURL
+      creator
+      publisher
+      applicationName
+      icons {
+        url
+        type
+        sizes
+      }
+      apple {
+        url
+        type
+        sizes
+      }
+      shortcut
+      appleWebAppCapable
+      appleWebAppTitle
+      appleWebAppStatusBarStyle
+      manifest
+  }
+}`;
+  }
+}
+
 export class clQueryNavbar extends clQuery<TnavbarSource> {
   constructor(iContentType: string) {
     super(iContentType);
@@ -288,6 +331,34 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       svg
       source
       alternate
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
@@ -863,7 +934,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
   getQuery(): string {
     return `
-  query Solution($locale: I18NLocaleCode) {
+query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
   solution(locale: $locale) {
   heroSection {
       heading {
@@ -1059,6 +1130,35 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       }
     }
   }
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+    heroSection {
+      tag
+      image {
+        source
+        alternate
+      }
+    }
+  }
+  home {
+    successClients {
+      svg
+      source
+      alternate
+    }
+  }
 }`;
   }
 }
@@ -1084,6 +1184,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
       image {
         source
@@ -1110,6 +1211,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         label
         href
         formMode
+        icon
       }
     }
     solutionsHeaderFooter {
@@ -1144,6 +1246,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     guideFeature {
@@ -1176,6 +1279,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     successStoryCard {
@@ -1207,6 +1311,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         formMode
         variant
+        icon
       }
     }
     pricingHighlight {
@@ -1237,6 +1342,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         href
         variant
         formMode
+        icon
       }
     }
   }
@@ -1381,6 +1487,8 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
     }
     allFeatureHeader {
       title
+      highlight
+      badge
     }
     allFeatureCard {
       header {
@@ -1411,6 +1519,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         formMode
+        icon
       }
     }
     successStoryHeaderFooter {
@@ -1422,6 +1531,10 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       buttons {
         label
         formMode
+      }
+      list {
+        label
+        description
       }
     }
     successStoryCard {
@@ -1472,8 +1585,8 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
 
   getQuery(): string {
     return `
-    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode) {
-    ${this.contentType}(locale: $locale, filters: $filters) {
+      query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
+     ${this.contentType}(locale: $locale, filters: $filters) {
     slug
     name
     pdfName
@@ -1574,17 +1687,6 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
         href
       }
     }
-    relatedCaseStudies {
-      header {
-        title
-        subtitle
-      }
-      category
-      link {
-        label
-        href
-      }
-    }
     ctaSection {
       header {
         title
@@ -1599,6 +1701,28 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
     }
     conclusion {
       subtitle
+    }
+  }
+    allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+    heroSection {
+      tag
+      image {
+        source
+        alternate
+      }
     }
   }
   footer(locale: $footerLocale2) {
@@ -1716,6 +1840,7 @@ export class clQueryFactory {
     aboutUs: clQueryAboutUs,
     event: clQueryEvent,
     forms: clQueryForms,
+    globalMeta: clQueryGlobalMeta,
     // Add more mappings here
   };
 

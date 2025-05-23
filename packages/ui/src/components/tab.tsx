@@ -3,12 +3,12 @@ import { ReactElement, useState } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
 import CustomCard from "@repo/ui/components/customCard";
-import { ArrowRight } from "lucide-react";
+import {  ChevronDown, ChevronUp } from "lucide-react";
 import { TcardProps } from "@repo/middleware";
 
 type TtabProps = {
   data: TcardProps[]
-  TabDefault: { text: string, label: string }
+  TabDefault: { text: string, AllLabel: string, LessLabel: string, defaultTab?: string }
 }
 
 export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
@@ -26,7 +26,7 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
 
   return (
     <section className="py-10">
-      <Tabs defaultValue="all" className="w-full">
+      <Tabs defaultValue={idTab.TabDefault.defaultTab? idTab.TabDefault.defaultTab : "all"} className="w-full">
         <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(Lacategories.length + 1, 6)} mb-8 md:gap-0 gap-4 rounded-none bg-accent`}>
           <TabsTrigger className="rounded-none" value="all">{idTab.TabDefault.text}</TabsTrigger>
           {Lacategories.map((iCategory) => (
@@ -43,13 +43,24 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
               <CustomCard key={iIndex} idCardProps={idItem} />
             ))}
           </div>
-          {VisibleCount < idTab.data.length && (
-            <div className="mt-8 text-center">
-              <Button onClick={fnShowMoreItems} size="lg" variant="outline">
-                {idTab.TabDefault.label} <ArrowRight className="size-5" />
-              </Button>
-            </div>
-          )}
+          <div className="mt-8 text-center">
+          { idTab.data.length > 4 && (
+  <div className="mt-8 text-center">
+    {VisibleCount < idTab.data.length ? (
+      <Button onClick={fnShowMoreItems} size="lg" variant="outline">
+        {idTab.TabDefault.AllLabel} <ChevronDown className="size-5" />
+      </Button>
+    ) : (
+      <Button onClick={() => fnSetVisibleCount(4)} size="lg" variant="outline">
+        {idTab.TabDefault.LessLabel}
+        <ChevronUp className="size-5" />
+      </Button>
+    )}
+  </div>
+)}
+
+        </div>
+
         </TabsContent>
 
         {/* Generate content for each category tab */}

@@ -29,7 +29,8 @@ export async function JobApi(): Promise<MappedResult> {
       LaRawData.map(idItem => idItem.custom_job_location).filter((iLocation): iLocation is string => Boolean(iLocation))
     )];
 
-    const LaMappedData: JobData[] = LaRawData.map(item => ({
+    const LaOpenJobs = LaRawData.filter(item => item.status === "Open");
+    const LaMappedData: JobData[] = LaOpenJobs.map(item => ({
       id: item.name,
       title: item.job_title,
       location: item.custom_job_location || "",

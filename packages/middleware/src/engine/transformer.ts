@@ -1,4 +1,4 @@
-import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget, TeventPageSource, TeventPageTarget, TformsPageTarget, TformsPageSource } from "../types";
+import { IQuery, ITransformer, TpricingPageSource, TpricingPageTarget, TproductsPageSource, TproductsPageTarget, TsolutionPageSource, TsolutionPageTarget, TtrendsPageSource, TtrendsPageTarget, TcareerPageSource, TcareerPageTarget, TindustriesPageSource, TindustriesPageTarget, TtermsAndConditionsPageSource, TtermsAndConditionsPageTarget, TprivacyPolicyPageSource, TprivacyPolicyPageTarget, TslugsSource, TslugsTarget, ThomePageSource, ThomePageTarget, TfooterSource, TfooterTarget, TnavbarSource, TnavbarTarget, TcontactTarget, TcontactSource, TcaseStudiesPageSource, TcaseStudiesPageTarget, TaboutUsPageSource, TaboutUsPageTarget, TeventPageSource, TeventPageTarget, TformsPageTarget, TformsPageSource, TglobalMetaTarget, TglobalMetaSource } from "../types";
 import { clQueryFactory, clQuerySlug } from "../api/query";
 // Sleep function to introduce a delay for every Promise
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -222,6 +222,17 @@ export class clPrivacyPolicyTransformer extends clTransformer<TprivacyPolicyPage
   }
 }
 
+// GlobalMeta transformer
+export class clGlobalMetaTransformer extends clTransformer<TglobalMetaSource, TglobalMetaTarget> {
+  async performTransformation(idSourceData: TglobalMetaSource): Promise<TglobalMetaTarget> {
+    this.targetData = idSourceData;
+    return this.targetData;
+  }
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer;
@@ -239,6 +250,7 @@ interface ITransformerMap {
   termsAndCondition: clTermsandConditionsTransformer;
   aboutUs: clAboutUsTransformer;
   event: clEventTransformer;
+  globalMeta: clGlobalMetaTransformer;
   forms: clFormsTransformer
   // Add other content types and corresponding transformers
 }
@@ -263,6 +275,7 @@ export class clTransformerFactory {
       termsAndCondition: clTermsandConditionsTransformer,
       aboutUs: clAboutUsTransformer,
       event: clEventTransformer,
+      globalMeta: clGlobalMetaTransformer,
       forms: clFormsTransformer
       // Add other content types and corresponding transformers
     };
