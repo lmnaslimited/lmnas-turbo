@@ -58,15 +58,16 @@ export type Tcontext = {
             eq: string;
         };
     };
+    caseStudiesLocale2?: string;
     caseStudiesFilters2?: {
         heroSection?: {
             tag: {
                 eq: string;
             };
         };
-         slug?: {
-                ne: string;
-            };
+        slug?: {
+            ne: string;
+        };
     };
 };
 
@@ -605,15 +606,15 @@ export type Tindustries = {
 export type TsolutionPageSource = {
     solution: Tsolution
     caseStudies: TcaseStudy[]
-       home: {
-        successClients:Timage[]
+    home: {
+        successClients: Timage[]
     }
 }
 export type TsolutionPageTarget = {
     solution: Tsolution
     caseStudies: TcaseStudy[]
     home: {
-        successClients:Timage[]
+        successClients: Timage[]
     }
 
 }
