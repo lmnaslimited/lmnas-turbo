@@ -59,6 +59,7 @@ export type Tcontext = {
         };
     };
     caseStudiesLocale2?: string;
+    footerLocale2?: string,
     caseStudiesFilters2?: {
         heroSection?: {
             tag: {
