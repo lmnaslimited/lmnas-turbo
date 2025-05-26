@@ -23,8 +23,7 @@ import { gql } from "@apollo/client";
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType>
-{
+  implements IQuery<DynamicSourceType> {
   query: string;
   contentType: string;
   locale: string;
@@ -934,7 +933,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
   getQuery(): string {
     return `
-query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
+  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
   solution(locale: $locale) {
   heroSection {
       heading {
@@ -1585,8 +1584,8 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
 
   getQuery(): string {
     return `
-      query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
-     ${this.contentType}(locale: $locale, filters: $filters) {
+    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
+    ${this.contentType}(locale: $locale, filters: $filters) {
     slug
     name
     pdfName
@@ -1703,7 +1702,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       subtitle
     }
   }
-    allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
+  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
     solutionSection {
       successCard {
         header {
@@ -1824,25 +1823,25 @@ export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
   } = {
-    navbar: clQueryNavbar,
-    footer: clQueryFooter,
-    home: clQueryHome,
-    trend: clQueryTrends,
-    career: clQueryCareer,
-    contact: clQueryContact,
-    pricing: clQueryPricing,
-    solution: clQuerySolution,
-    products: clQueryProducts,
-    industries: clQueryIndustries,
-    caseStudies: clQueryCaseStudies,
-    termsAndCondition: clQueryTermsAndConditions,
-    privacyPolicy: clQueryPrivacyPolicy,
-    aboutUs: clQueryAboutUs,
-    event: clQueryEvent,
-    forms: clQueryForms,
-    globalMeta: clQueryGlobalMeta,
-    // Add more mappings here
-  };
+      navbar: clQueryNavbar,
+      footer: clQueryFooter,
+      home: clQueryHome,
+      trend: clQueryTrends,
+      career: clQueryCareer,
+      contact: clQueryContact,
+      pricing: clQueryPricing,
+      solution: clQuerySolution,
+      products: clQueryProducts,
+      industries: clQueryIndustries,
+      caseStudies: clQueryCaseStudies,
+      termsAndCondition: clQueryTermsAndConditions,
+      privacyPolicy: clQueryPrivacyPolicy,
+      aboutUs: clQueryAboutUs,
+      event: clQueryEvent,
+      forms: clQueryForms,
+      globalMeta: clQueryGlobalMeta,
+      // Add more mappings here
+    };
 
   static createQuery<T extends object>(iContentType: string): IQuery<T> {
     const QueryClass = this.queryMap[iContentType];
