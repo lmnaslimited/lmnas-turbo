@@ -437,6 +437,34 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
         formMode
       }
     }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
+    }
   }
 }`;
   }
@@ -555,9 +583,37 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       highlight
       subtitle
     }
-         trendingFooter {
+    trendingFooter {
       label
       description
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
@@ -648,6 +704,34 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
         href
         formMode
       }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
@@ -819,7 +903,35 @@ query Pricing($locale: I18NLocaleCode) {
         icon
     }
   }
-}
+  metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
+    }
+  }
 }`;
   }
 }
@@ -872,6 +984,34 @@ export class clQueryContact extends clQuery<TcontactSource> {
       type
       validationMessage
     }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
+    }
   }
   forms(filters: $filters) {
     title
@@ -920,6 +1060,34 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
       buttons {
         label
       }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
@@ -1127,6 +1295,34 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
         label
         icon
       }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
   caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
@@ -1344,6 +1540,34 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         icon
       }
     }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
+    }
   }
 }`;
   }
@@ -1551,6 +1775,34 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         href
         icon
       }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
   caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
@@ -1777,6 +2029,34 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
       emailLabel
       emailHref
     }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
+    }
   }
 }`;
   }
@@ -1813,6 +2093,34 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
       websiteHref
       emailLabel
       emailHref
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage {
+        url
+      }
+      twitterCreator
+      category
     }
   }
 }`;
