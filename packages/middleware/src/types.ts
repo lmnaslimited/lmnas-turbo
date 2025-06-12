@@ -129,7 +129,7 @@ export type TpageMetadata = {
     twitterCard: "summary" | "summary_large_image" | "player" | "app";
     twitterTitle: string;
     twitterDescription: string;
-    twitterImage: TseoIcons[];
+    twitterImage: string;
     twitterCreator: string;
     category: string;
 };
@@ -473,6 +473,7 @@ type Ttrend = {
     trendingSection: Theader
     showAll: Tbutton
     calloutSection: TcalloutProps
+    metaData: TpageMetadata
 }
 
 // career
@@ -497,6 +498,7 @@ type Tcareer = {
     planSection: TheroSection
     trendingSection: Theader
     trendingFooter: Tbutton[]
+    metaData: TpageMetadata
 }
 
 
@@ -517,6 +519,7 @@ type TaboutUs = {
     testimonialHeader: Theader
     testimonalCard: TcardProps[]
     ctaSection: TcalloutProps
+    metaData: TpageMetadata
 }
 
 export type TformsPageSource = {
@@ -538,6 +541,7 @@ type TtermsAndCondition = {
     acknowledgment: string
     faq: TtechStack
     contact: TcontactData
+    metaData: TpageMetadata
 }
 
 // privacy policy
@@ -552,6 +556,7 @@ type TprivacyPolicy = {
     acknowledgment: string
     faq: TtechStack
     contact: TcontactData
+    metaData: TpageMetadata
 }
 
 // pricing
@@ -577,6 +582,7 @@ export type Tpricing = {
     guideFooter: TcalloutProps
     guideCallout: Theader
     ctaSection: TheroSection
+    metaData: TpageMetadata
 }
 
 // industries
@@ -597,6 +603,7 @@ export type Tindustry = {
     cta: TcalloutProps
     successStoryHeaderFooter: TcalloutProps
     successStoryCard: TcardProps[]
+    metaData: TpageMetadata
 }
 export type Tindustries = {
     industries: Tindustry[]
@@ -641,6 +648,7 @@ export type Tsolution = {
     calloutCard: TcardProps[]
     calloutSection: TcalloutProps
     calloutFooter: TcalloutProps
+    metaData: TpageMetadata
 }
 
 // casestudies
@@ -688,6 +696,7 @@ export type Tproducts = {
     pricingHighlight: TcalloutProps
     ctaSectionHeader: Theader
     ctaSection: TcalloutProps
+    metaData: TpageMetadata
 }
 
 // Contact
@@ -703,6 +712,7 @@ export type Tcontact = {
     header: Theader[]
     contactForm: TformFieldConfig[]
     bookingForm: TformFieldConfig[]
+    metaData: TpageMetadata
 }
 
 // Event
@@ -714,6 +724,7 @@ export type TeventPageTarget = {
 }
 export type Tevent = {
     heroSection: TheroSection
+    metaData: TpageMetadata
 }
 
 // -------------------------------------------------------------------------------------------
