@@ -1742,22 +1742,6 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         description
       }
     }
-    successStoryCard {
-      header {
-        title
-        subtitle
-      }
-      category
-      image {
-        source
-        alternate
-      }
-      buttons {
-        label
-        href
-        icon
-      }
-    }
     metaData {
       title
       description
