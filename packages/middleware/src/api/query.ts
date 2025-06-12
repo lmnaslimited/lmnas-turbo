@@ -353,9 +353,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -459,9 +457,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage
       twitterCreator
       category
     }
@@ -609,9 +605,7 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage
       twitterCreator
       category
     }
@@ -727,9 +721,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -925,9 +917,7 @@ query Pricing($locale: I18NLocaleCode) {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage
       twitterCreator
       category
     }
@@ -1006,9 +996,7 @@ export class clQueryContact extends clQuery<TcontactSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -1083,9 +1071,7 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -1318,9 +1304,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -1562,9 +1546,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage
       twitterCreator
       category
     }
@@ -1798,9 +1780,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage
       twitterCreator
       category
     }
@@ -2051,9 +2031,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
@@ -2116,9 +2094,7 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
       twitterCard
       twitterTitle
       twitterDescription
-      twitterImage {
-        url
-      }
+      twitterImage 
       twitterCreator
       category
     }
