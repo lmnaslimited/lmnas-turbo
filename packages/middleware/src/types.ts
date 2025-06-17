@@ -99,7 +99,7 @@ export type TglobalMeta = {
         appleWebAppTitle?: string;
         appleWebAppStatusBarStyle?: 'default' | 'black' | 'black-translucent';
         manifest?: string;
-        schemaData?: Record<string, unknown>[];
+        schemaData?: Record<string, any>[];
     }
 }
 
