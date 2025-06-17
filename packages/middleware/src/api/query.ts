@@ -106,6 +106,7 @@ export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
       appleWebAppTitle
       appleWebAppStatusBarStyle
       manifest
+      schemaData
   }
 }`;
   }
