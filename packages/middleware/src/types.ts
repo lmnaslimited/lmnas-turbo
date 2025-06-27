@@ -740,6 +740,7 @@ export type JobOpening = {
     custom_job_location?: string;
     _user_tags: string[];
     creation: string;
+    route: string
 };
 
 export type JobFilters = {
