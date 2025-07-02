@@ -104,7 +104,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
       </div>
       {/* Image part */}
       <div className="w-full overflow-hidden rounded-xl">
-        <img
+        <Image
           src={idHero.image?.source || "/placeholder.svg"}
           alt={idHero?.image?.alternate}
           className="aspect-[4/3] h-auto w-full object-cover"
