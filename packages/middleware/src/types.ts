@@ -133,6 +133,7 @@ export type TpageMetadata = {
     twitterImage: string;
     twitterCreator: string;
     category: string;
+    schemaData?: Record<string, any>[];
 };
 
 export type TseoIcons = {
