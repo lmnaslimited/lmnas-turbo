@@ -133,6 +133,7 @@ export type TpageMetadata = {
     twitterImage: string;
     twitterCreator: string;
     category: string;
+    schemaData?: Record<string, any>[];
 };
 
 export type TseoIcons = {
@@ -740,6 +741,7 @@ export type JobOpening = {
     custom_job_location?: string;
     _user_tags: string[];
     creation: string;
+    route: string
 };
 
 export type JobFilters = {

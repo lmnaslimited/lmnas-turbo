@@ -9,7 +9,7 @@ export async function JobApi(): Promise<MappedResult> {
   }
   try {
     const LdJobResponse = await fetch(
-      `${LUrl}/api/resource/Job Opening?fields=["name","job_title","status","designation","custom_job_location","description","_user_tags","creation", "custom_excerpt_description"]&limit_page_length=0`,
+      `${LUrl}/api/resource/Job Opening?fields=["name","job_title","status","designation","custom_job_location","description","_user_tags","creation", "custom_excerpt_description", "route"]&limit_page_length=0`,
       {
         method: "GET",
         headers: LdHeaders,
@@ -36,7 +36,7 @@ export async function JobApi(): Promise<MappedResult> {
       location: item.custom_job_location || "",
       role: item.designation,
       description: item.custom_excerpt_description || "",
-      applyUrl: `${process.env.SUBSCRIBE_URL}/${item.name}`
+      applyUrl: `${process.env.SUBSCRIBE_URL}/${item.route}`
     }));
     return {
       filters: {

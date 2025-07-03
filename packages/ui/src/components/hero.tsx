@@ -11,7 +11,7 @@ import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
 
 type THeroProps = {
   idHero: TheroSection;
-  onButtonClick?: (mode: TformMode, formTitle?:string) => void;
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
 }
 
 const renderIcon = (icon: Tbutton['icon']) => {
@@ -90,36 +90,28 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
     * Hero section variant with an image.
     * Displays content alongside a visual representation for better engagement.
     */
-    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 md:py-24 lg:py-32")}>
+    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 lg:py-24")}>
       <div className={cn("flex flex-col justify-center space-y-8")}>
         {idHero.heading.badge && <Badge iText={idHero.heading.badge} />}
         <TitleSubtitle idTitle={{
           ...idHero.heading,
           className: "m-0",
-          headingClass: "md:text-6xl lg:text-7xl tracking-tight",
-          descripClass: "max-w-xl md:text-2xl"
+          headingClass: "md:text-5xl lg:text-6xl tracking-tight",
+          descripClass: "max-w-xl md:text-xl"
         }} />
         {idHero.highlight && <FeatureList iaItems={idHero.highlight} />}
         <CTAButtons iaButtons={idHero.buttons} />
       </div>
       {/* Image part */}
-      <div className={cn("flex items-center justify-center")}>
-  <div
-    className={cn(
-      // Increased max width, taller aspect ratio, removed padding
-      "relative w-full max-w-[700px] aspect-[3/2] overflow-hidden rounded-lg min-w-[300px] md:mt-16"
-    )}
-  >
-    <Image
-      src={idHero.image?.source || "/placeholder.svg"}
-      alt={idHero?.image?.alternate || ""}
-      fill
-      className="object-contain"
-    />
-  </div>
-</div>
-
-
+      <div className="w-full overflow-hidden rounded-xl">
+        <Image
+          src={idHero.image?.source || "/placeholder.svg"}
+          alt={idHero?.image?.alternate}
+          className="aspect-[4/3] h-auto w-full object-cover"
+          height={1000}
+          width={1000}
+        />
+      </div>
     </div>
   ) : (
     /**
