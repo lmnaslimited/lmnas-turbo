@@ -150,8 +150,9 @@ export type Titems = {
     className?: string
     label?: string
     description?: string
-    title: string
-    subtitle: string
+    title?: string
+    subtitle?: string
+    type?: string
 }
 
 export type Theader = {
@@ -319,6 +320,21 @@ export type TsolutionSection = {
     }
     successCard: TcardProps
     footer: TheroSection
+}
+
+
+
+// location component
+export type TlocationCard = {
+    index: string
+    type: string
+    badge: string
+    title: string
+    description: string
+    contacts: Titems[]
+    svg: Timage
+    navigation: Tbutton
+    isReversed: boolean
 }
 
 // Form Type
@@ -715,6 +731,9 @@ export type Tcontact = {
     contactForm: TformFieldConfig[]
     bookingForm: TformFieldConfig[]
     metaData: TpageMetadata
+    locationHeadline: string
+    locationHeader: Theader
+    locationCard: TlocationCard[]
 }
 
 // Event
