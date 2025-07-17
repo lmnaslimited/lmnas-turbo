@@ -41,7 +41,7 @@ export default function LocationCard({ location: iLocation }: { location: Tlocat
                 <div className={`lg:col-span-5 ${iLocation.isReversed ? "lg:pl-5 order-1 lg:order-2" : "lg:pr-5"}`}>
                     <div className="relative">
                         {/* Badge */}
-                        <div className="inline-flex items-center gap-3 mb-8">
+                        <div className="inline-flex items-center gap-2 mb-5 ml-1">
                             <div className="w-3 h-3 rounded-full bg-foreground" />
                             <span className="text-foreground text-sm tracking-widest uppercase">{iLocation.badge}</span>
                         </div>
@@ -86,23 +86,54 @@ export default function LocationCard({ location: iLocation }: { location: Tlocat
                                 )
                             })()}
 
-                            {/* Contact Info */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {iLocation.contacts
-                                    .filter((lContact: Titems) => lContact.type === "contact")
-                                    .map((lContact, lIndex) => {
-                                        const IconComponent = fnGetIcon(lContact.icon)
-                                        return (
-                                            <div
-                                                key={lIndex}
-                                                className="flex items-center gap-4 p-4 bg-accent border border-accent backdrop-blur-sm"
-                                            >
-                                                <IconComponent className="h-4 w-4 text-foreground flex-shrink-0" />
-                                                <p className="text-foreground text-base">{lContact.description}</p>
-                                            </div>
-                                        )
-                                    })}
+                            <div className="flex flex-col md:flex-row gap-4">
+                                {/* Phone Info */}
+                                <div className="flex-1 grid grid-cols-1 gap-4">
+                                    {iLocation.contacts
+                                        .filter((lContact: Titems) => lContact.type === "phone")
+                                        .map((lContact, lIndex) => {
+                                            const IconComponent = fnGetIcon(lContact.icon)
+                                            return (
+                                                <div
+                                                    key={lIndex}
+                                                    className="flex items-center gap-4 p-4 bg-accent border border-accent backdrop-blur-sm"
+                                                >
+                                                    <IconComponent className="h-4 w-4 text-foreground flex-shrink-0" />
+                                                    <Link
+                                                        href={`tel:${lContact.description}`}
+                                                        className="text-foreground text-base"
+                                                    >
+                                                        {lContact.description}
+                                                    </Link>
+                                                </div>
+                                            )
+                                        })}
+                                </div>
+
+                                {/* Mail Info */}
+                                <div className="flex-1 grid grid-cols-1 gap-4">
+                                    {iLocation.contacts
+                                        .filter((lContact: Titems) => lContact.type === "mail")
+                                        .map((lContact, lIndex) => {
+                                            const IconComponent = fnGetIcon(lContact.icon)
+                                            return (
+                                                <div
+                                                    key={lIndex}
+                                                    className="flex items-center gap-4 p-4 bg-accent border border-accent backdrop-blur-sm"
+                                                >
+                                                    <IconComponent className="h-4 w-4 text-foreground flex-shrink-0" />
+                                                    <Link
+                                                        href={`mailto:${lContact.description}`}
+                                                        className="text-foreground text-base"
+                                                    >
+                                                        {lContact.description}
+                                                    </Link>
+                                                </div>
+                                            )
+                                        })}
+                                </div>
                             </div>
+
 
                             {/* Hours Info */}
                             {iLocation.contacts
@@ -124,19 +155,28 @@ export default function LocationCard({ location: iLocation }: { location: Tlocat
                 </div>
 
                 {/* Right Image */}
-                <div className={`lg:col-span-7 ${iLocation.isReversed ? "order-2 lg:order-1" : ""} relative z-20`}>
-                    {fnGetSvg(iLocation.svg.svg, iLocation.svg.alternate)}
-                    <div className={`absolute bottom-6 ${iLocation.isReversed ? "left-6" : "right-6"}`}>
-                        <Link
-                            href={iLocation.navigation.href}
-                            className="inline-flex items-center gap-2 text-foreground hover:text-white/80 transition-colors group backdrop-blur-sm px-4 py-2 rounded-md bg-accent border border-accent"
+                <div
+                    className={`lg:col-span-7 ${iLocation.isReversed ? "order-1 lg:order-1" : "order-1 lg:order-2"} relative z-20`}
+                >
+                    <div className="relative">
+                        {fnGetSvg(iLocation.svg.svg, iLocation.svg.alternate)}
+                        <div
+                            className={`absolute bottom-2 lg:bottom-6 ${iLocation.isReversed ? "left-4 lg:left-6" : "right-4 lg:right-6"}`}
                         >
-                            <span className="font-medium">{iLocation.navigation.label}</span>
-                            {(() => {
-                                const IconComponent = fnGetIcon(iLocation.navigation.icon)
-                                return <IconComponent className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                            })()}
-                        </Link>
+                            <Link
+                                target="_blank"
+                                href={iLocation.navigation.href}
+                                className="inline-flex items-center gap-2 text-foreground transition-colors group backdrop-blur-sm px-3 py-2 sm:px-4 sm:py-2 rounded-md bg-accent border border-accent text-sm sm:text-base"
+                            >
+                                <span className="font-medium">{iLocation.navigation.label}</span>
+                                {(() => {
+                                    const IconComponent = fnGetIcon(iLocation.navigation.icon)
+                                    return (
+                                        <IconComponent className="h-3 w-3 sm:h-4 sm:w-4 group-hover:translate-x-1 transition-transform" />
+                                    )
+                                })()}
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
