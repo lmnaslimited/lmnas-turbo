@@ -516,8 +516,6 @@ type Tcareer = {
     trendingFooter: Tbutton[]
     metaData: TpageMetadata
 }
-
-
 // about us
 export type TaboutUsPageSource = {
     aboutUs: TaboutUs
