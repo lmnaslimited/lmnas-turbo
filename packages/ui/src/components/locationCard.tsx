@@ -8,13 +8,13 @@ import { TlocationCard, Tbutton, Titems } from "@repo/middleware"
 import * as SVG from "@repo/ui/svg/svgs"
 
 export default function LocationCard({ idLocation }: { idLocation: TlocationCard }) {
-    const [LCopied, setLCopied] = useState(false)
+    const [LCopied, fnSetLCopied] = useState(false)
 
     const fnCopyAddress = (iAddress: string) => {
         // Use browser clipboard API to write text
         navigator.clipboard.writeText(iAddress).then(() => {
-            setLCopied(true)
-            setTimeout(() => setLCopied(false), 2000)
+            fnSetLCopied(true)
+            setTimeout(() => fnSetLCopied(false), 2000)
         })
     }
 
@@ -29,9 +29,9 @@ export default function LocationCard({ idLocation }: { idLocation: TlocationCard
         )
     }
 
-    const fnRenderIcon = (icon: Tbutton['icon']) => {
-        const iconName = typeof icon === "string" ? icon : "HelpCircle";
-        const IconComponent = getIconComponent(iconName);
+    const fnRenderIcon = (iIcon: Tbutton['icon']) => {
+        const LIconName = typeof iIcon === "string" ? iIcon : "HelpCircle";
+        const IconComponent = getIconComponent(LIconName);
         return <IconComponent className="w-5 h-5" />;
     };
 
