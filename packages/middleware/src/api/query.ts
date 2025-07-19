@@ -1007,6 +1007,35 @@ export class clQueryContact extends clQuery<TcontactSource> {
       category
       schemaData
     }
+    locationHeadline
+    locationHeader {
+      title
+      highlight
+      subtitle
+    }
+      locationCard {
+      index
+      type
+      badge
+      title
+      description
+      contacts {
+      icon
+      label
+      description
+      type
+      }
+      svg {
+        svg
+        alternate
+    }
+    navigation {
+      href
+      label
+      icon
+    }
+    isReversed
+    }
   }
   forms(filters: $filters) {
     title
