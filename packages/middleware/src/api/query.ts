@@ -357,6 +357,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -461,6 +462,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
       twitterImage
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -609,6 +611,7 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       twitterImage
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -725,6 +728,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -921,6 +925,7 @@ query Pricing($locale: I18NLocaleCode) {
       twitterImage
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -1000,6 +1005,36 @@ export class clQueryContact extends clQuery<TcontactSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
+    }
+    locationHeadline
+    locationHeader {
+      title
+      highlight
+      subtitle
+    }
+      locationCard {
+      index
+      type
+      badge
+      title
+      description
+      contacts {
+      icon
+      label
+      description
+      type
+      }
+      svg {
+        svg
+        alternate
+    }
+    navigation {
+      href
+      label
+      icon
+    }
+    isReversed
     }
   }
   forms(filters: $filters) {
@@ -1075,6 +1110,7 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -1308,6 +1344,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
   caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
@@ -1550,6 +1587,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       twitterImage
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -1768,6 +1806,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       twitterImage
       twitterCreator
       category
+      schemaData
     }
   }
   caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
@@ -2019,6 +2058,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
@@ -2082,6 +2122,7 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
       twitterImage 
       twitterCreator
       category
+      schemaData
     }
   }
 }`;
