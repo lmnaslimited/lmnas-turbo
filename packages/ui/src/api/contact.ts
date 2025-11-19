@@ -1,6 +1,6 @@
 'use server'
 
-import { TcontactApi } from "@repo/middleware"
+import { TcontactApi } from "@repo/middleware/type"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {

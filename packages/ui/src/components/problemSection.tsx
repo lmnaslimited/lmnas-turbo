@@ -4,9 +4,15 @@ import { useRef, useEffect, useState, ReactElement } from "react";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 import { Button } from "@repo/ui/components/ui/button";
 import { ChevronRight, Download } from "lucide-react";
-import { TcalloutProps, TformMode } from "@repo/middleware";
+import { TcalloutProps, TformMode } from "@repo/middleware/type";
 
-export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: TcalloutProps, onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
+export function ProblemSection({
+  idCaseStudy,
+  onButtonClick,
+}: {
+  idCaseStudy: TcalloutProps;
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
+}): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null);
 
   // Checks if the section is in view for triggering animations
@@ -20,9 +26,7 @@ export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: Tca
     if (!IsInView) return;
 
     const Interval = setInterval(() => {
-      fnSetActiveChallenge(
-        (prev) => (prev + 1) % idCaseStudy.list.length
-      );
+      fnSetActiveChallenge((prev) => (prev + 1) % idCaseStudy.list.length);
     }, 3000);
 
     return () => clearInterval(Interval);
@@ -46,7 +50,7 @@ export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: Tca
                 className="w-full gap-2 bg-primary/10 hover:bg-primary/20 text-primary"
                 onClick={() => {
                   if (onButtonClick && idButton.formMode) {
-                    onButtonClick(idButton.formMode, idButton.label)
+                    onButtonClick(idButton.formMode, idButton.label);
                   }
                 }}
               >
@@ -71,18 +75,20 @@ export function ProblemSection({ idCaseStudy,onButtonClick }: { idCaseStudy: Tca
           {idCaseStudy.list.map((iChallenge, iIndex) => (
             <div
               key={iIndex}
-              className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${iIndex === ActiveChallenge
-                ? "border-primary bg-primary/5 shadow-md"
-                : "border-muted bg-card hover:border-muted/80 hover:bg-muted/5"
-                }`}
+              className={`cursor-pointer rounded-lg border p-6 transition-all duration-300 ${
+                iIndex === ActiveChallenge
+                  ? "border-primary bg-primary/5 shadow-md"
+                  : "border-muted bg-card hover:border-muted/80 hover:bg-muted/5"
+              }`}
               onClick={() => fnSetActiveChallenge(iIndex)}
             >
               <div className="flex items-start gap-4">
                 <div
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${iIndex === ActiveChallenge
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
-                    }`}
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
+                    iIndex === ActiveChallenge
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
                 >
                   <span className="font-mono text-sm font-bold">
                     {iIndex + 1}

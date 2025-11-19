@@ -1,11 +1,11 @@
-"use client"
-import type { ThemeProviderProps } from "next-themes"
-import { ThemeProvider as NextThemesProvider } from "next-themes"
-import { useThemeSynchronization } from "@repo/ui/lib/broadcast-channel"
+"use client";
+
+import type { ThemeProviderProps } from "next-themes";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { useThemeSynchronization } from "@repo/ui/lib/broadcast-channel";
 
 export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
-  useThemeSynchronization()
+  useThemeSynchronization();
 
-  return <NextThemesProvider {...props}>{children}</NextThemesProvider>
+  return <NextThemesProvider {...props}>{children}</NextThemesProvider>;
 }
-

@@ -1,11 +1,11 @@
-import Link from "next/link"
-import type { ReactElement } from "react"
+import type { ReactElement } from "react";
+import Link from "next/link";
 import { cn } from "@repo/ui/lib/utils";
-import { Button } from "@repo/ui/components/ui/button"
-import { TcalloutProps, TformMode, Tbutton } from "@repo/middleware";
+import { Button } from "@repo/ui/components/ui/button";
+import { TcalloutProps, TformMode, Tbutton } from "@repo/middleware/type";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
-const renderIcon = (icon: Tbutton['icon']) => {
+const renderIcon = (icon: Tbutton["icon"]) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
   return <IconComponent className="w-5 h-5" />;
@@ -15,10 +15,9 @@ export default function Callout({
   idCallout,
   onButtonClick,
 }: {
-  idCallout: TcalloutProps
-  onButtonClick?: (mode: TformMode, formTitle?:string) => void
+  idCallout: TcalloutProps;
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
 }): ReactElement {
-
   // Determine the layout type, defaulting to "classic" if not provided
   const Layout = idCallout.layout || "classic";
 
@@ -28,13 +27,24 @@ export default function Callout({
     >
       {/* Render callout header with different styling based on layout */}
       {Layout === "classic" ? (
-        <h2 className={cn("text-3xl font-extrabold sm:text-4xl", idCallout.variant || "text-background")}>
-          <span className="block text-background">{idCallout.header?.title}</span>
-          <span className="block text-background">{idCallout.header?.subtitle}</span>
+        <h2
+          className={cn(
+            "text-3xl font-extrabold sm:text-4xl",
+            idCallout.variant || "text-background"
+          )}
+        >
+          <span className="block text-background">
+            {idCallout.header?.title}
+          </span>
+          <span className="block text-background">
+            {idCallout.header?.subtitle}
+          </span>
         </h2>
       ) : (
         <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
-          <span className="block text-foreground">{idCallout.header.title}</span>
+          <span className="block text-foreground">
+            {idCallout.header.title}
+          </span>
           <span className="block text-foreground">
             {idCallout.header.subtitle}
           </span>
@@ -42,14 +52,15 @@ export default function Callout({
       )}
 
       {/* Display an optional description text */}
-      <p className="mt-4 text-lg leading-6 text-secondary">
-        {idCallout.title}
-      </p>
+      <p className="mt-4 text-lg leading-6 text-secondary">{idCallout.title}</p>
 
       {/* Render a list of bullet points if provided */}
       <ul className="mt-4 space-y-4">
         {idCallout.list?.map((iPoint, iIndex) => (
-          <li key={iIndex} className={cn("text-lg", idCallout.variant || "text-secondary")}>
+          <li
+            key={iIndex}
+            className={cn("text-lg", idCallout.variant || "text-secondary")}
+          >
             {iPoint.label}
           </li>
         ))}
@@ -66,11 +77,9 @@ export default function Callout({
           // Construct button content, including an optional icon
           const ButtonContent = (
             <>
-              
               {idButton.label}
-              
-                <span className="ml-2">{renderIcon(idButton.icon)}</span>
-              
+
+              <span className="ml-2">{renderIcon(idButton.icon)}</span>
             </>
           );
 
@@ -84,7 +93,6 @@ export default function Callout({
               </Button>
             </Link>
           ) : (
-
             // Render a standard button with an event handler if no href is provided
             <Button
               key={`btn-${index}`}
@@ -92,7 +100,7 @@ export default function Callout({
               size={idButton.size || "lg"}
               onClick={() => {
                 if (onButtonClick && idButton.formMode) {
-                  onButtonClick(idButton.formMode, idButton.label)
+                  onButtonClick(idButton.formMode, idButton.label);
                 }
               }}
             >
@@ -102,5 +110,5 @@ export default function Callout({
         })}
       </div>
     </div>
-  )
+  );
 }

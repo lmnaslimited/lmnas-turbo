@@ -1,6 +1,6 @@
 'use server'
 
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/type"
 
 /**
  * Fetches the list of available timezones from the backend.

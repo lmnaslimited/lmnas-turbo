@@ -3,9 +3,21 @@ import Link from "next/link";
 import { ReactElement, ReactNode } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
-import { Youtube, Linkedin, Twitter, Clipboard, ArrowRight } from "lucide-react";
-import { TformMode, TtrendCardProps } from "@repo/middleware";
+import { TformMode, TtrendCardProps } from "@repo/middleware/type";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/ui/components/ui/card";
+import {
+  Youtube,
+  Linkedin,
+  Twitter,
+  Clipboard,
+  ArrowRight,
+} from "lucide-react";
 
 /**
  * Function to return the appropriate icon based on the source platform.
@@ -19,9 +31,9 @@ const fnGetIcon = (iSource: string): ReactNode => {
     case "Twitter":
       return <Twitter className="h-4 w-4" />;
     case "webinar":
-      return <Clipboard className="h-4 w-4" />
+      return <Clipboard className="h-4 w-4" />;
     default:
-      return <Clipboard className="h-4 w-4" />
+      return <Clipboard className="h-4 w-4" />;
   }
 };
 
@@ -39,14 +51,21 @@ const fnGetPlatformUrl = (iSource: string, iId: string): string => {
 };
 
 type TtrendsProps = {
-  idTrends: TtrendCardProps
-  onButtonClick?: (mode: TformMode, formTitle?:string) => void
-}
-export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): ReactElement {
+  idTrends: TtrendCardProps;
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
+};
+export default function TrendCard({
+  idTrends,
+  onButtonClick,
+}: TtrendsProps): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
-    <Link href={LPlatformUrl} 
-    {...(LPlatformUrl !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})} >
+    <Link
+      href={LPlatformUrl}
+      {...(LPlatformUrl !== "#"
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {})}
+    >
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">
@@ -54,7 +73,9 @@ export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): Re
               {fnGetIcon(idTrends.source)}
               {idTrends.source}
             </Badge>
-            <CardDescription>{new Date(idTrends.publishedAt).toLocaleDateString()}</CardDescription>
+            <CardDescription>
+              {new Date(idTrends.publishedAt).toLocaleDateString()}
+            </CardDescription>
           </div>
           <CardTitle className="line-clamp-2">{idTrends.title}</CardTitle>
         </CardHeader>
@@ -63,8 +84,8 @@ export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): Re
           <div className="relative w-full aspect-video mb-4">
             <Image
               className="absolute top-0 left-0 w-full h-full object-cover"
-              src={idTrends.media.url}  // Image URL
-              alt={idTrends.media.alt || "Media preview"}  // Image alt text (optional)
+              src={idTrends.media.url} // Image URL
+              alt={idTrends.media.alt || "Media preview"} // Image alt text (optional)
               width={800} // Provide width and height for Image component optimization
               height={450}
             />
@@ -72,16 +93,30 @@ export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): Re
         )}
 
         <CardContent className="px-4">
-          <div className="min-h-[80px]">{idTrends.description && (<CardDescription className="line-clamp-3">{idTrends.description}</CardDescription>)}</div>
-          {idTrends.author && <p className="mt-2 text-sm font-medium">{idTrends.author}</p>}
+          <div className="min-h-[80px]">
+            {idTrends.description && (
+              <CardDescription className="line-clamp-3">
+                {idTrends.description}
+              </CardDescription>
+            )}
+          </div>
+          {idTrends.author && (
+            <p className="mt-2 text-sm font-medium">{idTrends.author}</p>
+          )}
           {idTrends.formMode && (
-            <div className="py-2 mt-auto"><Button
-              size="sm"
-              onClick={() => onButtonClick?.(idTrends.formMode as TformMode, idTrends.title)}
-            >
-              {idTrends.btnLabel}
-              <ArrowRight />
-            </Button>
+            <div className="py-2 mt-auto">
+              <Button
+                size="sm"
+                onClick={() =>
+                  onButtonClick?.(
+                    idTrends.formMode as TformMode,
+                    idTrends.title
+                  )
+                }
+              >
+                {idTrends.btnLabel}
+                <ArrowRight />
+              </Button>
             </div>
           )}
         </CardContent>

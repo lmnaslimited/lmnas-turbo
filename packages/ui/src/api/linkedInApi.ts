@@ -1,6 +1,6 @@
 "use server";
 
-import { TtrendCardProps } from "@repo/middleware";
+import { TtrendCardProps } from "@repo/middleware/type";
 
 export type TsocialAPIPostIds = {
   data: TtrendCardProps[];

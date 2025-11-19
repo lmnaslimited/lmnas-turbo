@@ -1,6 +1,6 @@
 'use server'
 
-import { TslotResponse, Tslot } from "@repo/middleware"
+import { TslotResponse, Tslot } from "@repo/middleware/type"
 
 /**
  * Fetches available appointment time slots for a given date and timezone.

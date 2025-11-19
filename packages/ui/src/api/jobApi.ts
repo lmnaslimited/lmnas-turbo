@@ -1,5 +1,5 @@
 'use server'
-import { JobData, JobOpening, MappedResult } from "@repo/middleware";
+import { JobData, JobOpening, MappedResult } from "@repo/middleware/type";
 
 export async function JobApi(): Promise<MappedResult> {
   const LUrl = process.env.SUBSCRIBE_URL

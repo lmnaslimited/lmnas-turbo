@@ -1,16 +1,20 @@
 "use client";
 import { useRef, useEffect, ReactElement } from "react";
-import { Titems, Tbutton } from "@repo/middleware";
 import { getIconComponent } from "@repo/ui/lib/icon";
+import { Titems, Tbutton } from "@repo/middleware/type";
 
-const renderIcon = (icon: Tbutton['icon']) => {
+const renderIcon = (icon: Tbutton["icon"]) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
   return <IconComponent className="w-6 h-6" />;
 };
 
 // PainPoints Component: Displays a list of pain points with a smooth fade-in animation when they enter the viewport.
-export default function PainPoints({ idItems }: { idItems: Titems[] }): ReactElement {
+export default function PainPoints({
+  idItems,
+}: {
+  idItems: Titems[];
+}): ReactElement {
   const PainPointsRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

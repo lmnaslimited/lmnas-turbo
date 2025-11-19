@@ -1,19 +1,17 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@repo/ui/lib/utils";
 import { ReactElement } from "react";
-import { Button } from "@repo/ui/components/ui/button";
+import { cn } from "@repo/ui/lib/utils";
 import { Badge } from "@repo/ui/components/ui/badge";
+import { Button } from "@repo/ui/components/ui/button";
+import { getIconComponent } from "@repo/ui/lib/icon";
+import { TcardProps, Tbutton } from "@repo/middleware/type";
+import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@repo/ui/components/ui/avatar";
-import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
-import { TcardProps, Tbutton } from "@repo/middleware";
-import { getIconComponent } from "@repo/ui/lib/icon";
 
 const renderIcon = (icon: Tbutton["icon"], classname: string = "w-6 h-6") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";

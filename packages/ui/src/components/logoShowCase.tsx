@@ -1,12 +1,9 @@
-"use client"
-import Image from "next/image"
-import { cn } from "@repo/ui/lib/utils"
-import { ReactElement } from "react"
-import { motion, useAnimation } from "framer-motion"
-import { TlogoShowcaseProps, Timage, Tbutton } from "@repo/middleware"
-import { getIconComponent } from "@repo/ui/lib/icon";
-import GetIcon from "@repo/ui/components/getIcon"
-
+import Image from "next/image";
+import { ReactElement } from "react";
+import { cn } from "@repo/ui/lib/utils";
+import GetIcon from "@repo/ui/components/getIcon";
+import { motion, useAnimation } from "framer-motion";
+import { TlogoShowcaseProps, Timage } from "@repo/middleware/type";
 
 /**
  * LogoShowcase Component
@@ -14,7 +11,11 @@ import GetIcon from "@repo/ui/components/getIcon"
  * Props:
  * - idLogoProps: Configuration object containing logo data, layout preferences, animation speed, and spacing.
  */
-export default function LogoShowcase({ idLogoProps }: { idLogoProps: TlogoShowcaseProps }): ReactElement {
+export default function LogoShowcase({
+  idLogoProps,
+}: {
+  idLogoProps: TlogoShowcaseProps;
+}): ReactElement {
   /**
    * Determines the dimensions (width & height) of each logo based on the specified size.
    * Returns an object with width and height properties.
@@ -22,51 +23,51 @@ export default function LogoShowcase({ idLogoProps }: { idLogoProps: TlogoShowca
   const fnGetLogoDimensions = (): { width: number; height: number } => {
     switch (idLogoProps.logoSize) {
       case "small":
-        return { width: 100, height: 50 }
+        return { width: 100, height: 50 };
       case "large":
-        return { width: 200, height: 100 }
+        return { width: 200, height: 100 };
       case "medium":
       default:
-        return { width: 150, height: 75 }
+        return { width: 150, height: 75 };
     }
-  }
+  };
 
   /**
-    * Determines the spacing between logos based on the spacing prop.
-    * Returns a Tailwind CSS class for gap spacing.
-    */
+   * Determines the spacing between logos based on the spacing prop.
+   * Returns a Tailwind CSS class for gap spacing.
+   */
   const fnGetSpacing = (): string => {
     switch (idLogoProps.spacing) {
       case "tight":
-        return "gap-8"
+        return "gap-8";
       case "loose":
-        return "gap-24"
+        return "gap-24";
       case "normal":
       default:
-        return "gap-16"
+        return "gap-16";
     }
-  }
+  };
 
   /**
- * Determines the animation speed for the marquee (scrolling ticker).
- * Returns a numerical value representing the animation duration.
- */
+   * Determines the animation speed for the marquee (scrolling ticker).
+   * Returns a numerical value representing the animation duration.
+   */
   const fnGetMarqueeSpeed = (): number => {
     switch (idLogoProps.speed) {
       case "slow":
-        return 20
+        return 20;
       case "fast":
-        return 5
+        return 5;
       case "medium":
       default:
-        return 10
+        return 10;
     }
-  }
+  };
 
   /**
-  * Renders the logos either in a grid layout or a marquee (scrolling ticker) layout.
-  * Decides which component to use based on the 'variant' prop.
-  */
+   * Renders the logos either in a grid layout or a marquee (scrolling ticker) layout.
+   * Decides which component to use based on the 'variant' prop.
+   */
   const fnRenderLogos = (): ReactElement => {
     switch (idLogoProps.variant) {
       case "marquee":
@@ -79,7 +80,7 @@ export default function LogoShowcase({ idLogoProps }: { idLogoProps: TlogoShowca
             pauseOnHover={idLogoProps?.pauseOnHover ?? true}
             variant="marquee"
           />
-        )
+        );
       case "grid":
       default:
         return (
@@ -90,11 +91,15 @@ export default function LogoShowcase({ idLogoProps }: { idLogoProps: TlogoShowca
             logosPerRow={idLogoProps.logosPerRow || 4}
             variant="grid"
           />
-        )
+        );
     }
-  }
+  };
 
-  return <div className={cn("w-full overflow-hidden", idLogoProps.className,)}>{fnRenderLogos()}</div>
+  return (
+    <div className={cn("w-full overflow-hidden", idLogoProps.className)}>
+      {fnRenderLogos()}
+    </div>
+  );
 }
 
 /**
@@ -104,8 +109,8 @@ export default function LogoShowcase({ idLogoProps }: { idLogoProps: TlogoShowca
  * - idMarquee: Configuration object containing logos, animation speed, spacing, and hover behavior.
  */
 function MarqueeLogos(idMarquee: TlogoShowcaseProps): ReactElement {
-  const Controls = useAnimation() // Controls for animation
-  const DuplicateLogo = [...idMarquee.logos, ...idMarquee.logos]
+  const Controls = useAnimation(); // Controls for animation
+  const DuplicateLogo = [...idMarquee.logos, ...idMarquee.logos];
 
   return (
     <div className="relative py-6 w-full overflow-hidden">
@@ -121,17 +126,28 @@ function MarqueeLogos(idMarquee: TlogoShowcaseProps): ReactElement {
           duration: idMarquee.speed,
         }}
         onHoverStart={() => idMarquee.pauseOnHover && Controls.stop()} // Stops animation
-        onHoverEnd={() => idMarquee.pauseOnHover && Controls.start({
-          x: ["0%", "-100%"],
-          transition: { repeat: Infinity, ease: "linear", duration: idMarquee.speed }
-        })} // Restarts animation
+        onHoverEnd={() =>
+          idMarquee.pauseOnHover &&
+          Controls.start({
+            x: ["0%", "-100%"],
+            transition: {
+              repeat: Infinity,
+              ease: "linear",
+              duration: idMarquee.speed,
+            },
+          })
+        } // Restarts animation
       >
         {DuplicateLogo.map((idLogo, iIndex) => (
-          <LogoItem key={`${idLogo.alternate}-${iIndex}`} logo={idLogo} dimensions={idMarquee.dimensions ?? { width: 150, height: 75 }} />
+          <LogoItem
+            key={`${idLogo.alternate}-${iIndex}`}
+            logo={idLogo}
+            dimensions={idMarquee.dimensions ?? { width: 150, height: 75 }}
+          />
         ))}
       </motion.div>
     </div>
-  )
+  );
 }
 
 /**
@@ -148,18 +164,18 @@ function GridLogos(idGridLogo: TlogoShowcaseProps): ReactElement {
   const fnGridCols = (): string => {
     switch (idGridLogo.logosPerRow) {
       case 2:
-        return "grid-cols-2"
+        return "grid-cols-2";
       case 3:
-        return "grid-cols-2 md:grid-cols-3"
+        return "grid-cols-2 md:grid-cols-3";
       case 5:
-        return "grid-cols-2 md:grid-cols-5"
+        return "grid-cols-2 md:grid-cols-5";
       case 6:
-        return "grid-cols-2 md:grid-cols-6"
+        return "grid-cols-2 md:grid-cols-6";
       case 4:
       default:
-        return "grid-cols-2 md:grid-cols-4"
+        return "grid-cols-2 md:grid-cols-4";
     }
-  }
+  };
 
   return (
     <div className="py-6">
@@ -172,12 +188,15 @@ function GridLogos(idGridLogo: TlogoShowcaseProps): ReactElement {
             transition={{ duration: 0.3, delay: iIndex * 0.05 }}
             className="flex justify-center"
           >
-            <LogoItem logo={idLogo} dimensions={idGridLogo.dimensions ?? { width: 150, height: 75 }} />
+            <LogoItem
+              logo={idLogo}
+              dimensions={idGridLogo.dimensions ?? { width: 150, height: 75 }}
+            />
           </motion.div>
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 /**
@@ -186,23 +205,25 @@ function GridLogos(idGridLogo: TlogoShowcaseProps): ReactElement {
  * Props:
  * - idLogo: Object containing logo details and dimensions.
  */
-function LogoItem(idLogo: { logo: Timage; dimensions: { width: number; height: number } }): ReactElement {
-  const { width, height } = idLogo.dimensions
+function LogoItem(idLogo: {
+  logo: Timage;
+  dimensions: { width: number; height: number };
+}): ReactElement {
+  const { width, height } = idLogo.dimensions;
   const LogoElement: ReactElement = (
-    <div
-      className="flex items-center justify-center p-4 rounded-lg transition-all duration-200">
+    <div className="flex items-center justify-center p-4 rounded-lg transition-all duration-200">
       {idLogo.logo.svg ? (
-
         <div
-          className={cn("flex items-center justify-center text-muted-foreground hover:text-chart5")}
+          className={cn(
+            "flex items-center justify-center text-muted-foreground hover:text-chart5"
+          )}
           style={{ width: width, height: height }}
         >
           {/* {renderIcon(idLogo.logo.svg)} */}
           <GetIcon iconName={idLogo.logo.svg} />
         </div>
-      )
-
-        : <Image
+      ) : (
+        <Image
           src={idLogo.logo.source || "/placeholder.svg"}
           alt={idLogo.logo.alternate}
           width={width}
@@ -210,10 +231,9 @@ function LogoItem(idLogo: { logo: Timage; dimensions: { width: number; height: n
           className={cn("object-contain")}
           loading="lazy"
         />
-      }
+      )}
     </div>
-  )
+  );
 
-  return LogoElement
+  return LogoElement;
 }
-

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { isValidPhoneNumber } from "libphonenumber-js";
-import { TformFieldConfig } from "@repo/middleware";
+import { TformFieldConfig } from "@repo/middleware/type";
 
 /**
  * Generates a Zod validation schema object dynamically based on an array of field definitions.

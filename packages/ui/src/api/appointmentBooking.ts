@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/type"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {

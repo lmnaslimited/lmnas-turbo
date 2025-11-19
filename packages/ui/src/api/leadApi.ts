@@ -1,6 +1,6 @@
 'use server'
 
-import {TleadApi} from "@repo/middleware"
+import {TleadApi} from "@repo/middleware/type"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {

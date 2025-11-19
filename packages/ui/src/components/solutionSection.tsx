@@ -1,26 +1,41 @@
-"use client"
+"use client";
 import * as Icons from "lucide-react";
-import { ReactElement, useRef } from "react"
-import { motion } from "framer-motion"
-import { Badge } from "@repo/ui/components/ui/badge"
-import { Button } from "@repo/ui/components/ui/button"
-import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
-import { TsolutionSection, TformMode } from "@repo/middleware"
+import { ReactElement, useRef } from "react";
+import { motion } from "framer-motion";
+import { Badge } from "@repo/ui/components/ui/badge";
+import { Button } from "@repo/ui/components/ui/button";
+import {
+  Lightbulb,
+  CheckCircle2,
+  TrendingUp,
+  Download,
+  LucideIcon,
+} from "lucide-react";
+import { TsolutionSection, TformMode } from "@repo/middleware/type";
 
-export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
-  const SectionRef = useRef<HTMLDivElement>(null)
+export function SolutionSection({
+  idCaseStudy,
+  onButtonClick,
+}: {
+  idCaseStudy: TsolutionSection;
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
+}): ReactElement {
+  const SectionRef = useRef<HTMLDivElement>(null);
 
   // Animation variants for fade-in effect.
   const LdItemVariants = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 },
-  }
+  };
 
   return (
     <section ref={SectionRef} className="mb-24">
       {/* Solution Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 to-primary/10 p-8">
-        <motion.div variants={LdItemVariants} className="mb-8 flex items-center gap-3">
+        <motion.div
+          variants={LdItemVariants}
+          className="mb-8 flex items-center gap-3"
+        >
           <div className="flex h-10 w-14 items-center justify-center rounded-full bg-primary/20">
             <Lightbulb className="h-5 w-5 text-primary" />
           </div>
@@ -28,10 +43,16 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
             {idCaseStudy.successCard?.header?.title}
           </h2>
         </motion.div>
-        <motion.p variants={LdItemVariants} className="mb-8 text-lg text-muted-foreground">
+        <motion.p
+          variants={LdItemVariants}
+          className="mb-8 text-lg text-muted-foreground"
+        >
           {idCaseStudy.successCard?.header?.subtitle}
         </motion.p>
-        <motion.div variants={LdItemVariants} className="mb-8 flex flex-wrap gap-2">
+        <motion.div
+          variants={LdItemVariants}
+          className="mb-8 flex flex-wrap gap-2"
+        >
           {idCaseStudy.products.map((iProduct, iIndex) => (
             <Badge key={iIndex} className="text-base">
               {iProduct.label}
@@ -39,7 +60,10 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
           ))}
         </motion.div>
 
-        <motion.div variants={LdItemVariants} className="grid gap-6 md:grid-cols-2">
+        <motion.div
+          variants={LdItemVariants}
+          className="grid gap-6 md:grid-cols-2"
+        >
           {idCaseStudy.details.map((iDetail, iIndex) => (
             <div
               key={iIndex}
@@ -54,14 +78,22 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
 
       {/* Results Section */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background to-muted/50 p-8">
-        <motion.div variants={LdItemVariants} className="mb-8 flex items-center gap-3">
+        <motion.div
+          variants={LdItemVariants}
+          className="mb-8 flex items-center gap-3"
+        >
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted-foreground/20">
             <TrendingUp className="h-5 w-5 text-primary" />
           </div>
-          <h2 className="text-2xl font-bold md:text-3xl">{idCaseStudy.title}</h2>
+          <h2 className="text-2xl font-bold md:text-3xl">
+            {idCaseStudy.title}
+          </h2>
         </motion.div>
 
-        <motion.div variants={LdItemVariants} className="grid gap-6 sm:grid-cols-2">
+        <motion.div
+          variants={LdItemVariants}
+          className="grid gap-6 sm:grid-cols-2"
+        >
           {idCaseStudy.results.map((idResult, iIndex) => (
             <div
               key={iIndex}
@@ -70,7 +102,9 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
               {/* Background decoration */}
               <div className="absolute -right-4 -top-4 h-16 w-16 rounded-full bg-primary/10 opacity-0 blur-xl transition-opacity group-hover:opacity-100" />
               <h3 className="mb-2 text-lg font-semibold">{idResult.title}</h3>
-              <p className="text-3xl font-bold text-primary">{idResult.subtitle}</p>
+              <p className="text-3xl font-bold text-primary">
+                {idResult.subtitle}
+              </p>
             </div>
           ))}
         </motion.div>
@@ -92,8 +126,12 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
                 </div>
               </div>
               <div className="text-center md:w-32">
-                <p className="font-semibold">{idCaseStudy.testimonial.author}</p>
-                <p className="text-sm text-muted-foreground">{idCaseStudy.testimonial.title}</p>
+                <p className="font-semibold">
+                  {idCaseStudy.testimonial.author}
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {idCaseStudy.testimonial.title}
+                </p>
               </div>
             </div>
 
@@ -114,12 +152,19 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
                 <div className="flex items-center gap-2">
                   <div className="flex">
                     {[1, 2, 3, 4, 5].map((iStar) => (
-                      <svg key={iStar} className="h-5 w-5 fill-primary" viewBox="0 0 20 20" fill="currentColor">
+                      <svg
+                        key={iStar}
+                        className="h-5 w-5 fill-primary"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
                         <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                       </svg>
                     ))}
                   </div>
-                  <span className="text-sm text-muted-foreground">{idCaseStudy.testimonial.verify}</span>
+                  <span className="text-sm text-muted-foreground">
+                    {idCaseStudy.testimonial.verify}
+                  </span>
                 </div>
               </blockquote>
             </div>
@@ -131,9 +176,16 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
           <h3 className="text-lg font-semibold">Share this case study</h3>
           <div className="mt-2 flex gap-2">
             {idCaseStudy.footer?.highlight?.map((idItem, iIndex) => {
-              const IconComponent = (Icons[idItem.icon as keyof typeof Icons] as LucideIcon) || Icons.Users;
+              const IconComponent =
+                (Icons[idItem.icon as keyof typeof Icons] as LucideIcon) ||
+                Icons.Users;
               return (
-                <Button variant="outline" size="icon" className="rounded-full" key={iIndex}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full"
+                  key={iIndex}
+                >
                   <span className="sr-only">{idItem.label}</span>
                   <IconComponent className="w-5 h-5" />
                 </Button>
@@ -142,18 +194,20 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
           </div>
         </div>
         {idCaseStudy.footer?.buttons?.map((idButton, index) => (
-          <Button key={index} className="flex items-center gap-2"
-          onClick={() => {
-            if (onButtonClick && idButton.formMode) {
-              onButtonClick(idButton.formMode, idButton.label)
-            }
-          }}>
+          <Button
+            key={index}
+            className="flex items-center gap-2"
+            onClick={() => {
+              if (onButtonClick && idButton.formMode) {
+                onButtonClick(idButton.formMode, idButton.label);
+              }
+            }}
+          >
             <Download className="w-5 h-5" />
             {idButton.label}
           </Button>
         ))}
       </div>
     </section>
-  )
+  );
 }
-

@@ -1,27 +1,38 @@
-"use client";
 import Link from "next/link";
+import { CheckCircle2 } from "lucide-react";
 import { ReactElement, useRef } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
-import { Download, CheckCircle2 } from "lucide-react";
-import { TcardProps, TformMode } from "@repo/middleware";
+import { TcardProps, TformMode } from "@repo/middleware/type";
 
-export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
+export function DynamicSidebar({
+  idCaseStudy,
+  onButtonClick,
+}: {
+  idCaseStudy: TcardProps[];
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
+}): ReactElement {
   // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
   return (
     <div ref={SidebarRef} className="relative">
-
       {/* Sticky container to keep the sidebar fixed while scrolling */}
       <div className="sticky" style={{ position: "sticky", top: "2rem" }}>
         {idCaseStudy.map((idCard, iIndex) => (
-          <Card key={iIndex} className="mb-6 overflow-hidden transition-all duration-300">
+          <Card
+            key={iIndex}
+            className="mb-6 overflow-hidden transition-all duration-300"
+          >
             <CardContent className="p-6">
               {idCard.header && (
                 <>
-                  <h3 className="mb-4 text-xl font-semibold">{idCard.header.title}</h3>
-                  <p className="mb-6 text-muted-foreground">{idCard.header.subtitle}</p>
+                  <h3 className="mb-4 text-xl font-semibold">
+                    {idCard.header.title}
+                  </h3>
+                  <p className="mb-6 text-muted-foreground">
+                    {idCard.header.subtitle}
+                  </p>
                 </>
               )}
 
@@ -43,41 +54,28 @@ export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: T
               )}
 
               {/* Render a button if provided */}
-              {idCard.buttons && idCard.buttons.map((idButton, index) => {
-                 // Construct button content, including an optional icon
-                         
-                return idButton.href ? (
-                  <Link href={idButton.href} key={`btn-${index}`}>
+              {idCard.buttons &&
+                idCard.buttons.map((idButton, index) => {
+                  // Construct button content, including an optional icon
+
+                  return idButton.href ? (
+                    <Link href={idButton.href} key={`btn-${index}`}>
+                      <Button>{idButton.label}</Button>
+                    </Link>
+                  ) : (
+                    // Render a standard button with an event handler if no href is provided
                     <Button
+                      key={`btn-${index}`}
+                      onClick={() => {
+                        if (onButtonClick && idButton.formMode) {
+                          onButtonClick(idButton.formMode, idButton.label);
+                        }
+                      }}
                     >
                       {idButton.label}
                     </Button>
-                  </Link>
-                ) : (
-      
-                  // Render a standard button with an event handler if no href is provided
-                  <Button
-                    key={`btn-${index}`}
-                    onClick={() => {
-                      if (onButtonClick && idButton.formMode) {
-                        onButtonClick(idButton.formMode, idButton.label)
-                      }
-                    }}
-                  >
-                    {idButton.label}
-                  </Button>
-                );
-              })}
-
-              {/* Render a link if available
-              {idCard.link && (
-                <div className="mt-6">
-                  <Link href={idCard.link.href} className="flex items-center gap-2 text-primary hover:underline">
-                    {idCard.link.label}
-                    <ArrowRight className="h-4 w-4" />
-                  </Link>
-                </div>
-              )} */}
+                  );
+                })}
             </CardContent>
           </Card>
         ))}

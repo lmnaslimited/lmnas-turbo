@@ -1,6 +1,6 @@
 'use server';
 
-import { TapiResponse, TwitterApiResponse } from "@repo/middleware";
+import { TapiResponse, TwitterApiResponse } from "@repo/middleware/type";
 
 export async function TwitterApi(): Promise<TapiResponse> {
 
