@@ -128,11 +128,13 @@ export default function Hero({
       {/* Image part */}
       <div className="w-full overflow-hidden rounded-xl">
         <Image
-          src={idHero.image?.source || "/placeholder.svg"}
+          src={idHero.image?.source}
           alt={idHero?.image?.alternate}
           className="aspect-[4/3] h-auto w-full object-cover"
           height={1000}
           width={1000}
+          priority
+          fetchPriority="high"
         />
       </div>
     </div>
