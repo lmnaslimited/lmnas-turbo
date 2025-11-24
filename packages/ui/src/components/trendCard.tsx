@@ -19,9 +19,9 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-/**
- * Function to return the appropriate icon based on the source platform.
- */
+
+// Function to return the appropriate icon based on the source platform.
+
 const fnGetIcon = (iSource: string): ReactNode => {
   switch (iSource) {
     case "LinkedIn":
@@ -84,14 +84,14 @@ export default function TrendCard({
           <div className="relative w-full aspect-video mb-4">
             <Image
               className="absolute top-0 left-0 w-full h-full object-cover"
-              src={idTrends.media.url} // Image URL
-              alt={idTrends.media.alt || "Media preview"} // Image alt text (optional)
-              width={800} // Provide width and height for Image component optimization
+              src={idTrends.media.url} 
+              alt={idTrends.media.alt || "Media preview"} 
+              width={800} 
               height={450}
+              loading="lazy"
             />
           </div>
         )}
-
         <CardContent className="px-4">
           <div className="min-h-[80px]">
             {idTrends.description && (

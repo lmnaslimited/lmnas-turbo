@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Zap } from "lucide-react";
@@ -6,11 +8,22 @@ import { cn } from "@repo/ui/lib/utils";
 import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 import { getIconComponent } from "@repo/ui/lib/icon";
-import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/type";
+import {
+  TformMode,
+  Titems,
+  Tbutton,
+  TheroSection,
+} from "@repo/middleware/type";
 
 type THeroProps = {
   idHero: TheroSection;
   onButtonClick?: (mode: TformMode, formTitle?: string) => void;
+  fnHandleFormButtonClick?: (
+    mode: TformMode,
+    sectionId: string,
+    formTitle?: string
+  ) => void;
+  sectionId?: string;
 };
 
 const renderIcon = (icon: Tbutton["icon"]) => {
@@ -21,12 +34,14 @@ const renderIcon = (icon: Tbutton["icon"]) => {
 
 export default function Hero({
   idHero,
-  onButtonClick,
+  fnHandleFormButtonClick,
+  sectionId,
 }: THeroProps): ReactElement {
   /**
    * Renders a badge with an icon and text.
    * Typically used for highlighting a special feature or status.
    */
+
   const Badge = ({ iText }: { iText: string }): ReactElement => (
     <div className="inline-flex w-fit items-center rounded-full border bg-accent px-3 py-1 text-sm text-primary/70">
       <Zap className="mr-1 h-3.5 w-3.5" />
@@ -87,7 +102,12 @@ export default function Hero({
             asChild={!!idButton.href}
             onClick={
               !idButton.href
-                ? () => onButtonClick?.(idButton.formMode, idButton.label)
+                ? () =>
+                    fnHandleFormButtonClick?.(
+                      idButton.formMode,
+                      sectionId!,
+                      idButton.label
+                    )
                 : undefined
             }
           >

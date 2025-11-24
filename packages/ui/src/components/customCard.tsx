@@ -143,6 +143,7 @@ export default function CustomCard({
                 alt={idCardProps.image.alternate}
                 width={500}
                 height={300}
+                loading="lazy"
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
               />
             )}
@@ -181,6 +182,7 @@ export default function CustomCard({
                   alt={idCardProps.image.alternate}
                   width={500}
                   height={300}
+                  loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
                 />
               )}

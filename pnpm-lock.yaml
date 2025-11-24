@@ -234,9 +234,6 @@ importers:
       lucide-react:
         specifier: ^0.474.0
         version: 0.474.0(react@19.0.0)
-      next:
-        specifier: 15.1.6
-        version: 15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       next-recaptcha-v3:
         specifier: ^1.5.2
         version: 1.5.2(next@15.1.6(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(react@19.0.0)
@@ -274,6 +271,9 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
+      '@next/bundle-analyzer':
+        specifier: ^16.0.3
+        version: 16.0.3
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
