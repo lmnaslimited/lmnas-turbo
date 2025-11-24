@@ -39,6 +39,9 @@ importers:
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@rudderstack/analytics-js':
+        specifier: ^3.24.3
+        version: 3.25.1
       libphonenumber-js:
         specifier: ^1.12.6
         version: 1.12.6
@@ -271,9 +274,6 @@ importers:
         specifier: ^3.24.2
         version: 3.24.2
     devDependencies:
-      '@next/bundle-analyzer':
-        specifier: ^16.0.3
-        version: 16.0.3
       '@repo/eslint-config':
         specifier: workspace:*
         version: link:../eslint-config
@@ -1140,6 +1140,9 @@ packages:
 
   '@rtsao/scc@1.1.0':
     resolution: {integrity: sha512-zt6OdqaDoOnJ1ZYsCYGt9YmWzDXl4vQdKTyJev62gFhRGKdx7mcT54V9KIjg+d2wi9EXsPvAPKe7i7WjfVWB8g==}
+
+  '@rudderstack/analytics-js@3.25.1':
+    resolution: {integrity: sha512-FcAftqB1zQXaDsaG6Yjthj+WfdBmNvNTeTXlHKctpX4VBHFjwbD51kVIPE0Be89SLYOhif+B5b3D4Y7EsX+aag==}
 
   '@rushstack/eslint-patch@1.14.1':
     resolution: {integrity: sha512-jGTk8UD/RdjsNZW8qq10r0RBvxL8OWtoT+kImlzPDFilmozzM+9QmIJsmze9UiSBrFU45ZxhTYBypn9q9z/VfQ==}
@@ -5097,6 +5100,8 @@ snapshots:
       '@react-pdf/stylesheet': 6.1.0
 
   '@rtsao/scc@1.1.0': {}
+
+  '@rudderstack/analytics-js@3.25.1': {}
 
   '@rushstack/eslint-patch@1.14.1': {}
 

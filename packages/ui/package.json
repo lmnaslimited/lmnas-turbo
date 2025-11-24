@@ -19,7 +19,6 @@
     "check-types": "tsc --noEmit"
   },
   "devDependencies": {
-    "@next/bundle-analyzer": "^16.0.3",
     "@repo/eslint-config": "workspace:*",
     "@repo/middleware": "workspace:*",
     "@repo/typescript-config": "workspace:*",
