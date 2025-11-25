@@ -100,16 +100,20 @@ export default function Hero({
             variant={idButton.variant || "default"}
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
-            onClick={
-              !idButton.href
-                ? () =>
-                    fnHandleFormButtonClick?.(
-                      idButton.formMode,
-                      sectionId!,
-                      idButton.label
-                    )
-                : undefined
-            }
+            // onClick={
+            //   !idButton.href
+            //     ? () =>
+            //         fnHandleFormButtonClick?.(
+            //           idButton.formMode,
+            //           sectionId!,
+            //           idButton.label
+            //         )
+            //     : undefined
+            // }
+
+            formMode={idButton.formMode}
+            sectionId={sectionId}
+            fnHandleFormButtonClick={fnHandleFormButtonClick}
           >
             {idButton.href ? (
               <Link href={idButton.href}>{buttonContent}</Link>
