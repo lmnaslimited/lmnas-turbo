@@ -114,3 +114,12 @@
     @apply bg-background text-foreground;
   }
 }
+
+:root {
+  --chat--input--text-color: #000 ;
+  --chat--input--background: #ffffff ;
+  --chat--toggle--background: #0474B5 ;
+	--chat--toggle--hover--background: #036197 ;
+	--chat--toggle--active--background: #0474B5 ;
+}
+

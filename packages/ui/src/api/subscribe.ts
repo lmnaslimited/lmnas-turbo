@@ -31,7 +31,7 @@ export async function subscribeNewsletter(idPrevState: { message: string }, idFo
   const LEmail = LdParsed.data.email
 
   // Disables TLS verification for local development 
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
   try {
     // First check: is this email already subscribed? Prevents duplicate entries and unnecessary API calls

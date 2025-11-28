@@ -8,7 +8,7 @@ import { TapiResponse } from "@repo/middleware"
  * @returns A promise that resolves to a TapiResponse object containing either the timezones or an error.
  */
 export async function fetchTimezones(): Promise<TapiResponse> {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
 
   // Define headers for the API request, including authorization and guest cookie info
   const ldHeaders = {
