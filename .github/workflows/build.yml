@@ -25,6 +25,7 @@ jobs:
           YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
           NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY }}
           NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL }}
+          NEXT_PUBLIC_WEBHOOK_URL: ${{secrets.NEXT_PUBLIC_WEBHOOK_URL}}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
