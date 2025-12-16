@@ -115,6 +115,7 @@
   }
 }
 
+/* Customising the chatbot in website  */
 :root {
   --chat--input--text-color: #000 ;
   --chat--input--background: #ffffff ;
@@ -122,6 +123,8 @@
 	--chat--toggle--hover--background: #036197 ;
 	--chat--toggle--active--background: #0474B5 ;
 }
+
+/* media query for chatbot when its in mobile view */
 @media (max-width: 1023px) {
   .chat-window-toggle {
     margin-bottom: 55px ;
