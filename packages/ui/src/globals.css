@@ -123,9 +123,13 @@
 	--chat--toggle--active--background: #0474B5 ;
 }
 @media (max-width: 1023px) {
-  .chat-window-wrapper .chat-window-toggle {
+  .chat-window-toggle {
     margin-bottom: 55px ;
     bottom: 55px ;
+    z-index: 0;
+  }
+  .chat-window-wrapper{
+    z-index: 0;
   }
 }
 
