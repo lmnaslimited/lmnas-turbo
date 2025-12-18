@@ -3,7 +3,7 @@ import * as LucideIcons from "lucide-react"
 import { cva } from "class-variance-authority"
 import { ReactElement } from "react"
 import { Button } from "@repo/ui/components/ui/button"
-import { TfeatureProps, Titems,Tbutton } from "@repo/middleware"
+import { TfeatureProps, Titems, Tbutton } from "@repo/middleware"
 import { getIconComponent } from "@repo/ui/lib/icon";
 
 const renderIcon = (icon: Tbutton['icon']) => {
@@ -62,12 +62,11 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
               </Button> */}
               {idFeature.buttons?.[0]?.href && (
                 <Link href={idFeature.buttons[0].href}>
-                <Button size="lg">
-                  
+                  <Button size="lg">
+
                     {idFeature.buttons[0].label} {" "}
                     {renderIcon(idFeature.buttons[0].icon)}
-                  
-                </Button>
+                  </Button>
                 </Link>
               )}
             </div>
@@ -93,14 +92,13 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
                 <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
             </Button> */}
             {idFeature.buttons?.[0]?.href && (
-                <Link href={idFeature.buttons[0].href}>
-                    <Button size="lg">
+              <Link href={idFeature.buttons[0].href}>
+                <Button size="lg">
 
                   {idFeature.buttons[0].label}{" "}
                   {renderIcon(idFeature.buttons[0].icon)}
-                  </Button>
-
-                </Link>
+                </Button>
+              </Link>
             )}
           </div>
         )}
@@ -121,7 +119,7 @@ const FAQItem = (idItems: Titems): ReactElement => {
       )}
       <div className={IconComponent ? "ml-2" : ""}>
         <div className="text-lg leading-6 font-medium text-primary">{idItems.label}</div>
-        <div className="mt-2 text-base text-muted-foreground">{idItems.description}</div>
+        <div className="mt-2 text-base text-primary font-light">{idItems.description}</div>
       </div>
     </div>
 

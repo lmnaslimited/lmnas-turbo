@@ -92,8 +92,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
             <div className="hidden lg:flex lg:items-center">
-              <NavigationMenu  value={desktopMenuOpen}
-  onValueChange={setDesktopMenuOpen} className="md:justify-center">
+              <NavigationMenu value={desktopMenuOpen}
+                onValueChange={setDesktopMenuOpen} className="md:justify-center">
                 <NavigationMenuList className="flex items-center">
                   <NavigationMenuItem value="products"  >
                     <NavigationMenuTrigger className="text-md flex items-center transition-transform duration-200 hover:scale-105">
@@ -178,6 +178,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
+                          aria-label="More Options"
                           variant="ghost"
                           size="icon"
                           className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
@@ -319,8 +320,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
 
 
-   {/* Mobile Bottom Navigation */}
-   <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background border-t border-border lg:hidden">
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background border-t border-border lg:hidden">
         <div className="flex justify-around items-center h-16 px-2">
 
           {/* Menu Item */}
@@ -331,7 +332,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
             <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[2]?.icon)}</span>
             <span className="text-xs">{idNavbar.navbar.menu[2]?.label}</span>
           </Link>
-         
+
           {/* Products */}
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center ">
             <button
