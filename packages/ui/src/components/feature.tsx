@@ -11,11 +11,8 @@ const renderIcon = (icon: Tbutton['icon']) => {
   const IconComponent = getIconComponent(iconName);
   return <IconComponent className="w-5 h-5" />;
 };
-/**
- * Utility function to define the button container styles based on position.
- * Uses `cva` (Class Variance Authority) to generate responsive styles dynamically.
- */
 
+// Utility function to define the button container styles based on position.
 const fnButtonContainer = cva("mt-8 flex lg:flex-shrink-0", {
   variants: {
     position: {
@@ -40,7 +37,7 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-primary sm:text-4xl">
             {idFeature.heading?.title}
           </p>
-          <p className="mt-4 max-w-2xl text-xl text-muted-foreground lg:mx-auto">
+          <p className="mt-4 max-w-2xl text-xl text-primary lg:mx-auto">
             {idFeature.heading?.subtitle}
           </p>
         </div>
@@ -56,14 +53,9 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
           {/* Conditionally render a button in the header if `iShowButton` is true and button position is `header` */}
           {idFeature.iShowButton && idFeature.buttonPosition === "header" && (
             <div className={fnButtonContainer({ position: "header" })}>
-              {/* <Button asChild size="lg">
-                {idFeature.buttons[0]?.href && (
-                  <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
-              </Button> */}
               {idFeature.buttons?.[0]?.href && (
                 <Link href={idFeature.buttons[0].href}>
                   <Button size="lg">
-
                     {idFeature.buttons[0].label} {" "}
                     {renderIcon(idFeature.buttons[0].icon)}
                   </Button>
@@ -87,14 +79,9 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
         {/* Conditionally render a button at the bottom if `iShowButton` is true and button position is not `header` */}
         {idFeature.iShowButton && idFeature.buttonPosition !== "header" && (
           <div className={fnButtonContainer({ position: idFeature.buttonPosition })}>
-            {/* <Button asChild size="lg">
-              {idFeature.buttons[0]?.href && (
-                <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
-            </Button> */}
             {idFeature.buttons?.[0]?.href && (
               <Link href={idFeature.buttons[0].href}>
                 <Button size="lg">
-
                   {idFeature.buttons[0].label}{" "}
                   {renderIcon(idFeature.buttons[0].icon)}
                 </Button>
@@ -108,7 +95,6 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
 }
 
 const FAQItem = (idItems: Titems): ReactElement => {
-  // Dynamically retrieve the icon component from `lucide-react` based on the icon name provided
   const IconComponent = idItems.icon && (LucideIcons[idItems.icon as keyof typeof LucideIcons] as React.ElementType)
   return (
     <div className="relative flex gap-4 items-start">
@@ -118,10 +104,9 @@ const FAQItem = (idItems: Titems): ReactElement => {
         </div>
       )}
       <div className={IconComponent ? "ml-2" : ""}>
-        <div className="text-lg leading-6 font-medium text-primary">{idItems.label}</div>
-        <div className="mt-2 text-base text-primary font-light">{idItems.description}</div>
+        <div className="text-lg leading-6 font-bold text-accent-foreground">{idItems.label}</div>
+        <div className="mt-2 text-base text-accent-foreground">{idItems.description}</div>
       </div>
     </div>
-
   )
 }

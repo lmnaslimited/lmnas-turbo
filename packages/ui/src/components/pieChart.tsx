@@ -1,6 +1,6 @@
 "use client"
 import { Pie, PieChart, Sector } from "recharts"
-import { Card, CardContent,  CardFooter } from "@repo/ui/components/ui/card"
+import { Card, CardContent, CardFooter } from "@repo/ui/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"
 
 // Updated chart data based on your new percentages and categories
@@ -18,7 +18,7 @@ const LdChartConfig = {
     },
     start: {
         label: "Where to start",
-        color: "var(--chart5)",
+        color: "var(--chart-5)",
     },
     switch: {
         label: "Switching fields",
