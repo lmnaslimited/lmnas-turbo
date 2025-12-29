@@ -1,12 +1,11 @@
 "use client"
+
 import Image from "next/image"
 import { cn } from "@repo/ui/lib/utils"
 import { ReactElement } from "react"
 import { motion, useAnimation } from "framer-motion"
-import { TlogoShowcaseProps, Timage, Tbutton } from "@repo/middleware"
-import { getIconComponent } from "@repo/ui/lib/icon";
-import GetIcon from "@repo/ui/components/getIcon"
-
+import GetIcon from "@repo/ui/components/get-icon";
+import { TlogoShowcaseProps, Timage } from "@repo/middleware/type"
 
 /**
  * LogoShowcase Component

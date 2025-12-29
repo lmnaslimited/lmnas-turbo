@@ -1,7 +1,8 @@
 "use client"
+
 import { cn } from "@repo/ui/lib/utils";
 import { ReactElement } from "react";
-import { Theader } from "@repo/middleware";
+import { Theader } from "@repo/middleware/type";
 
 export default function TitleSubtitle({ idTitle }: { idTitle: Theader }): ReactElement {
     return (

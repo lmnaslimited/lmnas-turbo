@@ -68,7 +68,7 @@ export function DynamicWeb() {
         this.p2 = p2
       }
 
-      update() {}
+      update() { }
 
       draw() {
         if (!ctx) return

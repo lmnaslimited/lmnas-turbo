@@ -1,9 +1,8 @@
-'use server';
+"use server";
 
-import { TapiResponse, TwitterApiResponse } from "@repo/middleware";
+import { TapiResponse, TwitterApiResponse } from "@repo/middleware/type";
 
 export async function TwitterApi(): Promise<TapiResponse> {
-
   const LdHeaders = {
     Authorization: `${process.env.TWITTER_BEARER_TOKEN}`,
   };
@@ -15,15 +14,17 @@ export async function TwitterApi(): Promise<TapiResponse> {
   );
 
   if (!userTweetsResponse.ok) {
-    throw new Error('Failed to fetch tweets');
+    throw new Error("Failed to fetch tweets");
   }
 
   const LdUserTweetsData = await userTweetsResponse.json();
 
-  const LTweetIds = LdUserTweetsData.data?.map((tweet: any) => tweet.id).join(',');
+  const LTweetIds = LdUserTweetsData.data
+    ?.map((tweet: any) => tweet.id)
+    .join(",");
 
   if (!LTweetIds) {
-    throw new Error('No tweets found');
+    throw new Error("No tweets found");
   }
 
   // Step 2: Get tweet details
@@ -33,7 +34,7 @@ export async function TwitterApi(): Promise<TapiResponse> {
   );
 
   if (!LdTweetResponse.ok) {
-    throw new Error('Failed to fetch tweet details');
+    throw new Error("Failed to fetch tweet details");
   }
 
   const LdTweetDetails = await LdTweetResponse.json();
@@ -42,10 +43,16 @@ export async function TwitterApi(): Promise<TapiResponse> {
 
   const LaTweets = LdTwitterApiResponse.data || [];
   const LdUsersMap = new Map(
-    (LdTwitterApiResponse.includes?.users || []).map((idUser) => [idUser.id, idUser])
+    (LdTwitterApiResponse.includes?.users || []).map((idUser) => [
+      idUser.id,
+      idUser,
+    ])
   );
   const LdMediaMap = new Map(
-    (LdTwitterApiResponse.includes?.media || []).map((idMedia) => [idMedia.media_key, idMedia])
+    (LdTwitterApiResponse.includes?.media || []).map((idMedia) => [
+      idMedia.media_key,
+      idMedia,
+    ])
   );
 
   const LaFormattedTweets = LaTweets.map((tweet) => {
@@ -62,7 +69,6 @@ export async function TwitterApi(): Promise<TapiResponse> {
 
     // Check if the media has a preview image URL (which is typically available for video)
     if (LdMedia && LdMedia.preview_image_url) {
-
       LdMediaToDisplay = {
         url: LdMedia.preview_image_url, // Use the preview image for videos
         alt: LMediaAlt,
@@ -72,15 +78,15 @@ export async function TwitterApi(): Promise<TapiResponse> {
     return {
       id: tweet.id,
       publishedAt: tweet.created_at,
-      title: tweet.text.split('\n')[0], // Use first line as title
+      title: tweet.text.split("\n")[0], // Use first line as title
       description: tweet.text,
-      author: LdAuthor?.name ?? 'Unknown',
-      source: 'X',
+      author: LdAuthor?.name ?? "Unknown",
+      source: "X",
       media: LdMediaToDisplay,
     };
   });
   return {
-    message: 'Tweets fetched successfully',
+    message: "Tweets fetched successfully",
     data: LaFormattedTweets,
   };
 }

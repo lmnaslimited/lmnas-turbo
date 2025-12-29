@@ -12,7 +12,7 @@ import {
   AvatarImage,
 } from "@repo/ui/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
-import { TcardProps, Tbutton } from "@repo/middleware";
+import { TcardProps, Tbutton } from "@repo/middleware/type";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
 const renderIcon = (icon: Tbutton["icon"], classname: string = "w-6 h-6") => {
@@ -133,9 +133,9 @@ export default function CustomCard({
                 {""}
                 {typeof idCardProps.image?.svg === "string"
                   ? renderIcon(
-                      idCardProps.image.svg,
-                      idCardProps.image.className
-                    )
+                    idCardProps.image.svg,
+                    idCardProps.image.className
+                  )
                   : idCardProps.image?.svg}
                 {""}
               </div>
@@ -270,22 +270,20 @@ export default function CustomCard({
             {idCardProps.buttons?.map((idBtn, iIndex) =>
               idBtn.href ? (
                 <Button
-                  key={`btn-${iIndex}`}
+                  asChild
                   variant={idBtn.variant || "default"}
                   size={idBtn.size || "default"}
                 >
-                  {/* If iconPosition is 'before', render icon first */}
-                  {idBtn.icon && idBtn.iconPosition === "before" && (
-                    <span className="mr-2">{renderIcon(idBtn.icon)}</span>
-                  )}
-
-                  {/* Button Label */}
-                  <Link href={idBtn.href}>{idBtn.label}</Link>
-                  {/* If iconPosition is 'after', render icon after */}
-                  {idBtn.icon && idBtn.iconPosition === "after" && (
-                    <span className="ml-2">{renderIcon(idBtn.icon)}</span>
-                  )}
+                  <Link
+                    href={idBtn.href}
+                    className="flex items-center gap-2"
+                  >
+                    {idBtn.icon && idBtn.iconPosition === "before" && renderIcon(idBtn.icon)}
+                    {idBtn.label}
+                    {idBtn.icon && idBtn.iconPosition === "after" && renderIcon(idBtn.icon)}
+                  </Link>
                 </Button>
+
               ) : (
                 <Button
                   key={`btn-${iIndex}`}

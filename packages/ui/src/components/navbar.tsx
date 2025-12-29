@@ -1,4 +1,5 @@
 "use client"
+
 import * as React from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
@@ -9,7 +10,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 import { SVGComponent } from "@repo/ui/svg/svgs"
 import { getIconComponent } from "@repo/ui/lib/icon"
-import type { TnavbarTarget, Tbutton } from "@repo/middleware"
+import type { TnavbarTarget, Tbutton } from "@repo/middleware/type"
 import { MoreHorizontal, Globe } from "lucide-react"
 
 export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React.ReactElement {

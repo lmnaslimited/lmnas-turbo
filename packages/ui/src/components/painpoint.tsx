@@ -1,6 +1,7 @@
 "use client";
+
 import { useRef, useEffect, ReactElement } from "react";
-import { Titems, Tbutton } from "@repo/middleware";
+import { Titems, Tbutton } from "@repo/middleware/type";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
 const renderIcon = (icon: Tbutton['icon']) => {

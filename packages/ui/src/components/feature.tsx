@@ -3,7 +3,7 @@ import * as LucideIcons from "lucide-react"
 import { cva } from "class-variance-authority"
 import { ReactElement } from "react"
 import { Button } from "@repo/ui/components/ui/button"
-import { TfeatureProps, Titems, Tbutton } from "@repo/middleware"
+import { TfeatureProps, Titems, Tbutton } from "@repo/middleware/type"
 import { getIconComponent } from "@repo/ui/lib/icon";
 
 const renderIcon = (icon: Tbutton['icon']) => {

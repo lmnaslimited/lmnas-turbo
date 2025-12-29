@@ -1,4 +1,5 @@
 "use client"
+
 import { Pie, PieChart, Sector } from "recharts"
 import { Card, CardContent, CardFooter } from "@repo/ui/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "@repo/ui/components/ui/chart"

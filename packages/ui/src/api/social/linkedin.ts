@@ -1,10 +1,11 @@
 "use server";
 
-import { TtrendCardProps } from "@repo/middleware";
+import { TtrendCardProps } from "@repo/middleware/type";
 
 export type TsocialAPIPostIds = {
   data: TtrendCardProps[];
 };
+
 export type Tpost = {
   content: { media: { id: string; altText: string } };
 };
@@ -101,7 +102,7 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
       LaMediaIds.push(LId);
       LaMediaMap.set(LId, idPost.content.media.altText || "");
     });
-    
+
     // Step 4: Construct the URL with List(...)
     const LencodedUrns = LaMediaIds.map((urn) => encodeURIComponent(urn)); // encode individual URNs
     const LidsParam = `List(${LencodedUrns.join(",")})`; // keep List(...) structure literal
