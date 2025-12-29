@@ -1,34 +1,39 @@
 "use client"
 
-import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
-import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { format } from "date-fns/format"
-import { CalendarIcon } from "lucide-react"
-import { cn } from "@repo/ui/lib/utils"
-import { Button } from "@repo/ui/components/ui/button"
-import { Calendar } from "@repo/ui/components/ui/calendar"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
-import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
-import { Textarea } from "@repo/ui/components/ui/textarea"
-import { Checkbox } from "@repo/ui/components/ui/checkbox"
-import { PhoneInput } from "react-international-phone"
-import "react-international-phone/style.css"
-import { fetchTimezones } from "@repo/ui/api/getTimeZone"
-import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
-import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
-import { subscribeNewsletter } from "@repo/ui/api/subscribe"
-import { sendCommunicationAction } from "@repo/ui/api/communication"
-import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
-import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
-import { ContactApi } from "@repo/ui/api/contact"
-import { LeadApi } from "@repo/ui/api/leadApi"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware/types"
 import Link from "next/link";
 import { useParams } from 'next/navigation';
+import { useForm } from "react-hook-form"
+import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
+
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { cn } from "@repo/ui/lib/utils"
+import { format } from "date-fns/format"
+import { CalendarIcon } from "lucide-react"
+
+import { Button } from "@repo/ui/components/ui/button"
+import { Calendar } from "@repo/ui/components/ui/calendar"
+import { Textarea } from "@repo/ui/components/ui/textarea"
+import { Checkbox } from "@repo/ui/components/ui/checkbox"
+import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
+import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
+
+import "react-international-phone/style.css"
+import { PhoneInput } from "react-international-phone"
+import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
+
+import { ContactApi } from "@repo/ui/api/contact"
+import { LeadApi } from "@repo/ui/api/casestudy/create-lead"
+import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
+import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
+import { bookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
+import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { sendCommunicationAction } from "@repo/ui/api/communication"
+import { UpdateEventParticipant } from "@repo/ui/api/event/create-participant"
+
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware/types"
 
 //till now the strapi's enumerate field value is return with uderscore(incase of space)
 // https://github.com/strapi/strapi/issues/7904
@@ -54,7 +59,6 @@ function fnGetClassNameFromFriendlyName(iStrapiValue: string) {
     }
     return LdClassNameMap[iStrapiValue] || "w-full mb-3"
 }
-
 
 /**
  * Checks if the contact exists or creates a new one.
@@ -288,7 +292,6 @@ export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iReca
         };
     }
 }
-
 
 /**
  * Main form component that renders dynamic form fields based on configuration
