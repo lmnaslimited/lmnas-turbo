@@ -1,12 +1,12 @@
-import { BluemapleLogo, MindfreshLogo, SGBCzexhTrafoLogo, SGBIndiaLogo } from "@repo/ui/svg/svgs";
 import { JSX } from "react";
-import { Timage } from "@repo/middleware";
+import { Timage } from "@repo/middleware/types";
+import { BluemapleLogo, MindfreshLogo, SGBCzexhTrafoLogo, SGBIndiaLogo } from "@repo/ui/svg/svgs";
 
 export default function GetIcon({
     iconName
-  }: {
+}: {
     iconName: Timage["svg"]
-  }): JSX.Element {
+}): JSX.Element {
     switch (iconName) {
         case "SGBIndiaLogo":
             return <SGBIndiaLogo />;
@@ -18,4 +18,5 @@ export default function GetIcon({
             return <BluemapleLogo />;
         default:
             return <div>Icon</div>;
-    }}
+    }
+}

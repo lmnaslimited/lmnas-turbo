@@ -1,11 +1,11 @@
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { ReactElement, ReactNode } from "react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/ui/components/ui/card";
 import { Youtube, Linkedin, Twitter, Clipboard, ArrowRight } from "lucide-react";
-import { TformMode, TtrendCardProps } from "@repo/middleware";
+import { TformMode, TtrendCardProps } from "@repo/middleware/types";
 
 /**
  * Function to return the appropriate icon based on the source platform.
@@ -40,13 +40,13 @@ const fnGetPlatformUrl = (iSource: string, iId: string): string => {
 
 type TtrendsProps = {
   idTrends: TtrendCardProps
-  onButtonClick?: (mode: TformMode, formTitle?:string) => void
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void
 }
 export default function TrendCard({ idTrends, onButtonClick }: TtrendsProps): ReactElement {
   const LPlatformUrl = fnGetPlatformUrl(idTrends.source, idTrends.id);
   return (
-    <Link href={LPlatformUrl} 
-    {...(LPlatformUrl !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})} >
+    <Link href={LPlatformUrl}
+      {...(LPlatformUrl !== "#" ? { target: "_blank", rel: "noopener noreferrer" } : {})} >
       <Card className="overflow-hidden">
         <CardHeader className="p-4">
           <div className="flex items-center justify-between">

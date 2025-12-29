@@ -1,13 +1,14 @@
 "use client"
+
 import * as Icons from "lucide-react";
 import { ReactElement, useRef } from "react"
 import { motion } from "framer-motion"
 import { Badge } from "@repo/ui/components/ui/badge"
 import { Button } from "@repo/ui/components/ui/button"
 import { Lightbulb, CheckCircle2, TrendingUp, Download, LucideIcon } from "lucide-react"
-import { TsolutionSection, TformMode } from "@repo/middleware"
+import { TsolutionSection, TformMode } from "@repo/middleware/types"
 
-export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
+export function SolutionSection({ idCaseStudy, onButtonClick, }: { idCaseStudy: TsolutionSection, onButtonClick?: (mode: TformMode, formTitle?: string) => void }): ReactElement {
   const SectionRef = useRef<HTMLDivElement>(null)
 
   // Animation variants for fade-in effect.
@@ -143,11 +144,11 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
         </div>
         {idCaseStudy.footer?.buttons?.map((idButton, index) => (
           <Button key={index} className="flex items-center gap-2"
-          onClick={() => {
-            if (onButtonClick && idButton.formMode) {
-              onButtonClick(idButton.formMode, idButton.label)
-            }
-          }}>
+            onClick={() => {
+              if (onButtonClick && idButton.formMode) {
+                onButtonClick(idButton.formMode, idButton.label)
+              }
+            }}>
             <Download className="w-5 h-5" />
             {idButton.label}
           </Button>
@@ -156,4 +157,3 @@ export function SolutionSection({ idCaseStudy,  onButtonClick, }: { idCaseStudy:
     </section>
   )
 }
-

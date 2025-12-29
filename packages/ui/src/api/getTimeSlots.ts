@@ -1,15 +1,18 @@
-'use server'
+"use server"
 
-import { TslotResponse, Tslot } from "@repo/middleware"
+import { TslotResponse, Tslot } from "@repo/middleware/types"
 
 /**
  * Fetches available appointment time slots for a given date and timezone.
- * 
+ *
  * @param iSelectedDate - The selected date for which slots are needed.
  * @param iTimezone - The user's timezone.
  * @returns A promise that resolves to TslotResponse, either with slot data or an error message.
  */
-export async function fetchTimeSlots(iSelectedDate: string, iTimezone: string): Promise<TslotResponse> {
+export async function fetchTimeSlots(
+  iSelectedDate: string,
+  iTimezone: string
+): Promise<TslotResponse> {
   try {
     // Validate required parameters
     if (!iSelectedDate || !iTimezone) {
@@ -20,7 +23,8 @@ export async function fetchTimeSlots(iSelectedDate: string, iTimezone: string): 
     const ldHeaders = new Headers({
       Authorization: `${process.env.AUTH_BASE_64}`,
       "Content-Type": "application/json",
-      Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+      Cookie:
+        "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
     })
 
     // Construct the API URL with date and timezone as query parameters

@@ -1,9 +1,10 @@
 "use client"
+
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
-import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 import { Button } from "@repo/ui/components/ui/button"
+import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 
 export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false)
@@ -126,4 +127,3 @@ export default function Header() {
     </header>
   )
 }
-

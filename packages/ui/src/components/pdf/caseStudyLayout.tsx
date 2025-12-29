@@ -11,7 +11,7 @@ import {
   Path,
   Link,
 } from "@react-pdf/renderer";
-import { TcaseStudies } from "@repo/middleware";
+import { TcaseStudies } from "@repo/middleware/types";
 
 //custom styles for react-pdf/renderer
 const LdStyles = StyleSheet.create({
@@ -110,13 +110,13 @@ const LdStyles = StyleSheet.create({
     backgroundColor: "#EAEAEA",
     borderRadius: 6,
   },
-  ctaHeading:{
+  ctaHeading: {
     fontSize: 14,
     fontWeight: "bold",
     color: "#212121",
     marginBottom: 6,
   },
-  cta:{
+  cta: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
@@ -268,7 +268,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
             </Link>
           </View>
         )}
-    </View>
+      </View>
       {/* Right Column */}
       <View style={LdStyles.rightColumn}>
         {/* objective */}
@@ -287,7 +287,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
           <Text
             style={LdStyles.ctaHeading}
           >
-           {idData.caseStudies[0]?.ctaSection[1].header?.title} 
+            {idData.caseStudies[0]?.ctaSection[1].header?.title}
           </Text>
 
           <Link
@@ -302,7 +302,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         </View>)}
 
         <View style={LdStyles.divider} />
-        
+
         {/* result */}
         <Text style={LdStyles.heading}>RESULT AND BENEFITS</Text>
         <View style={LdStyles.bulletList}>
@@ -327,18 +327,18 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
           </Text>
 
           {(() => {
-      const Subtitle = idData.caseStudies[0]?.ctaSection[0].header?.subtitle || "";
-      const Badge = idData.caseStudies[0]?.ctaSection[0].header?.badge || "";
-      const [before, after] = Subtitle.split("{badge}");
+            const Subtitle = idData.caseStudies[0]?.ctaSection[0].header?.subtitle || "";
+            const Badge = idData.caseStudies[0]?.ctaSection[0].header?.badge || "";
+            const [before, after] = Subtitle.split("{badge}");
 
-      return (
-        <Text style={{ fontSize: 12, color: "#444", marginBottom: 12 }}>
-          {before}
-          <Text style={{ fontWeight: "bold" }}>{Badge}</Text>
-          {after}
-        </Text>
-      );
-    })()}
+            return (
+              <Text style={{ fontSize: 12, color: "#444", marginBottom: 12 }}>
+                {before}
+                <Text style={{ fontWeight: "bold" }}>{Badge}</Text>
+                {after}
+              </Text>
+            );
+          })()}
 
 
           <Link
@@ -360,55 +360,55 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
       </View>
     </Page>
 
-{/* page 2 */}
+    {/* page 2 */}
     <Page size="A4" style={LdStyles.page}>
       <View style={LdStyles.leftColumn}>
         {/* contact */}
         <Text style={LdStyles.heading}>CONTACT</Text>
         <View style={LdStyles.contact}>
-        
-            <Link src={`tel:${idData.footer.contact.phoneHref}`} style={LdStyles.contactLink}>
-              {idData.footer.contact.phoneHref}
-            </Link>
-            <Link src={idData.footer.contact.address} style={LdStyles.contactLink}>
-              {idData.footer.contact.address}
-            </Link>
-            <Link src={`mailto:${idData.footer.contact.emailHref}`} style={LdStyles.contactLink}>
-              {idData.footer.contact.emailHref              }
-            </Link>
-            <Link src={idData.footer.contact.websiteHref} style={LdStyles.contactLink}>
-              {idData.footer.contact.websiteHref}
-            </Link>
-          
+
+          <Link src={`tel:${idData.footer.contact.phoneHref}`} style={LdStyles.contactLink}>
+            {idData.footer.contact.phoneHref}
+          </Link>
+          <Link src={idData.footer.contact.address} style={LdStyles.contactLink}>
+            {idData.footer.contact.address}
+          </Link>
+          <Link src={`mailto:${idData.footer.contact.emailHref}`} style={LdStyles.contactLink}>
+            {idData.footer.contact.emailHref}
+          </Link>
+          <Link src={idData.footer.contact.websiteHref} style={LdStyles.contactLink}>
+            {idData.footer.contact.websiteHref}
+          </Link>
+
           {/* Social Icons Row */}
           <View style={LdStyles.socialRow}>
-          {idData.footer.social.map((idItem, iIndex) => {
-            let IconComponent = null;
+            {idData.footer.social.map((idItem, iIndex) => {
+              let IconComponent = null;
 
-            switch (idItem.icon) {
-              case "Linkedin":
-                IconComponent = <LinkedInIcon />;
-                break;
-              case "Youtube":
-                IconComponent = <YouTubeIcon />;
-                break;
-              case "Twitter":
-                IconComponent = <TwitterIcon />;
-                break;
-            }
+              switch (idItem.icon) {
+                case "Linkedin":
+                  IconComponent = <LinkedInIcon />;
+                  break;
+                case "Youtube":
+                  IconComponent = <YouTubeIcon />;
+                  break;
+                case "Twitter":
+                  IconComponent = <TwitterIcon />;
+                  break;
+              }
 
-            return IconComponent && (
-              <Link key={iIndex} src={idItem.href} style={LdStyles.iconLink}>
-                {IconComponent}
-              </Link>
-            );
-          })}
-        </View>
+              return IconComponent && (
+                <Link key={iIndex} src={idItem.href} style={LdStyles.iconLink}>
+                  {IconComponent}
+                </Link>
+              );
+            })}
+          </View>
         </View>
       </View>
 
       <View style={LdStyles.rightColumn}>
-      {idData.caseStudies[0]?.ctaSection?.[1] && (<View style={LdStyles.ctaSection}>
+        {idData.caseStudies[0]?.ctaSection?.[1] && (<View style={LdStyles.ctaSection}>
           <Text style={LdStyles.ctaHeading}>
             {idData.caseStudies[0]?.ctaSection[1].title}
           </Text>

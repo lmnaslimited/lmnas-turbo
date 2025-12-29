@@ -1,12 +1,13 @@
 "use client";
+
 import Link from "next/link";
 import { ReactElement, useRef } from "react";
+import { CheckCircle2 } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
 import { Card, CardContent } from "@repo/ui/components/ui/card";
-import { Download, CheckCircle2 } from "lucide-react";
-import { TcardProps, TformMode } from "@repo/middleware";
+import { TcardProps, TformMode } from "@repo/middleware/types";
 
-export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode, formTitle?:string) => void }): ReactElement {
+export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: TcardProps[], onButtonClick?: (mode: TformMode, formTitle?: string) => void }): ReactElement {
   // Reference to the sidebar container for potential future use (e.g., scrolling)
   const SidebarRef = useRef<HTMLDivElement>(null);
 
@@ -44,8 +45,8 @@ export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: T
 
               {/* Render a button if provided */}
               {idCard.buttons && idCard.buttons.map((idButton, index) => {
-                 // Construct button content, including an optional icon
-                         
+                // Construct button content, including an optional icon
+
                 return idButton.href ? (
                   <Link href={idButton.href} key={`btn-${index}`}>
                     <Button
@@ -54,7 +55,7 @@ export function DynamicSidebar({ idCaseStudy, onButtonClick, }: { idCaseStudy: T
                     </Button>
                   </Link>
                 ) : (
-      
+
                   // Render a standard button with an event handler if no href is provided
                   <Button
                     key={`btn-${index}`}

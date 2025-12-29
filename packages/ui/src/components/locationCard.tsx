@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { Copy, Check } from "lucide-react"
 import { useState } from "react"
-import { getIconComponent } from "@repo/ui/lib/icon"
-import { TlocationCard, Tbutton, Titems } from "@repo/middleware"
+import { Copy, Check } from "lucide-react"
 import * as SVG from "@repo/ui/svg/svgs"
+import { getIconComponent } from "@repo/ui/lib/icon"
+import { TlocationCard, Tbutton, Titems } from "@repo/middleware/types"
 
 export default function LocationCard({ idLocation }: { idLocation: TlocationCard }) {
     const [LCopied, fnSetLCopied] = useState(false)

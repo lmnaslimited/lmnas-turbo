@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/types"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -29,18 +29,21 @@ const LdCommunicationSchema = z.object({
 
 /**
  * Handles website communication messages (e.g., contact form submissions).
- * 
+ *
  * Steps:
  * 1. Validate form data
  * 2. Verify reCAPTCHA to ensure it's submitted by a human
  * 3. Send the message to the LENS backend endpoint
  */
-export async function sendCommunicationAction(idFormData: z.infer<typeof LdCommunicationSchema>): Promise<TapiResponse> {
+export async function sendCommunicationAction(
+  idFormData: z.infer<typeof LdCommunicationSchema>
+): Promise<TapiResponse> {
   // Prepare necessary headers for API request
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
-    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+    Cookie:
+      "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   })
 
   const { email, notes, option, recaptchaToken } = idFormData

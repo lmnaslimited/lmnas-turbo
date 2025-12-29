@@ -1,20 +1,21 @@
-'use server'
+"use server"
 
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/types"
 
 /**
  * Fetches the list of available timezones from the backend.
- * 
+ *
  * @returns A promise that resolves to a TapiResponse object containing either the timezones or an error.
  */
 export async function fetchTimezones(): Promise<TapiResponse> {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
   // Define headers for the API request, including authorization and guest cookie info
   const ldHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
-    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+    Cookie:
+      "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   }
 
   try {

@@ -2,10 +2,8 @@
   "name": "@repo/ui",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "exports": {
-    "./globals.css": "./src/globals.css",
-    "./type": "./src/type.ts",
+    "./globals.css": "./src/style/globals.css",
     "./postcss.config": "./postcss.config.mjs",
     "./tailwind.config": "./tailwind.config.ts",
     "./components/*": "./src/components/*.tsx",

@@ -1,7 +1,7 @@
 "use server"
 
 import { z } from "zod"
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/types"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -42,12 +42,12 @@ const LdAppointmentSchema = z.object({
 export async function bookAppointmentAction(
   idFormData: z.infer<typeof LdAppointmentSchema>
 ): Promise<TapiResponse> {
-
   // Prepare API headers including authentication and session cookies
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
-    Cookie: "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
+    Cookie:
+      "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   })
 
   const { date, time, timezone, contact, recaptchaToken } = idFormData

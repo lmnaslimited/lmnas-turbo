@@ -1,9 +1,8 @@
-'use server'
+"use server"
 
-import { TapiResponse } from "@repo/middleware"
+import { TapiResponse } from "@repo/middleware/types"
 
 export async function youTubeApi(): Promise<TapiResponse> {
-
   try {
     const LTimezoneUrl = `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE}&channelId=${process.env.YOUTUBE_CHANNEL_ID}&part=snippet,id&order=date&maxResults=20`
 
@@ -28,8 +27,8 @@ export async function youTubeApi(): Promise<TapiResponse> {
       media: {
         // url: `https://www.youtube.com/embed/${item.id.videoId}`,
         url: `https://img.youtube.com/vi/${item.id.videoId}/hqdefault.jpg`,
-        alt: item.snippet.title
-      }
+        alt: item.snippet.title,
+      },
     }))
     return {
       message: "youtube fetched successfully",

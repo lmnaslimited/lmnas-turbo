@@ -1,12 +1,11 @@
 "use client"
-import Image from "next/image"
-import { cn } from "@repo/ui/lib/utils"
-import { ReactElement } from "react"
-import { motion, useAnimation } from "framer-motion"
-import { TlogoShowcaseProps, Timage, Tbutton } from "@repo/middleware"
-import { getIconComponent } from "@repo/ui/lib/icon";
-import GetIcon from "@repo/ui/components/getIcon"
 
+import Image from "next/image"
+import { ReactElement } from "react"
+import { cn } from "@repo/ui/lib/utils"
+import { motion, useAnimation } from "framer-motion"
+import GetIcon from "@repo/ui/components/getIcon"
+import { TlogoShowcaseProps, Timage } from "@repo/middleware/types"
 
 /**
  * LogoShowcase Component
@@ -216,4 +215,3 @@ function LogoItem(idLogo: { logo: Timage; dimensions: { width: number; height: n
 
   return LogoElement
 }
-

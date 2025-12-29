@@ -1,16 +1,17 @@
 "use client"
+
 import * as React from "react"
 import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
-import { Button } from "@repo/ui/components/ui/button"
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@repo/ui/components/ui/navigation-menu"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui/components/ui/dropdown-menu"
-import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 import { SVGComponent } from "@repo/ui/svg/svgs"
 import { getIconComponent } from "@repo/ui/lib/icon"
-import type { TnavbarTarget, Tbutton } from "@repo/middleware"
 import { MoreHorizontal, Globe } from "lucide-react"
+import { Button } from "@repo/ui/components/ui/button"
+import { ThemeToggle } from "@repo/ui/components/theme-toggle"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui/components/ui/dropdown-menu"
+import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@repo/ui/components/ui/navigation-menu"
+import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 
 export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
@@ -92,8 +93,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
             <div className="hidden lg:flex lg:items-center">
-              <NavigationMenu  value={desktopMenuOpen}
-  onValueChange={setDesktopMenuOpen} className="md:justify-center">
+              <NavigationMenu value={desktopMenuOpen}
+                onValueChange={setDesktopMenuOpen} className="md:justify-center">
                 <NavigationMenuList className="flex items-center">
                   <NavigationMenuItem value="products"  >
                     <NavigationMenuTrigger className="text-md flex items-center transition-transform duration-200 hover:scale-105">
@@ -319,8 +320,8 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
 
 
-   {/* Mobile Bottom Navigation */}
-   <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background border-t border-border lg:hidden">
+      {/* Mobile Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background border-t border-border lg:hidden">
         <div className="flex justify-around items-center h-16 px-2">
 
           {/* Menu Item */}
@@ -331,7 +332,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
             <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[2]?.icon)}</span>
             <span className="text-xs">{idNavbar.navbar.menu[2]?.label}</span>
           </Link>
-         
+
           {/* Products */}
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center ">
             <button

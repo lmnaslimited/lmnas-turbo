@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { cn } from "@repo/ui/lib/utils";
 import { ReactElement } from "react";
+import { cn } from "@repo/ui/lib/utils";
+import { getIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import {
@@ -12,8 +13,7 @@ import {
   AvatarImage,
 } from "@repo/ui/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
-import { TcardProps, Tbutton } from "@repo/middleware";
-import { getIconComponent } from "@repo/ui/lib/icon";
+import { TcardProps, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton["icon"], classname: string = "w-6 h-6") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -133,9 +133,9 @@ export default function CustomCard({
                 {""}
                 {typeof idCardProps.image?.svg === "string"
                   ? renderIcon(
-                      idCardProps.image.svg,
-                      idCardProps.image.className
-                    )
+                    idCardProps.image.svg,
+                    idCardProps.image.className
+                  )
                   : idCardProps.image?.svg}
                 {""}
               </div>
