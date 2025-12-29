@@ -56,17 +56,11 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
           {/* Conditionally render a button in the header if `iShowButton` is true and button position is `header` */}
           {idFeature.iShowButton && idFeature.buttonPosition === "header" && (
             <div className={fnButtonContainer({ position: "header" })}>
-              {/* <Button asChild size="lg">
-                {idFeature.buttons[0]?.href && (
-                  <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
-              </Button> */}
               {idFeature.buttons?.[0]?.href && (
                 <Link href={idFeature.buttons[0].href}>
                   <Button size="lg">
-
                     {idFeature.buttons[0].label} {" "}
                     {renderIcon(idFeature.buttons[0].icon)}
-
                   </Button>
                 </Link>
               )}
@@ -88,18 +82,12 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
         {/* Conditionally render a button at the bottom if `iShowButton` is true and button position is not `header` */}
         {idFeature.iShowButton && idFeature.buttonPosition !== "header" && (
           <div className={fnButtonContainer({ position: idFeature.buttonPosition })}>
-            {/* <Button asChild size="lg">
-              {idFeature.buttons[0]?.href && (
-                <Link href={idFeature.buttons[0]?.href}>{idFeature.buttons[0]?.label}</Link>)}
-            </Button> */}
             {idFeature.buttons?.[0]?.href && (
               <Link href={idFeature.buttons[0].href}>
                 <Button size="lg">
-
                   {idFeature.buttons[0].label}{" "}
                   {renderIcon(idFeature.buttons[0].icon)}
                 </Button>
-
               </Link>
             )}
           </div>
@@ -124,6 +112,5 @@ const FAQItem = (idItems: Titems): ReactElement => {
         <div className="mt-2 text-base text-muted-foreground">{idItems.description}</div>
       </div>
     </div>
-
   )
 }

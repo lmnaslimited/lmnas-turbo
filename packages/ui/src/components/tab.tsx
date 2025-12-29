@@ -3,8 +3,8 @@
 import { ReactElement, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
+import CustomCard from "@repo/ui/components/custom-card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
-import CustomCard from "@repo/ui/components/customCard";
 import { TcardProps } from "@repo/middleware/types";
 
 type TtabProps = {

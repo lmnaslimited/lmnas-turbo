@@ -19,7 +19,7 @@ const LdChartConfig = {
     },
     start: {
         label: "Where to start",
-        color: "var(--chart5)",
+        color: "var(--chart-5)",
     },
     switch: {
         label: "Switching fields",

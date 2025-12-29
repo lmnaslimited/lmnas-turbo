@@ -257,7 +257,7 @@ export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iReca
         }
         // Dynamically import the Case Study PDF layout component(nextjs feature)
         // Dynamically import the React PDF renderer(nextjs feature)
-        const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout");
+        const { PdfDocument } = await import("@repo/ui/components/pdf/casestudy-layout");
         const { pdf } = await import("@react-pdf/renderer");
 
         // Generate a PDF blob from the PdfDocument component with provided case study data

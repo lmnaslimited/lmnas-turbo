@@ -4,7 +4,7 @@ import Image from "next/image"
 import { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils"
 import { motion, useAnimation } from "framer-motion"
-import GetIcon from "@repo/ui/components/getIcon"
+import GetIcon from "@repo/ui/components/get-icon"
 import { TlogoShowcaseProps, Timage } from "@repo/middleware/types"
 
 /**

@@ -2,9 +2,9 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState, ReactElement } from "react";
-import { Button } from "@repo/ui/components/ui/button";
-import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 import { ChevronRight, Download } from "lucide-react";
+import { Button } from "@repo/ui/components/ui/button";
+import TitleSubtitle from "@repo/ui/components/title-subtitle";
 import { TcalloutProps, TformMode } from "@repo/middleware/types";
 
 export function ProblemSection({ idCaseStudy, onButtonClick }: { idCaseStudy: TcalloutProps, onButtonClick?: (mode: TformMode, formTitle?: string) => void }): ReactElement {
@@ -97,7 +97,6 @@ export function ProblemSection({ idCaseStudy, onButtonClick }: { idCaseStudy: Tc
                   </p>
                   {/* Additional details for the active challenge */}
                   {iIndex === ActiveChallenge && (
-                    // footer.title
                     <motion.p
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
