@@ -9,39 +9,59 @@ import { getIconComponent } from "@repo/ui/lib/icon"
 import { MoreHorizontal, Globe } from "lucide-react"
 import { Button } from "@repo/ui/components/ui/button"
 import { ThemeToggle } from "@repo/ui/components/theme-toggle"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@repo/ui/components/ui/dropdown-menu"
-import { NavigationMenu, NavigationMenuContent, NavigationMenuItem, NavigationMenuLink, NavigationMenuList, NavigationMenuTrigger, navigationMenuTriggerStyle } from "@repo/ui/components/ui/navigation-menu"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/ui/components/ui/dropdown-menu"
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
+} from "@repo/ui/components/ui/navigation-menu"
 import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 
-export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React.ReactElement {
+export default function Navbar({
+  idNavbar,
+}: {
+  idNavbar: TnavbarTarget
+}): React.ReactElement {
   const [Language, fnSetLanguage] = React.useState("en")
   const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
-  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] = React.useState(false)
-  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] = React.useState(false)
-  const router = useRouter();
-  const pathname = usePathname();
-  const [desktopMenuOpen, setDesktopMenuOpen] = React.useState<string | undefined>(undefined)
+  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] =
+    React.useState(false)
+  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
+    React.useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
+  const [desktopMenuOpen, setDesktopMenuOpen] = React.useState<
+    string | undefined
+  >(undefined)
 
-
-  const renderIcon = (icon: Tbutton['icon']) => {
-    const iconName = typeof icon === "string" ? icon : "HelpCircle";
-    const IconComponent = getIconComponent(iconName);
-    return <IconComponent className="w-6 h-6" />;
-  };
+  const renderIcon = (icon: Tbutton["icon"]) => {
+    const iconName = typeof icon === "string" ? icon : "HelpCircle"
+    const IconComponent = getIconComponent(iconName)
+    return <IconComponent className="w-6 h-6" />
+  }
 
   //middleware
   React.useEffect(() => {
-    const currentLang = pathname.split('/')[1]; // get "en" from /en/trending-now
-    fnSetLanguage(currentLang ?? "EN");
-  }, [pathname]);
+    const currentLang = pathname.split("/")[1] // get "en" from /en/trending-now
+    fnSetLanguage(currentLang ?? "EN")
+  }, [pathname])
 
   const fnHandleLanguageChange = (newLang: string) => {
-    const Segments = pathname.split('/');
-    Segments[1] = newLang; // replace language segment
-    const NewPath = Segments.join('/');
-    fnSetLanguage(newLang);
-    router.push(NewPath); // navigate to new lang route
-  };
+    const Segments = pathname.split("/")
+    Segments[1] = newLang // replace language segment
+    const NewPath = Segments.join("/")
+    fnSetLanguage(newLang)
+    router.push(NewPath) // navigate to new lang route
+  }
 
   React.useEffect(() => {
     const fnHandleScroll = () => {
@@ -52,51 +72,59 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
 
     const fnHandleClickOutside = (idevent: MouseEvent | TouchEvent) => {
       const Target = idevent.target as HTMLElement
-      if (!Target.closest('.mobile-dropdown')) {
+      if (!Target.closest(".mobile-dropdown")) {
         fnSetMobileProductsOpen(false)
         fnSetMobileIndustriesOpen(false)
         fnSetMobileModeDropdownOpen(false)
       }
     }
 
-    window.addEventListener('scroll', fnHandleScroll, { passive: true })
-    window.addEventListener('click', fnHandleClickOutside)
-    window.addEventListener('touchstart', fnHandleClickOutside)
+    window.addEventListener("scroll", fnHandleScroll, { passive: true })
+    window.addEventListener("click", fnHandleClickOutside)
+    window.addEventListener("touchstart", fnHandleClickOutside)
 
     return () => {
-      window.removeEventListener('scroll', fnHandleScroll)
-      window.removeEventListener('click', fnHandleClickOutside)
-      window.removeEventListener('touchstart', fnHandleClickOutside)
+      window.removeEventListener("scroll", fnHandleScroll)
+      window.removeEventListener("click", fnHandleClickOutside)
+      window.removeEventListener("touchstart", fnHandleClickOutside)
     }
   }, [])
 
   const fnGetCurrentLanguageDisplay = (): string => {
-    const CurrentLang = idNavbar.navbar.language.find((idLang) => idLang.label === Language)
-    return CurrentLang && CurrentLang.label ? CurrentLang.label.toUpperCase() : "EN";
+    const CurrentLang = idNavbar.navbar.language.find(
+      (idLang) => idLang.label === Language
+    )
+    return CurrentLang && CurrentLang.label
+      ? CurrentLang.label.toUpperCase()
+      : "EN"
   }
   return (
     <>
-      <header
-        className={cn(
-          "sticky top-0 z-50 w-full bg-background",
-        )}
-      >
+      <header className={cn("sticky top-0 z-50 w-full bg-background")}>
         <div className="container flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-6">
             {/* Logo and Brand */}
-            <Link href={idNavbar.navbar.logo.href ?? "/"} className="flex items-center gap-2">
+            <Link
+              href={idNavbar.navbar.logo.href ?? "/"}
+              className="flex items-center gap-2"
+            >
               <div className="w-10 h-10 bg-black rounded-sm flex items-center justify-center text-white">
                 <SVGComponent />
               </div>
-              <span className="text-lg font-bold tracking-tight ">{idNavbar.navbar.logo.label}</span>
+              <span className="text-lg font-bold tracking-tight ">
+                {idNavbar.navbar.logo.label}
+              </span>
             </Link>
 
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
             <div className="hidden lg:flex lg:items-center">
-              <NavigationMenu value={desktopMenuOpen}
-                onValueChange={setDesktopMenuOpen} className="md:justify-center">
+              <NavigationMenu
+                value={desktopMenuOpen}
+                onValueChange={setDesktopMenuOpen}
+                className="md:justify-center"
+              >
                 <NavigationMenuList className="flex items-center">
-                  <NavigationMenuItem value="products"  >
+                  <NavigationMenuItem value="products">
                     <NavigationMenuTrigger className="text-md flex items-center transition-transform duration-200 hover:scale-105">
                       {idNavbar.navbar.menu[0]?.label}
                     </NavigationMenuTrigger>
@@ -104,14 +132,24 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       <div className="p-5 w-[500px]">
                         <div className="grid grid-cols-2 gap-2">
                           {idNavbar.navbar.product.map((idProduct) => (
-                            <Link href={idProduct.href!} key={idProduct.label} onClick={() => setDesktopMenuOpen(undefined)}>
+                            <Link
+                              href={idProduct.href!}
+                              key={idProduct.label}
+                              onClick={() => setDesktopMenuOpen(undefined)}
+                            >
                               <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                  <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idProduct.icon)}</div>
+                                  <div className="w-6 h-6 flex items-center justify-center">
+                                    {renderIcon(idProduct.icon)}
+                                  </div>
                                 </div>
                                 <div>
-                                  <span className="font-medium text-md  ">{idProduct.label}</span>
-                                  <p className="text-xs text-muted-foreground ">{idProduct.description}</p>
+                                  <span className="font-medium text-md  ">
+                                    {idProduct.label}
+                                  </span>
+                                  <p className="text-xs text-muted-foreground ">
+                                    {idProduct.description}
+                                  </p>
                                 </div>
                               </div>
                             </Link>
@@ -129,17 +167,27 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       <div className="p-5 w-[500px]">
                         <div className="grid grid-cols-2 gap-2">
                           {idNavbar.navbar.industry.map((idIndustry) => (
-                            <Link href={idIndustry.href!} key={idIndustry.label} onClick={() => setDesktopMenuOpen(undefined)}>
+                            <Link
+                              href={idIndustry.href!}
+                              key={idIndustry.label}
+                              onClick={() => setDesktopMenuOpen(undefined)}
+                            >
                               <div
                                 key={idIndustry.label}
                                 className="flex items-start gap-2 transition-transform duration-200 hover:scale-105"
                               >
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
-                                  <div className="w-6 h-6 flex items-center justify-center">{renderIcon(idIndustry.icon)}</div>
+                                  <div className="w-6 h-6 flex items-center justify-center">
+                                    {renderIcon(idIndustry.icon)}
+                                  </div>
                                 </div>
                                 <div>
-                                  <span className="font-medium text-md  ">{idIndustry.label}</span>
-                                  <p className="text-xs text-muted-foreground ">{idIndustry.description}</p>
+                                  <span className="font-medium text-md  ">
+                                    {idIndustry.label}
+                                  </span>
+                                  <p className="text-xs text-muted-foreground ">
+                                    {idIndustry.description}
+                                  </p>
                                 </div>
                               </div>
                             </Link>
@@ -150,11 +198,15 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
-                    <Link href={idNavbar.navbar.menu[2]?.href!} legacyBehavior passHref>
+                    <Link
+                      href={idNavbar.navbar.menu[2]?.href!}
+                      legacyBehavior
+                      passHref
+                    >
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
                         )}
                       >
                         {idNavbar.navbar.menu[2]?.label}
@@ -163,11 +215,15 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                   </NavigationMenuItem>
 
                   <NavigationMenuItem>
-                    <Link href={idNavbar.navbar.menu[3]?.href!} legacyBehavior passHref>
+                    <Link
+                      href={idNavbar.navbar.menu[3]?.href!}
+                      legacyBehavior
+                      passHref
+                    >
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
                         )}
                       >
                         {idNavbar.navbar.menu[3]?.label}
@@ -179,6 +235,7 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button
+                          aria-label="More Options"
                           variant="ghost"
                           size="icon"
                           className="h-10 w-10 flex items-center justify-center bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
@@ -186,14 +243,19 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                           <MoreHorizontal className="h-6 w-6" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-[80px] p-2 border border-border shadow-sm">
+                      <DropdownMenuContent
+                        align="end"
+                        className="w-[80px] p-2 border border-border shadow-sm"
+                      >
                         {idNavbar.navbar.more.map((idItem, iIndex) => (
                           <DropdownMenuItem
                             key={idItem.label}
                             asChild
                             className={cn(
                               "py-2 text-md font-normal text-center ",
-                              iIndex === 1 ? "border-b border-border  pb-2 mb-1" : "",
+                              iIndex === 1
+                                ? "border-b border-border  pb-2 mb-1"
+                                : ""
                             )}
                           >
                             <Link href={idItem.href!}>{idItem.label}</Link>
@@ -223,22 +285,30 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                   className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
                 >
                   <Globe className="h-4 w-4" />
-                  <span className="text-md">{fnGetCurrentLanguageDisplay()}</span>
+                  <span className="text-md">
+                    {fnGetCurrentLanguageDisplay()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px] border border-border  shadow-sm">
+              <DropdownMenuContent
+                align="end"
+                className="w-[160px] border border-border  shadow-sm"
+              >
                 <div className="grid grid-cols-1 gap-0">
                   {idNavbar.navbar.language.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
-                      // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() => fnHandleLanguageChange(idLang.label ?? "EN")}
+                      onClick={() =>
+                        fnHandleLanguageChange(idLang.label ?? "EN")
+                      }
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : "",
+                        idLang.label === Language ? "bg-muted " : ""
                       )}
                     >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
+                      <span className="flex items-center justify-center w-6 h-6 text-base">
+                        {idLang.icon}
+                      </span>
                       <span>{idLang.description}</span>
                       {idLang.label === Language && (
                         <svg
@@ -260,7 +330,10 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
               </DropdownMenuContent>
             </DropdownMenu>
             <Link href={idNavbar.navbar.menu[5]?.href!}>
-              <Button variant="default" className="rounded-lg h-10 flex items-center">
+              <Button
+                variant="default"
+                className="rounded-lg h-10 flex items-center"
+              >
                 {idNavbar.navbar.menu[5]?.label}
               </Button>
             </Link>
@@ -276,24 +349,37 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
             {/* Language Switcher for Mobile */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="secondary" size="sm" className="gap-1 h-8 flex items-center ">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  className="gap-1 h-8 flex items-center "
+                >
                   <Globe className="h-4 w-4" />
-                  <span className="text-xs">{fnGetCurrentLanguageDisplay()}</span>
+                  <span className="text-xs">
+                    {fnGetCurrentLanguageDisplay()}
+                  </span>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-[160px] border border-border shadow-sm">
+              <DropdownMenuContent
+                align="end"
+                className="w-[160px] border border-border shadow-sm"
+              >
                 <div className="grid grid-cols-1 gap-0">
                   {idNavbar.navbar.language.map((idLang) => (
                     <DropdownMenuItem
                       key={idLang.label ?? "EN"}
                       // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() => fnHandleLanguageChange(idLang.label ?? "EN")}
+                      onClick={() =>
+                        fnHandleLanguageChange(idLang.label ?? "EN")
+                      }
                       className={cn(
                         "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : "",
+                        idLang.label === Language ? "bg-muted " : ""
                       )}
                     >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">{idLang.icon}</span>
+                      <span className="flex items-center justify-center w-6 h-6 text-base">
+                        {idLang.icon}
+                      </span>
                       <span>{idLang.description}</span>
                       {idLang.label === Language && (
                         <svg
@@ -318,18 +404,17 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
         </div>
       </header>
 
-
-
       {/* Mobile Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 z-[100] backdrop-blur-md bg-background border-t border-border lg:hidden">
         <div className="flex justify-around items-center h-16 px-2">
-
           {/* Menu Item */}
           <Link
             href={idNavbar.navbar.menu[2]?.href!}
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground hover:text-primary"
           >
-            <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[2]?.icon)}</span>
+            <span className="w-5 h-6 mb-1">
+              {renderIcon(idNavbar.navbar.menu[2]?.icon)}
+            </span>
             <span className="text-xs">{idNavbar.navbar.menu[2]?.label}</span>
           </Link>
 
@@ -343,10 +428,14 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileProductsOpen ? "text-primary" : "text-muted-foreground hover:text-primary"
+                MobileProductsOpen
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
               )}
             >
-              <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[0]?.icon)}</span>
+              <span className="w-5 h-6 mb-1">
+                {renderIcon(idNavbar.navbar.menu[0]?.icon)}
+              </span>
               <span className="text-xs ">{idNavbar.navbar.menu[0]?.label}</span>
             </button>
             {MobileProductsOpen && (
@@ -360,9 +449,13 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                        <div className="w-6 h-6 text-primary/70">{renderIcon(idProduct.icon)}</div>
+                        <div className="w-6 h-6 text-primary/70">
+                          {renderIcon(idProduct.icon)}
+                        </div>
                       </div>
-                      <span className="text-xs font-medium text-primary">{idProduct.label}</span>
+                      <span className="text-xs font-medium text-primary">
+                        {idProduct.label}
+                      </span>
                     </Link>
                   ))}
                 </div>
@@ -380,10 +473,14 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileIndustriesOpen ? "text-primary" : "text-muted-foreground hover:text-primary"
+                MobileIndustriesOpen
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
               )}
             >
-              <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[1]?.icon)}</span>
+              <span className="w-5 h-6 mb-1">
+                {renderIcon(idNavbar.navbar.menu[1]?.icon)}
+              </span>
               <span className="text-xs ">{idNavbar.navbar.menu[1]?.label}</span>
             </button>
 
@@ -397,9 +494,13 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
-                        <div className="w-6 h-6 text-primary/70">{renderIcon(idIndustry.icon)}</div>
+                        <div className="w-6 h-6 text-primary/70">
+                          {renderIcon(idIndustry.icon)}
+                        </div>
                       </div>
-                      <span className="text-xs font-medium text-primary">{idIndustry.label}</span>
+                      <span className="text-xs font-medium text-primary">
+                        {idIndustry.label}
+                      </span>
                     </Link>
                   ))}
                 </div>
@@ -412,7 +513,9 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
             href={idNavbar.navbar.menu[3]?.href!}
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground hover:text-primary"
           >
-            <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[3]?.icon)}</span>
+            <span className="w-5 h-6 mb-1">
+              {renderIcon(idNavbar.navbar.menu[3]?.icon)}
+            </span>
             <span className="text-xs">{idNavbar.navbar.menu[3]?.label}</span>
           </Link>
 
@@ -426,10 +529,14 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileModeDropdownOpen ? "text-primary" : "text-muted-foreground hover:text-primary"
+                MobileModeDropdownOpen
+                  ? "text-primary"
+                  : "text-muted-foreground hover:text-primary"
               )}
             >
-              <span className="w-5 h-6 mb-1">{renderIcon(idNavbar.navbar.menu[4]?.icon)}</span>
+              <span className="w-5 h-6 mb-1">
+                {renderIcon(idNavbar.navbar.menu[4]?.icon)}
+              </span>
               <span className="text-xs">{idNavbar.navbar.menu[4]?.label}</span>
             </button>
 
@@ -443,7 +550,11 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
                       iIndex === 1 ? "border-b border-border pb-2 mb-1" : ""
                     )}
                   >
-                    <Link href={idItem.href!} onClick={() => fnSetMobileModeDropdownOpen(false)} className="block w-full text-primary">
+                    <Link
+                      href={idItem.href!}
+                      onClick={() => fnSetMobileModeDropdownOpen(false)}
+                      className="block w-full text-primary"
+                    >
                       {idItem.label}
                     </Link>
                   </div>
@@ -451,7 +562,6 @@ export default function Navbar({ idNavbar }: { idNavbar: TnavbarTarget }): React
               </div>
             )}
           </div>
-
         </div>
       </div>
     </>
