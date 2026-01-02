@@ -37,7 +37,7 @@ export default function Feature({ idFeature }: { idFeature: TfeatureProps }): Re
           <p className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-primary sm:text-4xl">
             {idFeature.heading?.title}
           </p>
-          <p className="mt-4 max-w-2xl text-xl text-accent-foreground lg:mx-auto">
+          <p className="mt-4 max-w-2xl text-xl text-muted-foreground lg:mx-auto">
             {idFeature.heading?.subtitle}
           </p>
         </div>
@@ -105,8 +105,8 @@ const FAQItem = (idItems: Titems): ReactElement => {
         </div>
       )}
       <div className={IconComponent ? "ml-2" : ""}>
-        <div className="text-lg leading-6 font-medium text-accent-foreground">{idItems.label}</div>
-        <div className="mt-2 text-base text-accent-foreground">{idItems.description}</div>
+        <div className="text-lg leading-6 font-medium text-primary">{idItems.label}</div>
+        <div className="mt-2 text-base text-muted-foreground">{idItems.description}</div>
       </div>
     </div>
   )
