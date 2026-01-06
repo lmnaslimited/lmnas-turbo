@@ -7,18 +7,13 @@ import { cn } from "@repo/ui/lib/utils";
 import { getIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/ui/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui/avatar";
 import { Card, CardFooter, CardHeader } from "@repo/ui/components/ui/card";
 import { TcardProps, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton["icon"], classname: string = "w-6 h-6") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
-
   return <IconComponent className={classname} />;
 };
 
@@ -271,20 +266,20 @@ export default function CustomCard({
               idBtn.href ? (
                 <Button
                   key={`btn-${iIndex}`}
+                  asChild
                   variant={idBtn.variant || "default"}
                   size={idBtn.size || "default"}
                 >
-                  {/* If iconPosition is 'before', render icon first */}
-                  {idBtn.icon && idBtn.iconPosition === "before" && (
-                    <span className="mr-2">{renderIcon(idBtn.icon)}</span>
-                  )}
-
-                  {/* Button Label */}
-                  <Link href={idBtn.href}>{idBtn.label}</Link>
-                  {/* If iconPosition is 'after', render icon after */}
-                  {idBtn.icon && idBtn.iconPosition === "after" && (
-                    <span className="ml-2">{renderIcon(idBtn.icon)}</span>
-                  )}
+                  <Link
+                    href={idBtn.href}
+                    className="flex items-center gap-2"
+                  >
+                    {/* If iconPosition is 'before', render icon first */}
+                    {idBtn.icon && idBtn.iconPosition === "before" && renderIcon(idBtn.icon)}
+                    {idBtn.label}
+                    {/* If iconPosition is 'after', render icon after */}
+                    {idBtn.icon && idBtn.iconPosition === "after" && renderIcon(idBtn.icon)}
+                  </Link>
                 </Button>
               ) : (
                 <Button
@@ -310,21 +305,24 @@ export default function CustomCard({
             {idCardProps.link?.map((idLnk, iIndex) => (
               <Button
                 key={`lnk-${iIndex}`}
+                asChild
                 variant="link"
-                className="p-0"
                 size={idLnk.size || "default"}
+                className="p-0"
                 onClick={(event) => event.stopPropagation()}
               >
-                {idLnk.icon && idLnk.iconPosition === "before" && (
-                  <span className="mr-2">{renderIcon(idLnk.icon)}</span>
-                )}{" "}
                 {idLnk.href ? (
-                  <Link href={idLnk.href}>{idLnk.label}</Link>
+                  <Link href={idLnk.href} className="flex items-center gap-2">
+                    {idLnk.icon && idLnk.iconPosition === "before" && (
+                      <span>{renderIcon(idLnk.icon)}</span>
+                    )}
+                    {idLnk.label}
+                    {idLnk.icon && idLnk.iconPosition === "after" && (
+                      <span>{renderIcon(idLnk.icon)}</span>
+                    )}
+                  </Link>
                 ) : (
-                  idLnk.label
-                )}
-                {idLnk.icon && idLnk.iconPosition === "after" && (
-                  <span>{renderIcon(idLnk.icon)}</span>
+                  <span className="flex items-center gap-2">{idLnk.label}</span>
                 )}
               </Button>
             ))}
