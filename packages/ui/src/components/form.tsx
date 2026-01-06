@@ -523,7 +523,7 @@ function InnerSectionForm({
                             <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Select onValueChange={iField.onChange} value={iField.value || idField.defaultValue}>
                                     <FormControl>
-                                        <SelectTrigger className="h-12">
+                                        <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
                                             <SelectValue placeholder={idField.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
@@ -609,7 +609,7 @@ function InnerSectionForm({
                             <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Select onValueChange={iField.onChange} value={iField.value || ""} disabled={IsLoadingTimezones}>
                                     <FormControl>
-                                        <SelectTrigger className="h-12">
+                                        <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
                                             <SelectValue placeholder={IsLoadingTimezones ? "Loading timezones..." : idField.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
