@@ -5,7 +5,7 @@
 import { client } from "./apollo-client"
 import { DocumentNode } from "graphql"
 
-type FetchOptions = {
+type TFetchOptions = {
   iQuery: DocumentNode
   locale?: string
   iDvariables?: Record<string, any>
@@ -15,7 +15,7 @@ export async function fnFetchFromStrapi<T>({
   iQuery,
   locale = "en",
   iDvariables = {},
-}: FetchOptions): Promise<T> {
+}: TFetchOptions): Promise<T> {
   // Apollo Client that triggers strapi's Graphql
   const { data } = await client.query({
     query: iQuery,
