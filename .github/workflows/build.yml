@@ -52,6 +52,6 @@ jobs:
           pull: true
           no-cache: true
           provenance: false
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v2' }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v3' }}
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
