@@ -1,8 +1,8 @@
 "use client"
-import { Moon, Sun } from "lucide-react"
-import { useTheme } from "next-themes"
-import { ReactElement, ReactNode, useEffect, useState } from "react"
 
+import { useTheme } from "next-themes"
+import { Moon, Sun } from "lucide-react"
+import { ReactNode, useEffect, useState } from "react"
 import { Switch } from "@repo/ui/components/ui/switch"
 
 export function ThemeToggle(): ReactNode {
@@ -41,4 +41,3 @@ export function ThemeToggle(): ReactNode {
     </div>
   )
 }
-

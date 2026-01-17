@@ -1,13 +1,12 @@
-import * as Icons from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Zap } from "lucide-react";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
-import { Button } from "@repo/ui/components/ui/button";
-import TitleSubtitle from "@repo/ui/components/titleSubtitle";
 import { getIconComponent } from "@repo/ui/lib/icon";
-import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware";
+import { Button } from "@repo/ui/components/ui/button";
+import TitleSubtitle from "@repo/ui/components/title-subtitle";
+import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/types";
 
 type THeroProps = {
   idHero: TheroSection;
