@@ -2,8 +2,8 @@ name: Turbo Image Build
 on:
   push:
     branches:
-      - main
-      - develop
+      - access-vm
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -46,6 +46,6 @@ jobs:
           context: .
           dockerfile: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v1' }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:v2.01
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
