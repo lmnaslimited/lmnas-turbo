@@ -28,6 +28,11 @@
     --chart-3: oklch(0.66 0.0031 286.31);
     --chart-4: oklch(0.53 0.0033 286.29);
     --chart-5: oklch(0.38 0.0045 286.18);
+    --chat--input--text-color: #000 ;
+    --chat--input--background: #ffffff ;
+    --chat--toggle--background: #0474B5 ;
+	  --chat--toggle--hover--background: #036197 ;
+	  --chat--toggle--active--background: #0474B5 ;
   }
 
   .dark {
@@ -65,5 +70,16 @@
   body {
     @apply antialiased;
     @apply bg-background text-foreground;
+  }
+}
+
+@media (max-width: 1023px) {
+  .chat-window-toggle {
+    margin-bottom: 55px ;
+    bottom: 55px ;
+    z-index: 99;
+  }
+  .chat-window-wrapper{
+    z-index: 99;
   }
 }
