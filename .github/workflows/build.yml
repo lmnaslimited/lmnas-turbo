@@ -16,7 +16,7 @@ jobs:
         env:
           SUBSCRIBE_URL: ${{ secrets.MAIN_SUBSCRIBE_URL }}
           AUTH_BASE_64: ${{ secrets.MAIN_AUTH_BASE_64 }}
-          RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'main' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
+          RECAPTCHA_SECRET_KEY: ${{ secrets.MAIN_RECAPTCHA_SECRET_KEY }}
           YOUTUBE: ${{ secrets.YOUTUBE }}
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
