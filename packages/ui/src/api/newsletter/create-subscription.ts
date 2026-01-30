@@ -10,7 +10,7 @@ const LdSchema = z.object({
 
 export async function subscribeNewsletter(
   idPrevState: { message: string },
-  idFormData: FormData
+  idFormData: FormData,
 ): Promise<{ message: string }> {
   //headers for API requests
   const LdHeaders = {
@@ -36,13 +36,13 @@ export async function subscribeNewsletter(
   const LEmail = LdParsed.data.email
 
   // Disables TLS verification for local development
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
   try {
     // First check: is this email already subscribed? Prevents duplicate entries and unnecessary API calls
     const LdCheckEmailGroup = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${LEmail}","email_group":"Website"}`,
-      { method: "GET", headers: LdHeaders }
+      { method: "GET", headers: LdHeaders },
     )
 
     const LdCheckData = await LdCheckEmailGroup.json()
@@ -59,7 +59,7 @@ export async function subscribeNewsletter(
         method: "POST",
         headers: LdHeaders,
         body: JSON.stringify({ email: LEmail }),
-      }
+      },
     )
 
     if (LdSubscribe.status === 429) {
