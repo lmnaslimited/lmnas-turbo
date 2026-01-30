@@ -22,6 +22,9 @@ jobs:
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           TWITTER_USER_NAME: ${{ secrets.TWITTER_USER_NAME }}
           YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
+          NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY }}
+          NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL }}
+          NEXT_PUBLIC_WEBHOOK_URL: ${{secrets.NEXT_PUBLIC_WEBHOOK_URL}}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
@@ -46,6 +49,6 @@ jobs:
           context: .
           dockerfile: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:v2.02
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:v2.03
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
