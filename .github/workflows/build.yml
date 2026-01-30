@@ -14,8 +14,8 @@ jobs:
       - name: Read sampleenv and generate .env dynamically
         id: generate_env
         env:
-          SUBSCRIBE_URL: ${{ github.ref_name == 'main' && secrets.MAIN_SUBSCRIBE_URL || secrets.DEVELOP_SUBSCRIBE_URL }}
-          AUTH_BASE_64: ${{ github.ref_name == 'main' && secrets.MAIN_AUTH_BASE_64 || secrets.DEVELOP_AUTH_BASE_64 }}
+          SUBSCRIBE_URL: ${{ secrets.MAIN_SUBSCRIBE_URL }}
+          AUTH_BASE_64: ${{ secrets.MAIN_AUTH_BASE_64 }}
           RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'main' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
           YOUTUBE: ${{ secrets.YOUTUBE }}
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
