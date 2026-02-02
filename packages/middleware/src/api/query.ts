@@ -1484,6 +1484,11 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         svg
         source
         alternate
+        subtitle {
+          startTime
+          endTime
+          text
+        }
       }
     }
     successStoryHeaderFooter {

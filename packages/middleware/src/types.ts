@@ -29,7 +29,7 @@ export interface ITransformer<DynamicSourceType, DynamicTargetType = any>
   init?(context?: Record<string, any>): Promise<void>
   getData(): Promise<DynamicSourceType>
   performTransformation(
-    idSourceData: DynamicSourceType
+    idSourceData: DynamicSourceType,
   ): Promise<DynamicTargetType>
 }
 export interface ItransformationRule {}
@@ -190,6 +190,12 @@ export type Tbutton = {
   description?: string
 }
 
+export type Tsubtitle = {
+  startTime: string
+  endTime: string
+  text: string
+}
+
 export type Timage = {
   source?: string
   alternate: string
@@ -199,6 +205,7 @@ export type Timage = {
   svg?: React.ReactNode | keyof typeof LucideIcons | string
   className?: string
   position?: string
+  subtitle?: Tsubtitle[]
 }
 
 export type TheroSection = {
