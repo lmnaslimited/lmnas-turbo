@@ -55,6 +55,7 @@ export type Tcontext = {
       eq: string
     }
   }
+  status:"draft" | "published"
   caseStudiesLocale2?: string
   footerLocale2?: string
   caseStudiesFilters2?: {

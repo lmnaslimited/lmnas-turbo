@@ -1388,8 +1388,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
 
   getQuery(): string {
     return `
-  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     heroSection {
       heading {
@@ -1597,59 +1597,59 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
 
 export class clQueryForms extends clQuery<TformsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType)
+    super(iContentType);
   }
 
   getQuery(): string {
     return `
- query Forms($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
-     formId
-    title
-    description
-    submitText
-    showTerms
-    successMessage
-    successTitle
-    verifiedMessage {
-      label
-      description
-    }
-    unVerifiedMessage {
-      label
-      description
-    }
-    privacy {
-      href
-      label
-    }
-    terms {
-      href
-      label
-    }
-    policyDescription
-    fields {
-      fieldDisplay
-      defaultValue
-      loading {
-        label
-        description
+      query Forms($locale: I18NLocaleCode, $status: PublicationStatus) {
+        ${this.contentType}(locale: $locale, status: $status) {
+          formId
+          title
+          description
+          submitText
+          showTerms
+          successMessage
+          successTitle
+          verifiedMessage {
+            label
+            description
+          }
+          unVerifiedMessage {
+            label
+            description
+          }
+          privacy {
+            href
+            label
+          }
+          terms {
+            href
+            label
+          }
+          policyDescription
+          fields {
+            fieldDisplay
+            defaultValue
+            loading {
+              label
+              description
+            }
+            name
+            options {
+              label
+              value
+            }
+            placeholder
+            required
+            type
+            validationMessage
+          }
+        }
       }
-      name
-      options {
-        label
-        value
-      }
-      placeholder
-      required
-      type
-      validationMessage
-    }
-  }
-}`
+    `;
   }
 }
-
 export class clQueryIndustries extends clQuery<TindustriesPageSource> {
   constructor(iContentType: string) {
     super(iContentType)
