@@ -5,7 +5,7 @@ import { ApolloClient, InMemoryCache, HttpLink } from "@apollo/client"
 
 const API_URL =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://dumps-240005.lmnaslens.com/graphql"
+  "http://localhost:1337/graphql"
 export const createApolloClient = () => {
   return new ApolloClient({
     ssrMode: true,

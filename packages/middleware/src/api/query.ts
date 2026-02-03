@@ -1388,8 +1388,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
 
   getQuery(): string {
     return `
-  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     heroSection {
       heading {
