@@ -1,6 +1,6 @@
 import { ReactElement } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@repo/ui/components/ui/accordion"
-import { Titems } from "@repo/middleware"
+import { Titems } from "@repo/middleware/types"
 
 export default function FAQs({ idFaq }: { idFaq: Titems[] }): ReactElement {
   return (

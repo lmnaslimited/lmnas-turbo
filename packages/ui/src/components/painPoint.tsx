@@ -1,7 +1,8 @@
 "use client";
+
 import { useRef, useEffect, ReactElement } from "react";
-import { Titems, Tbutton } from "@repo/middleware";
 import { getIconComponent } from "@repo/ui/lib/icon";
+import { Titems, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";

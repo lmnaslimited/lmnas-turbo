@@ -1,7 +1,7 @@
 "use client"
 
-import { useTheme } from "next-themes"
 import { useEffect } from "react"
+import { useTheme } from "next-themes"
 
 const THEME_CHANNEL_NAME = "theme-sync-channel"
 
@@ -33,4 +33,3 @@ export function useThemeSynchronization() {
     }
   }, [theme, setTheme])
 }
-

@@ -1,9 +1,9 @@
 import Link from "next/link"
 import type { ReactElement } from "react"
 import { cn } from "@repo/ui/lib/utils";
-import { Button } from "@repo/ui/components/ui/button"
-import { TcalloutProps, TformMode, Tbutton } from "@repo/middleware";
 import { getIconComponent } from "@repo/ui/lib/icon";
+import { Button } from "@repo/ui/components/ui/button"
+import { TcalloutProps, TformMode, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -16,7 +16,7 @@ export default function Callout({
   onButtonClick,
 }: {
   idCallout: TcalloutProps
-  onButtonClick?: (mode: TformMode, formTitle?:string) => void
+  onButtonClick?: (mode: TformMode, formTitle?: string) => void
 }): ReactElement {
 
   // Determine the layout type, defaulting to "classic" if not provided
@@ -66,11 +66,11 @@ export default function Callout({
           // Construct button content, including an optional icon
           const ButtonContent = (
             <>
-              
+
               {idButton.label}
-              
-                <span className="ml-2">{renderIcon(idButton.icon)}</span>
-              
+
+              <span className="ml-2">{renderIcon(idButton.icon)}</span>
+
             </>
           );
 
