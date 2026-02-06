@@ -1,24 +1,18 @@
-import { Tsubtitle } from "@repo/middleware/types"
-
 type VideoPlayerProps = {
     src: string
-    subtitle?: Tsubtitle[]
+    sourceId?: string
 }
 
-const VideoPlayer = ({ src, subtitle }: VideoPlayerProps) => {
-    console.log("subtitle:", subtitle);
+export default function VideoPlayer({ src, sourceId }: VideoPlayerProps) {
 
-    const subtitleUrl = subtitle
-        ? `/api/subtitle?data=${JSON.stringify(subtitle)}`
-        : undefined
-
-    // console.log("subtitleUrl:", subtitleUrl);
+    const subtitleUrl =
+        sourceId
+            ? `/api/subtitle?sourceId=${sourceId}`
+            : undefined
 
     return (
         <video
             className="aspect-[16/9] w-full object-cover rounded-sm"
-            width={1000}
-            height={1000}
             autoPlay
             muted
             loop
@@ -38,5 +32,3 @@ const VideoPlayer = ({ src, subtitle }: VideoPlayerProps) => {
         </video>
     )
 }
-
-export default VideoPlayer

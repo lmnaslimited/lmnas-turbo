@@ -205,7 +205,7 @@ export type Timage = {
   svg?: React.ReactNode | keyof typeof LucideIcons | string
   className?: string
   position?: string
-  subtitle?: Tsubtitle[]
+  sourceId?: string
 }
 
 export type TheroSection = {
