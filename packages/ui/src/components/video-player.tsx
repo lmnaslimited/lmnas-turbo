@@ -5,6 +5,8 @@ type VideoPlayerProps = {
 
 export default function VideoPlayer({ src, sourceId }: VideoPlayerProps) {
 
+    console.log("VideoPlayer props", { src, sourceId })
+
     const subtitleUrl =
         sourceId
             ? `/api/subtitle?sourceId=${sourceId}`
