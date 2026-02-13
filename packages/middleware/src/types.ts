@@ -58,6 +58,7 @@ export type Tcontext = {
             eq: string;
         };
     };
+    status?: string
     caseStudiesLocale2?: string;
     footerLocale2?: string,
     caseStudiesFilters2?: {
