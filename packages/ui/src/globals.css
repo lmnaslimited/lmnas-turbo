@@ -123,6 +123,8 @@
 	--chat--toggle--active--background: #0474B5 ;
 }
 
+/* Chatbot window styles */
+
 @media (max-width: 1023px) {
   .chat-window-toggle {
     margin-bottom: 55px ;
