@@ -208,6 +208,11 @@ export type Timage = {
   sourceId?: string
 }
 
+export type TvideoPlayerProps = {
+  src: string
+  sourceId?: string
+}
+
 export type TheroSection = {
   heading: Theader
   highlight?: Titems[]

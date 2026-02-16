@@ -1,11 +1,8 @@
-type VideoPlayerProps = {
-    src: string
-    sourceId?: string
-}
+import { TvideoPlayerProps } from "@repo/middleware/types"
 
-export default function VideoPlayer({ src, sourceId }: VideoPlayerProps) {
+export default function VideoPlayer({ src, sourceId }: TvideoPlayerProps) {
 
-    const subtitleUrl =
+    const LSubtitleUrl =
         sourceId
             ? `/api/subtitle?sourceId=${sourceId}`
             : undefined
@@ -20,9 +17,9 @@ export default function VideoPlayer({ src, sourceId }: VideoPlayerProps) {
         >
             <source src={src} type="video/mp4" />
 
-            {subtitleUrl && (
+            {LSubtitleUrl && (
                 <track
-                    src={subtitleUrl}
+                    src={LSubtitleUrl}
                     kind="subtitles"
                     srcLang="en"
                     label="English"
