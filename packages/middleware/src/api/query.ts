@@ -1347,7 +1347,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, $status: PublicationStatus) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1382,7 +1382,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
 export class clQueryProducts extends clQuery<TproductsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType)
+    super(iContentType);
   }
 
   getQuery(): string {
@@ -1483,7 +1483,6 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         svg
         source
         alternate
-        sourceId
       }
     }
     successStoryHeaderFooter {
@@ -1591,9 +1590,10 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       schemaData
     }
   }
-}`
+}`;
   }
 }
+
 
 export class clQueryForms extends clQuery<TformsPageSource> {
   constructor(iContentType: string) {
@@ -1810,7 +1810,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, $status: PublicationStatus) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1959,7 +1959,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       subtitle
     }
   }
-  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2, $status: PublicationStatus) {
+  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
