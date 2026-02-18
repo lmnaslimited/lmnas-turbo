@@ -120,8 +120,8 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
 
   getQuery(): string {
     return `
-  query Navbar($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     locale
     logo {
       label
@@ -165,8 +165,8 @@ export class clQueryFooter extends clQuery<TfooterSource> {
 
   getQuery(): string {
     return `
-  query Footer($locale: I18NLocaleCode) {
-    ${this.contentType}(locale: $locale) {
+  query Footer($locale: I18NLocaleCode, $status: PublicationStatus) {
+    ${this.contentType}(locale: $locale, status: $status) {
       companyName
       companyInfo
       social {
@@ -210,8 +210,8 @@ export class clQueryHome extends clQuery<ThomePageSource> {
 
   getQuery(): string {
     return `
-  query Home($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Home($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
    heroSection {
       heading {
         title
@@ -372,8 +372,8 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
 
   getQuery(): string {
     return `
-  query Trend($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Trend($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
    heroSection {
       heading {
         title
@@ -477,8 +477,8 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
 
   getQuery(): string {
     return `
-  query Career($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
+  query Career($locale: I18NLocaleCode, $status: PublicationStatus) {
+   ${this.contentType}(locale: $locale, status: $status) {
   heroSection {
       heading {
         title
@@ -626,8 +626,8 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
 
   getQuery(): string {
     return `
-  query AboutUs($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         title
@@ -743,8 +743,8 @@ export class clQueryPricing extends clQuery<TpricingPageSource> {
 
   getQuery(): string {
     return `
-query Pricing($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+query Pricing($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         title
@@ -940,8 +940,8 @@ export class clQueryContact extends clQuery<TcontactSource> {
 
   getQuery(): string {
     return `
-  query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput) {
-  ${this.contentType}(locale: $locale)  {
+  query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status)  {
     header {
       title
       subtitle
@@ -1075,8 +1075,8 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
 
   getQuery(): string {
     return `
-  query Event($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Event($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         highlight
@@ -1125,8 +1125,8 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
   getQuery(): string {
     return `
-  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
-  solution(locale: $locale) {
+  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  solution(locale: $locale, status: $status) {
   heroSection {
       heading {
         title
@@ -1348,7 +1348,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1388,8 +1388,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
 
   getQuery(): string {
     return `
-  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     heroSection {
       heading {
@@ -1602,8 +1602,8 @@ export class clQueryForms extends clQuery<TformsPageSource> {
 
   getQuery(): string {
     return `
- query Forms($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
+ query Forms($locale: I18NLocaleCode, $status: PublicationStatus) {
+   ${this.contentType}(locale: $locale, status: $status) {
      formId
     title
     description
@@ -1657,8 +1657,8 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
 
   getQuery(): string {
     return `
- query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+ query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     name
     slug
     heroSection {
@@ -1810,7 +1810,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1841,8 +1841,8 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
 
   getQuery(): string {
     return `
-    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
-    ${this.contentType}(locale: $locale, filters: $filters) {
+    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+    ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     name
     pdfName
@@ -1959,7 +1959,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       subtitle
     }
   }
-  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
+  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -2009,8 +2009,8 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     header {
       title
       subtitle
@@ -2073,8 +2073,8 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     header {
       title
       subtitle

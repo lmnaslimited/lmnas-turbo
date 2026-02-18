@@ -29,7 +29,7 @@ export interface ITransformer<DynamicSourceType, DynamicTargetType = any>
   init?(context?: Record<string, any>): Promise<void>
   getData(): Promise<DynamicSourceType>
   performTransformation(
-    idSourceData: DynamicSourceType
+    idSourceData: DynamicSourceType,
   ): Promise<DynamicTargetType>
 }
 export interface ItransformationRule {}
@@ -55,6 +55,7 @@ export type Tcontext = {
       eq: string
     }
   }
+  status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
   caseStudiesFilters2?: {
