@@ -18,8 +18,8 @@ import {
   TeventPageSource,
   TformsPageSource,
 } from "../types"
-import { gql } from "@apollo/client"
 import { client } from "../lib/apollo-client"
+import { gql } from "@apollo/client"
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType>
