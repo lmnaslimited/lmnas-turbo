@@ -17,19 +17,20 @@ import {
   TaboutUsPageSource,
   TeventPageSource,
   TformsPageSource,
-} from "../types";
-import { client } from "../lib/apollo-client";
-import { gql } from "@apollo/client";
+} from "../types"
+import { client } from "../lib/apollo-client"
+import { gql } from "@apollo/client"
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
 export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType> {
-  query: string;
-  contentType: string;
-  locale: string;
-  variables?: Record<string, any>;
+  implements IQuery<DynamicSourceType>
+{
+  query: string
+  contentType: string
+  locale: string
+  variables?: Record<string, any>
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
-  abstract getQuery(): string;
+  abstract getQuery(): string
 
   async executeQuery(): Promise<DynamicSourceType> {
     // Set params of the query
@@ -40,23 +41,23 @@ export abstract class clQuery<DynamicSourceType>
       `,
       variables: this.variables || {},
       fetchPolicy: "no-cache",
-    });
-    return data as DynamicSourceType;
+    })
+    return data as DynamicSourceType
   }
   setVariables(variables: Record<string, any>): void {
-    this.variables = variables;
+    this.variables = variables
   }
   constructor(iContentType: string) {
-    this.contentType = iContentType;
-    this.locale = "en";
-    this.query = this.getQuery();
+    this.contentType = iContentType
+    this.locale = "en"
+    this.query = this.getQuery()
   }
 }
 
 // The clQueryTrends class extends the clQuery class and provides a specific implementation for the "Trends" query.
 export class clQuerySlug extends clQuery<TslugsSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
   getQuery(): string {
     return `
@@ -64,13 +65,13 @@ export class clQuerySlug extends clQuery<TslugsSource> {
       ${this.contentType} {
         slug
       }
-    }`;
+    }`
   }
 }
 
 export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
@@ -108,19 +109,19 @@ export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
       manifest
       schemaData
   }
-}`;
+}`
   }
 }
 
 export class clQueryNavbar extends clQuery<TnavbarSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Navbar($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     locale
     logo {
       label
@@ -153,19 +154,19 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       icon
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryFooter extends clQuery<TfooterSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Footer($locale: I18NLocaleCode) {
-    ${this.contentType}(locale: $locale) {
+  query Footer($locale: I18NLocaleCode, $status: PublicationStatus) {
+    ${this.contentType}(locale: $locale, status: $status) {
       companyName
       companyInfo
       social {
@@ -198,19 +199,19 @@ export class clQueryFooter extends clQuery<TfooterSource> {
         href
       }
     }
-  }`;
+  }`
   }
 }
 
 export class clQueryHome extends clQuery<ThomePageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Home($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Home($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
    heroSection {
       heading {
         title
@@ -360,19 +361,19 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryTrends extends clQuery<TtrendsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Trend($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Trend($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
    heroSection {
       heading {
         title
@@ -465,19 +466,19 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryCareer extends clQuery<TcareerPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Career($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
+  query Career($locale: I18NLocaleCode, $status: PublicationStatus) {
+   ${this.contentType}(locale: $locale, status: $status) {
   heroSection {
       heading {
         title
@@ -614,19 +615,19 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query AboutUs($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         title
@@ -731,19 +732,19 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryPricing extends clQuery<TpricingPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-query Pricing($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+query Pricing($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         title
@@ -928,19 +929,19 @@ query Pricing($locale: I18NLocaleCode) {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryContact extends clQuery<TcontactSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput) {
-  ${this.contentType}(locale: $locale)  {
+  query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status)  {
     header {
       title
       subtitle
@@ -1063,19 +1064,19 @@ export class clQueryContact extends clQuery<TcontactSource> {
     }
     policyDescription
   }
-}`;
+}`
   }
 }
 
 export class clQueryEvent extends clQuery<TeventPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Event($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Event($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
         highlight
@@ -1113,19 +1114,19 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQuerySolution extends clQuery<TsolutionPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
-  solution(locale: $locale) {
+  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  solution(locale: $locale, status: $status) {
   heroSection {
       heading {
         title
@@ -1347,7 +1348,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1376,19 +1377,19 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       alternate
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryProducts extends clQuery<TproductsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     heroSection {
       heading {
@@ -1590,19 +1591,19 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryForms extends clQuery<TformsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
- query Forms($locale: I18NLocaleCode) {
-   ${this.contentType}(locale: $locale) {
+ query Forms($locale: I18NLocaleCode, $status: PublicationStatus) {
+   ${this.contentType}(locale: $locale, status: $status) {
      formId
     title
     description
@@ -1645,19 +1646,19 @@ export class clQueryForms extends clQuery<TformsPageSource> {
       validationMessage
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryIndustries extends clQuery<TindustriesPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
- query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput) {
-  ${this.contentType}(locale: $locale, filters: $filters) {
+ query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     name
     slug
     heroSection {
@@ -1809,7 +1810,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1829,19 +1830,19 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       }
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput) {
-    ${this.contentType}(locale: $locale, filters: $filters) {
+    query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+    ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
     name
     pdfName
@@ -1958,7 +1959,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       subtitle
     }
   }
-  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2) {
+  allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2, status: $status) {
     solutionSection {
       successCard {
         header {
@@ -1997,19 +1998,19 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       }
   }
 }
-`;
+`
   }
 }
 
 export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     header {
       title
       subtitle
@@ -2061,19 +2062,19 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
   constructor(iContentType: string) {
-    super(iContentType);
+    super(iContentType)
   }
 
   getQuery(): string {
     return `
-  query Query($locale: I18NLocaleCode) {
-  ${this.contentType}(locale: $locale) {
+  query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
     header {
       title
       subtitle
@@ -2125,37 +2126,37 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
       schemaData
     }
   }
-}`;
+}`
   }
 }
 
 export class clQueryFactory {
   private static queryMap: {
-    [key: string]: new (icontentType: string) => IQuery<any>;
+    [key: string]: new (icontentType: string) => IQuery<any>
   } = {
-      navbar: clQueryNavbar,
-      footer: clQueryFooter,
-      home: clQueryHome,
-      trend: clQueryTrends,
-      career: clQueryCareer,
-      contact: clQueryContact,
-      pricing: clQueryPricing,
-      solution: clQuerySolution,
-      products: clQueryProducts,
-      industries: clQueryIndustries,
-      caseStudies: clQueryCaseStudies,
-      termsAndCondition: clQueryTermsAndConditions,
-      privacyPolicy: clQueryPrivacyPolicy,
-      aboutUs: clQueryAboutUs,
-      event: clQueryEvent,
-      forms: clQueryForms,
-      globalMeta: clQueryGlobalMeta,
-      // Add more mappings here
-    };
+    navbar: clQueryNavbar,
+    footer: clQueryFooter,
+    home: clQueryHome,
+    trend: clQueryTrends,
+    career: clQueryCareer,
+    contact: clQueryContact,
+    pricing: clQueryPricing,
+    solution: clQuerySolution,
+    products: clQueryProducts,
+    industries: clQueryIndustries,
+    caseStudies: clQueryCaseStudies,
+    termsAndCondition: clQueryTermsAndConditions,
+    privacyPolicy: clQueryPrivacyPolicy,
+    aboutUs: clQueryAboutUs,
+    event: clQueryEvent,
+    forms: clQueryForms,
+    globalMeta: clQueryGlobalMeta,
+    // Add more mappings here
+  }
 
   static createQuery<T extends object>(iContentType: string): IQuery<T> {
-    const QueryClass = this.queryMap[iContentType];
-    if (!QueryClass) throw new Error(`Invalid query type: ${iContentType}`);
-    return new QueryClass(iContentType);
+    const QueryClass = this.queryMap[iContentType]
+    if (!QueryClass) throw new Error(`Invalid query type: ${iContentType}`)
+    return new QueryClass(iContentType)
   }
 }

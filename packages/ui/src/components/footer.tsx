@@ -1,11 +1,12 @@
 "use client"
+
 import Link from "next/link"
 import { type ReactElement, useActionState } from "react"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
 import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
-import { subscribeNewsletter } from "@repo/ui/api/subscribe"
-import { TfooterTarget } from "@repo/middleware";
+import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { TfooterTarget } from "@repo/middleware/types";
 
 // Map of icon names to their components
 const iconMap = {

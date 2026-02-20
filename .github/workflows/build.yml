@@ -8,8 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-
-      - name: Checkout 
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Read sampleenv and generate .env dynamically
@@ -26,6 +25,8 @@ jobs:
           NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY }}
           NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_DATAPLANE_URL }}
           NEXT_PUBLIC_WEBHOOK_URL: ${{secrets.NEXT_PUBLIC_WEBHOOK_URL}}
+          STRAPI_BASE_URL: ${{ secrets.STRAPI_BASE_URL }}
+          PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
@@ -34,22 +35,24 @@ jobs:
           done < build.env
           ENCODED=$(cat build.env | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "BUILD_ENV_CONTENT=$ENCODED" >> $GITHUB_ENV
-      
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
-      
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
           context: .
           dockerfile: ./Dockerfile
           push: true
+          pull: true
+          no-cache: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v1' }}
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
