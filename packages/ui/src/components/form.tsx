@@ -1,443 +1,39 @@
 "use client"
-import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
-import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
-import { format } from "date-fns/format"
-import { CalendarIcon } from "lucide-react"
-import { cn } from "@repo/ui/lib/utils"
-import { Button } from "@repo/ui/components/ui/button"
-import { Calendar } from "@repo/ui/components/ui/calendar"
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
-import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
-import { Textarea } from "@repo/ui/components/ui/textarea"
-import { Checkbox } from "@repo/ui/components/ui/checkbox"
-import { PhoneInput } from "react-international-phone"
-import "react-international-phone/style.css"
-// import { isValidPhoneNumber } from "libphonenumber-js"
-import { fetchTimezones } from "@repo/ui/api/getTimeZone"
-import { fetchTimeSlots } from "@repo/ui/api/getTimeSlots"
-import { bookAppointmentAction } from "@repo/ui/api/appointmentBooking"
-import { subscribeNewsletter } from "@repo/ui/api/subscribe"
-import { sendCommunicationAction } from "@repo/ui/api/communication"
-import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
-import { UpdateEventParticipant } from "@repo/ui/api/putEventParticipant"
-import { ContactApi } from "@repo/ui/api/contact"
-import { LeadApi } from "@repo/ui/api/leadApi"
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware"
+
 import Link from "next/link";
 import { useParams } from 'next/navigation';
-// These form configuration objects define the structure, validation rules, and fields for different form types.
-// export const LdBookingFormConfig: TformConfig = {
-//     id: "booking",
-//     title: "Book an Appointment",
-//     description: "Fill out the form below to schedule a meeting with us.",
-//     submitText: "Book Now",
-//     successTitle: "Thank You!",
-//     successMessage: "Your booking has been confirmed successfully!",
-//     showTerms: true,
-//     termsText: "Terms of Service",
-//     privacyText: "Privacy Policy",
-//     // The schema defines validation rules using Zod for each field in the form
-//     schema: z.object({
-//         date: z.date({ required_error: "Please select a date." }),
-//         timezone: z.string({ required_error: "Please select a timezone." }),
-//         timeSlot: z.string({ required_error: "Please select a time slot." }),
-//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-//         phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-//             message: "Invalid phone number",
-//         }),
-//         email: z.string().email("Please enter a valid email"),
-//         message: z.string().optional(),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     // Field configurations define the UI and behavior of each form field
-//     fields: [
-//         {
-//             name: "date",
-//             type: "date",
-//             placeholder: "Select date",
-//             required: true,
-//             className: "w-1/2 pr-2 mb-3",
-//         },
-//         {
-//             name: "timezone",
-//             type: "timezone",
-//             placeholder: "Select timezone",
-//             required: true,
-//             className: "w-1/2 pl-2 mb-3",
-//         },
-//         {
-//             name: "timeSlot",
-//             type: "timeslot",
-//             placeholder: "Select time slot",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "name",
-//             type: "text",
-//             placeholder: "Enter your full name *",
-//             required: true,
-//             className: "md:w-1/2 w-full md:pr-2 mb-3",
-//         },
-//         {
-//             name: "phone",
-//             type: "phone",
-//             required: true,
-//             className: "md:w-1/2 w-full md:pl-2 mb-3",
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address *",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "message",
-//             type: "textarea",
-//             required: true,
-//             placeholder: "Your message",
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to newsletter",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import { useForm } from "react-hook-form"
+import { useState, useRef, useEffect, type ReactElement, type ReactNode } from "react"
 
-// export const LdContactFormConfig: TformConfig = {
-//     id: "contact",
-//     title: "Contact Us",
-//     description: "Get in touch with our team",
-//     submitText: "Send Message",
-//     successTitle: "Thank You!",
-//     successMessage: "Your message has been sent!",
-//     showTerms: true,
-//     schema: z.object({
-//         enquiryType: z.string().default("Free Trial"),
-//         email: z.string().email("Please enter a valid email"),
-//         message: z.string().optional(),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     fields: [
-//         {
-//             name: "enquiryType",
-//             type: "select",
-//             placeholder: "Select an option",
-//             required: true,
-//             className: "w-full mb-3",
-//             options: [
-//                 { value: "Free Trial", label: "Free Trial" },
-//                 { value: "Demo", label: "Demo" },
-//                 { value: "Pricing", label: "Pricing" },
-//                 { value: "Support", label: "Support" },
-//             ],
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address *",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "message",
-//             type: "textarea",
-//             placeholder: "Your message",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to newsletter",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { cn } from "@repo/ui/lib/utils"
+import { format } from "date-fns/format"
+import { CalendarIcon } from "lucide-react"
 
-// export const LdDownloadFormConfig: TformConfig = {
-//     id: "download",
-//     title: "Download Resources",
-//     description: "Fill out the form to access our content",
-//     submitText: "Download Now",
-//     successTitle: "Happy Reading!",
-//     successMessage: "Your download will start shortly!",
-//     showTerms: true,
-//     schema: z.object({
-//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-//         email: z.string().email("Please enter a valid email"),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     fields: [
-//         {
-//             name: "name",
-//             type: "text",
-//             placeholder: "Enter your full name *",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address*",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to newsletter",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import { Button } from "@repo/ui/components/ui/button"
+import { Calendar } from "@repo/ui/components/ui/calendar"
+import { Textarea } from "@repo/ui/components/ui/textarea"
+import { Checkbox } from "@repo/ui/components/ui/checkbox"
+import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
+import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
 
-// export const LdContactPageFormConfig: TformConfig = {
-//     id: "contact",
-//     title: "Contact Us",
-//     description: "Get in touch with our team",
-//     submitText: "Send Message",
-//     successTitle: "Thank You!",
-//     successMessage: "Your message has been sent successfully!",
-//     showTerms: true,
-//     termsText: "Terms of Service",
-//     privacyText: "Privacy Policy",
-//     schema: z.object({
-//         name: z
-//             .string()
-//             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-//         email: z.string().email("Please enter a valid email"),
-//         company: z.string().optional(),
-//         phone: z
-//             .string()
-//             .refine((iVal) => isValidPhoneNumber(iVal), {
-//                 message: "Invalid phone number",
-//             })
-//             .optional(),
-//         product: z.string().optional(),
-//         enquiryType: z.string().optional(),
-//         message: z.string().optional(),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     fields: [
-//         {
-//             name: "name",
-//             type: "text",
-//             placeholder: "Enter your full name *",
-//             required: true,
-//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address*",
-//             required: true,
-//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-//         },
-//         {
-//             name: "company",
-//             type: "text",
-//             placeholder: "Enter your company name",
-//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-//         },
-//         {
-//             name: "phone",
-//             type: "phone",
-//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-//         },
-//         {
-//             name: "product",
-//             type: "select",
-//             placeholder: "Select product",
-//             className: "w-full md:w-1/2 md:pr-2 mb-3",
-//             options: [
-//                 { value: "LENS ERP", label: "LENS ERP" },
-//                 { value: "CRM", label: "CRM" },
-//                 { value: "Analytics", label: "Analytics" },
-//             ],
-//         },
-//         {
-//             name: "enquiryType",
-//             type: "select",
-//             placeholder: "Select enquiry type",
-//             className: "w-full md:w-1/2 md:pl-2 mb-3",
-//             options: [
-//                 { value: "Free Trial", label: "Free Trial" },
-//                 { value: "Demo", label: "Demo" },
-//                 { value: "Pricing", label: "Pricing" },
-//                 { value: "Support", label: "Support" },
-//             ],
-//         },
-//         {
-//             name: "message",
-//             type: "textarea",
-//             placeholder: "Your message",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to our newsletter for updates and offers",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import "react-international-phone/style.css"
+import { PhoneInput } from "react-international-phone"
+import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 
-// export const LdBookingPageFormConfig: TformConfig = {
-//     id: "appointment",
-//     title: "Book Appointment",
-//     description: "Fill out the form below to schedule a meeting with us.",
-//     submitText: "Book Now",
-//     successTitle: "Thank You!",
-//     successMessage: "Your booking has been confirmed successfully!",
-//     showTerms: true,
-//     termsText: "Terms of Service",
-//     privacyText: "Privacy Policy",
-//     schema: z.object({
-//         date: z.date({ required_error: "Please select a date." }),
-//         timezone: z.string({ required_error: "Please select a timezone." }),
-//         timeSlot: z.string({ required_error: "Please select a time slot." }),
-//         name: z
-//             .string()
-//             .regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-//         email: z.string().email("Please enter a valid email"),
-//         company: z.string().optional(),
-//         phone: z
-//             .string()
-//             .refine((iVal) => isValidPhoneNumber(iVal), {
-//                 message: "Invalid phone number",
-//             })
-//             .optional(),
-//         message: z.string().optional(),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     fields: [
-//         {
-//             name: "date",
-//             type: "date",
-//             placeholder: "Select date",
-//             required: true,
-//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-//         },
-//         {
-//             name: "timezone",
-//             type: "timezone",
-//             placeholder: "Select timezone",
-//             required: true,
-//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-//         },
-//         {
-//             name: "timeSlot",
-//             type: "timeslot",
-//             placeholder: "Select time slot",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "name",
-//             type: "text",
-//             placeholder: "Enter your full name *",
-//             required: true,
-//             className: "w-full md:w-1/2 md:pr-2.5 mb-3",
-//         },
-//         {
-//             name: "phone",
-//             type: "phone",
-//             className: "w-full md:w-1/2 md:pl-2.5 mb-3",
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address *",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "message",
-//             type: "textarea",
-//             placeholder: "Your message",
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to our newsletter for updates and offers",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import { ContactApi } from "@repo/ui/api/contact/create-contact"
+import { LeadApi } from "@repo/ui/api/casestudy/create-lead"
+import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
+import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
+import { bookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
+import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { sendCommunicationAction } from "@repo/ui/api/contact/fetch-contact"
+import { UpdateEventParticipant } from "@repo/ui/api/event/create-participant"
 
-// export const LdWebinarFormConfig: TformConfig = {
-//     id: "webinar",
-//     title: "Join Our Webinar – Register Now",
-//     description: "Fill out the form to receive your webinar access link.",
-//     submitText: "Register",
-//     successTitle: "Thank You!",
-//     successMessage: "Thank you for registering! A confirmation email has been sent to your inbox",
-//     showTerms: true,
-//     termsText: "Terms of Service",
-//     privacyText: "Privacy Policy",
-//     // The schema defines validation rules using Zod for each field in the form
-//     schema: z.object({
-//         name: z.string().regex(/^[A-Za-z\s]+$/, "Name can only contain letters and spaces"),
-//         phone: z.string().refine((iVal) => isValidPhoneNumber(iVal), {
-//             message: "Invalid phone number",
-//         }).optional(),
-//         email: z.string().email("Please enter a valid email"),
-//         company: z.string().optional(),
-//         job: z.string().optional(),
-//         newsletter: z.boolean().default(true),
-//     }),
-//     // Field configurations define the UI and behavior of each form field
-//     fields: [
-//         {
-//             name: "name",
-//             type: "text",
-//             placeholder: "Enter your full name *",
-//             required: true,
-//             className: "md:w-1/2 w-full md:pr-2 mb-3",
-//         },
-//         {
-//             name: "phone",
-//             type: "phone",
-//             className: "md:w-1/2 w-full md:pl-2 mb-3",
-//         },
-//         {
-//             name: "email",
-//             type: "email",
-//             placeholder: "Enter your email address *",
-//             required: true,
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "company",
-//             type: "text",
-//             placeholder: "Enter your Company Name",
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "job",
-//             type: "text",
-//             placeholder: "Enter your Job Title",
-//             className: "w-full mb-3",
-//         },
-//         {
-//             name: "newsletter",
-//             type: "checkbox",
-//             placeholder: "Subscribe to newsletter",
-//             className: "w-full mb-4",
-//         },
-//     ],
-// }
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware/types"
 
 //till now the strapi's enumerate field value is return with uderscore(incase of space)
 // https://github.com/strapi/strapi/issues/7904
@@ -460,11 +56,10 @@ function fnGetClassNameFromFriendlyName(iStrapiValue: string) {
         Full_Width_Medium_Left_Padding_2_5: "w-full md:pl-2.5 mb-3",
         Half_Width_on_Tablet_No_Margin: "w-full md:w-1/2",
         Full_Width_No_Margin: "w-full",
-      }
-      return LdClassNameMap[iStrapiValue] || "w-full mb-3"
-  }
-  
-  
+    }
+    return LdClassNameMap[iStrapiValue] || "w-full mb-3"
+}
+
 /**
  * Checks if the contact exists or creates a new one.
  * Adds the participant to the corresponding event.
@@ -525,7 +120,7 @@ export async function fnSubmitWebinar(idFormData: any, idData: TtrendCardProps, 
  * idConfig - form configuration from strapi
  * returns Object containing response data or error
  */
-export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string, idConfig:TformConfig) {
+export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToken: string, idConfig: TformConfig) {
     try {
         // Format the date into 'yyyy-MM-dd' string format for the backend
         const LFormattedDate = format(new Date(idFormData.date), "yyyy-MM-dd")
@@ -561,7 +156,7 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
         // Determine the booking status (e.g., Unverified vs Verified)
         const LStatus = LdResponse?.data?.message?.status
 
-         // Determine title and message to show based on verification status
+        // Determine title and message to show based on verification status
         const LTitle = LStatus === "Unverified" ? idConfig.unVerifiedMessage?.label ?? "Welcome To Our Family!" : idConfig.verifiedMessage?.label ?? "Thank You!"
 
         const LMessage =
@@ -638,8 +233,8 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
  * An object with a message and title indicating success or failure.
  */
 
-export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecaptchaToken: string){
-    
+export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iRecaptchaToken: string) {
+
     try {
         //payload to be passed on LeadApi
         const LdPayload = {
@@ -650,25 +245,25 @@ export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecapt
         //call the LeadApi, which is check if lead with the incoming email
         //exist, if not create a new Lead with the incoming name and email
         const LdResponse = await LeadApi(LdPayload)
-         // Check if the user opted in for the newsletter
+        // Check if the user opted in for the newsletter
         if (idFormData.newsletter) {
-          // Prepare a FormData object with the user's email
-          const LdNewFormData = new FormData();
-          LdNewFormData.append("email", idFormData.email);
-           // Subscribe the user to the newsletter
-          await subscribeNewsletter({ message: "" }, LdNewFormData);
+            // Prepare a FormData object with the user's email
+            const LdNewFormData = new FormData();
+            LdNewFormData.append("email", idFormData.email);
+            // Subscribe the user to the newsletter
+            await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
         if (LdResponse.message === 'error') {
             return {
-              message: "Something went wrong, please try again later",
-              title: "Download Fail",
+                message: "Something went wrong, please try again later",
+                title: "Download Fail",
             };
-          }
+        }
         // Dynamically import the Case Study PDF layout component(nextjs feature)
         // Dynamically import the React PDF renderer(nextjs feature)
-        const { PdfDocument } = await import("@repo/ui/components/pdf/caseStudyLayout");
+        const { PdfDocument } = await import("@repo/ui/components/pdf/casestudy-layout");
         const { pdf } = await import("@react-pdf/renderer");
-    
+
         // Generate a PDF blob from the PdfDocument component with provided case study data
         const Blob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
         // Create a temporary object URL from the Blob
@@ -681,23 +276,22 @@ export async function fnDownload(idFormData:any, idPdfData:TcaseStudies, iRecapt
         Link.click();  // Programmatically click the link to trigger the download
         document.body.removeChild(Link);
         URL.revokeObjectURL(Url);   // Clean up the object URL
-    
+
         // Return a success message
         return {
-          message: "Your file has been downloaded.",
-          title: "Download Success",
+            message: "Your file has been downloaded.",
+            title: "Download Success",
         };
-      } catch (error) {
+    } catch (error) {
         console.error("Download failed:", error);
         // Return a failure message and error info
         return {
-          message: "Failed to download the file.",
-          title: "Download Failed",
-          error: error instanceof Error ? error.message : String(error),
+            message: "Failed to download the file.",
+            title: "Download Failed",
+            error: error instanceof Error ? error.message : String(error),
         };
-      }
+    }
 }
-
 
 /**
  * Main form component that renders dynamic form fields based on configuration
@@ -834,7 +428,7 @@ function InnerSectionForm({
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
             }
             else if (config.formId === "download") {
-                LdResponse = await fnDownload(idFormData,  pdfData, LdRecaptchaToken)
+                LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
             }
             else if (config.formId === "webinar") {
                 LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)
@@ -929,7 +523,7 @@ function InnerSectionForm({
                             <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Select onValueChange={iField.onChange} value={iField.value || idField.defaultValue}>
                                     <FormControl>
-                                        <SelectTrigger className="h-12">
+                                        <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
                                             <SelectValue placeholder={idField.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
@@ -1015,7 +609,7 @@ function InnerSectionForm({
                             <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                                 <Select onValueChange={iField.onChange} value={iField.value || ""} disabled={IsLoadingTimezones}>
                                     <FormControl>
-                                        <SelectTrigger className="h-12">
+                                        <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
                                             <SelectValue placeholder={IsLoadingTimezones ? "Loading timezones..." : idField.placeholder} />
                                         </SelectTrigger>
                                     </FormControl>
@@ -1150,7 +744,7 @@ function InnerSectionForm({
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                             ></path>
                                         </svg>
-                                </span>
+                                    </span>
                                 ) : (
                                     config.submitText
                                 )}
@@ -1197,19 +791,19 @@ export const SectionForm = (props: TdynamicFormProps): ReactElement => {
         if (ExistingScript) {
             ExistingScript.remove(); // remove old script
         }
-      
+
         const LdScript = document.createElement("script");
         LdScript.src = `https://www.google.com/recaptcha/api.js?render=${ikey}&hl=${iLang}`;
         LdScript.id = "google-recaptcha-v3";
         LdScript.async = true;
         LdScript.defer = true;
         document.body.appendChild(LdScript);
-      };
-      const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+    };
+    const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
-  useEffect(() => {
-    fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
-  }, [Locale, LRecaptchaSiteKey]);
+    useEffect(() => {
+        fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
+    }, [Locale, LRecaptchaSiteKey]);
     /**
      * Inner component that wraps the form with ReCaptcha provider
      * innerProps - Props passed to the inner form component

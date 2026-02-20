@@ -1,10 +1,11 @@
 "use client";
+
 import { ReactElement, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@repo/ui/components/ui/button";
+import CustomCard from "@repo/ui/components/custom-card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components/ui/tabs";
-import CustomCard from "@repo/ui/components/customCard";
-import {  ChevronDown, ChevronUp } from "lucide-react";
-import { TcardProps } from "@repo/middleware";
+import { TcardProps } from "@repo/middleware/types";
 
 type TtabProps = {
   data: TcardProps[]
@@ -26,7 +27,7 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
 
   return (
     <section className="py-10">
-      <Tabs defaultValue={idTab.TabDefault.defaultTab? idTab.TabDefault.defaultTab : "all"} className="w-full">
+      <Tabs defaultValue={idTab.TabDefault.defaultTab ? idTab.TabDefault.defaultTab : "all"} className="w-full">
         <TabsList className={`grid grid-cols-2 md:grid-cols-${Math.min(Lacategories.length + 1, 6)} mb-8 md:gap-0 gap-4 rounded-none bg-accent`}>
           <TabsTrigger className="rounded-none" value="all">{idTab.TabDefault.text}</TabsTrigger>
           {Lacategories.map((iCategory) => (
@@ -44,22 +45,22 @@ export default function Tab({ idTab }: { idTab: TtabProps }): ReactElement {
             ))}
           </div>
           <div className="mt-8 text-center">
-          { idTab.data.length > 4 && (
-  <div className="mt-8 text-center">
-    {VisibleCount < idTab.data.length ? (
-      <Button onClick={fnShowMoreItems} size="lg" variant="outline">
-        {idTab.TabDefault.AllLabel} <ChevronDown className="size-5" />
-      </Button>
-    ) : (
-      <Button onClick={() => fnSetVisibleCount(4)} size="lg" variant="outline">
-        {idTab.TabDefault.LessLabel}
-        <ChevronUp className="size-5" />
-      </Button>
-    )}
-  </div>
-)}
+            {idTab.data.length > 4 && (
+              <div className="mt-8 text-center">
+                {VisibleCount < idTab.data.length ? (
+                  <Button onClick={fnShowMoreItems} size="lg" variant="outline">
+                    {idTab.TabDefault.AllLabel} <ChevronDown className="size-5" />
+                  </Button>
+                ) : (
+                  <Button onClick={() => fnSetVisibleCount(4)} size="lg" variant="outline">
+                    {idTab.TabDefault.LessLabel}
+                    <ChevronUp className="size-5" />
+                  </Button>
+                )}
+              </div>
+            )}
 
-        </div>
+          </div>
 
         </TabsContent>
 
