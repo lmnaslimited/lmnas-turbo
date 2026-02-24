@@ -188,6 +188,7 @@ export type Tbutton = {
   iconPosition?: "before" | "after"
   className?: string
   formMode?: "booking" | "contact" | "download"
+  benefitMode?: string
   description?: string
 }
 
