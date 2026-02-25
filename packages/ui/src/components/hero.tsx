@@ -7,7 +7,7 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/title-subtitle";
 import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/types";
-import { useCTAContext } from "../context/cta-context-provider";
+import { useCTAContext } from "@repo/ui/context/cta-context-provider";
 
 type THeroProps = {
   idHero: TheroSection;

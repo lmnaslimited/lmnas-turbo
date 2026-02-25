@@ -21,7 +21,7 @@ export function CTAContextProvider({ children }: { children: ReactNode }) {
             benefitSlug,
             openChat: (slug: string) => {
                 setBenefitSlug(slug)
-                setTimeout(() => setIsChatOpen(true), 100)
+                setIsChatOpen(true)
             },
             closeChat: () => setIsChatOpen(false),
         }),
