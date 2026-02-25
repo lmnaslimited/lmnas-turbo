@@ -7,6 +7,7 @@ import { getIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/title-subtitle";
 import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/types";
+import { useCTAContext } from "@repo/ui/context/cta-context-provider";
 
 type THeroProps = {
   idHero: TheroSection;
@@ -20,6 +21,9 @@ const renderIcon = (icon: Tbutton['icon']) => {
 };
 
 export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
+
+  const { openChat } = useCTAContext()
+
   /**
   * Renders a badge with an icon and text.
   * Typically used for highlighting a special feature or status.
@@ -75,13 +79,22 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             variant={idButton.variant || "default"}
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
-            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode, idButton.label) : undefined}
-          >
+            onClick={() => {
+              if (!idButton.href) {
+                if (idButton.formMode) {
+                  onButtonClick?.(idButton.formMode, idButton.label);
+                }
+
+                if (idButton.benefitMode) {
+                  openChat(idButton.benefitMode);
+                }
+              }
+            }}>
             {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>
         );
       })}
-    </div>
+    </div >
   );
 
   return idHero.image?.source ? (

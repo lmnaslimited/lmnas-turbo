@@ -226,6 +226,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         icon
         formMode
         variant
+        benefitMode
       }
       image {
       source
