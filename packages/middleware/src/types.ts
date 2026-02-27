@@ -51,8 +51,11 @@ export type Tslug = {
 export type Tcontext = {
   locale: string
   filters?: {
-    slug: {
+    slug?: {
       eq: string
+    }
+    benefitType?: {
+      eq: TbenefitType
     }
   }
   status?: string
@@ -825,4 +828,55 @@ export type TwitterApiResponse = {
     users?: TwitterUser[]
     media?: TwitterMedia[]
   }
+}
+
+export type TbenefitQuestionItemTarget = {
+  questionid: string
+  question: string
+  options?: string[]
+  inputType: "text" | "number" | "options"
+  key: string
+}
+
+export type TbenefitQuestionTarget = {
+  benefitType: TbenefitType
+  questions: TbenefitQuestionItemTarget[]
+}
+
+export type TbenefitQuestionsPageTarget = {
+  benefitQuestions: TbenefitQuestionTarget[]
+}
+
+export type TbenefitQuestionItemSource = {
+  questionId: string
+  key: string
+  inputType: string
+  question: string
+  options: {
+    value: string
+  }[]
+}
+
+export type TbenefitQuestionSource = {
+  benefitType: TbenefitType
+  questions: TbenefitQuestionItemSource[]
+}
+
+export type TbenefitQuestionsPageSource = {
+  benefitQuestions: TbenefitQuestionSource[]
+}
+
+export type TbenefitType =
+  | "roi_calculator"
+  | "pipeline_audit"
+  | "cpq_maturity_scan"
+  | "sales_cycle_analyzer"
+  | "tender_complexity_score"
+
+export type TbenefitContext = {
+  benefitType: TbenefitType
+  industry: string
+  entryPage: string
+  leadSource: string
+  userIntent: string
 }
