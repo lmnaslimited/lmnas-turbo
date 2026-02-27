@@ -6,7 +6,7 @@ import { cn } from "@repo/ui/lib/utils";
 import { getIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/title-subtitle";
-import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/types";
+import { TformMode, Titems, Tbutton, TheroSection, TbenefitType } from "@repo/middleware/types";
 import { useCTAContext } from "@repo/ui/context/cta-context-provider";
 
 type THeroProps = {

@@ -33,7 +33,6 @@ export function CTAContextProvider({ children }: { children: ReactNode }) {
 
 export function useCTAContext() {
     const ctx = useContext(CTAContext)
-    // console.log("CTAContext value:", ctx) // Debug log to check context value
     if (!ctx) throw new Error("useCTAContext must be used within CTAContextProvider")
     return ctx
 }
