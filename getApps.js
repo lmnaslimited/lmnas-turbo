@@ -3,7 +3,6 @@ const fs = require('fs');
 const path = require('path');
 
 const input = process.argv[2];
-const branch = process.argv[3] || 'main';
 
 if (!input) {
     console.error('\x1b[31mError: Please provide either an app name or a full repository URL.\x1b[0m');
@@ -16,29 +15,24 @@ const appName = isUrl ? path.basename(input, '.git') : input;
 const appRepoUrl = isUrl ? input : `https://github.com/lmnaslimited/${appName}.git`; // Constructs the repo URL if only app name is given
 const appFolder = path.join(__dirname, 'apps', appName);
 
-function cloneApp(appRepoUrl, appFolder, branch) {
+function cloneApp(appRepoUrl, appFolder) {
     if (!fs.existsSync(appFolder)) {
-        console.log(`\x1b[36mCloning ${appName} (${branch}) from ${appRepoUrl}...\x1b[0m`);
-        execSync(
-            `git clone --branch ${branch} --single-branch ${appRepoUrl} ${appFolder}`,
-            { stdio: 'inherit' }
-        );
+        console.log(`\x1b[36mCloning ${appName} repository from ${appRepoUrl}...\x1b[0m`);
+        execSync(`git clone ${appRepoUrl} ${appFolder}`, { stdio: 'inherit' });
         console.log(`\x1b[32mSuccessfully cloned ${appName} into the apps folder.\x1b[0m`);
     } else {
-        console.log(`\x1b[33m${appName} exists. Fetching and pulling ${branch}...\x1b[0m`);
-        execSync(`git -C ${appFolder} fetch origin ${branch}`, { stdio: 'inherit' });
-        execSync(`git -C ${appFolder} checkout ${branch}`, { stdio: 'inherit' });
-        execSync(`git -C ${appFolder} pull origin ${branch}`, { stdio: 'inherit' });
-        console.log(`\x1b[32mSuccessfully updated ${appName}.\x1b[0m`);
+        console.log(`\x1b[33m${appName} repository already exists, pulling latest changes...\x1b[0m`);
+        execSync(`git -C ${appFolder} pull`, { stdio: 'inherit' });
+        console.log(`\x1b[32mSuccessfully updated ${appName} repository.\x1b[0m`);
     }
 }
 
 try {
-    cloneApp(appRepoUrl, appFolder, branch);
-    console.log(`\x1b[36mRunning pnpm install...\x1b[0m`);
+    cloneApp(appRepoUrl, appFolder);
+    console.log(`\x1b[36mRunning pnpm install in the current directory...\x1b[0m`);
     execSync(`pnpm install`, { stdio: 'inherit' });
-    console.log(`\x1b[32mDependencies installed successfully.\x1b[0m`);
+    console.log(`\x1b[32mSuccessfully installed dependencies in the current directory.\x1b[0m`);
 } catch (error) {
-    console.error(`\x1b[31mFailed for ${appName}. Check repo/branch name.\x1b[0m`);
+    console.error(`\x1b[31mFailed to clone, update, or install dependencies for ${appName}. Please check the app name or the repository URL.\x1b[0m`);
     process.exit(1);
 }
