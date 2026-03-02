@@ -50,11 +50,7 @@ export type Tslug = {
 
 export type Tcontext = {
   locale: string
-  filters?: {
-    slug: {
-      eq: string
-    }
-  }
+  filters?: Record<string, any>
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
@@ -772,8 +768,6 @@ export type Tevent = {
   metaData: TpageMetadata
 }
 
-// -------------------------------------------------------------------------------------------
-
 //job api
 export type JobOpening = {
   name: string
@@ -836,4 +830,18 @@ export type TwitterApiResponse = {
     users?: TwitterUser[]
     media?: TwitterMedia[]
   }
+}
+
+// subtitle
+export type TsubtitleSource = {
+  subtitles: TsubtitleItem[]
+}
+
+export type TsubtitleTarget = {
+  subtitles: TsubtitleItem[]
+}
+
+export type TsubtitleItem = {
+  sourceId: string
+  subtitle: Tsubtitle[]
 }
