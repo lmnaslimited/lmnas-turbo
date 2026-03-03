@@ -2141,7 +2141,7 @@ export class clQueryBenefitQuestions extends clQuery<TbenefitQuestionsPageSource
     return `
   query Query(
     $locale: I18NLocaleCode, 
-    $filters: BenefitQuestionFiltersInput,
+    $filters: BenefitQuestionFiltersInput
   ) {
     ${this.contentType}(locale: $locale, filters: $filters) {
       benefitType
