@@ -5,12 +5,12 @@ import { useParams } from "next/navigation"
 
 export default function VideoPlayer({ src, sourceId }: TvideoPlayerProps) {
 
-    const params = useParams()
-    const locale = params?.locale as string
+    const LdParams = useParams()
+    const LLocale = LdParams?.locale as string
 
     const LSubtitleUrl =
         sourceId
-            ? `/api/subtitle?sourceId=${sourceId}&locale=${locale}`
+            ? `/api/subtitle?sourceId=${sourceId}&locale=${LLocale}`
             : undefined
 
     return (
@@ -27,8 +27,8 @@ export default function VideoPlayer({ src, sourceId }: TvideoPlayerProps) {
                 <track
                     src={LSubtitleUrl}
                     kind="subtitles"
-                    srcLang={locale}
-                    label={locale?.toUpperCase()}
+                    srcLang={LLocale}
+                    label={LLocale?.toUpperCase()}
                     default
                 />
             )}
