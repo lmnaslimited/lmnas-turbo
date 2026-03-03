@@ -17,6 +17,7 @@ import {
   TaboutUsPageSource,
   TeventPageSource,
   TformsPageSource,
+  TbenefitQuestionsPageSource,
 } from "../types"
 import { client } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
@@ -2131,6 +2132,33 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
   }
 }
 
+export class clQueryBenefitQuestions extends clQuery<TbenefitQuestionsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+
+  getQuery(): string {
+    return `
+  query Query(
+    $locale: I18NLocaleCode, 
+    $filters: BenefitQuestionFiltersInput,
+  ) {
+    ${this.contentType}(locale: $locale, filters: $filters) {
+      benefitType
+      questions {
+        questionId
+        key
+        inputType
+        question
+        options {
+          value
+        }
+      }
+    }
+  }`
+  }
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>
@@ -2152,6 +2180,7 @@ export class clQueryFactory {
     event: clQueryEvent,
     forms: clQueryForms,
     globalMeta: clQueryGlobalMeta,
+    benefitQuestions: clQueryBenefitQuestions,
     // Add more mappings here
   }
 
