@@ -18,7 +18,7 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   }
 }
 
-export async function ContactApi(idFormdata: TcontactApi) {
+export async function fnContactApi(idFormdata: TcontactApi) {
   const LUrl = process.env.SUBSCRIBE_URL
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,

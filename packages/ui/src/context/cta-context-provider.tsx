@@ -1,11 +1,11 @@
 "use client"
 
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react"
-import type { TbenefitType } from "@repo/middleware/types"
+import type { TbenefitType} from "@repo/middleware/types"
 
 type CTAContextValue = {
     isChatOpen: boolean
-    benefitType: TbenefitType | null
+    benefitType: TbenefitType| null
     openChat: (benefitType: TbenefitType) => void
     closeChat: () => void
 }
@@ -13,14 +13,14 @@ const CTAContext = createContext<CTAContextValue | undefined>(undefined)
 
 export function CTAContextProvider({ children }: { children: ReactNode }) {
     const [isChatOpen, setIsChatOpen] = useState(false)
-    const [benefitType, setBenefitType] = useState<TbenefitType | null>(null)
+    const [benefitType, seTbenefitType] = useState<TbenefitType| null>(null)
 
     const value = useMemo(
         () => ({
             isChatOpen,
             benefitType,
             openChat: (slug: TbenefitType) => {
-                setBenefitType(slug)
+                seTbenefitType(slug)
                 setIsChatOpen(true)
             },
             closeChat: () => setIsChatOpen(false),

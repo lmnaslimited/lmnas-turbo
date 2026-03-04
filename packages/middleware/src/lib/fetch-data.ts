@@ -2,7 +2,7 @@
 // This is a generic function that accepts a query name, optional locale, and optional variables.
 // It retrieves the actual GraphQL query from a registry via `getQueryByName`, then performs the query.
 
-import { client } from "./apollo-client"
+import { LdClient } from "./apollo-client"
 import { DocumentNode } from "graphql"
 
 type FetchOptions = {
@@ -17,7 +17,7 @@ export async function fnFetchFromStrapi<T>({
   iDvariables = {},
 }: FetchOptions): Promise<T> {
   // Apollo Client that triggers strapi's Graphql
-  const { data } = await client.query({
+  const { data } = await LdClient.query({
     query: iQuery,
     variables: { locale, ...iDvariables },
   })

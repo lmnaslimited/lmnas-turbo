@@ -2,7 +2,7 @@
 
 import { TapiResponse, TwitterApiResponse } from "@repo/middleware/types"
 
-export async function TwitterApi(): Promise<TapiResponse> {
+export async function fnTwitterApi(): Promise<TapiResponse> {
   const LdHeaders = {
     Authorization: `${process.env.TWITTER_BEARER_TOKEN}`,
   }

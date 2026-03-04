@@ -8,7 +8,7 @@ const LdSchema = z.object({
   email: z.string().email("Please enter a valid email"),
 })
 
-export async function subscribeNewsletter(
+export async function fnSubscribeNewsletter(
   idPrevState: { message: string },
   idFormData: FormData,
 ): Promise<{ message: string }> {

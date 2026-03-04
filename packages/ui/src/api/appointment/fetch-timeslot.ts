@@ -9,7 +9,7 @@ import { TslotResponse, Tslot } from "@repo/middleware/types"
  * @param iTimezone - The user's timezone.
  * @returns A promise that resolves to TslotResponse, either with slot data or an error message.
  */
-export async function fetchTimeSlots(
+export async function fnFetchTimeSlots(
   iSelectedDate: string,
   iTimezone: string
 ): Promise<TslotResponse> {

@@ -39,7 +39,7 @@ const LdAppointmentSchema = z.object({
  * 2. Validating input data
  * 3. Sending booking data to the LENS API
  */
-export async function bookAppointmentAction(
+export async function fnBookAppointmentAction(
   idFormData: z.infer<typeof LdAppointmentSchema>
 ): Promise<TapiResponse> {
   // Prepare API headers including authentication and session cookies

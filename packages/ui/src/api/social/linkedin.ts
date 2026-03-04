@@ -61,7 +61,7 @@ async function fnRetryFetch(
   throw new Error("Failed after retries") // If all retries fail
 }
 
-export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
+export async function fnLinkedInApi(): Promise<TsocialAPIPostIds> {
   // Prepare request headers for LinkedIn API
   const LdHeaders = new Headers({
     "LinkedIn-Version": "202411",

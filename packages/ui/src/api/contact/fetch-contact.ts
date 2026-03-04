@@ -35,7 +35,7 @@ const LdCommunicationSchema = z.object({
  * 2. Verify reCAPTCHA to ensure it's submitted by a human
  * 3. Send the message to the LENS backend endpoint
  */
-export async function sendCommunicationAction(
+export async function fnSendCommunicationAction(
   idFormData: z.infer<typeof LdCommunicationSchema>
 ): Promise<TapiResponse> {
   // Prepare necessary headers for API request

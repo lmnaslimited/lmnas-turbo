@@ -38,12 +38,12 @@ import {
   TglobalMetaTarget,
   TglobalMetaSource,
   TbenefitQuestionsPageSource,
-  TbenefitQuestionsPageTarget,
+  TBenefitQuestionsPageTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
 // Sleep function to introduce a delay for every Promise
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+const fnSleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 export abstract class clTransformer<
   DynamicSourceType extends object,
@@ -56,35 +56,35 @@ export abstract class clTransformer<
   targetData?: DynamicTargetType
   query: IQuery<DynamicSourceType>
   locale: string
-  async execute(context?: Record<string, any>): Promise<DynamicTargetType> {
+  async fnExecute(context?: Record<string, any>): Promise<DynamicTargetType> {
     // Initialise the transformation
-    await this.init(context)
+    await this.fnInit(context)
     // Fire the query of the content type. Note the Query is intiated for the content type
     // in the transformation constructor
     // this.sourceData = await this.getData()
     // Perform the transformation for the data retrived from the query
-    this.targetData = await this.performTransformation(await this.getData())
+    this.targetData = await this.fnPerformTransformation(await this.fnGetData())
     // finally retrun the transformed data
     return this.targetData
   }
   // Implement specific transformation rule of Source Data to Traget data in the respective
   // Content type implementation.
-  abstract performTransformation(
+  abstract fnPerformTransformation(
     idSourceData: DynamicSourceType,
   ): Promise<DynamicTargetType>
   // Additional intiation specefic to Execute. Useful to have more controls for the execution
   // of the transformation
-  async init(context?: Record<string, any>): Promise<void> {
+  async fnInit(context?: Record<string, any>): Promise<void> {
     // initilaise the contect of the transformation
     // Intialalise the Loacle to language requested else fallback to English
     this.locale = this.query.locale = context?.locale ?? "en"
     // set the query vaiables
-    this.query.setVariables(context)
+    this.query.fnSetVariables(context)
     // Disallow any new Promise before 100 ms
-    await sleep(100)
+    await fnSleep(100)
   }
-  async getData(): Promise<DynamicSourceType> {
-    return this.query.executeQuery()
+  async fnGetData(): Promise<DynamicSourceType> {
+    return this.query.fnExecuteQuery()
   }
   // Intantiate the Transformation engine for the content type
   // inject dependecy of Query for unit testing
@@ -95,7 +95,7 @@ export abstract class clTransformer<
     // For unit testing scenarios the Query instance is injected
     this.locale = "en"
     this.query =
-      iQuery ?? clQueryFactory.createQuery<DynamicSourceType>(iContentType)
+      iQuery ?? clQueryFactory.fnCreateQuery<DynamicSourceType>(iContentType)
   }
 }
 
@@ -103,12 +103,12 @@ export class clSlugsTransformer extends clTransformer<
   TslugsSource,
   TslugsTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TslugsSource,
   ): Promise<TslugsTarget> {
     // Return only the slugs
     this.targetData =
-      idSourceData[this.contentType]?.map((entry) => entry) ?? []
+      idSourceData[this.contentType]?.map((lEntry) => lEntry) ?? []
     return this.targetData
   }
   constructor(iContentType: string, iQuery?: IQuery<TslugsSource>) {
@@ -120,7 +120,7 @@ export class clNavbarTransformer extends clTransformer<
   TnavbarSource,
   TnavbarTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TnavbarSource,
   ): Promise<TnavbarTarget> {
     this.targetData = idSourceData
@@ -135,7 +135,7 @@ export class clFooterTransformer extends clTransformer<
   TfooterSource,
   TfooterTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TfooterSource,
   ): Promise<TfooterTarget> {
     this.targetData = idSourceData
@@ -150,7 +150,7 @@ export class clHomeTransformer extends clTransformer<
   ThomePageSource,
   ThomePageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: ThomePageSource,
   ): Promise<ThomePageTarget> {
     this.targetData = idSourceData
@@ -165,7 +165,7 @@ export class clTrendsTransformer extends clTransformer<
   TtrendsPageSource,
   TtrendsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TtrendsPageSource,
   ): Promise<TtrendsPageTarget> {
     this.targetData = idSourceData
@@ -180,7 +180,7 @@ export class clAboutUsTransformer extends clTransformer<
   TaboutUsPageSource,
   TaboutUsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TaboutUsPageSource,
   ): Promise<TaboutUsPageTarget> {
     this.targetData = idSourceData
@@ -195,7 +195,7 @@ export class clPricingTransformer extends clTransformer<
   TpricingPageSource,
   TpricingPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TpricingPageSource,
   ): Promise<TpricingPageTarget> {
     this.targetData = idSourceData
@@ -210,7 +210,7 @@ export class clContactTransformer extends clTransformer<
   TcontactSource,
   TcontactTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TcontactSource,
   ): Promise<TcontactTarget> {
     this.targetData = idSourceData
@@ -225,7 +225,7 @@ export class clSolutionTransformer extends clTransformer<
   TsolutionPageSource,
   TsolutionPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TsolutionPageSource,
   ): Promise<TsolutionPageTarget> {
     this.targetData = idSourceData
@@ -240,7 +240,7 @@ export class clProductsTransformer extends clTransformer<
   TproductsPageSource,
   TproductsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TproductsPageSource,
   ): Promise<TproductsPageTarget> {
     this.targetData = idSourceData
@@ -254,7 +254,7 @@ export class clFormsTransformer extends clTransformer<
   TformsPageSource,
   TformsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TformsPageSource,
   ): Promise<TformsPageTarget> {
     this.targetData = idSourceData
@@ -268,7 +268,7 @@ export class clCareerTransformer extends clTransformer<
   TcareerPageSource,
   TcareerPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TcareerPageSource,
   ): Promise<TcareerPageTarget> {
     this.targetData = idSourceData
@@ -283,7 +283,7 @@ export class clIndustriesTransformer extends clTransformer<
   TindustriesPageSource,
   TindustriesPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TindustriesPageSource,
   ): Promise<TindustriesPageTarget> {
     this.targetData = idSourceData
@@ -298,7 +298,7 @@ export class clCaseStudiesTransformer extends clTransformer<
   TcaseStudiesPageSource,
   TcaseStudiesPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TcaseStudiesPageSource,
   ): Promise<TcaseStudiesPageTarget> {
     this.targetData = idSourceData
@@ -313,7 +313,7 @@ export class clEventTransformer extends clTransformer<
   TeventPageSource,
   TeventPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TeventPageSource,
   ): Promise<TeventPageTarget> {
     this.targetData = idSourceData
@@ -329,7 +329,7 @@ export class clTermsandConditionsTransformer extends clTransformer<
   TtermsAndConditionsPageSource,
   TtermsAndConditionsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TtermsAndConditionsPageSource,
   ): Promise<TtermsAndConditionsPageTarget> {
     this.targetData = idSourceData
@@ -345,7 +345,7 @@ export class clPrivacyPolicyTransformer extends clTransformer<
   TprivacyPolicyPageSource,
   TprivacyPolicyPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TprivacyPolicyPageSource,
   ): Promise<TprivacyPolicyPageTarget> {
     this.targetData = idSourceData
@@ -361,7 +361,7 @@ export class clGlobalMetaTransformer extends clTransformer<
   TglobalMetaSource,
   TglobalMetaTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     idSourceData: TglobalMetaSource,
   ): Promise<TglobalMetaTarget> {
     this.targetData = idSourceData
@@ -374,26 +374,26 @@ export class clGlobalMetaTransformer extends clTransformer<
 
 export class clBenefitQuestionsTransformer extends clTransformer<
   TbenefitQuestionsPageSource,
-  TbenefitQuestionsPageTarget
+  TBenefitQuestionsPageTarget
 > {
-  async performTransformation(
+  async fnPerformTransformation(
     source: TbenefitQuestionsPageSource,
-  ): Promise<TbenefitQuestionsPageTarget> {
-    const transformed: TbenefitQuestionsPageTarget = {
-      benefitQuestions: source.benefitQuestions.map((benefit) => ({
-        benefitType: benefit.benefitType,
-        questions: benefit.questions.map((q) => ({
-          questionid: q.questionId,
-          key: q.key,
-          question: q.question,
-          inputType: q.inputType as "text" | "number" | "options",
-          options: q.options?.map((option) => option.value),
+  ): Promise<TBenefitQuestionsPageTarget> {
+    const ldtransformed: TBenefitQuestionsPageTarget = {
+      benefitQuestions: source.benefitQuestions.map((lBenefit) => ({
+        benefitType: lBenefit.benefitType,
+        questions: lBenefit.questions.map((lQuestion) => ({
+          questionid: lQuestion.questionId,
+          key: lQuestion.key,
+          question: lQuestion.question,
+          inputType: lQuestion.inputType as "text" | "number" | "options",
+          options: lQuestion.options?.map((lOption) => lOption.value),
         })),
       })),
     }
 
-    this.targetData = transformed
-    return transformed
+    this.targetData = ldtransformed
+    return ldtransformed
   }
 
   constructor(iContentType: string) {
@@ -426,7 +426,7 @@ interface ITransformerMap {
 // A factory class to create a new instance for the transformation engine
 export class clTransformerFactory {
   // method to return the respective class for the content type
-  private static transformerMap: {
+  private static LdtransformerMap: {
     [K in keyof ITransformerMap]: new (icontentType: K) => ITransformerMap[K]
   } = {
     navbar: clNavbarTransformer,
@@ -451,17 +451,17 @@ export class clTransformerFactory {
   }
 
   // Create a new instance of the tranformer for the content type
-  static createTransformer<K extends keyof ITransformerMap>(
+  static fnCreateTransformer<K extends keyof ITransformerMap>(
     iContentType: K,
   ): ITransformerMap[K] {
-    const TransformerClass = this.transformerMap[iContentType]
-    if (!TransformerClass) {
+    const LTransformerClass = this.LdtransformerMap[iContentType]
+    if (!LTransformerClass) {
       // Log error if there isn't a specific implemenation for the content type
       // for debugging
       console.error(`Transformer not found for contentType: ${iContentType}`)
       throw new Error(`Invalid transformer type: ${iContentType}`)
     }
 
-    return new TransformerClass(iContentType) // use contentType as constructor arg
+    return new LTransformerClass(iContentType) // use contentType as constructor arg
   }
 }

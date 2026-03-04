@@ -24,14 +24,14 @@ import "react-international-phone/style.css"
 import { PhoneInput } from "react-international-phone"
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 
-import { ContactApi } from "@repo/ui/api/contact/create-contact"
-import { LeadApi } from "@repo/ui/api/casestudy/create-lead"
-import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
-import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
-import { bookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
-import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
-import { sendCommunicationAction } from "@repo/ui/api/contact/fetch-contact"
-import { UpdateEventParticipant } from "@repo/ui/api/event/create-participant"
+import { fnContactApi } from "@repo/ui/api/contact/create-contact"
+import { fnLeadApi } from "@repo/ui/api/casestudy/create-lead"
+import { fnFetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
+import { fnFetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
+import { fnBookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
+import { fnSubscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { fnSendCommunicationAction } from "@repo/ui/api/contact/fetch-contact"
+import { fnUpdateEventParticipant } from "@repo/ui/api/event/create-participant"
 
 import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware/types"
 
@@ -77,19 +77,19 @@ export async function fnSubmitWebinar(idFormData: any, idData: TtrendCardProps, 
             recaptchaToken: iRecaptchaToken,
         }
         // Step 1: Fetch contact data (create or check if the contact already exists)
-        const LdContact = await ContactApi(LdPayload);
+        const LdContact = await fnContactApi(LdPayload);
 
         // Step 2: Handle newsletter subscription if needed
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData();
             LdNewFormData.append("email", idFormData.email);
-            await subscribeNewsletter({ message: "" }, LdNewFormData);
+            await fnSubscribeNewsletter({ message: "" }, LdNewFormData);
         }
 
         // Check if the contact was successfully created or already exists
         if (LdContact.message === 'created' || LdContact.message === 'exist') {
             // Step 3: Update event participant
-            const LdUpdateEventParticipant = await UpdateEventParticipant(idData.id, LdContact.data.name);
+            const LdUpdateEventParticipant = await fnUpdateEventParticipant(idData.id, LdContact.data.name);
             return {
                 data: LdUpdateEventParticipant.data,  // Return the updated event participant data
             };
@@ -140,13 +140,13 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
         }
 
         // Send the booking request to the server
-        const LdResponse = await bookAppointmentAction(LdPayload)
+        const LdResponse = await fnBookAppointmentAction(LdPayload)
 
         // If user opted into the newsletter, submit their email
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
-            await subscribeNewsletter({ message: "" }, LdNewFormData)
+            await fnSubscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
         // Handle errors returned by the booking API
@@ -192,13 +192,13 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
             recaptchaToken: iRecaptchaToken,
         }
         // Send the contact details to the backend communication handler
-        const LdResponse = await sendCommunicationAction(LdPayload)
+        const LdResponse = await fnSendCommunicationAction(LdPayload)
 
         // If the user opted in to the newsletter, add them to the subscription list
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
-            await subscribeNewsletter({ message: "" }, LdNewFormData)
+            await fnSubscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
         // If server responded with an error, return it
@@ -244,14 +244,14 @@ export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iReca
         }
         //call the LeadApi, which is check if lead with the incoming email
         //exist, if not create a new Lead with the incoming name and email
-        const LdResponse = await LeadApi(LdPayload)
+        const LdResponse = await fnLeadApi(LdPayload)
         // Check if the user opted in for the newsletter
         if (idFormData.newsletter) {
             // Prepare a FormData object with the user's email
             const LdNewFormData = new FormData();
             LdNewFormData.append("email", idFormData.email);
             // Subscribe the user to the newsletter
-            await subscribeNewsletter({ message: "" }, LdNewFormData);
+            await fnSubscribeNewsletter({ message: "" }, LdNewFormData);
         }
         if (LdResponse.message === 'error') {
             return {
@@ -347,7 +347,7 @@ function InnerSectionForm({
     useEffect(() => {
         const fnLoadTimezones = async (): Promise<void> => {
             try {
-                const LdResult = await fetchTimezones()
+                const LdResult = await fnFetchTimezones()
                 if (LdResult?.data) {
                     fnSetTimezones(LdResult.data)
                 }
@@ -376,7 +376,7 @@ function InnerSectionForm({
                 fnSetILoadingSlots(true)
                 try {
                     const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd")
-                    const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone)
+                    const LdSlotResult = await fnFetchTimeSlots(LFormattedDate, SelectedTimezone)
                     if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
                         fnSetTimeSlots(LdSlotResult.data)
                     } else {

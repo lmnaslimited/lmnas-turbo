@@ -6,7 +6,7 @@ export type TsocialAPIPostIds = {
   data: TtrendCardProps[]
 }
 
-export async function EventApi(): Promise<TsocialAPIPostIds> {
+export async function fnEventApi(): Promise<TsocialAPIPostIds> {
   const LUrl = process.env.SUBSCRIBE_URL // URL for the API
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,

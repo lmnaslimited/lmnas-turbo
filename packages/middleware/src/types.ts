@@ -13,10 +13,10 @@ export interface IBaseComponent {
 }
 export interface IQuery<DynamicSourceType> extends IBaseComponent {
   query: string
-  getQuery(): string
-  executeQuery(): Promise<DynamicSourceType>
+  fnGetQuery(): string
+  fnExecuteQuery(): Promise<DynamicSourceType>
   variables?: Record<string, any>
-  setVariables(variables?: Record<string, any>): void
+  fnSetVariables(variables?: Record<string, any>): void
 }
 export interface ITransformer<DynamicSourceType, DynamicTargetType = any>
   extends IBaseComponent {
@@ -25,16 +25,16 @@ export interface ITransformer<DynamicSourceType, DynamicTargetType = any>
   // sourceData?: DynamicSourceType
   targetData?: DynamicTargetType
   query: IQuery<DynamicSourceType>
-  execute(context?: Record<string, any>): Promise<DynamicTargetType>
-  init?(context?: Record<string, any>): Promise<void>
-  getData(): Promise<DynamicSourceType>
-  performTransformation(
+  fnExecute(context?: Record<string, any>): Promise<DynamicTargetType>
+  fnInit?(context?: Record<string, any>): Promise<void>
+  fnGetData(): Promise<DynamicSourceType>
+  fnPerformTransformation(
     idSourceData: DynamicSourceType,
   ): Promise<DynamicTargetType>
 }
-export interface ItransformationRule {}
-export interface IsourceType {}
-export interface ItargetType {}
+export interface ITransformationRule {}
+export interface ISourceType {}
+export interface ITargetType {}
 
 export type TslugsSource = {
   [key: string]: {
@@ -259,7 +259,7 @@ export type TcontactData = {
   label: string
 }
 
-export type TPlanFeature = {
+export type TplanFeature = {
   tableHead: string
   pricingPlans: {
     name: string
@@ -605,7 +605,7 @@ export type Tpricing = {
   heroSection: TheroSection
   problemSection: TcalloutProps
   planHeader: Theader
-  planSection: TPlanFeature
+  planSection: TplanFeature
   planFooter: TcalloutProps
   testimonialHeader: TcalloutProps
   testimonialSection: TcardProps[]
@@ -767,7 +767,7 @@ export type Tevent = {
 // -------------------------------------------------------------------------------------------
 
 //job api
-export type JobOpening = {
+export type TJobOpening = {
   name: string
   job_title: string
   status: string
@@ -779,12 +779,12 @@ export type JobOpening = {
   route: string
 }
 
-export type JobFilters = {
+export type TjobFilters = {
   role: string[]
   location: string[]
 }
 
-export type JobData = {
+export type TJobData = {
   id: string
   title: string
   location: string
@@ -794,25 +794,25 @@ export type JobData = {
 }
 
 export type MappedResult = {
-  filters: JobFilters
-  data: JobData[]
+  filters: TjobFilters
+  data: TJobData[]
 }
 
 //tweeter
-export type TwitterUser = {
+export type TTwitterUser = {
   id: string
   name: string
   username: string
 }
 
-export type TwitterMedia = {
+export type TTwitterMedia = {
   media_key: string
   url?: string
   alt_text?: string
   preview_image_url?: string
 }
 
-export type TwitterTweet = {
+export type TTwitterTweet = {
   id: string
   created_at: string
   text: string
@@ -823,14 +823,14 @@ export type TwitterTweet = {
 }
 
 export type TwitterApiResponse = {
-  data: TwitterTweet[]
+  data: TTwitterTweet[]
   includes?: {
-    users?: TwitterUser[]
-    media?: TwitterMedia[]
+    users?: TTwitterUser[]
+    media?: TTwitterMedia[]
   }
 }
 
-export type TbenefitQuestionItemTarget = {
+export type TBenefitQuestionItemTarget = {
   questionid: string
   question: string
   options?: string[]
@@ -838,13 +838,13 @@ export type TbenefitQuestionItemTarget = {
   key: string
 }
 
-export type TbenefitQuestionTarget = {
+export type TBenefitQuestionTarget = {
   benefitType: TbenefitType
-  questions: TbenefitQuestionItemTarget[]
+  questions: TBenefitQuestionItemTarget[]
 }
 
-export type TbenefitQuestionsPageTarget = {
-  benefitQuestions: TbenefitQuestionTarget[]
+export type TBenefitQuestionsPageTarget = {
+  benefitQuestions: TBenefitQuestionTarget[]
 }
 
 export type TbenefitQuestionItemSource = {
@@ -866,7 +866,7 @@ export type TbenefitQuestionsPageSource = {
   benefitQuestions: TbenefitQuestionSource[]
 }
 
-export type TbenefitType =
+export type TbenefitType=
   | "roi_calculator"
   | "pipeline_audit"
   | "cpq_maturity_scan"

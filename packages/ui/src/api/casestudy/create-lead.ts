@@ -22,7 +22,7 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   }
 }
 
-export async function LeadApi(idFormdata: TleadApi) {
+export async function fnLeadApi(idFormdata: TleadApi) {
   const LUrl = process.env.SUBSCRIBE_URL
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,

@@ -1,7 +1,7 @@
 "use server"
 import { JobData, JobOpening, MappedResult } from "@repo/middleware/types"
 
-export async function JobApi(): Promise<MappedResult> {
+export async function fnJobApi(): Promise<MappedResult> {
   const LUrl = process.env.SUBSCRIBE_URL
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,

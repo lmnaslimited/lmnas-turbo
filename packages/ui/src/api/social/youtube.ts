@@ -2,7 +2,7 @@
 
 import { TapiResponse } from "@repo/middleware/types"
 
-export async function youTubeApi(): Promise<TapiResponse> {
+export async function fnYoutubeApi(): Promise<TapiResponse> {
   try {
     const LTimezoneUrl = `https://www.googleapis.com/youtube/v3/search?key=${process.env.YOUTUBE}&channelId=${process.env.YOUTUBE_CHANNEL_ID}&part=snippet,id&order=date&maxResults=20`
 

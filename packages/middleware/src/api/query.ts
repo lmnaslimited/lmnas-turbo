@@ -19,7 +19,7 @@ import {
   TformsPageSource,
   TbenefitQuestionsPageSource,
 } from "../types"
-import { client } from "../lib/apollo-client"
+import { LdClient } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
 
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
@@ -31,12 +31,12 @@ export abstract class clQuery<DynamicSourceType>
   locale: string
   variables?: Record<string, any>
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
-  abstract getQuery(): string
+  abstract fnGetQuery(): string
 
-  async executeQuery(): Promise<DynamicSourceType> {
+  async fnExecuteQuery(): Promise<DynamicSourceType> {
     // Set params of the query
     // this.setVariables({locale: this.locale})
-    const { data } = await client.query({
+    const { data } = await LdClient.query({
       query: gql`
         ${this.query}
       `,
@@ -45,13 +45,13 @@ export abstract class clQuery<DynamicSourceType>
     })
     return data as DynamicSourceType
   }
-  setVariables(variables: Record<string, any>): void {
+  fnSetVariables(variables: Record<string, any>): void {
     this.variables = variables
   }
   constructor(iContentType: string) {
     this.contentType = iContentType
     this.locale = "en"
-    this.query = this.getQuery()
+    this.query = this.fnGetQuery()
   }
 }
 
@@ -60,7 +60,7 @@ export class clQuerySlug extends clQuery<TslugsSource> {
   constructor(iContentType: string) {
     super(iContentType)
   }
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
     query Slugs {
       ${this.contentType} {
@@ -75,7 +75,7 @@ export class clQueryGlobalMeta extends clQuery<TnavbarSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query GlobalMeta {
   globalMeta {
@@ -119,7 +119,7 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -164,7 +164,7 @@ export class clQueryFooter extends clQuery<TfooterSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Footer($locale: I18NLocaleCode, $status: PublicationStatus) {
     ${this.contentType}(locale: $locale, status: $status) {
@@ -209,7 +209,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Home($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -372,7 +372,7 @@ export class clQueryTrends extends clQuery<TtrendsPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Trend($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -477,7 +477,7 @@ export class clQueryCareer extends clQuery<TcareerPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Career($locale: I18NLocaleCode, $status: PublicationStatus) {
    ${this.contentType}(locale: $locale, status: $status) {
@@ -626,7 +626,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -743,7 +743,7 @@ export class clQueryPricing extends clQuery<TpricingPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
 query Pricing($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -940,7 +940,7 @@ export class clQueryContact extends clQuery<TcontactSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Contact($locale: I18NLocaleCode, $filters: FormFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status)  {
@@ -1075,7 +1075,7 @@ export class clQueryEvent extends clQuery<TeventPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Event($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -1125,7 +1125,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
   solution(locale: $locale, status: $status) {
@@ -1388,7 +1388,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
@@ -1602,7 +1602,7 @@ export class clQueryForms extends clQuery<TformsPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
  query Forms($locale: I18NLocaleCode, $status: PublicationStatus) {
    ${this.contentType}(locale: $locale, status: $status) {
@@ -1657,7 +1657,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
  query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
@@ -1841,7 +1841,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
     query CaseStudies($locale: I18NLocaleCode,  $filters: CaseStudyFiltersInput, $footerLocale2: I18NLocaleCode,$caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
     ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
@@ -2009,7 +2009,7 @@ export class clQueryTermsAndConditions extends clQuery<TtermsAndConditionsPageSo
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -2073,7 +2073,7 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Query($locale: I18NLocaleCode, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, status: $status) {
@@ -2137,7 +2137,7 @@ export class clQueryBenefitQuestions extends clQuery<TbenefitQuestionsPageSource
     super(iContentType)
   }
 
-  getQuery(): string {
+  fnGetQuery(): string {
     return `
   query Query(
     $locale: I18NLocaleCode, 
@@ -2160,7 +2160,7 @@ export class clQueryBenefitQuestions extends clQuery<TbenefitQuestionsPageSource
 }
 
 export class clQueryFactory {
-  private static queryMap: {
+  private static LdQueryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>
   } = {
     navbar: clQueryNavbar,
@@ -2184,8 +2184,8 @@ export class clQueryFactory {
     // Add more mappings here
   }
 
-  static createQuery<T extends object>(iContentType: string): IQuery<T> {
-    const QueryClass = this.queryMap[iContentType]
+  static fnCreateQuery<T extends object>(iContentType: string): IQuery<T> {
+    const QueryClass = this.LdQueryMap[iContentType]
     if (!QueryClass) throw new Error(`Invalid query type: ${iContentType}`)
     return new QueryClass(iContentType)
   }

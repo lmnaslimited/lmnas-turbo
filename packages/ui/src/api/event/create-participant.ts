@@ -1,6 +1,6 @@
 "use server"
 
-export async function UpdateEventParticipant(
+export async function fnUpdateEventParticipant(
   iEventId: string,
   iContactId: string
 ) {
