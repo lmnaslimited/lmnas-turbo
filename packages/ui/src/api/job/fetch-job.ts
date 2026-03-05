@@ -1,7 +1,7 @@
 "use server"
-import { JobData, JobOpening, MappedResult } from "@repo/middleware/types"
+import { TjobData, TjobOpening, TmappedResult } from "@repo/middleware/types"
 
-export async function fnJobApi(): Promise<MappedResult> {
+export async function fnJobApi(): Promise<TmappedResult> {
   const LUrl = process.env.SUBSCRIBE_URL
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,
@@ -19,7 +19,7 @@ export async function fnJobApi(): Promise<MappedResult> {
     )
 
     const LdJOBResult = await LdJobResponse.json()
-    const LaRawData: JobOpening[] = LdJOBResult.data || []
+    const LaRawData: TjobOpening[] = LdJOBResult.data || []
 
     // Extract unique values for filters
     const LaUniqueRoles = [
@@ -39,7 +39,7 @@ export async function fnJobApi(): Promise<MappedResult> {
     ]
 
     const LaOpenJobs = LaRawData.filter((item) => item.status === "Open")
-    const LaMappedData: JobData[] = LaOpenJobs.map((item) => ({
+    const LaMappedData: TjobData[] = LaOpenJobs.map((item) => ({
       id: item.name,
       title: item.job_title,
       location: item.custom_job_location || "",

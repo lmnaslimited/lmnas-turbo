@@ -38,7 +38,7 @@ import {
   TglobalMetaTarget,
   TglobalMetaSource,
   TbenefitQuestionsPageSource,
-  TBenefitQuestionsPageTarget,
+  TbenefitQuestionsPageTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -374,12 +374,12 @@ export class clGlobalMetaTransformer extends clTransformer<
 
 export class clBenefitQuestionsTransformer extends clTransformer<
   TbenefitQuestionsPageSource,
-  TBenefitQuestionsPageTarget
+  TbenefitQuestionsPageTarget
 > {
   async fnPerformTransformation(
     source: TbenefitQuestionsPageSource,
-  ): Promise<TBenefitQuestionsPageTarget> {
-    const ldtransformed: TBenefitQuestionsPageTarget = {
+  ): Promise<TbenefitQuestionsPageTarget> {
+    const ldtransformed: TbenefitQuestionsPageTarget = {
       benefitQuestions: source.benefitQuestions.map((lBenefit) => ({
         benefitType: lBenefit.benefitType,
         questions: lBenefit.questions.map((lQuestion) => ({

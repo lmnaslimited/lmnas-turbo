@@ -46,19 +46,19 @@ export async function fnEventApi(): Promise<TsocialAPIPostIds> {
         )
 
         const LdEventDetailsResult = await LdEventDetailsResponse.json()
-        const eventData = LdEventDetailsResult.data
+        const LdeventData = LdEventDetailsResult.data
 
         // Map the event data to the desired format
         return {
-          id: eventData.name,
-          title: eventData.subject,
-          publishedAt: eventData.starts_on,
-          source: eventData._user_tags?.replace(/^,/, "").trim() || "",
+          id: LdeventData.name,
+          title: LdeventData.subject,
+          publishedAt: LdeventData.starts_on,
+          source: LdeventData._user_tags?.replace(/^,/, "").trim() || "",
           description:
-            eventData.description?.replace(/<\/?[^>]+(>|$)/g, "").trim() ||
+            LdeventData.description?.replace(/<\/?[^>]+(>|$)/g, "").trim() ||
             "" ||
             "",
-          ...(eventData._user_tags === ",webinar" && { formMode: "webinar" }),
+          ...(LdeventData._user_tags === ",webinar" && { formMode: "webinar" }),
         }
       })
     )

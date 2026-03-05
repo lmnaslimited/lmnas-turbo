@@ -1,6 +1,6 @@
 "use server"
 
-import { TapiResponse, TwitterApiResponse } from "@repo/middleware/types"
+import { TapiResponse, TtwitterApiResponse } from "@repo/middleware/types"
 
 export async function fnTwitterApi(): Promise<TapiResponse> {
   const LdHeaders = {
@@ -39,7 +39,7 @@ export async function fnTwitterApi(): Promise<TapiResponse> {
 
   const LdTweetDetails = await LdTweetResponse.json()
 
-  const LdTwitterApiResponse: TwitterApiResponse = LdTweetDetails
+  const LdTwitterApiResponse: TtwitterApiResponse = LdTweetDetails
 
   const LaTweets = LdTwitterApiResponse.data || []
   const LdUsersMap = new Map(

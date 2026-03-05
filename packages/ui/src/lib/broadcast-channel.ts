@@ -13,10 +13,10 @@ export function useThemeSynchronization() {
     if (typeof window === "undefined") return
 
     // Create a new BroadcastChannel
-    const themeChannel = new BroadcastChannel(THEME_CHANNEL_NAME)
+    const LThemeChannel = new BroadcastChannel(THEME_CHANNEL_NAME)
 
     // Listen for theme changes from other tabs
-    themeChannel.addEventListener("message", (event) => {
+    LThemeChannel.addEventListener("message", (event) => {
       if (event.data && event.data.theme && event.data.theme !== theme) {
         setTheme(event.data.theme)
       }
@@ -24,12 +24,12 @@ export function useThemeSynchronization() {
 
     // When theme changes in this tab, broadcast to other tabs
     if (theme) {
-      themeChannel.postMessage({ theme })
+      LThemeChannel.postMessage({ theme })
     }
 
     // Clean up
     return () => {
-      themeChannel.close()
+      LThemeChannel.close()
     }
   }, [theme, setTheme])
 }

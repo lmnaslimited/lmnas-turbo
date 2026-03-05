@@ -1,7 +1,7 @@
 import { z } from "zod"
 import * as LucideIcons from "lucide-react"
 
-export type Middleware = {
+export type Tmiddleware = {
   name: string
   description: string
   version: string
@@ -767,7 +767,7 @@ export type Tevent = {
 // -------------------------------------------------------------------------------------------
 
 //job api
-export type TJobOpening = {
+export type TjobOpening = {
   name: string
   job_title: string
   status: string
@@ -784,7 +784,7 @@ export type TjobFilters = {
   location: string[]
 }
 
-export type TJobData = {
+export type TjobData = {
   id: string
   title: string
   location: string
@@ -793,26 +793,26 @@ export type TJobData = {
   applyUrl: string
 }
 
-export type MappedResult = {
+export type TmappedResult = {
   filters: TjobFilters
-  data: TJobData[]
+  data: TjobData[]
 }
 
 //tweeter
-export type TTwitterUser = {
+export type TtwitterUser = {
   id: string
   name: string
   username: string
 }
 
-export type TTwitterMedia = {
+export type TtwitterMedia = {
   media_key: string
   url?: string
   alt_text?: string
   preview_image_url?: string
 }
 
-export type TTwitterTweet = {
+export type TtwitterTweet = {
   id: string
   created_at: string
   text: string
@@ -822,15 +822,15 @@ export type TTwitterTweet = {
   }
 }
 
-export type TwitterApiResponse = {
-  data: TTwitterTweet[]
+export type TtwitterApiResponse = {
+  data: TtwitterTweet[]
   includes?: {
-    users?: TTwitterUser[]
-    media?: TTwitterMedia[]
+    users?: TtwitterUser[]
+    media?: TtwitterMedia[]
   }
 }
 
-export type TBenefitQuestionItemTarget = {
+export type TbenefitQuestionItemTarget = {
   questionid: string
   question: string
   options?: string[]
@@ -838,13 +838,13 @@ export type TBenefitQuestionItemTarget = {
   key: string
 }
 
-export type TBenefitQuestionTarget = {
+export type TbenefitQuestionTarget = {
   benefitType: TbenefitType
-  questions: TBenefitQuestionItemTarget[]
+  questions: TbenefitQuestionItemTarget[]
 }
 
-export type TBenefitQuestionsPageTarget = {
-  benefitQuestions: TBenefitQuestionTarget[]
+export type TbenefitQuestionsPageTarget = {
+  benefitQuestions: TbenefitQuestionTarget[]
 }
 
 export type TbenefitQuestionItemSource = {

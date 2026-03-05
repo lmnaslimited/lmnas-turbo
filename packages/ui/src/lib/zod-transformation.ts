@@ -8,7 +8,7 @@ import { TformFieldConfig } from "@repo/middleware/types"
  * @param fields - An array of field objects, each containing metadata like name, required flag, validation message, and default value.
  * @returns A Zod object schema tailored to validate the given fields according to their rules.
  */
-export function generateSchemaFromFields(
+export function fnGenerateSchemaFromFields(
   iaFields: TformFieldConfig[]
 ): z.ZodObject<any> {
   // Initialize an empty shape object to hold individual field validators

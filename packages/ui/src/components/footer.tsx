@@ -5,7 +5,7 @@ import { type ReactElement, useActionState } from "react"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
 import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
-import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { fnSubscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
 import { TfooterTarget } from "@repo/middleware/types";
 
 // Map of icon names to their components
@@ -22,7 +22,7 @@ type IconKey = keyof typeof iconMap
 
 export default function Footer({ idFooter }: { idFooter: TfooterTarget }): ReactElement {
   const LdInitialState = { message: "", }
-  const [state, formAction, pending] = useActionState(subscribeNewsletter, LdInitialState)
+  const [state, formAction, pending] = useActionState(fnSubscribeNewsletter, LdInitialState)
   return (
     <footer className="bg-muted/80 pt-16 pb-8">
       <div className="container mx-auto px-4">
