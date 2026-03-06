@@ -31,7 +31,7 @@ export default function LocationCard({ idLocation }: { idLocation: TlocationCard
 
     const fnRenderIcon = (iIcon: Tbutton['icon']) => {
         const LIconName = typeof iIcon === "string" ? iIcon : "HelpCircle";
-        const IconComponent = getIconComponent(LIconName);
+        const IconComponent = fnGetIconComponent(LIconName);
         return <IconComponent className="w-5 h-5" />;
     };
 
