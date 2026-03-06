@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
 import { SVGComponent } from "@repo/ui/svg/svgs"
-import { getIconComponent } from "@repo/ui/lib/icon"
+import { fnGetIconComponent } from "@repo/ui/lib/icon"
 import { MoreHorizontal, Globe } from "lucide-react"
 import { Button } from "@repo/ui/components/ui/button"
 import { ThemeToggle } from "@repo/ui/components/theme-toggle"
@@ -45,7 +45,7 @@ export default function Navbar({
 
   const renderIcon = (icon: Tbutton["icon"]) => {
     const iconName = typeof icon === "string" ? icon : "HelpCircle"
-    const IconComponent = getIconComponent(iconName)
+    const IconComponent = fnGetIconComponent(iconName)
     return <IconComponent className="w-6 h-6" />
   }
 

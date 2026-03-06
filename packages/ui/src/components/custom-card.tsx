@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
-import { getIconComponent } from "@repo/ui/lib/icon";
+import { fnGetIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import { Badge } from "@repo/ui/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@repo/ui/components/ui/avatar";
@@ -13,7 +13,7 @@ import { TcardProps, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton["icon"], classname: string = "w-6 h-6") => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
-  const IconComponent = getIconComponent(iconName);
+  const IconComponent = fnGetIconComponent(iconName);
   return <IconComponent className={classname} />;
 };
 

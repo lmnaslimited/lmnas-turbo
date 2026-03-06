@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Zap } from "lucide-react";
 import { ReactElement } from "react";
 import { cn } from "@repo/ui/lib/utils";
-import { getIconComponent } from "@repo/ui/lib/icon";
+import { fnGetIconComponent } from "@repo/ui/lib/icon";
 import { Button } from "@repo/ui/components/ui/button";
 import TitleSubtitle from "@repo/ui/components/title-subtitle";
 import { TformMode, Titems, Tbutton, TheroSection, TbenefitType} from "@repo/middleware/types";
@@ -16,7 +16,7 @@ type THeroProps = {
 
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
-  const IconComponent = getIconComponent(iconName);
+  const IconComponent = fnGetIconComponent(iconName);
   return <IconComponent className="w-5 h-5" />;
 };
 

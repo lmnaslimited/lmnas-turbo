@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useState } from "react"
 import { Copy, Check } from "lucide-react"
 import * as SVG from "@repo/ui/svg/svgs"
-import { getIconComponent } from "@repo/ui/lib/icon"
+import { fnGetIconComponent } from "@repo/ui/lib/icon"
 import { TlocationCard, Tbutton, Titems } from "@repo/middleware/types"
 
 export default function LocationCard({ idLocation }: { idLocation: TlocationCard }) {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useEffect, ReactElement } from "react";
-import { getIconComponent } from "@repo/ui/lib/icon";
+import { fnGetIconComponent } from "@repo/ui/lib/icon";
 import { Titems, Tbutton } from "@repo/middleware/types";
 
 const renderIcon = (icon: Tbutton['icon']) => {

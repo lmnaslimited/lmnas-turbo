@@ -10,7 +10,7 @@ import {
 } from "react"
 import { cn } from "@repo/ui/lib/utils"
 
-export interface FloatingLabelInputProps
+export interface IFloatingLabelInputProps
     extends InputHTMLAttributes<HTMLInputElement> {
     label: string
     error?: boolean
@@ -19,15 +19,15 @@ export interface FloatingLabelInputProps
     labelClassName?: string
 }
 
-const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInputProps>(
+const FloatingLabelInput = forwardRef<HTMLInputElement, IFloatingLabelInputProps>(
     ({ label: iLabel, error: iError, className: iClassName, inputClassName: iInputClassName, labelClassName: iLabelClassName, ...iProps }, ref) => {
 
-        const [FormIsFocused, fnSetFormIsFocused] = useState(false)
-        const [FormHasValue, fnSetFormHasValue] = useState(!!iProps.value || !!iProps.defaultValue)
+        const [LFormIsFocused, fnSetFormIsFocused] = useState(false)
+        const [LFormHasValue, fnSetFormHasValue] = useState(!!iProps.value || !!iProps.defaultValue)
 
         const LInputRef = useRef<HTMLInputElement>(null)
 
-        const LCombinedRef = (iNode: HTMLInputElement) => {
+        const fnCombinedRef = (iNode: HTMLInputElement) => {
             if (typeof ref === "function") {
                 ref(iNode)
             } else if (ref) {
@@ -55,19 +55,19 @@ const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInputProps>
             iProps.onChange?.(iEvent)
         }
 
-        const LShouldLabelFloat = FormIsFocused || FormHasValue
+        const LShouldLabelFloat = LFormIsFocused || LFormHasValue
 
         return (
             <div className={cn("relative", iClassName)}>
                 <input
                     {...iProps}
-                    ref={LCombinedRef}
+                    ref={fnCombinedRef}
                     className={cn(
                         "peer w-full border border-input bg-background px-3 py-2 text-sm ring-offset-background",
                         "placeholder:text-transparent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
                         "disabled:cursor-not-allowed disabled:opacity-50",
                         "rounded-md transition-all duration-200 h-12",
-                        iError && FormHasValue ? "border-red-400" : "focus:border-primary",
+                        iError && LFormHasValue ? "border-red-400" : "focus:border-primary",
                         iInputClassName,
                     )}
                     placeholder={iLabel}
@@ -81,7 +81,7 @@ const FloatingLabelInput = forwardRef<HTMLInputElement, FloatingLabelInputProps>
                         "absolute left-3 pointer-events-none text-muted-foreground",
                         "transition-all duration-200 ease-out",
                         LShouldLabelFloat ? "-top-2 text-xs bg-background px-1 text-primary" : "top-3.5 text-sm",
-                        iError && LShouldLabelFloat && FormHasValue && "text-red-400",
+                        iError && LShouldLabelFloat && LFormHasValue && "text-red-400",
                         iLabelClassName,
                     )}
                 >
