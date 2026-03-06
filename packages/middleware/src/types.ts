@@ -830,6 +830,8 @@ export type TwitterApiResponse = {
   }
 }
 
+// benefit questions
+
 export type TbenefitQuestionItemTarget = {
   questionid: string
   question: string
@@ -880,3 +882,55 @@ export type TbenefitContext = {
   leadSource: string
   userIntent: string
 }
+
+//engine
+
+export type TworkflowStatus = "idle" | "discovering" | "running" | "completed"
+
+export type TchatRole = "assistant" | "user" | "system"
+
+export type TchatMessage = {
+  id: string
+  role: TchatRole
+  content: string
+  timestamp: number
+}
+
+export type TdiscoveryQuestion = {
+  questionid: string
+  question: string
+  options?: string[]
+  inputType: "text" | "number" | "options"
+  key: string
+}
+
+export type TbenefitResult = {
+  analysis: string
+  score: number
+  recommendation: string
+  northStarAction: string
+}
+
+export type TuserSession = {
+  sessionId: string
+  anonymousId: string
+  identity?: {
+    name: string
+    email: string
+    lensLeadId?: string
+  }
+  enrichment?: {
+    ip?: string
+    city?: string
+    region?: string
+    country?: string
+    org?: string
+    enrichedAt?: string
+  }
+  benefitHistory?: {
+    benefitType: string
+    lastCalculatedAt: string
+    lastScore?: number
+  }[]
+}
+
