@@ -883,6 +883,27 @@ export type TbenefitContext = {
   userIntent: string
 }
 
+export type TaisessionState = {
+  isDrawerOpen: boolean;
+  idContext?: TbenefitContext;
+  LaMessages: TchatMessage[];
+  LWorkflowStatus: TworkflowStatus;
+  LdCurrentQuestion?: TdiscoveryQuestion;
+  LdAnswers: Record<string, string>;
+  LdResult?: TbenefitResult;
+  isLoading: boolean;
+  fnOpenDrawer: () => void;
+  fnCloseDrawer: () => void;
+  fnSetContext: (context: TbenefitContext) => void;
+  fnAddMessage: (message: Omit<TchatMessage, "id" | "timestamp">) => void;
+  fnSetQuestion: (question?: TdiscoveryQuestion) => void;
+  fnSaveAnswer: (key: string, value: string) => void;
+  fnSetWorkflowStatus: (status: TworkflowStatus) => void;
+  fnSetLoading: (isLoading: boolean) => void;
+  fnSetResult: (result?: TbenefitResult) => void;
+  fnResetSession: () => void;
+};
+
 //engine
 
 export type TworkflowStatus = "idle" | "discovering" | "running" | "completed"
@@ -939,3 +960,16 @@ export type TchatInputProps = {
     options?: string[]
     inputType: "text" | "number" | "options"
 }
+
+export type TredisLike = {
+  get: (key: string) => Promise<string | null>
+  set: (
+    key: string,
+    value: string,
+    mode: "EX",
+    ttlSeconds: number,
+  ) => Promise<unknown>
+}
+
+export type TcacheValue = { value: string; expiresAt: number }
+
