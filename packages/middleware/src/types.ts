@@ -481,10 +481,8 @@ export type Thome = {
   problemSection: TfeatureProps[]
   calloutSection: TcalloutProps[]
   faqSection: TcalloutProps
-  socialSection: TheroSection
   trendingNowSection: TcalloutProps
-  testimonials: TcardProps[]
-  successClients: Timage[]
+  testimonials: TcardProps
   metaData: TpageMetadata
 }
 

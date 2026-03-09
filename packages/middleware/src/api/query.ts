@@ -232,7 +232,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         alternate
       }
     }
-      problemSection {
+    problemSection {
       highlight {
         label
         description
@@ -276,22 +276,6 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         description
       }
     }
-    socialSection {
-      heading {
-        title
-        subtitle
-      }
-      description
-      highlight {
-        label
-        description
-      }
-      buttons {
-        label
-        href
-        icon
-      }
-    }
     trendingNowSection {
       header {
         title
@@ -309,29 +293,26 @@ export class clQueryHome extends clQuery<ThomePageSource> {
     }
     testimonials {
       header {
+        highlight
         title
         subtitle
+        badge
       }
       avatar {
-        svg
-        alternate
         source
+        alternate
       }
       avatarDetails {
-        icon
         label
         description
       }
-      image {
-        svg
-        alternate
-        source
+      buttons {
+        label
+        description
+        variant
+        href
+        icon
       }
-    }
-    successClients {
-      svg
-      source
-      alternate
     }
     metaData {
       title
