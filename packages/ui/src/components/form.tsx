@@ -233,33 +233,40 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
  * An object with a message and title indicating success or failure.
  */
 
-export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iRecaptchaToken: string) {
+export async function fnDownload(
+    idFormData: any,
+    idPdfData: TcaseStudies,
+    iRecaptchaToken: string
+) {
     try {
         //payload to be passed on LeadApi
         const LdPayload = {
             name: idFormData.name,
             email: idFormData.email,
             recaptchaToken: iRecaptchaToken,
-        }
+        };
 
-        //call the LeadApi, which is check if lead with the incoming email
-        //exist, if not create a new Lead with the incoming name and email
-        const LdResponse = await fnLeadCreation(LdPayload);
+        //call the LeadApi, which checks if lead with the incoming email
+        //exists, if not create a new Lead with the incoming name and email
+        try {
+            await fnLeadCreation(LdPayload);
+        } catch (LError) {
+            console.error("Lead creation failed:", LError);
+
+            return {
+                message: "Something went wrong, please try again later",
+                title: "Download Fail",
+            };
+        }
 
         // Check if the user opted in for the newsletter
         if (idFormData.newsletter) {
             // Prepare a FormData object with the user's email
             const LdNewFormData = new FormData();
             LdNewFormData.append("email", idFormData.email);
+
             // Subscribe the user to the newsletter
             await subscribeNewsletter({ message: "" }, LdNewFormData);
-        }
-
-        if (LdResponse.message === 'error') {
-            return {
-                message: "Something went wrong, please try again later",
-                title: "Download Fail",
-            };
         }
 
         // PDF GENERATION STARTS HERE
@@ -302,6 +309,7 @@ export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iReca
 
     } catch (LError) {
         console.error("Download failed:", LError);
+
         return {
             message: "Failed to download the file.",
             title: "Download Failed",

@@ -42,8 +42,6 @@ async function fnVerifyRecaptchaToken(
 // Main function handles the lead creation process for the case study subscription form
 export async function fnLeadCreation(idLeadFormData: TleadApi) {
   try {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-
     const LBaseUrl = process.env.SUBSCRIBE_URL
     const LAuthorizationHeader = process.env.AUTH_BASE_64
 

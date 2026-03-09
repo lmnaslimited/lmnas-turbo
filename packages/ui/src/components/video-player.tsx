@@ -11,7 +11,7 @@ export default function VideoPlayer({ src, sourceId }: TvideoPlayerProps) {
     const LSubtitleUrl =
         sourceId
             ? `/api/subtitle?sourceId=${sourceId}&locale=${LLocale}`
-            : undefined
+            : null
 
     return (
         <video
