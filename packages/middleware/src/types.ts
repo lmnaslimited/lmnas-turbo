@@ -490,7 +490,7 @@ export type Thome = {
   calloutSection: TcalloutProps[]
   faqSection: TcalloutProps
   trendingNowSection: TcalloutProps
-  testimonials: TcardProps
+  testimonials: TcardProps[]
   metaData: TpageMetadata
 }
 
