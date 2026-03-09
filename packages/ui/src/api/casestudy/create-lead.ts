@@ -28,13 +28,8 @@ async function fnVerifyRecaptchaToken(
       )
       return false
     }
-    console.log(
-      "reCAPTCHA verification response status:",
-      LdVerificationResponse.status,
-    )
 
     const LdVerificationResult = await LdVerificationResponse.json()
-    console.log("reCAPTCHA verification result:", LdVerificationResult)
 
     // Accept only if success is true and score >= 0.5
     return LdVerificationResult.success && LdVerificationResult.score >= 0.5
@@ -74,8 +69,6 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
         message: "error",
       }
     }
-
-    console.log("reCAPTCHA verification passed, proceeding with lead creation")
 
     // Check if a Lead with the given email already exists
     const LdLeadLookupResponse = await fetch(
