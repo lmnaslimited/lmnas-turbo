@@ -934,3 +934,8 @@ export type TuserSession = {
   }[]
 }
 
+export type TchatInputProps = {
+    onSubmit: (value: string) => void
+    options?: string[]
+    inputType: "text" | "number" | "options"
+}
