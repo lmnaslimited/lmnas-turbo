@@ -265,7 +265,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       }
       buttons {
         label
-        formMode
+        href
         variant
         icon
       }
