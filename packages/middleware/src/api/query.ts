@@ -265,7 +265,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       }
       buttons {
         label
-        href
+        formMode
         variant
         icon
       }
@@ -275,6 +275,22 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         label
         icon
         description
+      }
+    }
+    socialSection {
+      heading {
+        title
+        subtitle
+      }
+      description
+      highlight {
+        label
+        description
+      }
+      buttons {
+        label
+        href
+        icon
       }
     }
     trendingNowSection {
@@ -294,26 +310,29 @@ export class clQueryHome extends clQuery<ThomePageSource> {
     }
     testimonials {
       header {
-        highlight
         title
         subtitle
-        badge
       }
       avatar {
-        source
+        svg
         alternate
+        source
       }
       avatarDetails {
-        label
-        description
-      }
-      buttons {
-        label
-        description
-        variant
-        href
         icon
+        label
+        description
       }
+      image {
+        svg
+        alternate
+        source
+      }
+    }
+    successClients {
+      svg
+      source
+      alternate
     }
     metaData {
       title
