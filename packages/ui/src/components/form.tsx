@@ -25,7 +25,7 @@ import { PhoneInput } from "react-international-phone"
 import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
 
 import { ContactApi } from "@repo/ui/api/contact/create-contact"
-import { LeadApi } from "@repo/ui/api/casestudy/create-lead"
+import { fnLeadCreation } from "@repo/ui/api/casestudy/create-lead"
 import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
 import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
 import { bookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
@@ -233,62 +233,87 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
  * An object with a message and title indicating success or failure.
  */
 
-export async function fnDownload(idFormData: any, idPdfData: TcaseStudies, iRecaptchaToken: string) {
-
+export async function fnDownload(
+    idFormData: any,
+    idPdfData: TcaseStudies,
+    iRecaptchaToken: string
+) {
     try {
         //payload to be passed on LeadApi
         const LdPayload = {
             name: idFormData.name,
             email: idFormData.email,
             recaptchaToken: iRecaptchaToken,
-        }
-        //call the LeadApi, which is check if lead with the incoming email
-        //exist, if not create a new Lead with the incoming name and email
-        const LdResponse = await LeadApi(LdPayload)
-        // Check if the user opted in for the newsletter
-        if (idFormData.newsletter) {
-            // Prepare a FormData object with the user's email
-            const LdNewFormData = new FormData();
-            LdNewFormData.append("email", idFormData.email);
-            // Subscribe the user to the newsletter
-            await subscribeNewsletter({ message: "" }, LdNewFormData);
-        }
-        if (LdResponse.message === 'error') {
+        };
+
+        //call the LeadApi, which checks if lead with the incoming email
+        //exists, if not create a new Lead with the incoming name and email
+        try {
+            await fnLeadCreation(LdPayload);
+        } catch (LError) {
+            console.error("Lead creation failed:", LError);
+
             return {
                 message: "Something went wrong, please try again later",
                 title: "Download Fail",
             };
         }
-        // Dynamically import the Case Study PDF layout component(nextjs feature)
-        // Dynamically import the React PDF renderer(nextjs feature)
+
+        // Check if the user opted in for the newsletter
+        if (idFormData.newsletter) {
+            // Prepare a FormData object with the user's email
+            const LdNewFormData = new FormData();
+            LdNewFormData.append("email", idFormData.email);
+
+            // Subscribe the user to the newsletter
+            await subscribeNewsletter({ message: "" }, LdNewFormData);
+        }
+
+        // PDF GENERATION STARTS HERE
         const { PdfDocument } = await import("@repo/ui/components/pdf/casestudy-layout");
         const { pdf } = await import("@react-pdf/renderer");
 
-        // Generate a PDF blob from the PdfDocument component with provided case study data
-        const Blob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
-        // Create a temporary object URL from the Blob
-        const Url = URL.createObjectURL(Blob);
-        // Create a hidden anchor element to trigger the download
-        const Link = document.createElement("a");
-        Link.href = Url;  // Set the href to the Blob URL
-        Link.download = `${idPdfData?.caseStudies[0]?.pdfName}.pdf`;  // Set the desired filename {can make it automated using the idPdfData}
-        document.body.appendChild(Link);
-        Link.click();  // Programmatically click the link to trigger the download
-        document.body.removeChild(Link);
-        URL.revokeObjectURL(Url);   // Clean up the object URL
+        // Generate Blob
+        const LBlob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
 
-        // Return a success message
+        if (!LBlob) {
+            throw new Error("Failed to generate PDF Blob");
+        }
+
+        // Create URL and Link
+        const LUrl = URL.createObjectURL(LBlob);
+        const LLink = document.createElement("a");
+
+        LLink.href = LUrl;
+
+        // Use the case study title as the file name, or default name if not available
+        const LFileName = idPdfData?.caseStudies?.[0]?.pdfName || "CaseStudy";
+        LLink.download = `${LFileName}.pdf`;
+
+        // Append link to body
+        document.body.appendChild(LLink);
+
+        // Trigger Download
+        LLink.click();
+
+        // Delay before revoking the URL to ensure the browser has started the download stream
+        setTimeout(() => {
+            document.body.removeChild(LLink);
+            URL.revokeObjectURL(LUrl);
+        }, 1000);
+
         return {
             message: "Your file has been downloaded.",
             title: "Download Success",
         };
-    } catch (error) {
-        console.error("Download failed:", error);
-        // Return a failure message and error info
+
+    } catch (LError) {
+        console.error("Download failed:", LError);
+
         return {
             message: "Failed to download the file.",
             title: "Download Failed",
-            error: error instanceof Error ? error.message : String(error),
+            error: LError instanceof Error ? LError.message : String(LError),
         };
     }
 }

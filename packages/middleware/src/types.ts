@@ -50,11 +50,7 @@ export type Tslug = {
 
 export type Tcontext = {
   locale: string
-  filters?: {
-    slug: {
-      eq: string
-    }
-  }
+  filters?: Record<string, any>
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
@@ -191,6 +187,12 @@ export type Tbutton = {
   description?: string
 }
 
+export type Tsubtitle = {
+  startTime: string
+  endTime: string
+  text: string
+}
+
 export type Timage = {
   source?: string
   alternate: string
@@ -200,6 +202,12 @@ export type Timage = {
   svg?: React.ReactNode | keyof typeof LucideIcons | string
   className?: string
   position?: string
+  sourceId?: string
+}
+
+export type TvideoPlayerProps = {
+  src: string
+  sourceId?: string
 }
 
 export type TheroSection = {
@@ -760,8 +768,6 @@ export type Tevent = {
   metaData: TpageMetadata
 }
 
-// -------------------------------------------------------------------------------------------
-
 //job api
 export type JobOpening = {
   name: string
@@ -824,4 +830,18 @@ export type TwitterApiResponse = {
     users?: TwitterUser[]
     media?: TwitterMedia[]
   }
+}
+
+// subtitle
+export type TsubtitleSource = {
+  subtitles: TsubtitleItem[]
+}
+
+export type TsubtitleTarget = {
+  subtitles: TsubtitleItem[]
+}
+
+export type TsubtitleItem = {
+  sourceId: string
+  subtitle: Tsubtitle[]
 }

@@ -17,6 +17,7 @@ import {
   TaboutUsPageSource,
   TeventPageSource,
   TformsPageSource,
+  TsubtitleSource,
 } from "../types"
 import { client } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
@@ -232,7 +233,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         alternate
       }
     }
-      problemSection {
+    problemSection {
       highlight {
         label
         description
@@ -1484,6 +1485,7 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         svg
         source
         alternate
+        sourceId
       }
     }
     successStoryHeaderFooter {
@@ -2130,6 +2132,26 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
   }
 }
 
+export class clQuerySubtitles extends clQuery<TsubtitleSource> {
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+
+  getQuery(): string {
+    return `
+  query Query($locale: I18NLocaleCode, $filters: SubtitleFiltersInput) {
+  ${this.contentType}(locale: $locale, filters: $filters) {
+    sourceId
+    subtitle {
+      startTime
+      endTime
+      text
+    }
+  }
+}`
+  }
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>
@@ -2151,6 +2173,7 @@ export class clQueryFactory {
     event: clQueryEvent,
     forms: clQueryForms,
     globalMeta: clQueryGlobalMeta,
+    subtitles: clQuerySubtitles,
     // Add more mappings here
   }
 
