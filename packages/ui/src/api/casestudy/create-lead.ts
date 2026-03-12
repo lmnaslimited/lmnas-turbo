@@ -116,13 +116,13 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
       data: LdLeadLookupResult.data[0],
       message: "exist",
     }
-  } catch (LError) {
-    console.error("LeadApi error:", LError)
+  } catch (idError) {
+    console.error("LeadApi error:", idError)
 
     return {
       data: [],
       message: "error",
-      error: LError instanceof Error ? LError.message : "Unexpected error",
+      error: idError instanceof Error ? idError.message : "Unexpected error",
     }
   }
 }
