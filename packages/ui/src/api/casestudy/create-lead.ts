@@ -33,8 +33,8 @@ async function fnVerifyRecaptchaToken(
 
     // Accept only if success is true and score >= 0.5
     return LdVerificationResult.success && LdVerificationResult.score >= 0.5
-  } catch (LError) {
-    console.error("reCAPTCHA verification error:", LError)
+  } catch (idError) {
+    console.error("reCAPTCHA verification error:", idError)
     return false
   }
 }
