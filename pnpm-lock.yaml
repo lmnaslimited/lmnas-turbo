@@ -28,61 +28,6 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
 
-  apps/braccoli-bites:
-    dependencies:
-      '@repo/middleware':
-        specifier: workspace:*
-        version: link:../../packages/middleware
-      '@repo/ui':
-        specifier: workspace:*
-        version: link:../../packages/ui
-      next:
-        specifier: 15.1.11
-        version: 15.1.11(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
-      react:
-        specifier: ^19.0.0
-        version: 19.0.0
-      react-dom:
-        specifier: ^19.0.0
-        version: 19.0.0(react@19.0.0)
-    devDependencies:
-      '@eslint/eslintrc':
-        specifier: ^3
-        version: 3.2.0
-      '@repo/eslint-config':
-        specifier: workspace:*
-        version: link:../../packages/eslint-config
-      '@repo/typescript-config':
-        specifier: workspace:*
-        version: link:../../packages/typescript-config
-      '@types/node':
-        specifier: ^20
-        version: 20.19.30
-      '@types/react':
-        specifier: ^19
-        version: 19.0.8
-      '@types/react-dom':
-        specifier: ^19
-        version: 19.0.3(@types/react@19.0.8)
-      autoprefixer:
-        specifier: ^10.4.20
-        version: 10.4.23(postcss@8.5.6)
-      eslint:
-        specifier: ^9
-        version: 9.19.0(jiti@1.21.7)
-      eslint-config-next:
-        specifier: 15.1.6
-        version: 15.1.6(eslint@9.19.0(jiti@1.21.7))(typescript@5.7.3)
-      postcss:
-        specifier: ^8.5.1
-        version: 8.5.6
-      tailwindcss:
-        specifier: ^3.4.17
-        version: 3.4.17(ts-node@10.9.2(@types/node@20.19.30)(typescript@5.7.3))
-      typescript:
-        specifier: ^5
-        version: 5.7.3
-
   apps/braccoli-site-2.0:
     dependencies:
       '@n8n/chat':
@@ -124,6 +69,9 @@ importers:
       zod:
         specifier: ^3.24.2
         version: 3.24.2
+      zustand:
+        specifier: ^5.0.11
+        version: 5.0.11(@types/react@19.0.8)(react@19.0.0)
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -4376,6 +4324,24 @@ packages:
   zod@3.24.2:
     resolution: {integrity: sha512-lY7CDW43ECgW9u1TcT3IoXHflywfVqDYze4waEz812jR/bZ8FHDsl7pFQoSZTz5N+2NqRXs8GBwnAwo3ZNxqhQ==}
 
+  zustand@5.0.11:
+    resolution: {integrity: sha512-fdZY+dk7zn/vbWNCYmzZULHRrss0jx5pPFiOuMZ/5HJN6Yv3u+1Wswy/4MpZEkEGhtNH+pwxZB8OKgUBPzYAGg==}
+    engines: {node: '>=12.20.0'}
+    peerDependencies:
+      '@types/react': '>=18.0.0'
+      immer: '>=9.0.6'
+      react: '>=18.0.0'
+      use-sync-external-store: '>=1.2.0'
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      immer:
+        optional: true
+      react:
+        optional: true
+      use-sync-external-store:
+        optional: true
+
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -5809,15 +5775,6 @@ snapshots:
       fraction.js: 5.3.4
       picocolors: 1.1.1
       postcss: 8.5.1
-      postcss-value-parser: 4.2.0
-
-  autoprefixer@10.4.23(postcss@8.5.6):
-    dependencies:
-      browserslist: 4.28.1
-      caniuse-lite: 1.0.30001766
-      fraction.js: 5.3.4
-      picocolors: 1.1.1
-      postcss: 8.5.6
       postcss-value-parser: 4.2.0
 
   available-typed-arrays@1.0.7:
@@ -9271,5 +9228,10 @@ snapshots:
   zen-observable@0.8.15: {}
 
   zod@3.24.2: {}
+
+  zustand@5.0.11(@types/react@19.0.8)(react@19.0.0):
+    optionalDependencies:
+      '@types/react': 19.0.8
+      react: 19.0.0
 
   zwitch@2.0.4: {}

@@ -11,8 +11,12 @@ import { useCTAContext } from "@repo/ui/context/cta-context-provider";
 
 type THeroProps = {
   idHero: TheroSection;
-  onButtonClick?: (mode: TformMode, formTitle?: string) => void;
-}
+  onButtonClick?: (
+    formMode?: TformMode | null,
+    benefitMode?: TbenefitType | null,
+    label?: string
+  ) => void;
+};
 
 const renderIcon = (icon: Tbutton['icon']) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -22,7 +26,7 @@ const renderIcon = (icon: Tbutton['icon']) => {
 
 export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
 
-  const { openChat } = useCTAContext()
+  // const { openChat } = useCTAContext()
 
   /**
   * Renders a badge with an icon and text.
@@ -80,15 +84,13 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
             onClick={() => {
-              if (!idButton.href) {
-                if (idButton.formMode) {
-                  onButtonClick?.(idButton.formMode, idButton.label);
-                }
+              if (idButton.href) return;
 
-                if (idButton.benefitMode) {
-                  openChat(idButton.benefitMode);
-                }
-              }
+              onButtonClick?.(
+                idButton.formMode ?? null,
+                idButton.benefitMode ?? null,
+                idButton.label
+              );
             }}>
             {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
           </Button>
