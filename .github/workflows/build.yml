@@ -2,8 +2,7 @@ name: Turbo Image Build
 on:
   push:
     branches:
-      - main
-      - develop
+      - build-test
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,9 +13,9 @@ jobs:
       - name: Read sampleenv and generate .env dynamically
         id: generate_env
         env:
-          SUBSCRIBE_URL: ${{ github.ref_name == 'main' && secrets.MAIN_SUBSCRIBE_URL || secrets.DEVELOP_SUBSCRIBE_URL }}
-          AUTH_BASE_64: ${{ github.ref_name == 'main' && secrets.MAIN_AUTH_BASE_64 || secrets.DEVELOP_AUTH_BASE_64 }}
-          RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'main' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
+          SUBSCRIBE_URL: ${{ github.ref_name == 'build-test' && secrets.MAIN_SUBSCRIBE_URL || secrets.DEVELOP_SUBSCRIBE_URL }}
+          AUTH_BASE_64: ${{ github.ref_name == 'build-test' && secrets.MAIN_AUTH_BASE_64 || secrets.DEVELOP_AUTH_BASE_64 }}
+          RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'build-test' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
           YOUTUBE: ${{ secrets.YOUTUBE }}
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
@@ -53,6 +52,6 @@ jobs:
           push: true
           pull: true
           no-cache: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v1' }}
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v2' }}
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
