@@ -9,9 +9,7 @@ export type Tpost = {
   content: { media: { id: string; altText: string } }
 }
 
-// ----------------------------------------
 // Utility: Fetch with timeout
-// ----------------------------------------
 // Wraps fetch in a timeout to prevent hanging requests
 function fnFetchWithTimeout(
   iUrl: string,
@@ -30,9 +28,7 @@ function fnFetchWithTimeout(
   })
 }
 
-// ----------------------------------------
 // Utility: Retry fetch with delay and timeout
-// ----------------------------------------
 // Retries failed fetch requests up to `iRetries` times, with a delay between each retry
 async function fnRetryFetch(
   iUrl: string,
