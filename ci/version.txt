@@ -1,1 +1,1 @@
-lmnas/turbo-braccoli:v1
+lmnas/turbo-braccoli:v1.2
