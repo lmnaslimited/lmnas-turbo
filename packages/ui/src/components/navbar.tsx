@@ -2,13 +2,11 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
 import { SVGComponent } from "@repo/ui/svg/svgs"
 import { getIconComponent } from "@repo/ui/lib/icon"
 import { MoreHorizontal, Globe } from "lucide-react"
 import { Button } from "@repo/ui/components/ui/button"
-import { ThemeToggle } from "@repo/ui/components/theme-toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,37 +29,39 @@ export default function Navbar({
 }: {
   idNavbar: TnavbarTarget
 }): React.ReactElement {
-  const [Language, fnSetLanguage] = React.useState("en")
-  const [MobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
-  const [MobileIndustriesOpen, fnSetMobileIndustriesOpen] =
+  // commented because Language is moved to footer
+  // const [Language, fnSetLanguage] = React.useState("en")
+  const [LMobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
+  const [LMobileIndustriesOpen, fnSetMobileIndustriesOpen] =
     React.useState(false)
-  const [MobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
+  const [LMobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
     React.useState(false)
-  const router = useRouter()
-  const pathname = usePathname()
-  const [desktopMenuOpen, setDesktopMenuOpen] = React.useState<
+  // const router = useRouter()
+  // const pathname = usePathname()
+  const [LDesktopMenuOpen, fnSetDesktopMenuOpen] = React.useState<
     string | undefined
   >(undefined)
 
-  const renderIcon = (icon: Tbutton["icon"]) => {
-    const iconName = typeof icon === "string" ? icon : "HelpCircle"
+  const fnRenderIcon = (iIcon: Tbutton["icon"]) => {
+    const iconName = typeof iIcon === "string" ? iIcon : "HelpCircle"
     const IconComponent = getIconComponent(iconName)
     return <IconComponent className="w-6 h-6" />
   }
 
-  //middleware
-  React.useEffect(() => {
-    const currentLang = pathname.split("/")[1] // get "en" from /en/trending-now
-    fnSetLanguage(currentLang ?? "EN")
-  }, [pathname])
+  // commented because Language is moved to footer
+  // //middleware
+  // React.useEffect(() => {
+  //   const currentLang = pathname.split("/")[1] // get "en" from /en/trending-now
+  //   fnSetLanguage(currentLang ?? "EN")
+  // }, [pathname])
 
-  const fnHandleLanguageChange = (newLang: string) => {
-    const Segments = pathname.split("/")
-    Segments[1] = newLang // replace language segment
-    const NewPath = Segments.join("/")
-    fnSetLanguage(newLang)
-    router.push(NewPath) // navigate to new lang route
-  }
+  // const fnHandleLanguageChange = (newLang: string) => {
+  //   const Segments = pathname.split("/")
+  //   Segments[1] = newLang // replace language segment
+  //   const NewPath = Segments.join("/")
+  //   fnSetLanguage(newLang)
+  //   router.push(NewPath) // navigate to new lang route
+  // }
 
   React.useEffect(() => {
     const fnHandleScroll = () => {
@@ -90,14 +90,15 @@ export default function Navbar({
     }
   }, [])
 
-  const fnGetCurrentLanguageDisplay = (): string => {
-    const CurrentLang = idNavbar.navbar.language.find(
-      (idLang) => idLang.label === Language
-    )
-    return CurrentLang && CurrentLang.label
-      ? CurrentLang.label.toUpperCase()
-      : "EN"
-  }
+  // commented because Language is moved to footer
+  // const fnGetCurrentLanguageDisplay = (): string => {
+  //   const CurrentLang = idNavbar.navbar.language.find(
+  //     (idLang) => idLang.label === Language
+  //   )
+  //   return CurrentLang && CurrentLang.label
+  //     ? CurrentLang.label.toUpperCase()
+  //     : "EN"
+  // }
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full bg-background")}>
@@ -119,8 +120,8 @@ export default function Navbar({
             {/* Desktop Navigation - Left aligned on large screens, centered on medium */}
             <div className="hidden lg:flex lg:items-center">
               <NavigationMenu
-                value={desktopMenuOpen}
-                onValueChange={setDesktopMenuOpen}
+                value={LDesktopMenuOpen}
+                onValueChange={fnSetDesktopMenuOpen}
                 className="md:justify-center"
               >
                 <NavigationMenuList className="flex items-center">
@@ -135,12 +136,12 @@ export default function Navbar({
                             <Link
                               href={idProduct.href!}
                               key={idProduct.label}
-                              onClick={() => setDesktopMenuOpen(undefined)}
+                              onClick={() => fnSetDesktopMenuOpen(undefined)}
                             >
                               <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
                                   <div className="w-6 h-6 flex items-center justify-center">
-                                    {renderIcon(idProduct.icon)}
+                                    {fnRenderIcon(idProduct.icon)}
                                   </div>
                                 </div>
                                 <div>
@@ -170,7 +171,7 @@ export default function Navbar({
                             <Link
                               href={idIndustry.href!}
                               key={idIndustry.label}
-                              onClick={() => setDesktopMenuOpen(undefined)}
+                              onClick={() => fnSetDesktopMenuOpen(undefined)}
                             >
                               <div
                                 key={idIndustry.label}
@@ -178,7 +179,7 @@ export default function Navbar({
                               >
                                 <div className="flex h-10 w-10 items-center justify-center rounded-md  flex-shrink-0 ">
                                   <div className="w-6 h-6 flex items-center justify-center">
-                                    {renderIcon(idIndustry.icon)}
+                                    {fnRenderIcon(idIndustry.icon)}
                                   </div>
                                 </div>
                                 <div>
@@ -271,13 +272,14 @@ export default function Navbar({
 
           {/* Right side controls */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
+           {/* commented because Language and Theme switcher is moved to footer */}
             {/* Theme Switcher */}
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <ThemeToggle />
-            </div>
+            </div> */}
 
             {/* Language Switcher */}
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="secondary"
@@ -328,7 +330,7 @@ export default function Navbar({
                   ))}
                 </div>
               </DropdownMenuContent>
-            </DropdownMenu>
+            </DropdownMenu> */}
             <Link href={idNavbar.navbar.menu[5]?.href!}>
               <Button
                 variant="default"
@@ -339,15 +341,16 @@ export default function Navbar({
             </Link>
           </div>
 
-          {/* Mobile menu button - removed hamburger menu */}
-          <div className="flex lg:hidden items-center gap-2">
+          {/* commented because Language and Theme switcher is moved to footer */}
+         {/* Mobile menu button - removed hamburger menu */}
+         {/* <div className="flex lg:hidden items-center gap-2"> */}
             {/* Theme Switcher for Mobile */}
-            <div className="flex items-center">
+            {/* <div className="flex items-center">
               <ThemeToggle />
-            </div>
+            </div> */}
 
             {/* Language Switcher for Mobile */}
-            <DropdownMenu>
+            {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="secondary"
@@ -400,7 +403,7 @@ export default function Navbar({
                 </div>
               </DropdownMenuContent>
             </DropdownMenu>
-          </div>
+          </div> */}
         </div>
       </header>
 
@@ -413,7 +416,7 @@ export default function Navbar({
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground hover:text-primary"
           >
             <span className="w-5 h-6 mb-1">
-              {renderIcon(idNavbar.navbar.menu[2]?.icon)}
+              {fnRenderIcon(idNavbar.navbar.menu[2]?.icon)}
             </span>
             <span className="text-xs">{idNavbar.navbar.menu[2]?.label}</span>
           </Link>
@@ -422,23 +425,23 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center ">
             <button
               onClick={() => {
-                fnSetMobileProductsOpen(!MobileProductsOpen)
+                fnSetMobileProductsOpen(!LMobileProductsOpen)
                 fnSetMobileIndustriesOpen(false)
                 fnSetMobileModeDropdownOpen(false)
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileProductsOpen
+                LMobileProductsOpen
                   ? "text-primary"
                   : "text-muted-foreground hover:text-primary"
               )}
             >
               <span className="w-5 h-6 mb-1">
-                {renderIcon(idNavbar.navbar.menu[0]?.icon)}
+                {fnRenderIcon(idNavbar.navbar.menu[0]?.icon)}
               </span>
               <span className="text-xs ">{idNavbar.navbar.menu[0]?.label}</span>
             </button>
-            {MobileProductsOpen && (
+            {LMobileProductsOpen && (
               <div className="fixed bottom-16 left-5 z-[90] max-w-[70%] border border-border rounded-lg lg:hidden animate-fadeInUp bg-background p-3">
                 <div className="grid grid-cols-2 gap-2">
                   {idNavbar.navbar.product.slice(0, 6).map((idProduct) => (
@@ -450,7 +453,7 @@ export default function Navbar({
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
                         <div className="w-6 h-6 text-primary/70">
-                          {renderIcon(idProduct.icon)}
+                          {fnRenderIcon(idProduct.icon)}
                         </div>
                       </div>
                       <span className="text-xs font-medium text-primary">
@@ -467,24 +470,24 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center">
             <button
               onClick={() => {
-                fnSetMobileIndustriesOpen(!MobileIndustriesOpen)
+                fnSetMobileIndustriesOpen(!LMobileIndustriesOpen)
                 fnSetMobileProductsOpen(false)
                 fnSetMobileModeDropdownOpen(false)
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileIndustriesOpen
+                LMobileIndustriesOpen
                   ? "text-primary"
                   : "text-muted-foreground hover:text-primary"
               )}
             >
               <span className="w-5 h-6 mb-1">
-                {renderIcon(idNavbar.navbar.menu[1]?.icon)}
+                {fnRenderIcon(idNavbar.navbar.menu[1]?.icon)}
               </span>
               <span className="text-xs ">{idNavbar.navbar.menu[1]?.label}</span>
             </button>
 
-            {MobileIndustriesOpen && (
+            {LMobileIndustriesOpen && (
               <div className="fixed bottom-16 left-5 z-[90] max-w-[70%] border border-border rounded-lg lg:hidden animate-fadeInUp bg-background p-3">
                 <div className="grid grid-cols-2 gap-2">
                   {idNavbar.navbar.industry.map((idIndustry) => (
@@ -495,7 +498,7 @@ export default function Navbar({
                     >
                       <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
                         <div className="w-6 h-6 text-primary/70">
-                          {renderIcon(idIndustry.icon)}
+                          {fnRenderIcon(idIndustry.icon)}
                         </div>
                       </div>
                       <span className="text-xs font-medium text-primary">
@@ -514,7 +517,7 @@ export default function Navbar({
             className="flex flex-col items-center justify-center w-1/5 h-full text-muted-foreground hover:text-primary"
           >
             <span className="w-5 h-6 mb-1">
-              {renderIcon(idNavbar.navbar.menu[3]?.icon)}
+              {fnRenderIcon(idNavbar.navbar.menu[3]?.icon)}
             </span>
             <span className="text-xs">{idNavbar.navbar.menu[3]?.label}</span>
           </Link>
@@ -523,24 +526,24 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center">
             <button
               onClick={() => {
-                fnSetMobileModeDropdownOpen(!MobileModeDropdownOpen)
+                fnSetMobileModeDropdownOpen(!LMobileModeDropdownOpen)
                 fnSetMobileProductsOpen(false)
                 fnSetMobileIndustriesOpen(false)
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
-                MobileModeDropdownOpen
+                LMobileModeDropdownOpen
                   ? "text-primary"
                   : "text-muted-foreground hover:text-primary"
               )}
             >
               <span className="w-5 h-6 mb-1">
-                {renderIcon(idNavbar.navbar.menu[4]?.icon)}
+                {fnRenderIcon(idNavbar.navbar.menu[4]?.icon)}
               </span>
               <span className="text-xs">{idNavbar.navbar.menu[4]?.label}</span>
             </button>
 
-            {MobileModeDropdownOpen && (
+            {LMobileModeDropdownOpen && (
               <div className="fixed bottom-16 right-3 z-[90] w-[120px] bg-background border border-border rounded-lg lg:hidden animate-fadeInUp p-2">
                 {idNavbar.navbar.more.map((idItem, iIndex) => (
                   <div
