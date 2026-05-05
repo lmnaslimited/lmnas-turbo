@@ -331,14 +331,29 @@ export default function Navbar({
                 </div>
               </DropdownMenuContent>
             </DropdownMenu> */}
-            <Link href={idNavbar.navbar.menu[5]?.href!}>
+          
+            {/* comment out and changed to dynamic */}
+            {/* <Link href={idNavbar.navbar.menu[5]?.href!}>
               <Button
                 variant="default"
                 className="rounded-lg h-10 flex items-center"
               >
                 {idNavbar.navbar.menu[5]?.label}
               </Button>
-            </Link>
+            </Link> */}
+            {/* we have consider the menus, with href and without icon to be button */}
+             { idNavbar.navbar.menu
+              .filter((idItem) => !idItem.icon && idItem.href)
+              .map((idItem, iIndex) => (
+                <Link key={iIndex} href={idItem.href!}>
+                  <Button
+                    variant="default"
+                    className="rounded-lg h-10 flex items-center"
+                  >
+                    {idItem.label}
+                  </Button>
+                </Link>
+            ))}
           </div>
 
           {/* commented because Language and Theme switcher is moved to footer */}
