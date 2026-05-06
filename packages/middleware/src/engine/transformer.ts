@@ -37,6 +37,8 @@ import {
   TformsPageSource,
   TglobalMetaTarget,
   TglobalMetaSource,
+  TsubtitleSource,
+  TsubtitleTarget,
   TbenefitQuestionsPageSource,
   TbenefitQuestionsPageTarget,
 } from "../types"
@@ -70,7 +72,7 @@ export abstract class clTransformer<
   // Implement specific transformation rule of Source Data to Traget data in the respective
   // Content type implementation.
   abstract performTransformation(
-    idSourceData: DynamicSourceType,
+    idSourceData: DynamicSourceType,,
   ): Promise<DynamicTargetType>
   // Additional intiation specefic to Execute. Useful to have more controls for the execution
   // of the transformation
@@ -372,6 +374,22 @@ export class clGlobalMetaTransformer extends clTransformer<
   }
 }
 
+// GlobalMeta transformer
+export class clSubtitlesTransformer extends clTransformer<
+  TsubtitleSource,
+  TsubtitleTarget
+> {
+  async performTransformation(
+    idSourceData: TsubtitleSource,
+  ): Promise<TsubtitleTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
 export class clBenefitQuestionsTransformer extends clTransformer<
   TbenefitQuestionsPageSource,
   TbenefitQuestionsPageTarget
@@ -420,6 +438,7 @@ interface ITransformerMap {
   event: clEventTransformer
   globalMeta: clGlobalMetaTransformer
   forms: clFormsTransformer
+  subtitles: clSubtitlesTransformer
   benefitQuestions: clBenefitQuestionsTransformer
   // Add other content types and corresponding transformers
 }
@@ -446,6 +465,7 @@ export class clTransformerFactory {
     event: clEventTransformer,
     globalMeta: clGlobalMetaTransformer,
     forms: clFormsTransformer,
+    subtitles: clSubtitlesTransformer,
     benefitQuestions: clBenefitQuestionsTransformer,
     // Add other content types and corresponding transformers
   }

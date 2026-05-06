@@ -9,9 +9,7 @@ export type Tpost = {
   content: { media: { id: string; altText: string } }
 }
 
-// ----------------------------------------
 // Utility: Fetch with timeout
-// ----------------------------------------
 // Wraps fetch in a timeout to prevent hanging requests
 function fnFetchWithTimeout(
   iUrl: string,
@@ -30,9 +28,7 @@ function fnFetchWithTimeout(
   })
 }
 
-// ----------------------------------------
 // Utility: Retry fetch with delay and timeout
-// ----------------------------------------
 // Retries failed fetch requests up to `iRetries` times, with a delay between each retry
 async function fnRetryFetch(
   iUrl: string,
@@ -64,15 +60,15 @@ async function fnRetryFetch(
 export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
   // Prepare request headers for LinkedIn API
   const LdHeaders = new Headers({
-    "LinkedIn-Version": "202411",
+    "LinkedIn-Version": "202603",
     "X-Restli-Protocol-Version": "2.0.0",
-    Authorization: `${process.env.LINKEDIN_ACCESS_TOKEN}`,
+    Authorization: `Bearer ${process.env.LINKEDIN_ACCESS_TOKEN}`,
   })
 
   try {
     // Step 1: Fetch latest 20 posts from the organization's LinkedIn page
     const LdResponse = await fnRetryFetch(
-      "https://api.linkedin.com/rest/posts?author=urn%3Ali%3Aorganization%3A67940092&q=author&count=20",
+      "https://api.linkedin.com/rest/posts?author=urn%3Ali%3Aorganization%3A67940092&q=author&count=20&sortBy=LAST_MODIFIED",
       {
         method: "GET",
         headers: LdHeaders,
