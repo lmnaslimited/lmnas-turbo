@@ -58,7 +58,8 @@ export type Tcontext = {
     benefitType?: {
       eq: TbenefitType
     }
-  }
+  } & Record<string, any>
+
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
