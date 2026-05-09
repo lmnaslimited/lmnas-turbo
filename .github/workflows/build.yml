@@ -27,6 +27,8 @@ jobs:
           NEXT_PUBLIC_WEBHOOK_URL: ${{secrets.NEXT_PUBLIC_WEBHOOK_URL}}
           STRAPI_BASE_URL: ${{ secrets.STRAPI_BASE_URL }}
           PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
+          NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
+          NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
