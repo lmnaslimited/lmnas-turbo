@@ -1,5 +1,6 @@
 # Use official Node.js image as base
-FROM node:20-alpine AS base
+# pnpm@latest currently installs pnpm 11, which requires Node 22.
+FROM node:22-alpine AS base
 
 # Set working directory
 WORKDIR /app
