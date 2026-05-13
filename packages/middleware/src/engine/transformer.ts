@@ -41,6 +41,10 @@ import {
   TsubtitleTarget,
   TbenefitQuestionsPageSource,
   TbenefitQuestionsPageTarget,
+  TbenefitChatSource,
+  TbenefitChatTarget,
+  TbenefitPdfContentSource,
+  TbenefitPdfContentTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -72,7 +76,7 @@ export abstract class clTransformer<
   // Implement specific transformation rule of Source Data to Traget data in the respective
   // Content type implementation.
   abstract performTransformation(
-    idSourceData: DynamicSourceType,,
+    idSourceData: DynamicSourceType,
   ): Promise<DynamicTargetType>
   // Additional intiation specefic to Execute. Useful to have more controls for the execution
   // of the transformation
@@ -419,6 +423,38 @@ export class clBenefitQuestionsTransformer extends clTransformer<
   }
 }
 
+// clBenefitCreatorChatTransformer transformer
+export class clBenefitCreatorChatTransformer extends clTransformer<
+  TbenefitChatSource,
+  TbenefitChatTarget
+> {
+  async performTransformation(
+    idBenefitChatData: TbenefitChatSource,
+  ): Promise<TbenefitChatTarget> {
+    this.targetData = idBenefitChatData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+// clBenefitCreatorChatTransformer transformer
+export class clBenefitPdfContentTransformer extends clTransformer<
+TbenefitPdfContentSource,
+TbenefitPdfContentTarget
+> {
+  async performTransformation(
+    idBenefitPdfData: TbenefitPdfContentSource,
+  ): Promise<TbenefitPdfContentTarget> {
+    this.targetData = idBenefitPdfData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer
@@ -440,6 +476,8 @@ interface ITransformerMap {
   forms: clFormsTransformer
   subtitles: clSubtitlesTransformer
   benefitQuestions: clBenefitQuestionsTransformer
+  benefitCreatorChatSetup: clBenefitCreatorChatTransformer
+  benefitPdfContents: clBenefitPdfContentTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -467,6 +505,8 @@ export class clTransformerFactory {
     forms: clFormsTransformer,
     subtitles: clSubtitlesTransformer,
     benefitQuestions: clBenefitQuestionsTransformer,
+    benefitCreatorChatSetup: clBenefitCreatorChatTransformer,
+    benefitPdfContents: clBenefitPdfContentTransformer
     // Add other content types and corresponding transformers
   }
 

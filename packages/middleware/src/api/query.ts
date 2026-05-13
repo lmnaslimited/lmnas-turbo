@@ -19,6 +19,8 @@ import {
   TformsPageSource,
   TsubtitleSource,
   TbenefitQuestionsPageSource,
+  TbenefitChat,
+  TbenefitPdfContent,
 } from "../types"
 import { client } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
@@ -2181,6 +2183,116 @@ export class clQuerySubtitles extends clQuery<TsubtitleSource> {
   }
 }
 
+export class clQueryBenefitCreatorChatSetUp extends clQuery<TbenefitChat>{
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+  getQuery(): string {
+    return`
+    query BenefitCreatorChatSetup($status: PublicationStatus, $locale: I18NLocaleCode) {
+      ${this.contentType}(status: $status, locale: $locale) {
+        aiThinking
+        followUpTitle
+        recomdationTitle
+        scroreText
+        sendButton
+        startFlowText
+        welcomeBackText
+        welcomeNewText
+        working
+        chatbuttons {
+          label
+          variant
+          href
+          icon
+          formMode
+        }
+        streamFlow {
+          label
+          value
+        }
+      }
+    }
+    `
+  }
+}
+
+export class clQueryBenefitCreatorPdf extends clQuery<TbenefitPdfContent>{
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+  getQuery(): string {
+    return`
+    query BenefitPdfContents($locale: I18NLocaleCode, $status: PublicationStatus) {
+      ${this.contentType}(locale: $locale, status: $status) {
+        benefit_type
+        header {
+          title
+          subtitle
+          highlight
+        }
+        sections {
+          header {
+            title
+          }
+          list {
+            description
+          }
+        }
+        performanceAndUserAnswer {
+          title
+          subtitle
+          list {
+            description
+          }
+        }
+        analysis {
+          title
+          list {
+            description
+          }
+        }
+        scoreOverview {
+          title
+          subtitle
+        }
+        ctaSection {
+          header {
+            title
+          }
+          list {
+            description
+          }
+          buttons {
+            label
+            href
+            variant
+            formMode
+          }
+        }
+        nextSteps {
+          header {
+            title
+          }
+          list {
+            description
+          }
+        }
+        footer {
+          title
+          subtitle
+        }
+        recommendations {
+          max
+          message
+          min
+        }
+      }
+    }
+    `
+  }
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>
@@ -2202,6 +2314,9 @@ export class clQueryFactory {
     event: clQueryEvent,
     forms: clQueryForms,
     globalMeta: clQueryGlobalMeta,
+    benefitQuestions: clQueryBenefitQuestions,
+    benefitCreatorChatSetup: clQueryBenefitCreatorChatSetUp,
+    benefitPdfContents: clQueryBenefitCreatorPdf
     // Add more mappings here
   }
 
