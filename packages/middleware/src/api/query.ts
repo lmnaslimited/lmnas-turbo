@@ -2223,8 +2223,8 @@ export class clQueryBenefitCreatorPdf extends clQuery<TbenefitPdfContent>{
   }
   getQuery(): string {
     return`
-    query BenefitPdfContents($locale: I18NLocaleCode, $status: PublicationStatus) {
-      ${this.contentType}(locale: $locale, status: $status) {
+    query BenefitPdfContents($locale: I18NLocaleCode, $status: PublicationStatus, $filters: BenefitPdfContentFiltersInput) {
+      ${this.contentType}(locale: $locale, status: $status, filters: $filters) {
         benefit_type
         header {
           title
@@ -2243,6 +2243,7 @@ export class clQueryBenefitCreatorPdf extends clQuery<TbenefitPdfContent>{
           title
           subtitle
           list {
+            label
             description
           }
         }
