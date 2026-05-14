@@ -39,6 +39,12 @@ import {
   TglobalMetaSource,
   TsubtitleSource,
   TsubtitleTarget,
+  TbenefitQuestionsPageSource,
+  TbenefitQuestionsPageTarget,
+  TbenefitChatSource,
+  TbenefitChatTarget,
+  TbenefitPdfContentSource,
+  TbenefitPdfContentTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -388,6 +394,67 @@ export class clSubtitlesTransformer extends clTransformer<
   }
 }
 
+export class clBenefitQuestionsTransformer extends clTransformer<
+  TbenefitQuestionsPageSource,
+  TbenefitQuestionsPageTarget
+> {
+  async performTransformation(
+    source: TbenefitQuestionsPageSource,
+  ): Promise<TbenefitQuestionsPageTarget> {
+    const transformed: TbenefitQuestionsPageTarget = {
+      benefitQuestions: source.benefitQuestions.map((benefit) => ({
+        benefitType: benefit.benefitType,
+        questions: benefit.questions.map((q) => ({
+          questionid: q.questionId,
+          key: q.key,
+          question: q.question,
+          inputType: q.inputType as "text" | "number" | "options",
+          options: q.options?.map((option) => option.value),
+        })),
+      })),
+    }
+
+    this.targetData = transformed
+    return transformed
+  }
+
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+// clBenefitCreatorChatTransformer transformer
+export class clBenefitCreatorChatTransformer extends clTransformer<
+  TbenefitChatSource,
+  TbenefitChatTarget
+> {
+  async performTransformation(
+    idBenefitChatData: TbenefitChatSource,
+  ): Promise<TbenefitChatTarget> {
+    this.targetData = idBenefitChatData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+// clBenefitPdfContentTransformer transformer
+export class clBenefitPdfContentTransformer extends clTransformer<
+TbenefitPdfContentSource,
+TbenefitPdfContentTarget
+> {
+  async performTransformation(
+    idBenefitPdfData: TbenefitPdfContentSource,
+  ): Promise<TbenefitPdfContentTarget> {
+    this.targetData = idBenefitPdfData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer
@@ -408,6 +475,9 @@ interface ITransformerMap {
   globalMeta: clGlobalMetaTransformer
   forms: clFormsTransformer
   subtitles: clSubtitlesTransformer
+  benefitQuestions: clBenefitQuestionsTransformer
+  benefitCreatorChatSetup: clBenefitCreatorChatTransformer
+  benefitPdfContents: clBenefitPdfContentTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -434,6 +504,9 @@ export class clTransformerFactory {
     globalMeta: clGlobalMetaTransformer,
     forms: clFormsTransformer,
     subtitles: clSubtitlesTransformer,
+    benefitQuestions: clBenefitQuestionsTransformer,
+    benefitCreatorChatSetup: clBenefitCreatorChatTransformer,
+    benefitPdfContents: clBenefitPdfContentTransformer
     // Add other content types and corresponding transformers
   }
 

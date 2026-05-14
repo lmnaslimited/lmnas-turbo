@@ -33,7 +33,7 @@ import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription
 import { sendCommunicationAction } from "@repo/ui/api/contact/fetch-contact"
 import { UpdateEventParticipant } from "@repo/ui/api/event/create-participant"
 
-import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies } from "@repo/middleware/types"
+import type { TformFieldConfig, TformConfig, TdynamicFormProps, Tslot, TtrendCardProps, TcaseStudies, TbenefitPdfData, TbenefitPdfContent } from "@repo/middleware/types"
 
 //till now the strapi's enumerate field value is return with uderscore(incase of space)
 // https://github.com/strapi/strapi/issues/7904
@@ -218,24 +218,36 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
     }
 }
 
+function fnIsBenefitPdfData(
+    idData: TcaseStudies | TbenefitPdfData
+): idData is TbenefitPdfData {
+    return "type" in idData && idData.type === "benefit"
+}
+
 /**
- * Handles the download process of a Case Study PDF file.
- * 
+ * Handles the download process for Benefit and Case Study PDF files.
+ *
  * Steps performed:
- * 1. Subscribes the user to the newsletter if the option is selected.
- * 2. Dynamically imports the PDF layout component and React PDF renderer.
- * 3. Generates a PDF blob from the `PdfDocument` React component.
- * 4. Triggers a browser download of the generated PDF file.
- * 
- * idFormData - Form data object, including email and newsletter preference.
- * idPdfData - Case study data to be passed to the PDF layout.
- * iRecaptchaToken - reCAPTCHA token (currently unused, but can be integrated for validation).
- * An object with a message and title indicating success or failure.
+ * 1. Creates or validates the Lead using the provided name and email.
+ * 2. Subscribes the user to the newsletter if the newsletter option is enabled.
+ * 3. Dynamically imports the required PDF layout component and React PDF renderer.
+ * 4. Generates a PDF Blob using the corresponding PDF document component.
+ * 5. Creates a temporary download link and triggers the browser download.
+ * 6. Cleans up the generated object URL after the download starts.
+ *
+ * @param idFormData - Form data containing user details such as name, email, and newsletter preference.
+ * @param idPdfData - PDF data object for either Benefit PDF or Case Study PDF.
+ * @param iRecaptchaToken - reCAPTCHA token used for Lead API validation.
+ *
+ * @returns An object containing:
+ * - `title`: Status title of the operation.
+ * - `message`: Success or failure message.
+ * - `error`: Optional error details in case of failure.
  */
 
 export async function fnDownload(
     idFormData: any,
-    idPdfData: TcaseStudies,
+    idPdfData: TcaseStudies | TbenefitPdfData,
     iRecaptchaToken: string
 ) {
     try {
@@ -269,28 +281,64 @@ export async function fnDownload(
             await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
 
-        // PDF GENERATION STARTS HERE
-        const { PdfDocument } = await import("@repo/ui/components/pdf/casestudy-layout");
+        // import pdf renderer once
         const { pdf } = await import("@react-pdf/renderer");
 
-        // Generate Blob
-        const LBlob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
+        // Blob variable that will store the generated PDF
+        let lBlob: Blob;
+        let lFileName = "Download"; // Default file name used for download
 
-        if (!LBlob) {
+         /**
+         * Check whether the incoming data belongs
+         * to a Benefit PDF document.
+         */
+        if (fnIsBenefitPdfData(idPdfData)) {
+            // Dynamically import Benefit PDF layout component
+            const { BenefitPdfDocument } = await import(
+                "@repo/ui/components/pdf/benefit-layout"
+            );
+            // Generate PDF Blob for Benefit PDF
+            lBlob = await pdf(
+                <BenefitPdfDocument idData={idPdfData} idContent={idPdfData.content} />
+            ).toBlob();
+            // Generate file name using benefit type
+            lFileName = `${idPdfData.benefitType}-Benefit`;
+
+        } else {
+
+             /**
+             * Generate Case Study PDF
+             * if the data is not Benefit PDF data.
+             */
+
+            // Dynamically import Case Study PDF layout component
+            const { PdfDocument } = await import(
+                "@repo/ui/components/pdf/casestudy-layout"
+            );
+
+            // Generate PDF Blob for Case Study PDF
+            lBlob = await pdf(
+                <PdfDocument idData={idPdfData} />
+            ).toBlob();
+            // Use pdfName from case study data if available
+            lFileName =
+                idPdfData?.caseStudies?.[0]?.pdfName || "CaseStudy";
+        }
+        // Validate whether the Blob was generated successfully
+        if (!lBlob) {
             throw new Error("Failed to generate PDF Blob");
         }
 
-        // Create URL and Link
-        const LUrl = URL.createObjectURL(LBlob);
+        // Create temporary browser URL for the Blob
+        const LUrl = URL.createObjectURL(lBlob);
+        // Create temporary anchor element for download
         const LLink = document.createElement("a");
-
+        // Assign Blob URL to the anchor href
         LLink.href = LUrl;
+        // Assign download file name
+        LLink.download = `${lFileName}.pdf`;
+        // Append anchor element to the DOM
 
-        // Use the case study title as the file name, or default name if not available
-        const LFileName = idPdfData?.caseStudies?.[0]?.pdfName || "CaseStudy";
-        LLink.download = `${LFileName}.pdf`;
-
-        // Append link to body
         document.body.appendChild(LLink);
 
         // Trigger Download

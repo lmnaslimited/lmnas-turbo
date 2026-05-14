@@ -12,7 +12,6 @@ export async function youTubeApi(): Promise<TapiResponse> {
     })
 
     if (!LdResponse.ok) {
-      console.log(LdResponse)
       throw new Error("Failed to fetch youtube")
     }
 

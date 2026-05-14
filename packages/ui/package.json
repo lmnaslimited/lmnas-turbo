@@ -10,7 +10,8 @@
     "./svg/*": "./src/svg/*.tsx",
     "./api/*": "./src/api/*.ts",
     "./utils/*": "./src/utils/*.ts",
-    "./lib/*": "./src/lib/*.ts"
+    "./lib/*": "./src/lib/*.ts",
+    "./context/*": "./src/context/*.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

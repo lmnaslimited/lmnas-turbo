@@ -18,6 +18,9 @@ import {
   TeventPageSource,
   TformsPageSource,
   TsubtitleSource,
+  TbenefitQuestionsPageSource,
+  TbenefitChat,
+  TbenefitPdfContent,
 } from "../types"
 import { client } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
@@ -199,6 +202,11 @@ export class clQueryFooter extends clQuery<TfooterSource> {
         label
         href
       }
+      language {
+        label
+        description
+        icon
+      }
     }
   }`
   }
@@ -227,6 +235,7 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         icon
         formMode
         variant
+        benefitMode
       }
       image {
       source
@@ -2132,6 +2141,33 @@ export class clQueryPrivacyPolicy extends clQuery<TprivacyPolicyPageSource> {
   }
 }
 
+export class clQueryBenefitQuestions extends clQuery<TbenefitQuestionsPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+
+  getQuery(): string {
+    return `
+  query Query(
+    $locale: I18NLocaleCode, 
+    $filters: BenefitQuestionFiltersInput
+  ) {
+    ${this.contentType}(locale: $locale, filters: $filters) {
+      benefitType
+      questions {
+        questionId
+        key
+        inputType
+        question
+        options {
+          value
+        }
+      }
+    }
+  }`
+  }
+}
+
 export class clQuerySubtitles extends clQuery<TsubtitleSource> {
   constructor(iContentType: string) {
     super(iContentType)
@@ -2149,6 +2185,117 @@ export class clQuerySubtitles extends clQuery<TsubtitleSource> {
     }
   }
 }`
+  }
+}
+
+export class clQueryBenefitCreatorChatSetUp extends clQuery<TbenefitChat>{
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+  getQuery(): string {
+    return`
+    query BenefitCreatorChatSetup($status: PublicationStatus, $locale: I18NLocaleCode) {
+      ${this.contentType}(status: $status, locale: $locale) {
+        aiThinking
+        followUpTitle
+        recomdationTitle
+        scroreText
+        sendButton
+        startFlowText
+        welcomeBackText
+        welcomeNewText
+        working
+        chatbuttons {
+          label
+          variant
+          href
+          icon
+          formMode
+        }
+        streamFlow {
+          label
+          value
+        }
+      }
+    }
+    `
+  }
+}
+
+export class clQueryBenefitCreatorPdf extends clQuery<TbenefitPdfContent>{
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+  getQuery(): string {
+    return`
+    query BenefitPdfContents($locale: I18NLocaleCode, $status: PublicationStatus, $filters: BenefitPdfContentFiltersInput) {
+      ${this.contentType}(locale: $locale, status: $status, filters: $filters) {
+        benefit_type
+        header {
+          title
+          subtitle
+          highlight
+        }
+        sections {
+          header {
+            title
+          }
+          list {
+            description
+          }
+        }
+        performanceAndUserAnswer {
+          title
+          subtitle
+          list {
+            label
+            description
+          }
+        }
+        analysis {
+          title
+          list {
+            description
+          }
+        }
+        scoreOverview {
+          title
+          subtitle
+        }
+        ctaSection {
+          header {
+            title
+          }
+          list {
+            description
+          }
+          buttons {
+            label
+            href
+            variant
+            formMode
+          }
+        }
+        nextSteps {
+          header {
+            title
+          }
+          list {
+            description
+          }
+        }
+        footer {
+          title
+          subtitle
+        }
+        recommendations {
+          max
+          message
+          min
+        }
+      }
+    }
+    `
   }
 }
 
@@ -2173,7 +2320,9 @@ export class clQueryFactory {
     event: clQueryEvent,
     forms: clQueryForms,
     globalMeta: clQueryGlobalMeta,
-    subtitles: clQuerySubtitles,
+    benefitQuestions: clQueryBenefitQuestions,
+    benefitCreatorChatSetup: clQueryBenefitCreatorChatSetUp,
+    benefitPdfContents: clQueryBenefitCreatorPdf
     // Add more mappings here
   }
 

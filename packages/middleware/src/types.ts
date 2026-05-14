@@ -50,7 +50,16 @@ export type Tslug = {
 
 export type Tcontext = {
   locale: string
-  filters?: Record<string, any>
+  filters?: {
+    slug?: {
+      eq: string
+    }
+    sourceId?:{eq:string | null}
+    benefitType?: {
+      eq: TbenefitType
+    }
+  } & Record<string, any>
+
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
@@ -184,6 +193,7 @@ export type Tbutton = {
   iconPosition?: "before" | "after"
   className?: string
   formMode?: "booking" | "contact" | "download"
+  benefitMode?: TbenefitType
   description?: string
 }
 
@@ -475,6 +485,7 @@ export type Tfooter = {
   more: Tbutton[]
   contact: TcontactData
   policies: Tbutton[]
+  language: Tbutton[]
 }
 
 // home
@@ -844,4 +855,137 @@ export type TsubtitleTarget = {
 export type TsubtitleItem = {
   sourceId: string
   subtitle: Tsubtitle[]
+}
+
+export type TbenefitQuestionItemTarget = {
+  questionid: string
+  question: string
+  options?: string[]
+  inputType: "text" | "number" | "options"
+  key: string
+}
+
+export type TbenefitQuestionTarget = {
+  benefitType: TbenefitType
+  questions: TbenefitQuestionItemTarget[]
+}
+
+export type TbenefitQuestionsPageTarget = {
+  benefitQuestions: TbenefitQuestionTarget[]
+}
+
+export type TbenefitQuestionItemSource = {
+  questionId: string
+  key: string
+  inputType: string
+  question: string
+  options: {
+    value: string
+  }[]
+}
+
+export type TbenefitQuestionSource = {
+  benefitType: TbenefitType
+  questions: TbenefitQuestionItemSource[]
+}
+
+export type TbenefitQuestionsPageSource = {
+  benefitQuestions: TbenefitQuestionSource[]
+}
+
+export type TbenefitType =
+  | "roi_calculator"
+  | "pipeline_audit"
+  | "cpq_maturity_scan"
+  | "sales_cycle_analyzer"
+  | "tender_complexity_score"
+
+export type TbenefitContext = {
+  benefitType: TbenefitType
+  industry: string
+  entryPage: string
+  leadSource: string
+  userIntent: string
+}
+
+export interface TuserSession {
+  sessionId: string
+  anonymousId: string
+  identity?: {
+    name: string
+    email: string
+    lensLeadId?: string
+  }
+  enrichment?: {
+    ip?: string
+    city?: string
+    region?: string
+    country?: string
+    org?: string
+    enrichedAt?: string
+  }
+  benefitHistory?: {
+    benefitType: string
+    lastCalculatedAt: string
+    lastScore?: number
+  }[]
+}
+
+export type TbenefitPdfData = {
+  type: "benefit"
+  benefitType: TbenefitType
+  result?: {
+      summary: string
+      score?: number
+      recommendation?: string
+  }
+  answers: Record<string, string>
+  session?: TuserSession | null
+  content: TbenefitPdfContent
+}
+
+export type TbenefitPdfContent = {
+  benefit_type: string
+  header: Theader
+  sections: TcalloutProps[]
+  performanceAndUserAnswer: TcalloutProps
+  analysis: TcalloutProps
+  recommendations: {
+    min: number
+    max: number
+    message: string
+  }[]
+  scoreOverview: Theader
+  ctaSection: TcalloutProps
+  nextSteps: TcalloutProps
+  footer: Theader
+}
+
+export type TbenefitChat = {
+  welcomeBackText: string
+  welcomeNewText: string
+  aiThinking: string
+  working: string
+  sendButton: string
+  followUpTitle: string
+  result: string
+  scroreText: string
+  recommendationText: string
+  chatbuttons: Tbutton[]
+  startFlowText: string
+  streamFlow: { value: string; label: string }
+}
+
+export type TbenefitChatSource = {
+  benefitCreatorChatSetup: TbenefitChat
+}
+export type TbenefitChatTarget = {
+  benefitCreatorChatSetup: TbenefitChat
+}
+
+export type TbenefitPdfContentSource = {
+  benefitPdfContents: TbenefitPdfContent[]
+}
+export type TbenefitPdfContentTarget = {
+  benefitPdfContents: TbenefitPdfContent[]
 }
