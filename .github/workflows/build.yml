@@ -29,6 +29,8 @@ jobs:
           PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
           NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
           NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+          N8N_API_KEY: ${{ secrets.N8N_API_KEY }}
+          N8N_BENEFIT_WEBHOOK_URL: ${{ secrets.N8N_BENEFIT_WEBHOOK_URL }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
