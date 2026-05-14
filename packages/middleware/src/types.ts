@@ -485,6 +485,7 @@ export type Tfooter = {
   more: Tbutton[]
   contact: TcontactData
   policies: Tbutton[]
+  language: Tbutton[]
 }
 
 // home
