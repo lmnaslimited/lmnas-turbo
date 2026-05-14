@@ -439,7 +439,7 @@ export class clBenefitCreatorChatTransformer extends clTransformer<
   }
 }
 
-// clBenefitCreatorChatTransformer transformer
+// clBenefitPdfContentTransformer transformer
 export class clBenefitPdfContentTransformer extends clTransformer<
 TbenefitPdfContentSource,
 TbenefitPdfContentTarget
