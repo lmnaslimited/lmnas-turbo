@@ -1,6 +1,7 @@
 "use server"
 
 import { TcontactApi } from "@repo/middleware/types"
+import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -77,12 +78,23 @@ export async function ContactApi(idFormdata: TcontactApi) {
         redirect: "follow",
       })
       const LdPostContactResult = await LdPostContact.json()
+      await linkFrappeRecordToPostHog(
+        "Contact",
+        LdPostContactResult.data?.name,
+        idFormdata.formData.email,
+      )
 
       return {
         data: LdPostContactResult.data,
         message: "created",
       }
     } else {
+      await linkFrappeRecordToPostHog(
+        "Contact",
+        LdContactResult.data[0]?.name,
+        idFormdata.formData.email,
+      )
+
       // Contact already exists
       return {
         data: LdContactResult.data[0],
