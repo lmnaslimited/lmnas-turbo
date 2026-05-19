@@ -18,6 +18,7 @@ import {
   TeventPageSource,
   TformsPageSource,
   TsubtitleSource,
+  TblogPageSource,
 } from "../types"
 import { client } from "../lib/apollo-client"
 import { gql } from "@apollo/client"
@@ -2151,7 +2152,74 @@ export class clQuerySubtitles extends clQuery<TsubtitleSource> {
 }`
   }
 }
+// ==============================================================================
+export class clQueryBlogHome extends clQuery<TblogPageSource> {
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
 
+  getQuery(): string {
+    return `
+ query BlogHome($locale: I18NLocaleCode, $status: PublicationStatus, $blogsLocale2: I18NLocaleCode, $blogsStatus2: PublicationStatus) {
+   ${this.contentType}(locale: $locale, status: $status) {
+    blogHeader {
+      title
+      subtitle
+      badge
+      highlight
+    }
+    ctaSection {
+      buttons {
+        label
+        variant
+        href
+        icon
+        formMode
+      }
+    }
+    metaData {
+      id
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        height
+        alt
+        width
+      }
+      twitterTitle
+      twitterDescription
+      twitterCreator
+      twitterCard
+      ogType
+      category
+      twitterImage
+      schemaData
+    }
+  }
+  blogs(locale: $blogsLocale2, status: $blogsStatus2) {
+    blogHeader {
+      author
+      blogExert
+      blogTitle
+      category
+      image
+      publishingDate
+    }
+  }
+}
+    `
+  }
+}
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>
@@ -2174,6 +2242,7 @@ export class clQueryFactory {
     forms: clQueryForms,
     globalMeta: clQueryGlobalMeta,
     subtitles: clQuerySubtitles,
+    blogHome: clQueryBlogHome,
     // Add more mappings here
   }
 
