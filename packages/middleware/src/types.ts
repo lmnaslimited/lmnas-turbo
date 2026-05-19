@@ -49,6 +49,8 @@ export type Tslug = {
 }
 
 export type Tcontext = {
+  blogsLocale2?: string
+  blogsStatus2?: string
   locale: string
   filters?: Record<string, any>
   status?: string

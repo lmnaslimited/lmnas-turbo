@@ -2160,7 +2160,7 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
 
   getQuery(): string {
     return `
- query BlogHome($locale: I18NLocaleCode, $status: PublicationStatus, $blogsLocale2: I18NLocaleCode, $blogsStatus2: PublicationStatus) {
+ query Query($locale: I18NLocaleCode, $status: PublicationStatus, $blogsLocale2: I18NLocaleCode, $blogsStatus2: PublicationStatus) {
    ${this.contentType}(locale: $locale, status: $status) {
     blogHeader {
       title
@@ -2210,6 +2210,7 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
     blogHeader {
       author
       blogExert
+      slug
       blogTitle
       category
       image
