@@ -53,6 +53,7 @@ export type Tcontext = {
   blogsStatus2?: string
   locale: string
   filters?: Record<string, any>
+  relatedFilters?: Record<string, any>
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
@@ -866,13 +867,59 @@ export type TblogHome = {
 }
 
 export type Tblog = {
+  slug: string
+  featuredBlog: boolean
   blogHeader: {
-    author: string
-    blogExert: string
+    author?: string | null
+    blogExert: string | null
     blogTitle: string
-    slug: string
     category: string
-    publishingDate: string
+    publishingDate: string | null
     image: string
+  }
+}
+//Individual Article Page
+export type TblogArticleSource = {
+  currentBlog: TblogArticle[]
+  relatedBlogs: TblogRelatedArticle[]
+}
+
+export type TblogArticleTarget = {
+  currentBlog: TblogArticle[]
+  relatedBlogs: TblogRelatedArticle[]
+}
+
+export type TblogArticle = {
+  advertisement: {
+    buttons: Tbutton[]
+    header: Theader
+    category?: string
+    image?: Timage
+  }[]
+  blogContent: string | null
+  blogHeader: {
+    author?: string | null
+    blogExert: string | null
+    blogTitle: string
+    category: string
+    publishingDate: string | null
+    image: string
+  }
+  ctasection: {
+    title?: string
+    subtitle?: string
+    buttons: Tbutton[]
+  }[] | null
+  metaData: TpageMetadata | null
+}
+
+export type TblogRelatedArticle = {
+  slug: string
+  blogHeader: {
+    blogTitle: string
+    blogExert: string | null
+    category: string
+    image: string
+    publishingDate: string | null
   }
 }

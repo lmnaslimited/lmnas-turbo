@@ -41,6 +41,8 @@ import {
   TsubtitleTarget,
   TblogPageSource,
   TblogPageTarget,
+  TblogArticleSource,
+  TblogArticleTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -405,6 +407,16 @@ export class clBlogHomeTransformer extends clTransformer<
   }
 }
 
+export class clBlogArticleTransformer extends clTransformer<
+  TblogArticleSource,
+  TblogArticleTarget>{
+  async performTransformation(
+    idSourceData: TblogArticleSource,
+  ): Promise<TblogArticleTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer
@@ -426,6 +438,7 @@ interface ITransformerMap {
   forms: clFormsTransformer
   subtitles: clSubtitlesTransformer
   blogHome: clBlogHomeTransformer
+  blogs: clBlogArticleTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -453,6 +466,7 @@ export class clTransformerFactory {
     forms: clFormsTransformer,
     subtitles: clSubtitlesTransformer,
     blogHome: clBlogHomeTransformer,
+    blogs: clBlogArticleTransformer,
     // Add other content types and corresponding transformers
   }
 
