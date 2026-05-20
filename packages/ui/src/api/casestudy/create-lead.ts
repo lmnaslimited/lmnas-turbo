@@ -1,6 +1,7 @@
 "use server"
 
 import { TleadApi } from "@repo/middleware/types"
+import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
 
 // Verifies the Google reCAPTCHA token received from the client
 async function fnVerifyRecaptchaToken(
@@ -104,6 +105,11 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
       }
 
       const LdCreateLeadResult = await LdCreateLeadResponse.json()
+      await linkFrappeRecordToPostHog(
+        "Lead",
+        LdCreateLeadResult.data?.name,
+        idLeadFormData.email,
+      )
 
       return {
         data: LdCreateLeadResult.data,
@@ -112,6 +118,12 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
     }
 
     // Lead already exists then return existing lead
+    await linkFrappeRecordToPostHog(
+      "Lead",
+      LdLeadLookupResult.data[0]?.name,
+      idLeadFormData.email,
+    )
+
     return {
       data: LdLeadLookupResult.data[0],
       message: "exist",

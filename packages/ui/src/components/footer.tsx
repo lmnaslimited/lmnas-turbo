@@ -1,11 +1,11 @@
 "use client"
 
 import Link from "next/link"
-import { type ReactElement, useActionState } from "react"
+import { type ReactElement, useActionState, useEffect } from "react"
 import { Button } from "@repo/ui/components/ui/button"
 import { Input } from "@repo/ui/components/ui/input"
 import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube } from "lucide-react"
-import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { subscribeNewsletter, type TnewsletterSubscriptionState } from "@repo/ui/api/newsletter/create-subscription"
 import { TfooterTarget } from "@repo/middleware/types";
 
 // Map of icon names to their components
@@ -21,8 +21,25 @@ const iconMap = {
 type IconKey = keyof typeof iconMap
 
 export default function Footer({ idFooter }: { idFooter: TfooterTarget }): ReactElement {
-  const LdInitialState = { message: "", }
+  const LdInitialState: TnewsletterSubscriptionState = { message: "", status: "error" }
   const [state, formAction, pending] = useActionState(subscribeNewsletter, LdInitialState)
+
+  useEffect(() => {
+    if (
+      typeof window === "undefined" ||
+      !state.email ||
+      !["subscribed", "already_subscribed"].includes(state.status)
+    ) {
+      return
+    }
+
+    window.dispatchEvent(
+      new CustomEvent("newsletter_subscribed", {
+        detail: { email: state.email, status: state.status },
+      }),
+    )
+  }, [state.email, state.status])
+
   return (
     <footer className="bg-muted/80 pt-16 pb-8">
       <div className="container mx-auto px-4">
