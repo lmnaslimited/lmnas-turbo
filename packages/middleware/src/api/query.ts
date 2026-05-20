@@ -2152,7 +2152,7 @@ export class clQuerySubtitles extends clQuery<TsubtitleSource> {
 }`
   }
 }
-// ==============================================================================
+
 export class clQueryBlogHome extends clQuery<TblogPageSource> {
   constructor(iContentType: string) {
     super(iContentType)

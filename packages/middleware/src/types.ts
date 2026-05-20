@@ -850,8 +850,6 @@ export type TsubtitleItem = {
 
 //blog page
 
-// blog page
-
 export type TblogPageSource = {
   blogs: Tblog[]
   blogHome: TblogHome
@@ -878,21 +876,3 @@ export type Tblog = {
     image: string
   }
 }
-// export type TblogHome={
-// blogHeader: Theader
-// blogPosts: Tblog[]
-// metaData: TpageMetadata
-// }
-
-// export type TblogContent={
-
-// }
-
-// export type Tblog = {
-//     author: string
-//     blogExert: string
-//     blogTitle: string
-//     slug: string
-//     publishingDate: string
-//     image: string
-//   }
