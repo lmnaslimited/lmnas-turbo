@@ -2170,6 +2170,8 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
       highlight
     }
     ctaSection {
+      title
+      subtitle
       buttons {
         label
         variant
@@ -2238,7 +2240,6 @@ query Query(
   $status: PublicationStatus
   $locale: I18NLocaleCode
   $filters: BlogFiltersInput
-  $relatedFilters: BlogFiltersInput
 ) {
 
     ${this.contentType}(
@@ -2330,7 +2331,6 @@ query Query(
   relatedBlogs: blogs(
     status: $status
     locale: $locale
-    filters: $relatedFilters
   ) {
     blogHeader {
       blogTitle

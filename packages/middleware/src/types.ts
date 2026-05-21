@@ -864,6 +864,7 @@ export type TblogPageTarget = {
 export type TblogHome = {
   blogHeader: Theader
   metaData: TpageMetadata
+  ctaSection: TcalloutProps
 }
 
 export type Tblog = {
@@ -880,12 +881,12 @@ export type Tblog = {
 }
 //Individual Article Page
 export type TblogArticleSource = {
-  currentBlog: TblogArticle[]
+  blogs: TblogArticle[]
   relatedBlogs: TblogRelatedArticle[]
 }
 
 export type TblogArticleTarget = {
-  currentBlog: TblogArticle[]
+  blogs: TblogArticle[]
   relatedBlogs: TblogRelatedArticle[]
 }
 
@@ -896,13 +897,13 @@ export type TblogArticle = {
     category?: string
     image?: Timage
   }[]
-  blogContent: string | null
+  blogContent: string
   blogHeader: {
-    author?: string | null
-    blogExert: string | null
+    author?: string
+    blogExert: string
     blogTitle: string
     category: string
-    publishingDate: string | null
+    publishingDate: string
     image: string
   }
   ctasection: {
@@ -910,7 +911,7 @@ export type TblogArticle = {
     subtitle?: string
     buttons: Tbutton[]
   }[] | null
-  metaData: TpageMetadata | null
+  metaData: TpageMetadata
 }
 
 export type TblogRelatedArticle = {
