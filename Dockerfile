@@ -1,12 +1,12 @@
 # Use official Node.js image as base
 # pnpm@latest currently installs pnpm 11, which requires Node 22.
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 # Set working directory
 WORKDIR /app
 
 # Install Git and PNPM globally
-RUN apk add --no-cache git && npm install -g pnpm@9.0.0
+RUN apk add --no-cache git && npm install -g pnpm@latest
 
 # Install dependencies
 FROM base AS deps
@@ -17,7 +17,7 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS build
 COPY . .
 ARG BUILD_ENV_CONTENT
-RUN pnpm get-app braccoli-site-2.0 blog && pnpm get-app braccoli-bites story-US-2026-1122
+RUN pnpm get-app braccoli-site-2.0 && pnpm get-app braccoli-bites
 RUN echo -e "$BUILD_ENV_CONTENT" > .env.temp && \
     cp .env.temp apps/braccoli-site-2.0/.env && \
     cp .env.temp apps/braccoli-bites/.env
