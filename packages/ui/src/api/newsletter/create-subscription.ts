@@ -2,6 +2,18 @@
 
 // Zod is a TypeScript-first schema validation library recommended by Next.js
 import { z } from "zod"
+import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
+
+export type TnewsletterSubscriptionStatus =
+  | "subscribed"
+  | "already_subscribed"
+  | "error"
+
+export type TnewsletterSubscriptionState = {
+  message: string
+  email?: string
+  status: TnewsletterSubscriptionStatus
+}
 
 // Define expected structure and constraints for form data
 const LdSchema = z.object({
@@ -9,9 +21,9 @@ const LdSchema = z.object({
 })
 
 export async function subscribeNewsletter(
-  idPrevState: { message: string },
+  idPrevState: { message: string; status?: TnewsletterSubscriptionStatus },
   idFormData: FormData,
-): Promise<{ message: string }> {
+): Promise<TnewsletterSubscriptionState> {
   //headers for API requests
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,
@@ -29,6 +41,7 @@ export async function subscribeNewsletter(
     return {
       message:
         LdParsed.error.flatten().fieldErrors.email?.[0] || "Invalid input",
+      status: "error",
     }
   }
 
@@ -49,7 +62,12 @@ export async function subscribeNewsletter(
 
     // If email exists in the "Website" group, inform the user instead of trying to subscribe again
     if (LdCheckData?.data?.length > 0) {
-      return { message: "You're already subscribed!" }
+      await linkFrappeRecordByEmailToPostHog(LEmail)
+      return {
+        message: "You're already subscribed!",
+        email: LEmail,
+        status: "already_subscribed",
+      }
     }
 
     // If the email isn't already subscribed, submit it to the backend via a POST request
@@ -65,6 +83,7 @@ export async function subscribeNewsletter(
     if (LdSubscribe.status === 429) {
       return {
         message: "Too many requests. Please wait a moment before trying again.",
+        status: "error",
       }
     }
 
@@ -73,10 +92,17 @@ export async function subscribeNewsletter(
       throw new Error(await LdSubscribe.text())
     }
 
-    return { message: "Please check your inbox!" }
+    await linkFrappeRecordByEmailToPostHog(LEmail)
+
+    return {
+      message: "Please check your inbox!",
+      email: LEmail,
+      status: "subscribed",
+    }
   } catch (err: any) {
     return {
       message: err.message || "An error occurred, please try again later.",
+      status: "error",
     }
   }
 }

@@ -30,6 +30,7 @@ import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
 import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
 import { bookAppointmentAction } from "@repo/ui/api/appointment/book-appointment"
 import { subscribeNewsletter } from "@repo/ui/api/newsletter/create-subscription"
+import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
 import { sendCommunicationAction } from "@repo/ui/api/contact/fetch-contact"
 import { UpdateEventParticipant } from "@repo/ui/api/event/create-participant"
 
@@ -206,6 +207,8 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
             return { error: LdResponse.error }
         }
 
+        await linkFrappeRecordByEmailToPostHog(idFormData.email)
+
         // Return success response with any provided message and data
         return {
             data: LdResponse.data,
@@ -330,6 +333,7 @@ export async function fnDownload(
 function InnerSectionForm({
     config,
     onSuccess,
+    onSuccessfulSubmit,
     className = "",
     defaultValues,
     hideCardHeader = false,
@@ -344,6 +348,11 @@ function InnerSectionForm({
     const [IsSubmitting, fnSetIsSubmitting] = useState(false)
     const FormRef = useRef<HTMLDivElement>(null)
     const { executeRecaptcha } = useReCaptcha()
+
+    const fnSanitizeFormData = (idFormData: Record<string, unknown>) =>
+        Object.fromEntries(
+            Object.entries(idFormData).filter(([iKey]) => !["recaptchaToken", "timeSlot"].includes(iKey))
+        )
 
     // Sets up default values for all possible form fields, overridden by any provided values
     const LdInitialValues = {
@@ -465,6 +474,16 @@ function InnerSectionForm({
             if (LdResponse.error) {
                 throw new Error(LdResponse.error)
             }
+
+            await onSuccessfulSubmit?.({
+                formData: fnSanitizeFormData(idFormData),
+                formId: config.formId,
+                formTitle: config.title,
+                meta: {
+                    case_study_name: pdfData?.caseStudies?.[0]?.name,
+                    webinar_title: data?.title,
+                },
+            })
 
             LdForm.reset(LdInitialValues)
             onSuccess(config.successMessage, config.successTitle)

@@ -2,6 +2,7 @@
 
 import { z } from "zod"
 import { TapiResponse } from "@repo/middleware/types"
+import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -85,6 +86,8 @@ export async function bookAppointmentAction(
 
     // On success, return the booking confirmation
     const LdResult = await LdResponse.json()
+    await linkFrappeRecordByEmailToPostHog(contact.email)
+
     return {
       message: "Booking confirmed successfully",
       data: LdResult,

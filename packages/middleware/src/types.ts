@@ -403,6 +403,13 @@ export type TformConfig = {
 export type TdynamicFormProps = {
   config: TformConfig
   onSuccess: (message: string, title: string) => void
+  onSuccessfulSubmit?: (payload: {
+    formData: Record<string, unknown>
+    formId: string
+    formTitle?: string
+    source?: string
+    meta?: Record<string, unknown>
+  }) => void | Promise<void>
   onCancel?: () => void
   className?: string
   defaultValues?: Record<string, any>
