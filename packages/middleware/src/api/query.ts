@@ -2177,6 +2177,7 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
         variant
         href
         icon
+        description
         formMode
       }
     }

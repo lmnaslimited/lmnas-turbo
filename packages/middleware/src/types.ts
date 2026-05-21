@@ -917,7 +917,7 @@ export type TblogArticle = {
     title?: string
     subtitle?: string
     buttons: Tbutton[]
-  }[] | null
+  }
   metaData: TpageMetadata
 }
 
@@ -925,9 +925,9 @@ export type TblogRelatedArticle = {
   slug: string
   blogHeader: {
     blogTitle: string
-    blogExert: string | null
+    blogExert: string
     category: string
     image: string
-    publishingDate: string | null
+    publishingDate: string
   }
 }
