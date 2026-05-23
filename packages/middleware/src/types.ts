@@ -49,8 +49,11 @@ export type Tslug = {
 }
 
 export type Tcontext = {
+  blogsLocale2?: string
+  blogsStatus2?: string
   locale: string
   filters?: Record<string, any>
+  relatedFilters?: Record<string, any>
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
@@ -482,6 +485,7 @@ export type Tfooter = {
   more: Tbutton[]
   contact: TcontactData
   policies: Tbutton[]
+  language: Tbutton[]
 }
 
 // home
@@ -851,4 +855,80 @@ export type TsubtitleTarget = {
 export type TsubtitleItem = {
   sourceId: string
   subtitle: Tsubtitle[]
+}
+
+//blog page
+
+export type TblogPageSource = {
+  blogs: Tblog[]
+  blogHome: TblogHome
+}
+
+export type TblogPageTarget = {
+  blogs: Tblog[]
+  blogHome: TblogHome
+}
+
+export type TblogHome = {
+  blogHeader: Theader
+  metaData: TpageMetadata
+  ctaSection: TcalloutProps
+}
+
+export type Tblog = {
+  slug: string
+  featuredBlog: boolean
+  blogHeader: {
+    author?: string | null
+    blogExert: string | null
+    blogTitle: string
+    category: string
+    publishingDate: string | null
+    image: string
+  }
+}
+//Individual Article Page
+export type TblogArticleSource = {
+  blogs: TblogArticle[]
+  relatedBlogs: TblogRelatedArticle[]
+}
+
+export type TblogArticleTarget = {
+  blogs: TblogArticle[]
+  relatedBlogs: TblogRelatedArticle[]
+}
+
+export type TblogArticle = {
+  advertisement: {
+    buttons: Tbutton[]
+    header: Theader
+    category?: string
+    image?: Timage
+  }[]
+  blogContent: string
+  blogHeader: {
+    author?: string
+    blogExert: string
+    blogTitle: string
+    category: string
+    publishingDate: string
+    image: string
+  }
+  ctasection: {
+    title?: string
+    subtitle?: string
+    buttons: Tbutton[]
+  }
+  metaData: TpageMetadata
+}
+
+export type TblogRelatedArticle = {
+  slug: string
+  blogHeader: {
+    blogTitle: string
+    blogExert: string
+    category: string
+    image: string
+    publishingDate: string
+  }
 }

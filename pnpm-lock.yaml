@@ -14,9 +14,6 @@ importers:
       geist:
         specifier: ^1.3.1
         version: 1.3.1(next@15.1.11(@opentelemetry/api@1.9.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0))
-      pnpm:
-        specifier: ^10.5.2
-        version: 10.5.2
     devDependencies:
       prettier:
         specifier: ^3.4.2
@@ -30,12 +27,24 @@ importers:
 
   apps/braccoli-bites:
     dependencies:
+      '@n8n/chat':
+        specifier: ^0.67.0
+        version: 0.67.0(typescript@5.7.3)
       '@repo/middleware':
         specifier: workspace:*
         version: link:../../packages/middleware
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@tailwindcss/typography':
+        specifier: ^0.5.19
+        version: 0.5.19(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.19.30)(typescript@5.7.3)))
+      clsx:
+        specifier: ^2.1.1
+        version: 2.1.1
+      lucide-react:
+        specifier: ^0.474.0
+        version: 0.474.0(react@19.0.0)
       next:
         specifier: 15.1.11
         version: 15.1.11(@opentelemetry/api@1.9.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -45,6 +54,18 @@ importers:
       react-dom:
         specifier: ^19.0.0
         version: 19.0.0(react@19.0.0)
+      react-markdown:
+        specifier: ^10.1.0
+        version: 10.1.0(@types/react@19.0.8)(react@19.0.0)
+      rehype-raw:
+        specifier: ^7.0.0
+        version: 7.0.0
+      remark-gfm:
+        specifier: ^4.0.1
+        version: 4.0.1
+      tailwind-merge:
+        specifier: ^3.0.1
+        version: 3.0.1
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3
@@ -1351,6 +1372,11 @@ packages:
     resolution: {integrity: sha512-5U6SY5z8N42VtrCrKlsTAA35gy2VSyYtHWCsg1H87NU1SXnEfekTVlrga9fzUDrrHcGi2Lb5KenUWb4lRQT5/g==}
     peerDependencies:
       tailwindcss: '>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1'
+
+  '@tailwindcss/typography@0.5.19':
+    resolution: {integrity: sha512-w31dd8HOx3k9vPtcQh5QHP9GwKcgbMp87j58qi6xgiBnFFtKEAgCWnDw4qUT8aHwkCp8bKvb/KGKWWHedP0AAg==}
+    peerDependencies:
+      tailwindcss: '>=3.0.0 || insiders || >=4.0.0-alpha.20 || >=4.0.0-beta.1'
 
   '@tootallnate/quickjs-emscripten@0.23.0':
     resolution: {integrity: sha512-C5Mc6rdnsaJDjO3UpGW/CQTHtCKaYlScZTly4JIu97Jxo/odCiH0ITnDXSJPTOrEKk/ycSZ0AOgTmkDtkOsvIA==}
@@ -3574,11 +3600,6 @@ packages:
     resolution: {integrity: sha512-saLsH7WeYYPiD25LDuLRRY/i+6HaPYr6G1OUlN39otzkSTxKnubR9RTxS3/Kk50s1g2JTgFwWQDQyplC5/SHZg==}
     engines: {node: '>= 6'}
 
-  pnpm@10.5.2:
-    resolution: {integrity: sha512-2p3CjNP/QNBZIYgjWrJdMgKt2KIHr77caCIg5KACn/v/RWIQK55uRrTj+ei9U+bQXeSFRLDFfUsBeeIsdtEZmw==}
-    engines: {node: '>=18.12'}
-    hasBin: true
-
   possible-typed-array-names@1.0.0:
     resolution: {integrity: sha512-d7Uw+eZoloe0EHDIYoe+bQ5WXnGMOpmiZFTuMWCwpjzzkL2nTjcKiAk4hh8TjnGye2TwWOk3UXucZ+3rbmBa8Q==}
     engines: {node: '>= 0.4'}
@@ -3612,6 +3633,10 @@ packages:
     engines: {node: '>=12.0'}
     peerDependencies:
       postcss: ^8.2.14
+
+  postcss-selector-parser@6.0.10:
+    resolution: {integrity: sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w==}
+    engines: {node: '>=4'}
 
   postcss-selector-parser@6.1.2:
     resolution: {integrity: sha512-Q8qQfPiZ+THO/3ZrOrO0cJJKfpYCagtMUkXbnEfmgUjwXg6z/WBeOyS9APBBPCTSiDV+s4SwQGu8yFsiMRIudg==}
@@ -5547,6 +5572,11 @@ snapshots:
   '@tailwindcss/line-clamp@0.4.4(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3)))':
     dependencies:
       tailwindcss: 3.4.17(ts-node@10.9.2(@types/node@22.13.0)(typescript@5.7.3))
+
+  '@tailwindcss/typography@0.5.19(tailwindcss@3.4.17(ts-node@10.9.2(@types/node@20.19.30)(typescript@5.7.3)))':
+    dependencies:
+      postcss-selector-parser: 6.0.10
+      tailwindcss: 3.4.17(ts-node@10.9.2(@types/node@20.19.30)(typescript@5.7.3))
 
   '@tootallnate/quickjs-emscripten@0.23.0': {}
 
@@ -8359,8 +8389,6 @@ snapshots:
 
   pirates@4.0.6: {}
 
-  pnpm@10.5.2: {}
-
   possible-typed-array-names@1.0.0: {}
 
   postcss-import@15.1.0(postcss@8.5.1):
@@ -8395,6 +8423,11 @@ snapshots:
     dependencies:
       postcss: 8.5.1
       postcss-selector-parser: 6.1.2
+
+  postcss-selector-parser@6.0.10:
+    dependencies:
+      cssesc: 3.0.0
+      util-deprecate: 1.0.2
 
   postcss-selector-parser@6.1.2:
     dependencies:

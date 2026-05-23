@@ -6,7 +6,7 @@ FROM node:22-alpine AS base
 WORKDIR /app
 
 # Install Git and PNPM globally
-RUN apk add --no-cache git && npm install -g pnpm@latest
+RUN apk add --no-cache git && npm install -g pnpm@9.0.0
 
 # Install dependencies
 FROM base AS deps
