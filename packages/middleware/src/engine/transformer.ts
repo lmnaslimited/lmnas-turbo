@@ -39,6 +39,10 @@ import {
   TglobalMetaSource,
   TsubtitleSource,
   TsubtitleTarget,
+  TblogPageSource,
+  TblogPageTarget,
+  TblogArticleSource,
+  TblogArticleTarget,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -388,6 +392,31 @@ export class clSubtitlesTransformer extends clTransformer<
   }
 }
 
+export class clBlogHomeTransformer extends clTransformer<
+  TblogPageSource,
+  TblogPageTarget
+> {
+  async performTransformation(
+    idSourceData: TblogPageSource,
+  ): Promise<TblogPageTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
+
+export class clBlogArticleTransformer extends clTransformer<
+  TblogArticleSource,
+  TblogArticleTarget>{
+  async performTransformation(
+    idSourceData: TblogArticleSource,
+  ): Promise<TblogArticleTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }}
+
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer
@@ -408,6 +437,8 @@ interface ITransformerMap {
   globalMeta: clGlobalMetaTransformer
   forms: clFormsTransformer
   subtitles: clSubtitlesTransformer
+  blogHome: clBlogHomeTransformer
+  blogs: clBlogArticleTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -434,6 +465,8 @@ export class clTransformerFactory {
     globalMeta: clGlobalMetaTransformer,
     forms: clFormsTransformer,
     subtitles: clSubtitlesTransformer,
+    blogHome: clBlogHomeTransformer,
+    blogs: clBlogArticleTransformer,
     // Add other content types and corresponding transformers
   }
 
