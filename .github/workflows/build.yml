@@ -38,6 +38,19 @@ jobs:
           ENCODED=$(cat build.env | sed ':a;N;$!ba;s/\n/\\n/g')
           echo "BUILD_ENV_CONTENT=$ENCODED" >> $GITHUB_ENV
 
+      - name: Read version
+        run: |
+          VERSION=$(tr -d '[:space:]' < ./ci/version.txt)
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+
+      - name: Set Docker tags
+        run: |
+          if [ "${GITHUB_REF_NAME}" = "main" ]; then
+            echo "DOCKER_TAGS=${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:latest,${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${VERSION}" >> $GITHUB_ENV
+          elif [ "${GITHUB_REF_NAME}" = "develop" ]; then
+            echo "DOCKER_TAGS=${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:v1" >> $GITHUB_ENV
+          fi
+
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -55,6 +68,6 @@ jobs:
           push: true
           pull: true
           no-cache: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/turbo-braccoli:${{ github.ref_name == 'main' && 'latest' || 'v1' }}
+          tags: ${{ env.DOCKER_TAGS }}
           build-args: |
             BUILD_ENV_CONTENT=${{ env.BUILD_ENV_CONTENT }}
