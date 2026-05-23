@@ -201,6 +201,11 @@ export class clQueryFooter extends clQuery<TfooterSource> {
         label
         href
       }
+      language {
+        label
+        description
+        icon
+      }
     }
   }`;
   }
