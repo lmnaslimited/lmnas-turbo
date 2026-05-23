@@ -34,7 +34,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
   const [Language, fnSetLanguage] = React.useState("en") //Maintain Language state
   // Manage newsletter form state, submit action, and loading status
   const LdInitialState: TnewsletterSubscriptionState = { message: "",  status: "error"}
-  const [state, formAction, pending] = useActionState(subscribeNewsletter, LdInitialState)
+  const [LdState, fnFormAction, LPending] = useActionState(subscribeNewsletter, LdInitialState)
   const LaRouter = useRouter() // Router instance for navigation
   const LPathname = usePathname() // Get current pathname (e.g., /en/trending-now)
   // Sync language from URL path (middleware-like behavior)
@@ -68,18 +68,18 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
   useEffect(() => {
     if (
       typeof window === "undefined" ||
-      !state.email ||
-      !["subscribed", "already_subscribed"].includes(state.status)
+      !LdState.email ||
+      !["subscribed", "already_subscribed"].includes(LdState.status)
     ) {
       return
     }
 
     window.dispatchEvent(
       new CustomEvent("newsletter_subscribed", {
-        detail: { email: state.email, status: state.status },
+        detail: { email: LdState.email, status: LdState.status },
       }),
     )
-  }, [state.email, state.status])
+  }, [LdState.email, LdState.status])
 
 
   return (
