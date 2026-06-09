@@ -46,6 +46,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "echarts": "^6.1.0",
     "framer-motion": "^12.4.7",
     "graphql": "^16.10.0",
     "libphonenumber-js": "^1.12.6",

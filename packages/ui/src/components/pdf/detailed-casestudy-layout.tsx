@@ -91,60 +91,27 @@ class clTableRenderer extends clBaseBlockRenderer {
 }
 
 /**
- * Renders a simple vertical bar chart.
- * Computes relative bar heights based on dataset max value.
+ * Renders Apache echart
  */
-class clBarChartRenderer extends clBaseBlockRenderer {
+export class clChartRenderer extends clBaseBlockRenderer {
   render(idBlock: any, iIndex: number) {
-    idBlock = idBlock.content
-    const LaValues = idBlock.data.map((d: any) => d.value || 0);
-    const LMax = Math.max(...LaValues, 1); // prevent division by zero
-    const LHeight = 140;
+    if (!idBlock.chartImage) {
+      return null;
+    }
 
     return (
-      <View key={iIndex} style={{ marginTop: 20, padding: 10 }}>
-        <View style={{ flexDirection: "row" }}>
-
-          {/* Y axis */}
-          <View style={{ width: 30, height: LHeight, justifyContent: "space-between" }}>
-            {[1, 0.75, 0.5, 0.25, 0].map((iTab, iIndex) => (
-              <Text key={iIndex} style={{ fontSize: 8 }}>
-                {Math.round(LMax * iTab)}
-              </Text>
-            ))}
-          </View>
-
-          {/* Bars */}
-          <View style={{
-            flex: 1,
-            height: LHeight,
-            flexDirection: "row",
-            alignItems: "flex-end",
-          }}>
-            {idBlock.data.map((idItem: any, iIndex: number) => {
-              const LBarHeight = (idItem.value / LMax) * (LHeight - 10);
-
-              return (
-                <View key={iIndex} style={{ flex: 1, alignItems: "center" }}>
-                  <View
-                    style={{
-                      width: 18,
-                      height: LBarHeight,
-                      backgroundColor: "#0f4c81",
-                    }}
-                  />
-                  <Text style={{ fontSize: 8 }}>{idItem.label}</Text>
-                </View>
-              );
-            })}
-          </View>
-
-        </View>
-      </View>
+      <Image
+        key={iIndex}
+        src={idBlock.chartImage}
+        style={{
+          width: "100%",
+          height: 250,
+          marginVertical: 10,
+        }}
+      />
     );
   }
 }
-
 /**
  * Renders paragraph blocks with support for inline structured nodes.
  * Delegates rendering of each node to InlineRendererFactory.
@@ -337,7 +304,7 @@ class clBlockRendererFactory {
   private static registry: Record<string, IBlockRenderer> = {
     cta: new clCtaRenderer(),
     table: new clTableRenderer(),
-    barChart: new clBarChartRenderer(),
+    chart: new clChartRenderer(),
     paragraph: new clParagraphRenderer(),
     contact: new clContactRenderer()
   };

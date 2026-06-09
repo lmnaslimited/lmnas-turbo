@@ -946,3 +946,25 @@ export type TblogRelatedArticle = {
     publishingDate: string
   }
 }
+
+export type TchartSeries = {
+  label: string;
+  values: number[];
+}
+
+export type TchartData = {
+  type: string;
+
+  title?: string;
+
+  categories: string[];
+
+  series: TchartSeries[];
+
+  options?: {
+    showLegend?: boolean;
+    showLabels?: boolean;
+    stacked?: boolean;
+    [key: string]: any;
+  };
+}
