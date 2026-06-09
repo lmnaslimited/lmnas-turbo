@@ -701,6 +701,19 @@ export type Tsolution = {
 }
 
 // casestudies
+export type TrichTextNode = {
+  type: string;
+  children?: TrichTextNode[];
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  format?: string;
+}
+
+export type TpdfSection = {
+  sectionName: string;
+  paragraph: TrichTextNode[];
+}
 export type TcaseStudiesPageSource = TcaseStudies
 export type TcaseStudiesPageTarget = TcaseStudies
 export type TcaseStudy = {
@@ -715,6 +728,7 @@ export type TcaseStudy = {
   ctaSection?: TcalloutProps[]
   conclusion?: Theader
   moreCaseStudies?: Theader
+  pdfDownloadContent?: TpdfSection[]
 }
 export type TcaseStudies = {
   caseStudies: TcaseStudy[]

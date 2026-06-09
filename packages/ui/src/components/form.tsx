@@ -273,16 +273,21 @@ export async function fnDownload(
         }
 
         // PDF GENERATION STARTS HERE
-        const { PdfDocument } = await import("@repo/ui/components/pdf/casestudy-layout");
-        const { pdf } = await import("@react-pdf/renderer");
-
-        // Generate Blob
-        const LBlob = await pdf(<PdfDocument idData={idPdfData} />).toBlob();
-
-        if (!LBlob) {
-            throw new Error("Failed to generate PDF Blob");
+        
+        // CALL SERVER ACTION (Completely offloads 20-page calculation from browser)
+        const LdResponse = await fetch("/api/pdf-generator", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(idPdfData),
+        });
+        
+        if (!LdResponse.ok) {
+            throw new Error("Failed to generate PDF");
         }
-
+        // Generate Blob
+        const LBlob = await LdResponse.blob();
         // Create URL and Link
         const LUrl = URL.createObjectURL(LBlob);
         const LLink = document.createElement("a");

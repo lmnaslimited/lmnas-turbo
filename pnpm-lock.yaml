@@ -115,6 +115,9 @@ importers:
       '@n8n/chat':
         specifier: ^0.67.0
         version: 0.67.0(typescript@5.7.3)
+      '@react-pdf/renderer':
+        specifier: ^4.3.0
+        version: 4.3.0(react@19.0.0)
       '@repo/middleware':
         specifier: workspace:*
         version: link:../../packages/middleware
