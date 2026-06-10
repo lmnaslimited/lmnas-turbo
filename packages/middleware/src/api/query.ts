@@ -141,6 +141,12 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       description
       icon
     }
+    accelerator {
+      label
+      href
+      description
+      icon
+    }
     industry {
       label
       href

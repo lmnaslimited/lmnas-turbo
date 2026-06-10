@@ -464,6 +464,7 @@ export type Tnavbar = {
   logo: Tbutton
   menu: Tbutton[]
   product: Tbutton[]
+  accelerator?: Tbutton[]
   industry: Tbutton[]
   more: Tbutton[]
   language: Tbutton[]
