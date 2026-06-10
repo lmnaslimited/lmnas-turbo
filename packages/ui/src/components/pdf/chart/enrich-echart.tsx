@@ -20,33 +20,39 @@ export async function enrichCharts(idPdfData: any) {
         return idSection;
       }
 
-       /**
+      try {
+         /**
        * 1. Render chart as SVG string using ECharts (SSR)
        */
-      const LSvg = await renderChartSvg(
-        idSection.content.data
-      );
+        const LSvg = await renderChartSvg(idSection.content.data);
 
-      /**
+        if (!LSvg) {
+          throw new Error("Empty SVG output");
+        }
+         /**
        * 2. Convert SVG string into PNG buffer using Sharp
        */
-      const LPngBuffer = await sharp(
-        Buffer.from(LSvg)
-      )
-        .png()
-        .toBuffer();
-
-      /**
+        const LPngBuffer = await sharp(Buffer.from(LSvg))
+          .png()
+          .toBuffer();
+         /**
        * 3. Convert PNG buffer to base64 data URL
        *    (usable inside PDF/image components)
        */
-      const LChartImage =
-        `data:image/png;base64,${LPngBuffer.toString("base64")}`;
+        return {
+          ...idSection,
+          chartImage: `data:image/png;base64,${LPngBuffer.toString("base64")}`,
+        };
+      } catch (err) {
+        // Log for developers only
+        console.error("Chart render failed (silent fallback):", err);
 
-      return {
-        ...idSection,
-        chartImage: LChartImage,
-      };
+        // Safe fallback for UI / PDF
+        return {
+          ...idSection,
+          chartImage: null, // or fallback image
+        };
+      }
     })
   );
   /**
