@@ -45,7 +45,7 @@ export async function enrichCharts(idPdfData: any) {
 
       return {
         ...idSection,
-        LChartImage,
+        chartImage: LChartImage,
       };
     })
   );

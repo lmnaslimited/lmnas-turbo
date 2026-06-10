@@ -180,6 +180,28 @@ function fnBuildOption(idData: TchartData) {
         ],
       };
 
+      case "donut":
+        return {
+          ...LdCommon,
+  
+          series: [
+            {
+              type: "pie",
+              radius: ["40%", "75%"],
+              avoidLabelOverlap: true,
+              label: {
+                show: true,
+                // {b} represents the name, {d} automatically calculates the percentage
+                formatter: "{b}: {d}%", 
+              },
+              data: idData.categories.map((category, index) => ({
+                name: category,
+                value: idData.series[0]?.values[index] ?? 0,
+              })),
+            },
+          ],
+        };
+
     case "radar":
       return {
         ...LdCommon,
