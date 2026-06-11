@@ -514,6 +514,31 @@ export default function Navbar({
                     </Link>
                   ))}
                 </div>
+                {(idNavbar.navbar.accelerator?.length ?? 0) > 0 && (
+                  <>
+                    <hr className="my-4" />
+                    <div className="grid grid-cols-2 gap-2">
+                      {idNavbar.navbar.accelerator?.map((idAccelerator) => (
+                        <Link
+                          key={idAccelerator.label}
+                          href={idAccelerator.href!}
+                          onClick={() => fnSetMobileProductsOpen(false)}
+                          className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
+                            <div className="w-6 h-6 text-primary/70">
+                              {fnRenderIcon(idAccelerator.icon)}
+                            </div>
+                          </div>
+
+                          <span className="text-xs font-medium text-primary">
+                            {idAccelerator.label}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
