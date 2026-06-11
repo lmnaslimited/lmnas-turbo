@@ -134,7 +134,7 @@ export default function Navbar({
                         <div className="grid grid-cols-2 gap-2 mb-3">
                           {idNavbar.navbar.product.map((idProduct) => (
                             <Link
-                              href={idProduct.href!}
+                              href={idProduct.href ?? '#'}
                               key={idProduct.label}
                               onClick={() => fnSetDesktopMenuOpen(undefined)}
                             >
@@ -164,7 +164,7 @@ export default function Navbar({
                               {idNavbar.navbar.accelerator?.map(
                                 (idAccelerator) => (
                                   <Link
-                                    href={idAccelerator.href!}
+                                    href={idAccelerator.href ?? '#'}
                                     key={idAccelerator.label}
                                     onClick={() =>
                                       fnSetDesktopMenuOpen(undefined)
@@ -499,7 +499,7 @@ export default function Navbar({
                   {idNavbar.navbar.product.slice(0, 6).map((idProduct) => (
                     <Link
                       key={idProduct.label}
-                      href={idProduct.href!}
+                      href={idProduct.href ?? '#'}
                       onClick={() => fnSetMobileProductsOpen(false)}
                       className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                     >
@@ -521,7 +521,7 @@ export default function Navbar({
                       {idNavbar.navbar.accelerator?.map((idAccelerator) => (
                         <Link
                           key={idAccelerator.label}
-                          href={idAccelerator.href!}
+                          href={idAccelerator.href ?? '#'}
                           onClick={() => fnSetMobileProductsOpen(false)}
                           className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                         >
