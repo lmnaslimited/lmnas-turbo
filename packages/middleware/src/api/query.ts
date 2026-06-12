@@ -1971,6 +1971,7 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
       ... on ComponentCorePdfCasestudy {
         sectionName
         paragraph
+        image
       }
       ... on ComponentCoreCasestudyCta {
         cta

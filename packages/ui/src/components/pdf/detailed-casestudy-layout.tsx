@@ -356,7 +356,17 @@ export const DetailedPdf = ({ idData }: { idData: any }) => {
                     {idSection.sectionName}
                   </Text>
                 )}
-
+                {/* image */}
+                {idSection.image && (
+                  <Image
+                    src={idSection.image}
+                    style={{
+                      width: "100%",
+                      aspectRatio: 16 / 9,
+                      marginBottom: 10
+                    }}
+                  />
+                )}
                 {renderer.render(idSection, iIndex)}
               </View>
             );
