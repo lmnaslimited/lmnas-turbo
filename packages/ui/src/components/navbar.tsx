@@ -131,10 +131,10 @@ export default function Navbar({
                     </NavigationMenuTrigger>
                     <NavigationMenuContent className="border border-border  shadow-sm">
                       <div className="p-5 w-[500px]">
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-2 gap-2 mb-3">
                           {idNavbar.navbar.product.map((idProduct) => (
                             <Link
-                              href={idProduct.href!}
+                              href={idProduct.href ?? '#'}
                               key={idProduct.label}
                               onClick={() => fnSetDesktopMenuOpen(undefined)}
                             >
@@ -156,6 +156,43 @@ export default function Navbar({
                             </Link>
                           ))}
                         </div>
+
+                        {(idNavbar.navbar.accelerator?.length ?? 0) > 0 && (
+                          <>
+                            <hr />
+                            <div className="grid grid-cols-2 gap-2 mt-4">
+                              {idNavbar.navbar.accelerator?.map(
+                                (idAccelerator) => (
+                                  <Link
+                                    href={idAccelerator.href ?? '#'}
+                                    key={idAccelerator.label}
+                                    onClick={() =>
+                                      fnSetDesktopMenuOpen(undefined)
+                                    }
+                                  >
+                                    <div className="flex items-start gap-2 transition-transform duration-200 hover:scale-105">
+                                      <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
+                                        <div className="flex h-6 w-6 items-center justify-center">
+                                          {fnRenderIcon(idAccelerator.icon)}
+                                        </div>
+                                      </div>
+
+                                      <div>
+                                        <span className="text-md font-medium">
+                                          {idAccelerator.label}
+                                        </span>
+
+                                        <p className="text-xs text-muted-foreground">
+                                          {idAccelerator.description}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </Link>
+                                ),
+                              )}
+                            </div>
+                          </>
+                        )}
                       </div>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
@@ -207,7 +244,7 @@ export default function Navbar({
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
                         )}
                       >
                         {idNavbar.navbar.menu[2]?.label}
@@ -224,7 +261,7 @@ export default function Navbar({
                       <NavigationMenuLink
                         className={cn(
                           navigationMenuTriggerStyle(),
-                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105"
+                          "text-md h-10 flex items-center  transition-transform duration-200 hover:scale-105",
                         )}
                       >
                         {idNavbar.navbar.menu[3]?.label}
@@ -256,7 +293,7 @@ export default function Navbar({
                               "py-2 text-md font-normal text-center ",
                               iIndex === 1
                                 ? "border-b border-border  pb-2 mb-1"
-                                : ""
+                                : "",
                             )}
                           >
                             <Link href={idItem.href!}>{idItem.label}</Link>
@@ -272,7 +309,7 @@ export default function Navbar({
 
           {/* Right side controls */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
-           {/* commented because Language and Theme switcher is moved to footer */}
+            {/* commented because Language and Theme switcher is moved to footer */}
             {/* Theme Switcher */}
             {/* <div className="flex items-center gap-2">
               <ThemeToggle />
@@ -331,7 +368,7 @@ export default function Navbar({
                 </div>
               </DropdownMenuContent>
             </DropdownMenu> */}
-          
+
             {/* comment out and changed to dynamic */}
             {/* <Link href={idNavbar.navbar.menu[5]?.href!}>
               <Button
@@ -342,7 +379,7 @@ export default function Navbar({
               </Button>
             </Link> */}
             {/* we have consider the menus, with href and without icon to be button */}
-             { idNavbar.navbar.menu
+            {idNavbar.navbar.menu
               .filter((idItem) => !idItem.icon && idItem.href)
               .map((idItem, iIndex) => (
                 <Link key={iIndex} href={idItem.href!}>
@@ -353,19 +390,19 @@ export default function Navbar({
                     {idItem.label}
                   </Button>
                 </Link>
-            ))}
+              ))}
           </div>
 
           {/* commented because Language and Theme switcher is moved to footer */}
-         {/* Mobile menu button - removed hamburger menu */}
-         {/* <div className="flex lg:hidden items-center gap-2"> */}
-            {/* Theme Switcher for Mobile */}
-            {/* <div className="flex items-center">
+          {/* Mobile menu button - removed hamburger menu */}
+          {/* <div className="flex lg:hidden items-center gap-2"> */}
+          {/* Theme Switcher for Mobile */}
+          {/* <div className="flex items-center">
               <ThemeToggle />
             </div> */}
 
-            {/* Language Switcher for Mobile */}
-            {/* <DropdownMenu>
+          {/* Language Switcher for Mobile */}
+          {/* <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="secondary"
@@ -440,15 +477,15 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center ">
             <button
               onClick={() => {
-                fnSetMobileProductsOpen(!LMobileProductsOpen)
-                fnSetMobileIndustriesOpen(false)
-                fnSetMobileModeDropdownOpen(false)
+                fnSetMobileProductsOpen(!LMobileProductsOpen);
+                fnSetMobileIndustriesOpen(false);
+                fnSetMobileModeDropdownOpen(false);
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
                 LMobileProductsOpen
                   ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  : "text-muted-foreground hover:text-primary",
               )}
             >
               <span className="w-5 h-6 mb-1">
@@ -462,7 +499,7 @@ export default function Navbar({
                   {idNavbar.navbar.product.slice(0, 6).map((idProduct) => (
                     <Link
                       key={idProduct.label}
-                      href={idProduct.href!}
+                      href={idProduct.href ?? '#'}
                       onClick={() => fnSetMobileProductsOpen(false)}
                       className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
                     >
@@ -477,6 +514,31 @@ export default function Navbar({
                     </Link>
                   ))}
                 </div>
+                {(idNavbar.navbar.accelerator?.length ?? 0) > 0 && (
+                  <>
+                    <hr className="my-4" />
+                    <div className="grid grid-cols-2 gap-2">
+                      {idNavbar.navbar.accelerator?.map((idAccelerator) => (
+                        <Link
+                          key={idAccelerator.label}
+                          href={idAccelerator.href ?? '#'}
+                          onClick={() => fnSetMobileProductsOpen(false)}
+                          className="flex items-center gap-2 rounded-md transition-transform duration-200 hover:scale-105"
+                        >
+                          <div className="flex h-10 w-10 items-center justify-center rounded-md flex-shrink-0">
+                            <div className="w-6 h-6 text-primary/70">
+                              {fnRenderIcon(idAccelerator.icon)}
+                            </div>
+                          </div>
+
+                          <span className="text-xs font-medium text-primary">
+                            {idAccelerator.label}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -485,15 +547,15 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center">
             <button
               onClick={() => {
-                fnSetMobileIndustriesOpen(!LMobileIndustriesOpen)
-                fnSetMobileProductsOpen(false)
-                fnSetMobileModeDropdownOpen(false)
+                fnSetMobileIndustriesOpen(!LMobileIndustriesOpen);
+                fnSetMobileProductsOpen(false);
+                fnSetMobileModeDropdownOpen(false);
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
                 LMobileIndustriesOpen
                   ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  : "text-muted-foreground hover:text-primary",
               )}
             >
               <span className="w-5 h-6 mb-1">
@@ -541,15 +603,15 @@ export default function Navbar({
           <div className="mobile-dropdown relative w-1/5 h-full flex items-center justify-center">
             <button
               onClick={() => {
-                fnSetMobileModeDropdownOpen(!LMobileModeDropdownOpen)
-                fnSetMobileProductsOpen(false)
-                fnSetMobileIndustriesOpen(false)
+                fnSetMobileModeDropdownOpen(!LMobileModeDropdownOpen);
+                fnSetMobileProductsOpen(false);
+                fnSetMobileIndustriesOpen(false);
               }}
               className={cn(
                 "flex flex-col items-center justify-center w-full h-full",
                 LMobileModeDropdownOpen
                   ? "text-primary"
-                  : "text-muted-foreground hover:text-primary"
+                  : "text-muted-foreground hover:text-primary",
               )}
             >
               <span className="w-5 h-6 mb-1">
@@ -565,7 +627,7 @@ export default function Navbar({
                     key={idItem.label}
                     className={cn(
                       "py-2 text-sm font-normal text-center",
-                      iIndex === 1 ? "border-b border-border pb-2 mb-1" : ""
+                      iIndex === 1 ? "border-b border-border pb-2 mb-1" : "",
                     )}
                   >
                     <Link
@@ -583,5 +645,5 @@ export default function Navbar({
         </div>
       </div>
     </>
-  )
+  );
 }
