@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Document,
   Page,
@@ -7,12 +5,10 @@ import {
   View,
   StyleSheet,
   Image,
-  Svg,
-  Path,
   Link,
 } from "@react-pdf/renderer";
 import { TcaseStudies } from "@repo/middleware/types";
-
+import { CallIcon, CalendarIcon, LinkedInIcon, YouTubeIcon, TwitterIcon } from "./detailed-casestudy-style"
 //custom styles for react-pdf/renderer
 const LdStyles = StyleSheet.create({
   page: {
@@ -132,78 +128,6 @@ const LdStyles = StyleSheet.create({
     marginLeft: 6,
   },
 });
-
-//To Support SVG in react-pdf/renderer
-//use <Svg/> and <Path/> 
-//Component name should start with capital
-const CalendarIcon = () => (
-  <Svg viewBox="0 0 24 24" style={LdStyles.icon}>
-    <Path
-      fill="white"
-      d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 
-      .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 
-      2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zm0-13H5V6h14v1z"
-    />
-  </Svg>
-);
-
-const CallIcon = () => (
-  <Svg viewBox="0 0 24 24" style={LdStyles.icon}>
-    <Path
-      fill="white" // Tailwind blue-600
-      d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 
-         1 0 011.05-.24 11.36 11.36 0 003.55.57 1 
-         1 0 011 1V20a1 1 0 01-1 1A16 16 0 014 
-         5a1 1 0 011-1h3.5a1 1 0 011 1 11.36 11.36 0 
-         00.57 3.55 1 1 0 01-.24 1.05l-2.21 2.19z"
-    />
-  </Svg>
-);
-
-const LinkedInIcon = () => (
-  <Svg viewBox="0 0 24 24" width="16" height="16">
-    <Path
-      fill="#2563EB"
-      d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 
-         0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM7.1 20.5H3.6V9h3.5v11.5zM5.4 
-         7.4c-1.1 0-1.9-.9-1.9-2s.9-2 1.9-2c1.1 0 1.9.9 
-         1.9 2s-.8 2-1.9 2zm15.1 13.1h-3.5v-5.6c0-1.3-.5-2.2-1.6-2.2-1 
-         0-1.5.7-1.8 1.3-.1.3-.1.7-.1 1.1v5.4h-3.5V9h3.4v1.6c.5-.8 
-         1.3-1.6 3-1.6 2.2 0 3.8 1.5 3.8 4.6v6.9z"
-    />
-  </Svg>
-);
-
-const YouTubeIcon = () => (
-  <Svg viewBox="0 0 24 24" width="16" height="16">
-    <Path
-      fill="#FF0000"
-      d="M23.5 6.2c-.3-1.2-1.2-2.1-2.4-2.4C18.8 
-         3.3 12 3.3 12 3.3s-6.8 0-9.1.5c-1.2.3-2.1 1.2-2.4 
-         2.4C0 8.5 0 12 0 12s0 3.5.5 5.8c.3 1.2 1.2 2.1 2.4 
-         2.4 2.3.5 9.1.5 9.1.5s6.8 0 9.1-.5c1.2-.3 2.1-1.2 
-         2.4-2.4.5-2.3.5-5.8.5-5.8s0-3.5-.5-5.8zM9.5 15.5V8.5l6 
-         3.5-6 3.5z"
-    />
-  </Svg>
-);
-
-const TwitterIcon = () => (
-  <Svg viewBox="0 0 24 24" width="16" height="16">
-    <Path
-      fill="#1DA1F2"
-      d="M24 4.6c-.9.4-1.8.6-2.8.8 1-.6 1.7-1.5 
-         2.1-2.6-.9.5-2 .9-3.1 1.1-1-1-2.4-1.6-3.9-1.6-3 
-         0-5.4 2.5-5.4 5.5 0 .4 0 .8.1 1.1-4.5-.2-8.4-2.4-11-5.7-.5.9-.8 
-         1.9-.8 3 0 1.9 1 3.5 2.4 4.5-.8 0-1.6-.3-2.3-.7v.1c0 
-         2.7 1.9 5 4.4 5.5-.5.2-1.1.2-1.7.2-.4 0-.8 
-         0-1.2-.1.8 2.5 3.1 4.2 5.9 4.2-2.1 1.7-4.7 
-         2.7-7.5 2.7-.5 0-1 0-1.5-.1C2.7 21.5 5.9 22.5 
-         9.3 22.5c11.2 0 17.3-9.3 17.3-17.3v-.8c1.2-.9 
-         2-1.7 2.8-2.8z"
-    />
-  </Svg>
-);
 
 export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
   <Document>

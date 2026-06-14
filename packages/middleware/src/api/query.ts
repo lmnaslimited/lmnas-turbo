@@ -141,6 +141,12 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       description
       icon
     }
+    accelerator {
+      label
+      href
+      description
+      icon
+    }
     industry {
       label
       href
@@ -1966,6 +1972,26 @@ export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
     }
     conclusion {
       subtitle
+    }
+     pdfDownloadContent {
+      ... on ComponentCorePdfCasestudy {
+        sectionName
+        paragraph
+        image
+      }
+      ... on ComponentCoreCasestudyCta {
+        cta
+        Button {
+          label
+          href
+          description
+        }
+      }
+      ... on ComponentCoreCasestudyTable {
+        type
+        sectionName
+        content
+      }
     }
   }
   allCaseStudies: caseStudies(locale: $locale,filters: $caseStudiesFilters2, status: $status) {
