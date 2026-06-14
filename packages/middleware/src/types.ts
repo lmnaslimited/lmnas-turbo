@@ -702,6 +702,19 @@ export type Tsolution = {
 }
 
 // casestudies
+export type TrichTextNode = {
+  type: string;
+  children?: TrichTextNode[];
+  text?: string;
+  bold?: boolean;
+  italic?: boolean;
+  format?: string;
+}
+
+export type TpdfSection = {
+  sectionName: string;
+  paragraph: TrichTextNode[];
+}
 export type TcaseStudiesPageSource = TcaseStudies
 export type TcaseStudiesPageTarget = TcaseStudies
 export type TcaseStudy = {
@@ -716,6 +729,7 @@ export type TcaseStudy = {
   ctaSection?: TcalloutProps[]
   conclusion?: Theader
   moreCaseStudies?: Theader
+  pdfDownloadContent?: TpdfSection[]
 }
 export type TcaseStudies = {
   caseStudies: TcaseStudy[]
@@ -932,4 +946,26 @@ export type TblogRelatedArticle = {
     image: string
     publishingDate: string
   }
+}
+
+export type TchartSeries = {
+  label: string;
+  values: number[];
+}
+
+export type TchartData = {
+  type: string;
+
+  title?: string;
+
+  categories: string[];
+
+  series: TchartSeries[];
+
+  options?: {
+    showLegend?: boolean;
+    showLabels?: boolean;
+    stacked?: boolean;
+    [key: string]: any;
+  };
 }
