@@ -969,3 +969,11 @@ export type TchartData = {
     [key: string]: any;
   };
 }
+
+export type TNewsletterSubscriptionProps = {
+  placeholder: string;
+  buttonLabel: string;
+  buttonPendingLabel?: string;
+  variant?: "sm" | "lg";
+  source:string
+};
