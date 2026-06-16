@@ -1,15 +1,26 @@
+"use client"
+
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@repo/ui/components/ui/form";
+import { FormField, FormItem, FormControl, FormMessage } from "@repo/ui/components/ui/form";
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input";
 import { PhoneInput } from "react-international-phone";
-import { TformFieldConfig } from "../types";
 import { cn } from "@repo/ui/lib/utils";
 
-const StepDetails = () => {
-    const { register, formState: { errors } } = useFormContext();
+// Lightweight field definition local to this step. (Not TformFieldConfig — these
+// are static, simple fields and don't need the full Strapi field shape.)
+type TStepField = {
+    name: string;
+    label: string;
+    type?: string;
+    placeholder?: string;
+    inputClassName?: string;
+    fieldDisplay: string;
+};
 
-    const fields: TformFieldConfig[] = [
+const StepDetails = () => {
+    const { control } = useFormContext();
+
+    const fields: TStepField[] = [
         {
             name: "companyName",
             label: "Company Name",
@@ -33,9 +44,9 @@ const StepDetails = () => {
             {fields.map((field) => (
                 <FormField
                     key={field.name}
-                    control={register}
+                    control={control}
                     name={field.name}
-                    render={({ field: iField }) => (
+                    render={({ field: iField, fieldState }) => (
                         <FormItem className={cn(field.fieldDisplay)}>
                             <FormControl>
                                 {field.type === "phone" ? (
@@ -53,10 +64,11 @@ const StepDetails = () => {
                                 ) : (
                                     <FloatingLabelInput
                                         label={field.label}
-                                        type={field.type}
-                                        error={!!errors[field.name]}
+                                        type={field.type ?? "text"}
+                                        error={!!fieldState.error}
                                         inputClassName={field.inputClassName}
                                         {...iField}
+                                        value={iField.value ?? ""}
                                     />
                                 )}
                             </FormControl>

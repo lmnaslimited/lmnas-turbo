@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+"use client"
+
+import React from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { contactSchema } from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/schema/contact-schema';
-import useMultiStepForm from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/hooks/useMultiStepForm';
-import StepContactInfo from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/steps/StepContactInfo';
-import StepDetails from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/steps/StepDetails';
-import StepReview from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/steps/StepReview';
-import { TContactFormValues } from '../../../../lmnas-turbo/packages/ui/src/components/multi-step-contact-form/types';
+import { contactSchema } from "./schema/contact-schema";
+import { useMultiStepForm } from "./hooks/useMultiStepForm";
+import StepContactInfo from '@repo/ui/components/steps/StepContactInfo';
+import StepDetails from '@repo/ui/components/steps/StepDetails';
+import StepReview from '@repo/ui/components/steps/StepReview';
+import { TContactFormValues } from '@repo/middleware/types';
 
-const steps = [
+const steps: React.FC[] = [
     StepContactInfo,
     StepDetails,
     StepReview,
@@ -20,28 +22,37 @@ const MultiStepContactForm: React.FC = () => {
         mode: 'onTouched',
     });
 
-    const { currentStep, nextStep, prevStep, isLastStep, handleSubmit } = useMultiStepForm(steps.length);
+    const { currentStep, nextStep, prevStep, isLastStep } = useMultiStepForm(
+        steps.length,
+        methods.trigger,
+    );
 
     const onSubmit = async (data: TContactFormValues) => {
         // Handle form submission logic here, including API calls and reCAPTCHA
         console.log(data);
     };
 
-    const StepComponent = steps[currentStep];
+    const StepComponent = steps[currentStep] ?? steps[0];
 
     return (
         <FormProvider {...methods}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <StepComponent />
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+                {StepComponent ? <StepComponent /> : null}
                 <div className="flex justify-between mt-4">
                     {currentStep > 0 && (
                         <button type="button" onClick={prevStep} className="btn">
                             Previous
                         </button>
                     )}
-                    <button type="submit" className="btn">
-                        {isLastStep ? 'Submit' : 'Next'}
-                    </button>
+                    {isLastStep ? (
+                        <button type="submit" className="btn">
+                            Submit
+                        </button>
+                    ) : (
+                        <button type="button" onClick={nextStep} className="btn">
+                            Next
+                        </button>
+                    )}
                 </div>
                 <div className="progress-indicator">
                     Step {currentStep + 1} of {steps.length}

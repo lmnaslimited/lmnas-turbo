@@ -996,3 +996,12 @@ export interface Step {
     id: string;
     component: React.FC<StepProps>;
 }
+
+export type TContactFormValues = {
+    fullName: string;
+    email: string;
+    companyName: string;
+    phone: string;
+    message: string;
+    newsletter: boolean;
+};

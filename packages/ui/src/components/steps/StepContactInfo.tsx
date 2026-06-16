@@ -1,45 +1,50 @@
+"use client"
+
 import { useFormContext } from "react-hook-form";
-import { z } from "zod";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@repo/ui/components/ui/form";
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input";
 
 const StepContactInfo = () => {
-    const { register, formState: { errors } } = useFormContext();
+    const { control } = useFormContext();
 
     return (
         <div>
             <FormField
-                control={register}
+                control={control}
                 name="fullName"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                     <FormItem>
                         <FormLabel>Full Name</FormLabel>
                         <FormControl>
                             <FloatingLabelInput
+                                label="Full Name"
                                 placeholder="Enter your full name"
+                                error={!!fieldState.error}
                                 {...field}
-                                error={!!errors.fullName}
+                                value={field.value ?? ""}
                             />
                         </FormControl>
-                        <FormMessage>{errors.fullName?.message}</FormMessage>
+                        <FormMessage />
                     </FormItem>
                 )}
             />
             <FormField
-                control={register}
+                control={control}
                 name="email"
-                render={({ field }) => (
+                render={({ field, fieldState }) => (
                     <FormItem>
                         <FormLabel>Company Email Address</FormLabel>
                         <FormControl>
                             <FloatingLabelInput
+                                label="Company Email Address"
                                 type="email"
                                 placeholder="Enter your company email"
+                                error={!!fieldState.error}
                                 {...field}
-                                error={!!errors.email}
+                                value={field.value ?? ""}
                             />
                         </FormControl>
-                        <FormMessage>{errors.email?.message}</FormMessage>
+                        <FormMessage />
                     </FormItem>
                 )}
             />

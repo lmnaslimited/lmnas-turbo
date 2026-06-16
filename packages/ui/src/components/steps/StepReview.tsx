@@ -1,15 +1,23 @@
+"use client"
+
 import { useFormContext } from "react-hook-form";
 import { Button } from "@repo/ui/components/ui/button";
 import { Checkbox } from "@repo/ui/components/ui/checkbox";
 import { FormItem, FormControl, FormLabel, FormMessage } from "@repo/ui/components/ui/form";
+import type { TContactFormValues } from "@repo/middleware/types";
 
-const StepReview = ({ onBack, onSubmit }) => {
-    const { watch, handleSubmit, formState: { errors } } = useFormContext();
-    
+type TStepReviewProps = {
+    onBack?: () => void;
+    onSubmit?: (data: TContactFormValues) => void | Promise<void>;
+};
+
+const StepReview = ({ onBack, onSubmit }: TStepReviewProps) => {
+    const { watch, handleSubmit } = useFormContext<TContactFormValues>();
+
     const formData = watch();
 
-    const handleReviewSubmit = async (data) => {
-        await onSubmit(data);
+    const handleReviewSubmit = async (data: TContactFormValues) => {
+        await onSubmit?.(data);
     };
 
     return (
@@ -20,7 +28,7 @@ const StepReview = ({ onBack, onSubmit }) => {
             </div>
             <div className="mb-4">
                 <h3 className="font-semibold">Full Name:</h3>
-                <p>{formData.name}</p>
+                <p>{formData.fullName}</p>
             </div>
             <div className="mb-4">
                 <h3 className="font-semibold">Email Address:</h3>
@@ -39,7 +47,7 @@ const StepReview = ({ onBack, onSubmit }) => {
                     <FormControl>
                         <Checkbox
                             checked={formData.newsletter}
-                            onCheckedChange={(checked) => {
+                            onCheckedChange={() => {
                                 // Update the form state for newsletter subscription
                             }}
                         />

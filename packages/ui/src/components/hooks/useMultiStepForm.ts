@@ -1,30 +1,29 @@
 import { useState } from 'react';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { contactSchema } from '../schema/contact-schema';
-import type { ContactFormValues } from '../types';
+import type { FieldValues, UseFormTrigger } from 'react-hook-form';
 
-export const useMultiStepForm = (onSubmit: (data: ContactFormValues) => Promise<void>) => {
+/**
+ * Manages step navigation for a multi-step form.
+ *
+ * The form values themselves are owned by the parent's react-hook-form instance
+ * (the single source of truth); this hook only tracks the active step index and
+ * validates the form before advancing.
+ *
+ * @param iTotalSteps total number of steps
+ * @param iTrigger    optional react-hook-form `trigger` used to validate before advancing
+ */
+export const useMultiStepForm = <T extends FieldValues = FieldValues>(
+    iTotalSteps: number,
+    iTrigger?: UseFormTrigger<T>,
+) => {
     const [currentStep, setCurrentStep] = useState(0);
-    const [formData, setFormData] = useState<ContactFormValues>({} as ContactFormValues);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors },
-        setValue,
-        getValues,
-        trigger,
-    } = useForm<ContactFormValues>({
-        resolver: zodResolver(contactSchema),
-        defaultValues: formData,
-    });
+    const isFirstStep = currentStep === 0;
+    const isLastStep = currentStep === iTotalSteps - 1;
 
     const nextStep = async () => {
-        const isValid = await trigger();
+        const isValid = iTrigger ? await iTrigger() : true;
         if (isValid) {
-            setCurrentStep((prev) => Math.min(prev + 1, 2)); // Assuming 3 steps (0, 1, 2)
+            setCurrentStep((prev) => Math.min(prev + 1, iTotalSteps - 1));
         }
     };
 
@@ -32,21 +31,7 @@ export const useMultiStepForm = (onSubmit: (data: ContactFormValues) => Promise<
         setCurrentStep((prev) => Math.max(prev - 1, 0));
     };
 
-    const handleStepSubmit: SubmitHandler<ContactFormValues> = (data) => {
-        setFormData((prev) => ({ ...prev, ...data }));
-        if (currentStep === 2) {
-            onSubmit({ ...formData, ...data });
-        }
-    };
-
-    return {
-        currentStep,
-        nextStep,
-        prevStep,
-        handleStepSubmit: handleSubmit(handleStepSubmit),
-        register,
-        errors,
-        setValue,
-        getValues,
-    };
+    return { currentStep, nextStep, prevStep, isFirstStep, isLastStep };
 };
+
+export default useMultiStepForm;
