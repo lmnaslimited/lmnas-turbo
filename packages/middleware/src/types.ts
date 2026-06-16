@@ -969,3 +969,30 @@ export type TchartData = {
     [key: string]: any;
   };
 }
+// This file defines TypeScript types and interfaces used throughout the multi-step contact form implementation.
+
+export interface ContactFormData {
+    fullName: string;
+    email: string;
+    companyName: string;
+    phone: string;
+    message: string;
+    newsletter: boolean;
+}
+
+export interface StepProps {
+    formData: ContactFormData;
+    setFormData: React.Dispatch<React.SetStateAction<ContactFormData>>;
+    nextStep: () => void;
+    prevStep: () => void;
+}
+
+export interface MultiStepFormProps {
+    onSubmit: (data: ContactFormData) => Promise<void>;
+    initialData?: ContactFormData;
+}
+
+export interface Step {
+    id: string;
+    component: React.FC<StepProps>;
+}
