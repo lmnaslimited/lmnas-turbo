@@ -1,12 +1,10 @@
 "use client"
 
 import Link from "next/link"
-import { type ReactElement, useActionState, useEffect } from "react"
+import { type ReactElement } from "react"
 import * as React from "react"
 import { Button } from "@repo/ui/components/ui/button"
-import { Input } from "@repo/ui/components/ui/input"
 import { Twitter, Linkedin, Mail, Phone, MapPin, Youtube, Globe } from "lucide-react"
-import { subscribeNewsletter, type TnewsletterSubscriptionState } from "@repo/ui/api/newsletter/create-subscription"
 import { TfooterTarget } from "@repo/middleware/types";
 import { ThemeToggle } from "./theme-toggle"
 import {
@@ -17,6 +15,7 @@ import {
 } from "@repo/ui/components/ui/dropdown-menu"
 import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
+import { NewsletterSubscription } from "./subscription"
 
 // Map of icon names to their components
 const LdIconMap = {
@@ -32,9 +31,6 @@ type IconKey = keyof typeof LdIconMap
 
 export default function Footer({ idFooter }: { idFooter: TfooterTarget }): ReactElement {
   const [Language, fnSetLanguage] = React.useState("en") //Maintain Language state
-  // Manage newsletter form state, submit action, and loading status
-  const LdInitialState: TnewsletterSubscriptionState = { message: "",  status: "error"}
-  const [LdState, fnFormAction, LPending] = useActionState(subscribeNewsletter, LdInitialState)
   const LaRouter = useRouter() // Router instance for navigation
   const LPathname = usePathname() // Get current pathname (e.g., /en/trending-now)
   // Sync language from URL path (middleware-like behavior)
@@ -65,29 +61,6 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
       ? LCurrentLang.label.toUpperCase()
       : "EN"
   }
-
-  // Previous implementation dispatched the newsletter_subscribed event
-  // only after receiving a successful server action response.
-  // Temporarily disabled for investigation because some production users
-  // appear to subscribe successfully but never trigger PostHog identify.
-  // We now dispatch the event immediately on form submission to determine
-  // whether the server-response flow is causing identify events to be missed.
-  // useEffect(() => {
-  //   if (
-  //     typeof window === "undefined" ||
-  //     !LdState.email ||
-  //     !["subscribed", "already_subscribed"].includes(LdState.status)
-  //   ) {
-  //     return
-  //   }
-
-  //   window.dispatchEvent(
-  //     new CustomEvent("newsletter_subscribed", {
-  //       detail: { email: LdState.email, status: LdState.status },
-  //     }),
-  //   )
-  // }, [LdState.email, LdState.status])
-
 
   return (
     <footer className="bg-muted/80 pt-16 pb-8">
@@ -171,38 +144,13 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
             </ul>
             <div className="mt-6">
               <h4 className="font-medium mb-2">{idFooter.footer.menu[3]?.label}</h4>
-              <form action={fnFormAction} className="flex gap-2"
-              onSubmit={(e) => {
-                // Dispatch the newsletter_subscribed event immediately when the user
-                // submits the form. This bypasses the dependency on the server action
-                // response and helps verify whether delayed or missing responses are
-                // preventing PostHog user identification for some subscribers.
-                const LdFormData = new FormData(e.currentTarget)
-                const LEmail = LdFormData.get("email")
-            
-                if (typeof LEmail === "string" && LEmail.trim()) {
-                  window.dispatchEvent(
-                    new CustomEvent("newsletter_subscribed", {
-                      detail: {
-                        email: LEmail.trim().toLowerCase(),
-                      },
-                    }),
-                  )
-                }
-              }}
-              >
-                <Input
-                  type="email"
-                  name="email"
-                  placeholder={idFooter.footer.menu[4]?.label}
-                  required
-                  className="max-w-xs"
-                />
-                <Button type="submit" size="sm" disabled={LPending}>
-                  {LPending ? idFooter.footer.menu[4]?.description : idFooter.footer.menu[4]?.icon}
-                </Button>
-              </form>
-              {LdState?.message && <p className="text-sm mt-2 text-primary">{LdState.message}</p>}
+              <NewsletterSubscription
+                placeholder={idFooter.footer.menu[4]?.label ?? ""}
+                buttonLabel={String(idFooter.footer.menu[4]?.icon ?? "Subscribe")}
+                buttonPendingLabel={idFooter.footer.menu[4]?.description ?? "Subscribing..."}
+                variant="sm"
+                source="footer-newsletter"
+              />
             </div>
           </div>
           {/* Mobile menu button - removed hamburger menu */}
