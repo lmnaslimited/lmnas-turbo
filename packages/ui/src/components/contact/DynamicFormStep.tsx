@@ -45,6 +45,9 @@ type TdynamicFormStepProps = {
   step: TresolvedContactStep
   // react-hook-form control instance from the parent form (single source of truth)
   control: Control<Record<string, unknown>>
+  // Detected ISO-3166 alpha-2 (lowercase, e.g. "in") used as the phone field's
+  // initial country. Falls back to "de" when detection is unavailable.
+  countryIso?: string
 }
 
 /**
@@ -55,7 +58,7 @@ type TdynamicFormStepProps = {
  * parent form's `control` is used directly, so values persist across steps with
  * no duplicate state.
  */
-export default function DynamicFormStep({ step, control }: TdynamicFormStepProps) {
+export default function DynamicFormStep({ step, control, countryIso }: TdynamicFormStepProps) {
   const fnRenderField = (idField: TformFieldConfig): ReactNode => {
     switch (idField.type) {
       case "text":
@@ -93,7 +96,10 @@ export default function DynamicFormStep({ step, control }: TdynamicFormStepProps
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                 <FormControl>
                   <PhoneInput
-                    defaultCountry="de"
+                    // Remount when detection resolves so the new default country
+                    // is applied (defaultCountry is only read on mount).
+                    key={countryIso || "de"}
+                    defaultCountry={countryIso || "de"}
                     value={(iField.value as string) || ""}
                     onChange={iField.onChange}
                     onBlur={iField.onBlur}

@@ -20,6 +20,7 @@ import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 import { fnSubmitContact } from "@repo/ui/components/form";
 
 import DynamicFormStep from "./DynamicFormStep";
+import { useDetectedRegion } from "./useDetectedRegion";
 import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
 import type { TdynamicContactFormProps } from "./contact-form.types";
 /**
@@ -65,6 +66,11 @@ function InnerDynamicForm({
       )?.name,
     [config.fields],
   );
+
+  // Region detected from the visitor's browser (client-only, hydration-safe).
+  // The dynamic contact form uses only the country code for the phone field;
+  // the timezone value is intentionally ignored here (other forms use it).
+  const { countryIso: LDetectedCountry } = useDetectedRegion();
 
   const fnSanitizeFormData = (idFormData: Record<string, unknown>) =>
     Object.fromEntries(
@@ -208,7 +214,11 @@ function InnerDynamicForm({
 
           
             {LdCurrentStep && (
-              <DynamicFormStep step={LdCurrentStep} control={LdForm.control} />
+              <DynamicFormStep
+                step={LdCurrentStep}
+                control={LdForm.control}
+                countryIso={LDetectedCountry}
+              />
             )}
 
           {/* Navigation */}
