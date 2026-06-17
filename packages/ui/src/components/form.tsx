@@ -84,7 +84,6 @@ export async function fnSubmitWebinar(idFormData: any, idData: TtrendCardProps, 
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData();
             LdNewFormData.append("email", idFormData.email);
-            LdNewFormData.append("recaptchaToken", iRecaptchaToken);
             await subscribeNewsletter({ message: "" }, LdNewFormData);
         }
 
@@ -148,7 +147,6 @@ export async function fnSubmitAppointmentBooking(idFormData: any, iRecaptchaToke
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
-            LdNewFormData.append("recaptchaToken", iRecaptchaToken);
             await subscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
@@ -201,7 +199,6 @@ export async function fnSubmitContact(idFormData: any, iRecaptchaToken: string) 
         if (idFormData.newsletter) {
             const LdNewFormData = new FormData()
             LdNewFormData.append("email", idFormData.email)
-            LdNewFormData.append("recaptchaToken", iRecaptchaToken);
             await subscribeNewsletter({ message: "" }, LdNewFormData)
         }
 
@@ -269,7 +266,6 @@ export async function fnDownload(
         if (idFormData.newsletter) {
             // Prepare a FormData object with the user's email
             const LdNewFormData = new FormData();
-            LdNewFormData.append("recaptchaToken", iRecaptchaToken);
             LdNewFormData.append("email", idFormData.email);
 
             // Subscribe the user to the newsletter
