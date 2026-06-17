@@ -1,28 +1,27 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { useParams } from "next/navigation"
-import { useForm } from "react-hook-form"
-import { useEffect, useMemo, useState, type ReactElement } from "react"
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { useEffect, useMemo, useState, type ReactElement } from "react";
 
-import { z } from "zod"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { cn } from "@repo/ui/lib/utils"
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { cn } from "@repo/ui/lib/utils";
 
-import { Button } from "@repo/ui/components/ui/button"
-import { Form } from "@repo/ui/components/ui/form"
+import { Button } from "@repo/ui/components/ui/button";
+import { Form } from "@repo/ui/components/ui/form";
 
-import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
+import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 
 // Reuse the shared contact submit handler — same payload, reCAPTCHA verification,
 // newsletter subscription, PostHog link and success/error handling as the
 // existing Contact Us form. The shared form component itself is NOT modified.
-import { fnSubmitContact } from "@repo/ui/components/form"
+import { fnSubmitContact } from "@repo/ui/components/form";
 
-import DynamicFormStep from "./DynamicFormStep"
-import { fnResolveContactSteps } from "./contact-form.config"
-import type { TdynamicContactFormProps } from "./contact-form.types"
-
+import DynamicFormStep from "./DynamicFormStep";
+import { fnResolveContactSteps } from "./contact-form.config";
+import type { TdynamicContactFormProps } from "./contact-form.types";
 /**
  * Inner multi-step contact form.
  *
@@ -39,19 +38,26 @@ function InnerDynamicForm({
   className = "",
   defaultValues,
 }: TdynamicContactFormProps): ReactElement {
-  const [CurrentStep, fnSetCurrentStep] = useState(0)
-  const [IsSubmitting, fnSetIsSubmitting] = useState(false)
-  const { executeRecaptcha } = useReCaptcha()
+  const [CurrentStep, fnSetCurrentStep] = useState(0);
+  const [IsSubmitting, fnSetIsSubmitting] = useState(false);
+  const { executeRecaptcha } = useReCaptcha();
 
   // Steps are built from the field config coming from Strapi (chunked, 2/step).
-  const LaSteps = useMemo(() => fnResolveContactSteps(config.fields), [config.fields])
-  const LTotalSteps = LaSteps.length || 1
-  const LIsFirstStep = CurrentStep === 0
-  const LIsLastStep = CurrentStep >= LTotalSteps - 1
-  const LdCurrentStep = LaSteps[CurrentStep]
+  const LaSteps = useMemo(
+    () => fnResolveContactSteps(config.fields),
+    [config.fields],
+  );
+  const LTotalSteps = LaSteps.length || 1;
+  const LIsFirstStep = CurrentStep === 0;
+  const LIsLastStep = CurrentStep >= LTotalSteps - 1;
+  const LdCurrentStep = LaSteps[CurrentStep];
 
   const fnSanitizeFormData = (idFormData: Record<string, unknown>) =>
-    Object.fromEntries(Object.entries(idFormData).filter(([iKey]) => !["recaptchaToken", "timeSlot"].includes(iKey)))
+    Object.fromEntries(
+      Object.entries(idFormData).filter(
+        ([iKey]) => !["recaptchaToken", "timeSlot"].includes(iKey),
+      ),
+    );
 
   // Default values for every field; provided defaults win. Mirrors shared form.
   const LdInitialValues = {
@@ -61,76 +67,79 @@ function InnerDynamicForm({
     phone: "",
     newsletter: true,
     ...defaultValues,
-  }
+  };
 
   const LdForm = useForm<z.infer<typeof config.schema>>({
     resolver: zodResolver(config.schema),
     defaultValues: LdInitialValues,
     mode: "onTouched",
-  })
+  });
 
   // Reset progress if the resolved steps shrink (e.g. config change).
   useEffect(() => {
     if (CurrentStep > LTotalSteps - 1) {
-      fnSetCurrentStep(Math.max(0, LTotalSteps - 1))
+      fnSetCurrentStep(Math.max(0, LTotalSteps - 1));
     }
-  }, [LTotalSteps, CurrentStep])
+  }, [LTotalSteps, CurrentStep]);
 
   /**
    * Validates only the fields of the current step and advances if they pass.
    */
   const fnHandleNext = async () => {
-    const LaFieldNames = (LdCurrentStep?.fields ?? []).map((idField) => idField.name)
-    const LIsValid = await LdForm.trigger(LaFieldNames as never)
+    const LaFieldNames = (LdCurrentStep?.fields ?? []).map(
+      (idField) => idField.name,
+    );
+    const LIsValid = await LdForm.trigger(LaFieldNames as never);
     if (LIsValid && !LIsLastStep) {
-      fnSetCurrentStep((iPrev) => Math.min(iPrev + 1, LTotalSteps - 1))
+      fnSetCurrentStep((iPrev) => Math.min(iPrev + 1, LTotalSteps - 1));
     }
-  }
+  };
 
   const fnHandlePrevious = () => {
     if (!LIsFirstStep) {
-      fnSetCurrentStep((iPrev) => Math.max(iPrev - 1, 0))
+      fnSetCurrentStep((iPrev) => Math.max(iPrev - 1, 0));
     }
-  }
+  };
 
   /**
    * Submits the contact form — identical flow to the shared <SectionForm />.
    */
   const fnHandleSubmit = async (idFormData: z.infer<typeof config.schema>) => {
-    fnSetIsSubmitting(true)
+    fnSetIsSubmitting(true);
     if (!executeRecaptcha) {
-      fnSetIsSubmitting(false)
-      return
+      fnSetIsSubmitting(false);
+      return;
     }
 
     try {
-      const LdRecaptchaToken = await executeRecaptcha("submit")
-      const LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
+      const LdRecaptchaToken = await executeRecaptcha("submit");
+      const LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken);
 
       if (LdResponse.error) {
-        throw new Error(LdResponse.error)
+        throw new Error(LdResponse.error);
       }
 
       await onSuccessfulSubmit?.({
         formData: fnSanitizeFormData(idFormData),
         formId: config.formId,
         formTitle: config.title,
-      })
+      });
 
-      LdForm.reset(LdInitialValues)
-      fnSetCurrentStep(0)
-      onSuccess(config.successMessage, config.successTitle)
+      LdForm.reset(LdInitialValues);
+      fnSetCurrentStep(0);
+      onSuccess(config.successMessage, config.successTitle);
     } catch (error) {
       LdForm.setError("root", {
         type: "manual",
-        message: error instanceof Error ? error.message : "Something went wrong",
-      })
+        message:
+          error instanceof Error ? error.message : "Something went wrong",
+      });
     } finally {
-      fnSetIsSubmitting(false)
+      fnSetIsSubmitting(false);
     }
-  }
+  };
 
-  const LProgressPercent = Math.round(((CurrentStep + 1) / LTotalSteps) * 100)
+  const LProgressPercent = Math.round(((CurrentStep + 1) / LTotalSteps) * 100);
 
   return (
     <div className={cn("w-full", className)}>
@@ -138,12 +147,6 @@ function InnerDynamicForm({
         <form onSubmit={LdForm.handleSubmit(fnHandleSubmit)}>
           {/* Progress indicator */}
           <div className="mb-6">
-            <div className="flex items-center justify-between text-sm text-muted-foreground mb-2">
-              <span>
-                Step {CurrentStep + 1} of {LTotalSteps}
-              </span>
-              <span>{LProgressPercent}% Complete</span>
-            </div>
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-foreground transition-all duration-300 ease-out"
@@ -153,10 +156,15 @@ function InnerDynamicForm({
           </div>
 
           {LdForm.formState.errors.root && (
-            <p className="text-red-500 text-sm mb-4">{LdForm.formState.errors.root.message}</p>
+            <p className="text-red-500 text-sm mb-4">
+              {LdForm.formState.errors.root.message}
+            </p>
           )}
 
-          {LdCurrentStep && <DynamicFormStep step={LdCurrentStep} control={LdForm.control} />}
+          
+          {LdCurrentStep && (
+            <DynamicFormStep step={LdCurrentStep} control={LdForm.control} />
+          )}
 
           {/* Navigation */}
           <div className="space-y-4 mt-2">
@@ -174,13 +182,21 @@ function InnerDynamicForm({
               )}
 
               {!LIsLastStep && (
-                <Button type="button" className="h-12 flex-1 rounded-full" onClick={fnHandleNext}>
+                <Button
+                  type="button"
+                  className="h-12 flex-1 rounded-full"
+                  onClick={fnHandleNext}
+                >
                   Next
                 </Button>
               )}
 
               {LIsLastStep && (
-                <Button type="submit" className="h-12 flex-1 rounded-full" disabled={IsSubmitting}>
+                <Button
+                  type="submit"
+                  className="h-12 flex-1 rounded-full"
+                  disabled={IsSubmitting}
+                >
                   {IsSubmitting ? (
                     <span className="flex items-center justify-center">
                       <svg
@@ -237,7 +253,7 @@ function InnerDynamicForm({
         </form>
       </Form>
     </div>
-  )
+  );
 }
 
 /**
@@ -246,9 +262,9 @@ function InnerDynamicForm({
  * shared <SectionForm /> wrapper, so reCAPTCHA behaviour is unchanged.
  */
 export const DynamicForm = (props: TdynamicContactFormProps): ReactElement => {
-  const LdParams = useParams()
-  const Locale = LdParams.locale as string
-  const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""
+  const LdParams = useParams();
+  const Locale = LdParams.locale as string;
+  const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
   /*
     On switching the language, useRouter remounts the client component (including
@@ -257,28 +273,28 @@ export const DynamicForm = (props: TdynamicContactFormProps): ReactElement => {
     github ref: https://github.com/snelsi/next-recaptcha-v3/issues/164
   */
   const fnReloadRecaptchaScript = (iKey: string, iLang: string) => {
-    const ExistingScript = document.getElementById("google-recaptcha-v3")
+    const ExistingScript = document.getElementById("google-recaptcha-v3");
     if (ExistingScript) {
-      ExistingScript.remove()
+      ExistingScript.remove();
     }
 
-    const LdScript = document.createElement("script")
-    LdScript.src = `https://www.google.com/recaptcha/api.js?render=${iKey}&hl=${iLang}`
-    LdScript.id = "google-recaptcha-v3"
-    LdScript.async = true
-    LdScript.defer = true
-    document.body.appendChild(LdScript)
-  }
+    const LdScript = document.createElement("script");
+    LdScript.src = `https://www.google.com/recaptcha/api.js?render=${iKey}&hl=${iLang}`;
+    LdScript.id = "google-recaptcha-v3";
+    LdScript.async = true;
+    LdScript.defer = true;
+    document.body.appendChild(LdScript);
+  };
 
   useEffect(() => {
-    fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale)
-  }, [Locale, LRecaptchaSiteKey])
+    fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
+  }, [Locale, LRecaptchaSiteKey]);
 
   return (
     <ReCaptchaProvider reCaptchaKey={LRecaptchaSiteKey}>
       <InnerDynamicForm {...props} />
     </ReCaptchaProvider>
-  )
-}
+  );
+};
 
-export default DynamicForm
+export default DynamicForm;
