@@ -20,7 +20,7 @@ import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 import { fnSubmitContact } from "@repo/ui/components/form";
 
 import DynamicFormStep from "./DynamicFormStep";
-import { fnResolveContactSteps } from "./contact-form.config";
+import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
 import type { TdynamicContactFormProps } from "./contact-form.types";
 /**
  * Inner multi-step contact form.
@@ -52,6 +52,20 @@ function InnerDynamicForm({
   const LIsLastStep = CurrentStep >= LTotalSteps - 1;
   const LdCurrentStep = LaSteps[CurrentStep];
 
+  // Email→name autofill — purely client-side. The email field is the one typed
+  // as "email"; the target is the name-like field (`name` / `fullName`).
+  const LEmailFieldName = useMemo(
+    () => config.fields.find((idField) => idField.type === "email")?.name,
+    [config.fields],
+  );
+  const LAutoFillTargetName = useMemo(
+    () =>
+      config.fields.find((idField) =>
+        /^(full[_-]?name|name)$/i.test(idField.name),
+      )?.name,
+    [config.fields],
+  );
+
   const fnSanitizeFormData = (idFormData: Record<string, unknown>) =>
     Object.fromEntries(
       Object.entries(idFormData).filter(
@@ -81,6 +95,23 @@ function InnerDynamicForm({
       fnSetCurrentStep(Math.max(0, LTotalSteps - 1));
     }
   }, [LTotalSteps, CurrentStep]);
+
+  // Prefill the target field from the email as the user types — but never once
+  // the user has edited that field themselves (so a manual value is preserved).
+  const LEmailValue = LEmailFieldName
+    ? (LdForm.watch(LEmailFieldName as never) as unknown as string | undefined)
+    : undefined;
+
+  useEffect(() => {
+    if (!LEmailFieldName || !LAutoFillTargetName) return;
+    if (LdForm.formState.dirtyFields[LAutoFillTargetName as never]) return;
+    LdForm.setValue(
+      LAutoFillTargetName as never,
+      fnDeriveNameFromEmail(LEmailValue ?? "") as never,
+      { shouldValidate: false },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [LEmailValue, LEmailFieldName, LAutoFillTargetName]);
 
   /**
    * Validates only the fields of the current step and advances if they pass.
@@ -141,18 +172,32 @@ function InnerDynamicForm({
 
   const LProgressPercent = Math.round(((CurrentStep + 1) / LTotalSteps) * 100);
 
+  // Encouraging, locale-safe caption chosen by how many steps remain. Strapi
+  // copy wins; English fallbacks keep it working before the CMS fields exist.
+  const LStepsRemaining = LTotalSteps - 1 - CurrentStep;
+  const LdStepCaptions = config.stepCaptions;
+  let LProgressCaption = LdStepCaptions?.almostDone ?? "almost done";
+  if (LStepsRemaining > 1) {
+    LProgressCaption = LdStepCaptions?.fewToComplete ?? "few to complete";
+  } else if (LStepsRemaining === 1) {
+    LProgressCaption = LdStepCaptions?.oneMoreInput ?? "one more input";
+  }
+
   return (
     <div className={cn("w-full", className)}>
       <Form {...LdForm}>
         <form onSubmit={LdForm.handleSubmit(fnHandleSubmit)}>
           {/* Progress indicator */}
-          <div className="mb-6">
+          <div className="mb-6 mt-4">
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-foreground transition-all duration-300 ease-out"
                 style={{ width: `${LProgressPercent}%` }}
               />
             </div>
+            <p className="mt-4 text-sm text-muted-foreground">
+              {LProgressCaption}
+            </p>
           </div>
 
           {LdForm.formState.errors.root && (
@@ -162,9 +207,9 @@ function InnerDynamicForm({
           )}
 
           
-          {LdCurrentStep && (
-            <DynamicFormStep step={LdCurrentStep} control={LdForm.control} />
-          )}
+            {LdCurrentStep && (
+              <DynamicFormStep step={LdCurrentStep} control={LdForm.control} />
+            )}
 
           {/* Navigation */}
           <div className="space-y-4 mt-2">

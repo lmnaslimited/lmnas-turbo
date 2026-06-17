@@ -4,7 +4,7 @@ import type { TresolvedContactStep } from "./contact-form.types"
 /**
  * Maximum number of fields rendered per step in the multi-step contact form.
  */
-export const FIELDS_PER_STEP = 2
+export const FIELDS_PER_STEP = 3
 
 /**
  * Builds the multi-step layout purely from the field configuration coming from
@@ -29,4 +29,19 @@ export function fnResolveContactSteps(
   }
 
   return LaResolved
+}
+
+/**
+ * Derives a display name from an email's local part.
+ *
+ * Splits the part before "@" on common separators (".", "_", "-"), capitalises
+ * each token and joins with spaces — e.g. "yuvaraj.shanmugam@lmnas.com" becomes
+ * "Yuvaraj Shanmugam". Returns "" for an empty/invalid email.
+ */
+export function fnDeriveNameFromEmail(iEmail: string): string {
+  const LLocal = (iEmail || "").split("@")[0] || ""
+  return LLocal.split(/[._\-]+/)
+    .filter(Boolean)
+    .map((iWord) => iWord.charAt(0).toUpperCase() + iWord.slice(1).toLowerCase())
+    .join(" ")
 }

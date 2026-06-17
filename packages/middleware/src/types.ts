@@ -398,6 +398,13 @@ export type TformConfig = {
   terms?: Tbutton
   privacy?: Tbutton
   policyDescription?: string
+  // Optional Strapi-driven, locale-safe progress captions for the multi-step
+  // contact form. Chosen by steps remaining; falls back to English if absent.
+  stepCaptions?: {
+    fewToComplete?: string
+    oneMoreInput?: string
+    almostDone?: string
+  }
 }
 
 export type TdynamicFormProps = {
