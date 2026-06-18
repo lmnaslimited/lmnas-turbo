@@ -7,6 +7,7 @@ import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
 async function fnVerifyRecaptchaToken(
   iRecaptchaToken: string,
 ): Promise<boolean> {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   try {
     const LRecaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
 

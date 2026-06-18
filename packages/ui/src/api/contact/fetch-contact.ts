@@ -11,6 +11,7 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   try {
     const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" })
     const LdData = await LdRecaptchaResponse.json()
+    console.log("reCAPTCHA verification score:", LdData.score)
     // Return true only if verification is successful and the score is above threshold
     return LdData.success && LdData.score >= 0.5
   } catch (error) {

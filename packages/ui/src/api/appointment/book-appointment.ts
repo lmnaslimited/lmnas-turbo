@@ -6,12 +6,14 @@ import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
   const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
 
   try {
     const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
     const LdData = await LdResponse.json()
+    console.log("reCAPTCHA verification score:", LdData.score)
     // Return true only if verification is successful and the score is above threshold
     return LdData.success && LdData.score >= 0.5
   } catch (error) {
