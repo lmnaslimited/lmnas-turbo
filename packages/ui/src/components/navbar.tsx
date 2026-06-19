@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui/dropdown-menu"
+import UserAvatar from "./login/user-avatar"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -48,21 +49,6 @@ export default function Navbar({
     return <IconComponent className="w-6 h-6" />
   }
 
-  // commented because Language is moved to footer
-  // //middleware
-  // React.useEffect(() => {
-  //   const currentLang = pathname.split("/")[1] // get "en" from /en/trending-now
-  //   fnSetLanguage(currentLang ?? "EN")
-  // }, [pathname])
-
-  // const fnHandleLanguageChange = (newLang: string) => {
-  //   const Segments = pathname.split("/")
-  //   Segments[1] = newLang // replace language segment
-  //   const NewPath = Segments.join("/")
-  //   fnSetLanguage(newLang)
-  //   router.push(NewPath) // navigate to new lang route
-  // }
-
   React.useEffect(() => {
     const fnHandleScroll = () => {
       fnSetMobileProductsOpen(false)
@@ -90,15 +76,6 @@ export default function Navbar({
     }
   }, [])
 
-  // commented because Language is moved to footer
-  // const fnGetCurrentLanguageDisplay = (): string => {
-  //   const CurrentLang = idNavbar.navbar.language.find(
-  //     (idLang) => idLang.label === Language
-  //   )
-  //   return CurrentLang && CurrentLang.label
-  //     ? CurrentLang.label.toUpperCase()
-  //     : "EN"
-  // }
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full bg-background")}>
@@ -307,77 +284,9 @@ export default function Navbar({
             </div>
           </div>
 
-          {/* Right side controls */}
+          {/* Right side controls ex: contact button */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
-            {/* commented because Language and Theme switcher is moved to footer */}
-            {/* Theme Switcher */}
-            {/* <div className="flex items-center gap-2">
-              <ThemeToggle />
-            </div> */}
 
-            {/* Language Switcher */}
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
-                >
-                  <Globe className="h-4 w-4" />
-                  <span className="text-md">
-                    {fnGetCurrentLanguageDisplay()}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[160px] border border-border  shadow-sm"
-              >
-                <div className="grid grid-cols-1 gap-0">
-                  {idNavbar.navbar.language.map((idLang) => (
-                    <DropdownMenuItem
-                      key={idLang.label ?? "EN"}
-                      onClick={() =>
-                        fnHandleLanguageChange(idLang.label ?? "EN")
-                      }
-                      className={cn(
-                        "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : ""
-                      )}
-                    >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">
-                        {idLang.icon}
-                      </span>
-                      <span>{idLang.description}</span>
-                      {idLang.label === Language && (
-                        <svg
-                          className="ml-auto h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-
-            {/* comment out and changed to dynamic */}
-            {/* <Link href={idNavbar.navbar.menu[5]?.href!}>
-              <Button
-                variant="default"
-                className="rounded-lg h-10 flex items-center"
-              >
-                {idNavbar.navbar.menu[5]?.label}
-              </Button>
-            </Link> */}
             {/* we have consider the menus, with href and without icon to be button */}
             {idNavbar.navbar.menu
               .filter((idItem) => !idItem.icon && idItem.href)
@@ -391,71 +300,12 @@ export default function Navbar({
                   </Button>
                 </Link>
               ))}
+            <UserAvatar name="Guest User" size={32} />
+              
           </div>
 
-          {/* commented because Language and Theme switcher is moved to footer */}
-          {/* Mobile menu button - removed hamburger menu */}
-          {/* <div className="flex lg:hidden items-center gap-2"> */}
-          {/* Theme Switcher for Mobile */}
-          {/* <div className="flex items-center">
-              <ThemeToggle />
-            </div> */}
 
-          {/* Language Switcher for Mobile */}
-          {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1 h-8 flex items-center "
-                >
-                  <Globe className="h-4 w-4" />
-                  <span className="text-xs">
-                    {fnGetCurrentLanguageDisplay()}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[160px] border border-border shadow-sm"
-              >
-                <div className="grid grid-cols-1 gap-0">
-                  {idNavbar.navbar.language.map((idLang) => (
-                    <DropdownMenuItem
-                      key={idLang.label ?? "EN"}
-                      // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() =>
-                        fnHandleLanguageChange(idLang.label ?? "EN")
-                      }
-                      className={cn(
-                        "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : ""
-                      )}
-                    >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">
-                        {idLang.icon}
-                      </span>
-                      <span>{idLang.description}</span>
-                      {idLang.label === Language && (
-                        <svg
-                          className="ml-auto h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> */}
+
         </div>
       </header>
 

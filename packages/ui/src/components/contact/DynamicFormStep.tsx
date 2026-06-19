@@ -4,17 +4,23 @@ import type { ReactNode } from "react"
 import type { Control } from "react-hook-form"
 
 import { cn } from "@repo/ui/lib/utils"
+import { Button } from "@repo/ui/components/ui/button"
 import { Textarea } from "@repo/ui/components/ui/textarea"
 import { Checkbox } from "@repo/ui/components/ui/checkbox"
 import { FloatingLabelInput } from "@repo/ui/components/ui/floating-label-input"
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@repo/ui/components/ui/form"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui/components/ui/select"
+import { Popover, PopoverContent, PopoverTrigger } from "@repo/ui/components/ui/popover"
+import { Calendar } from "@repo/ui/components/ui/calendar"
+import { CalendarIcon } from "lucide-react"
+import { format } from "date-fns/format"
 
 import "react-international-phone/style.css"
 import { PhoneInput } from "react-international-phone"
 
 import type { TformFieldConfig } from "@repo/middleware/types"
 import type { TresolvedContactStep } from "./contact-form.types"
+import type { Tslot } from "@repo/middleware/types"
 
 // Strapi's enumerate field value is returned with underscores (in place of
 // spaces). This maps that user-friendly style name to the matching Tailwind
@@ -48,6 +54,11 @@ type TdynamicFormStepProps = {
   // Detected ISO-3166 alpha-2 (lowercase, e.g. "in") used as the phone field's
   // initial country. Falls back to "de" when detection is unavailable.
   countryIso?: string
+  showTimeSlots?: boolean
+  timeSlots?: Tslot[]
+  isLoadingSlots?: boolean
+  timezones?: string[]
+  isLoadingTimezones?: boolean
 }
 
 /**
@@ -58,7 +69,16 @@ type TdynamicFormStepProps = {
  * parent form's `control` is used directly, so values persist across steps with
  * no duplicate state.
  */
-export default function DynamicFormStep({ step, control, countryIso }: TdynamicFormStepProps) {
+export default function DynamicFormStep({
+  step,
+  control,
+  countryIso,
+  showTimeSlots = false,
+  timeSlots = [],
+  isLoadingSlots = false,
+  timezones = [],
+  isLoadingTimezones = false,
+}: TdynamicFormStepProps) {
   const fnRenderField = (idField: TformFieldConfig): ReactNode => {
     switch (idField.type) {
       case "text":
@@ -161,6 +181,120 @@ export default function DynamicFormStep({ step, control, countryIso }: TdynamicF
                   />
                 </FormControl>
                 {idField.name !== "message" && <FormMessage />}
+              </FormItem>
+            )}
+          />
+        )
+
+      case "date":
+        return (
+          <FormField
+            key={idField.name}
+            control={control}
+            name={idField.name}
+            render={({ field: iField }) => (
+              <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant="outline"
+                        className={cn("h-12 w-full text-left font-normal", !iField.value && "text-muted-foreground")}
+                      >
+                        {iField.value ? format(iField.value as Date, "PPP") : idField.placeholder}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={iField.value as Date | undefined}
+                      onSelect={iField.onChange}
+                      disabled={(idDate) => idDate < new Date()}
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+                {idField.name !== "date" && <FormMessage />}
+              </FormItem>
+            )}
+          />
+        )
+
+      case "timezone":
+        return (
+          <FormField
+            key={idField.name}
+            control={control}
+            name={idField.name}
+            render={({ field: iField }) => (
+              <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                <Select onValueChange={iField.onChange} value={(iField.value as string) || ""} disabled={isLoadingTimezones}>
+                  <FormControl>
+                    <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
+                      <SelectValue placeholder={isLoadingTimezones ? "Loading timezones..." : idField.placeholder} />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {timezones.map((iTimeZone) => (
+                      <SelectItem key={iTimeZone} value={iTimeZone}>
+                        {iTimeZone}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {idField.name !== "timezone" && <FormMessage />}
+              </FormItem>
+            )}
+          />
+        )
+
+      case "timeslot":
+        if (!showTimeSlots) return null
+        return (
+          <FormField
+            key={idField.name}
+            control={control}
+            name={idField.name}
+            render={({ field: iField }) => (
+              <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {idField.label && <FormLabel>{idField.label}</FormLabel>}
+                <div className="grid grid-cols-3 gap-2">
+                  {isLoadingSlots ? (
+                    <p className="col-span-3 text-muted-foreground text-sm">{idField.loading.label ?? "Loading slots..."}</p>
+                  ) : timeSlots.length === 0 ? (
+                    <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">
+                      {idField.loading.description ?? "No slots available"}
+                    </p>
+                  ) : (
+                    timeSlots.map(({ time, availability }) => {
+                      const fromTime = time.slice(11, 16)
+                      const [hourStr = "00", minuteStr = "00"] = fromTime.split(":")
+                      const hour = Number.parseInt(hourStr, 10)
+                      const slotLabel = `${fromTime} - ${(hour + 1) % 24}:${minuteStr}`
+                      const formattedValue = `${fromTime}:00`
+
+                      return (
+                        <Button
+                          key={time}
+                          type="button"
+                          variant="default"
+                          className={`h-10
+                                  ${!availability ? "bg-accent text-foreground cursor-not-allowed" : ""}
+                                  ${availability && iField.value !== formattedValue ? "bg-accent text-foreground hover:border hover:ring-2 hover:ring-ring hover:bg-foreground hover:text-background" : ""}
+                                  ${iField.value === formattedValue ? "border ring-2 ring-ring" : ""}
+                              `}
+                          onClick={() => iField.onChange(formattedValue)}
+                          disabled={!availability}
+                        >
+                          {slotLabel}
+                        </Button>
+                      )
+                    })
+                  )}
+                </div>
+                <FormMessage />
               </FormItem>
             )}
           />

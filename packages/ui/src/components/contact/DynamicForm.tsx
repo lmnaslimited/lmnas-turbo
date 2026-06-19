@@ -17,7 +17,11 @@ import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 // Reuse the shared contact submit handler — same payload, reCAPTCHA verification,
 // newsletter subscription, PostHog link and success/error handling as the
 // existing Contact Us form. The shared form component itself is NOT modified.
-import { fnSubmitContact } from "@repo/ui/components/form";
+import { fnSubmitAppointmentBooking, fnSubmitContact } from "@repo/ui/components/form";
+import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot";
+import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone";
+import { format } from "date-fns/format";
+import type { Tslot } from "@repo/middleware/types";
 
 import DynamicFormStep from "./DynamicFormStep";
 import { useDetectedRegion } from "./useDetectedRegion";
@@ -70,7 +74,7 @@ function InnerDynamicForm({
   // Region detected from the visitor's browser (client-only, hydration-safe).
   // The dynamic contact form uses only the country code for the phone field;
   // the timezone value is intentionally ignored here (other forms use it).
-  const { countryIso: LDetectedCountry } = useDetectedRegion();
+  const { countryIso: LDetectedCountry, timezone: LDetectedTimezone } = useDetectedRegion();
 
   const fnSanitizeFormData = (idFormData: Record<string, unknown>) =>
     Object.fromEntries(
@@ -86,14 +90,25 @@ function InnerDynamicForm({
     message: "",
     phone: "",
     newsletter: true,
+    timezone: "",
+    timeSlot: "",
     ...defaultValues,
   };
+
+  const [Timezones, fnSetTimezones] = useState<string[]>([]);
+  const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true);
+  const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([]);
+  const [IsLoadingSlots, fnSetIsLoadingSlots] = useState(false);
+  const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false);
 
   const LdForm = useForm<z.infer<typeof config.schema>>({
     resolver: zodResolver(config.schema),
     defaultValues: LdInitialValues,
     mode: "onTouched",
   });
+
+  const SelectedDate = LdForm.watch("date");
+  const SelectedTimezone = LdForm.watch("timezone");
 
   // Reset progress if the resolved steps shrink (e.g. config change).
   useEffect(() => {
@@ -118,6 +133,76 @@ function InnerDynamicForm({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [LEmailValue, LEmailFieldName, LAutoFillTargetName]);
+
+  useEffect(() => {
+    if (config.formId !== "booking") return;
+
+    const fnLoadTimezones = async (): Promise<void> => {
+      try {
+        const LdResult = await fetchTimezones();
+        if (LdResult?.data) {
+          fnSetTimezones(LdResult.data);
+        }
+      } catch (error) {
+        console.error("Failed to load timezones:", error);
+      } finally {
+        fnSetIsLoadingTimezones(false);
+      }
+    };
+
+    fnLoadTimezones();
+  }, [config.formId]);
+
+  useEffect(() => {
+    if (config.formId !== "booking") return;
+    const LCurrentTimezone = LdForm.getValues("timezone");
+    // Prefer the visitor-detected timezone when available and present in the
+    // backend-provided timezone list. Fall back to a sensible default.
+    if (!LCurrentTimezone && Timezones.length > 0) {
+      const LPreferred = LDetectedTimezone && Timezones.includes(LDetectedTimezone)
+        ? LDetectedTimezone
+        : Timezones.find((z) => z.includes("CET")) || "UTC";
+      LdForm.setValue("timezone", LPreferred);
+    }
+  }, [Timezones, LdForm]);
+
+  useEffect(() => {
+    if (config.formId !== "booking") return;
+
+    const fnLoadTimeSlots = async (): Promise<void> => {
+      if (SelectedDate && SelectedTimezone) {
+        fnSetIsLoadingSlots(true);
+        try {
+          const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd");
+          const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone);
+          if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
+            fnSetTimeSlots(LdSlotResult.data);
+          } else {
+            fnSetTimeSlots([]);
+          }
+        } catch (error) {
+          console.error("Error loading slots:", error);
+          fnSetTimeSlots([]);
+        } finally {
+          fnSetIsLoadingSlots(false);
+        }
+      }
+    };
+
+    fnLoadTimeSlots();
+  }, [SelectedDate, SelectedTimezone]);
+
+  useEffect(() => {
+    if (config.formId !== "booking") return;
+    if (SelectedDate && SelectedTimezone) {
+      fnSetShowTimeSlots(true);
+    } else {
+      fnSetShowTimeSlots(false);
+      if (LdForm.getValues("timeSlot")) {
+        LdForm.setValue("timeSlot", "");
+      }
+    }
+  }, [SelectedDate, SelectedTimezone, LdForm]);
 
   /**
    * Validates only the fields of the current step and advances if they pass.
@@ -150,10 +235,18 @@ function InnerDynamicForm({
 
     try {
       const LdRecaptchaToken = await executeRecaptcha("submit");
-      const LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken);
+      const LdResponse =
+        config.formId === "booking"
+          ? await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
+          : await fnSubmitContact(idFormData, LdRecaptchaToken);
 
       if (LdResponse.error) {
         throw new Error(LdResponse.error);
+      }
+
+      if (config.formId === "booking") {
+        config.successMessage = LdResponse.message ? LdResponse.message : "";
+        // config.successTitle = LdResponse.title ? LdResponse.title : "";
       }
 
       await onSuccessfulSubmit?.({
@@ -182,11 +275,11 @@ function InnerDynamicForm({
   // copy wins; English fallbacks keep it working before the CMS fields exist.
   const LStepsRemaining = LTotalSteps - 1 - CurrentStep;
   const LdStepCaptions = config.stepCaptions;
-  let LProgressCaption = LdStepCaptions?.almostDone ?? "almost done";
+  let LProgressCaption = LdStepCaptions?.almostDone ?? "Almost Done";
   if (LStepsRemaining > 1) {
-    LProgressCaption = LdStepCaptions?.fewToComplete ?? "few to complete";
+    LProgressCaption = LdStepCaptions?.fewToComplete ?? "Few Steps To Complete";
   } else if (LStepsRemaining === 1) {
-    LProgressCaption = LdStepCaptions?.oneMoreInput ?? "one more input";
+    LProgressCaption = LdStepCaptions?.oneMoreInput ?? "One More Input";
   }
 
   return (
@@ -218,6 +311,11 @@ function InnerDynamicForm({
                 step={LdCurrentStep}
                 control={LdForm.control}
                 countryIso={LDetectedCountry}
+                showTimeSlots={ShowTimeSlots}
+                timeSlots={TimeSlots}
+                isLoadingSlots={IsLoadingSlots}
+                timezones={Timezones}
+                isLoadingTimezones={IsLoadingTimezones}
               />
             )}
 
