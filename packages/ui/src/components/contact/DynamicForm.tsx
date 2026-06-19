@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { useEffect, useMemo, useState, type ReactElement } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactElement } from "react";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,7 @@ import DynamicFormStep from "./DynamicFormStep";
 import { useDetectedRegion } from "./useDetectedRegion";
 import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
 import type { TdynamicContactFormProps } from "./contact-form.types";
+import { useKnownVisitorProfile } from "../../hooks/use-known-visitor-profile";
 /**
  * Inner multi-step contact form.
  *
@@ -46,6 +47,9 @@ function InnerDynamicForm({
   const [CurrentStep, fnSetCurrentStep] = useState(0);
   const [IsSubmitting, fnSetIsSubmitting] = useState(false);
   const { executeRecaptcha } = useReCaptcha();
+  const { Profile, IsReady: LIsPostHogReady } = useKnownVisitorProfile();
+  const LHasAppliedProfile = useRef(false);
+  const LHasPrefilledKnownName = useRef(false);
 
   // Steps are built from the field config coming from Strapi (chunked, 2/step).
   const LaSteps = useMemo(
@@ -110,6 +114,38 @@ function InnerDynamicForm({
   const SelectedDate = LdForm.watch("date");
   const SelectedTimezone = LdForm.watch("timezone");
 
+  // Restore identity fields once when a known visitor returns. Marking the
+  // attempt complete even for an anonymous visitor prevents a successful
+  // submission from immediately refilling the form after it is reset.
+  useEffect(() => {
+    if (!LIsPostHogReady || LHasAppliedProfile.current) return;
+
+    LHasAppliedProfile.current = true;
+
+    const LdPrefillValues: Record<string, string | undefined> = {
+      email: Profile.email,
+      name: Profile.name,
+      phone: Profile.phone,
+    };
+
+    Object.entries(LdPrefillValues).forEach(([LFieldName, LValue]) => {
+      if (!LValue) return;
+      if (!config.fields.some((idField) => idField.name === LFieldName)) return;
+      if (LdForm.getFieldState(LFieldName as never).isDirty) return;
+      if (LdForm.getValues(LFieldName as never)) return;
+
+      LdForm.setValue(LFieldName as never, LValue as never, {
+        shouldDirty: false,
+        shouldTouch: false,
+        shouldValidate: false,
+      });
+
+      if (LFieldName === "name") {
+        LHasPrefilledKnownName.current = true;
+      }
+    });
+  }, [LIsPostHogReady, Profile, config.fields, LdForm]);
+
   // Reset progress if the resolved steps shrink (e.g. config change).
   useEffect(() => {
     if (CurrentStep > LTotalSteps - 1) {
@@ -126,6 +162,7 @@ function InnerDynamicForm({
   useEffect(() => {
     if (!LEmailFieldName || !LAutoFillTargetName) return;
     if (LdForm.formState.dirtyFields[LAutoFillTargetName as never]) return;
+    if (LHasPrefilledKnownName.current) return;
     LdForm.setValue(
       LAutoFillTargetName as never,
       fnDeriveNameFromEmail(LEmailValue ?? "") as never,

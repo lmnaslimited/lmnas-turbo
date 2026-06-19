@@ -13,7 +13,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/ui/components/ui/dropdown-menu"
-import UserAvatar from "./login/user-avatar"
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -300,7 +299,6 @@ export default function Navbar({
                   </Button>
                 </Link>
               ))}
-            <UserAvatar name="Guest User" size={32} />
               
           </div>
 
