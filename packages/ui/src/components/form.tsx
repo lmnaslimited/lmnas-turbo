@@ -280,7 +280,7 @@ export async function fnDownload(
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(idPdfData),
+            body: JSON.stringify({...idPdfData, email: idFormData.email}),
         });
         
         if (!LdResponse.ok) {
