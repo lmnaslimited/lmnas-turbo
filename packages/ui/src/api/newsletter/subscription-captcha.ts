@@ -2,6 +2,11 @@
 
 import z from "zod"
 import { subscribeNewsletter, TnewsletterSubscriptionState, TnewsletterSubscriptionStatus } from "./create-subscription"
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+});
 
 const LdCaptchaSchema = z.object({
     email: z.string().email("Please enter a valid email"),
@@ -16,6 +21,13 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   try {
     const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
     const LdData = await LdResponse.json()
+    posthog.capture({
+      event: "newsletter_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LdData.score),
+      },
+    });
+
     // Return true only if verification is successful and the score is above threshold
     return LdData.success && LdData.score >= 0.5
     

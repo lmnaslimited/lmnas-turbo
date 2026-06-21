@@ -2,6 +2,11 @@
 
 import { TleadApi } from "@repo/middleware/types"
 import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+});
 
 // Verifies the Google reCAPTCHA token received from the client
 async function fnVerifyRecaptchaToken(
@@ -34,6 +39,12 @@ async function fnVerifyRecaptchaToken(
     const LdVerificationResult = await LdVerificationResponse.json()
 
     // Accept only if success is true and score >= 0.5
+          posthog.capture({
+      event: "casestudy_recaptcha_verified",
+      properties: {
+      recaptcha_score: String(LdVerificationResult.score),
+    },
+  });
     return LdVerificationResult.success && LdVerificationResult.score >= 0.5
   } catch (idError) {
     console.error("reCAPTCHA verification error:", idError)

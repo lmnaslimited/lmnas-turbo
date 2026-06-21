@@ -1,24 +1,35 @@
-"use server"
+"use server";
 
-import { z } from "zod"
-import { TapiResponse } from "@repo/middleware/types"
-import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { z } from "zod";
+import { TapiResponse } from "@repo/middleware/types";
+import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link";
+import {PostHog} from "posthog-node";
+
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
+});
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
-  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`;
 
   try {
-    const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
-    const LdData = await LdResponse.json()
-    console.log("reCAPTCHA verification score:", LdData.score)
+    const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" });
+    const LdData = await LdResponse.json();
+      posthog.capture({
+      event: "booking_recaptcha_verified",
+      properties: {
+      recaptcha_score: String(LdData.score),
+    },
+  });
     // Return true only if verification is successful and the score is above threshold
-    return LdData.success && LdData.score >= 0.5
+    return LdData.success && LdData.score >= 0.5;
   } catch (error) {
-    console.error("reCAPTCHA verification error:", error)
-    return false
+    console.error("reCAPTCHA verification error:", error);
+    return false;
   }
 }
 
@@ -34,7 +45,7 @@ const LdAppointmentSchema = z.object({
     notes: z.string().optional(),
   }),
   recaptchaToken: z.string(),
-})
+});
 
 /**
  * Handles appointment booking by:
@@ -43,7 +54,7 @@ const LdAppointmentSchema = z.object({
  * 3. Sending booking data to the LENS API
  */
 export async function bookAppointmentAction(
-  idFormData: z.infer<typeof LdAppointmentSchema>
+  idFormData: z.infer<typeof LdAppointmentSchema>,
 ): Promise<TapiResponse> {
   // Prepare API headers including authentication and session cookies
   const ldHeaders = new Headers({
@@ -51,14 +62,14 @@ export async function bookAppointmentAction(
     "Content-Type": "application/json",
     Cookie:
       "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
-  })
+  });
 
-  const { date, time, timezone, contact, recaptchaToken } = idFormData
+  const { date, time, timezone, contact, recaptchaToken } = idFormData;
 
   // Verify if the form submission is made by a human
-  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
+  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken);
   if (!LIsHuman) {
-    return { error: "reCAPTCHA verification failed" }
+    return { error: "reCAPTCHA verification failed" };
   }
 
   try {
@@ -68,9 +79,9 @@ export async function bookAppointmentAction(
       time,
       tz: timezone,
       contact: JSON.stringify(contact),
-    }
+    };
 
-    const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
+    const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`;
 
     // Send the appointment request
     const LdResponse = await fetch(LBookingUrl, {
@@ -78,24 +89,24 @@ export async function bookAppointmentAction(
       headers: ldHeaders,
       redirect: "follow",
       body: JSON.stringify(LdPayload),
-    })
+    });
 
     // If request fails, return error details
     if (!LdResponse.ok) {
-      const lErrorText = await LdResponse.text()
-      return { error: lErrorText }
+      const lErrorText = await LdResponse.text();
+      return { error: lErrorText };
     }
 
     // On success, return the booking confirmation
-    const LdResult = await LdResponse.json()
-    await linkFrappeRecordByEmailToPostHog(contact.email)
+    const LdResult = await LdResponse.json();
+    await linkFrappeRecordByEmailToPostHog(contact.email);
 
     return {
       message: "Booking confirmed successfully",
       data: LdResult,
-    }
+    };
   } catch (error) {
-    console.error("Booking error:", error)
-    return { error: "Server error occurred" }
+    console.error("Booking error:", error);
+    return { error: "Server error occurred" };
   }
 }

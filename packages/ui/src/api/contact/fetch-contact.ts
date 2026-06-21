@@ -2,6 +2,12 @@
 
 import { z } from "zod"
 import { TapiResponse } from "@repo/middleware/types"
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+})
+
 
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
@@ -11,7 +17,12 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   try {
     const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" })
     const LdData = await LdRecaptchaResponse.json()
-    console.log("reCAPTCHA verification score:", LdData.score)
+    posthog.capture({
+      event: "communication_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LdData.score),
+      },
+    });
     // Return true only if verification is successful and the score is above threshold
     return LdData.success && LdData.score >= 0.5
   } catch (error) {
