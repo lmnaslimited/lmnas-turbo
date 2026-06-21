@@ -15,7 +15,7 @@ import {
 } from "@repo/ui/components/ui/dropdown-menu"
 import { useRouter, usePathname } from "next/navigation"
 import { cn } from "@repo/ui/lib/utils"
-import { NewsletterSubscription } from "./subscription"
+import { NewsletterSubscriptionForm } from "./subscription"
 
 // Map of icon names to their components
 const LdIconMap = {
@@ -144,7 +144,7 @@ export default function Footer({ idFooter }: { idFooter: TfooterTarget }): React
             </ul>
             <div className="mt-6">
               <h4 className="font-medium mb-2">{idFooter.footer.menu[3]?.label}</h4>
-              <NewsletterSubscription
+              <NewsletterSubscriptionForm
                 placeholder={idFooter.footer.menu[4]?.label ?? ""}
                 buttonLabel={String(idFooter.footer.menu[4]?.icon ?? "Subscribe")}
                 buttonPendingLabel={idFooter.footer.menu[4]?.description ?? "Subscribing..."}
