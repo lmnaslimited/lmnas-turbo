@@ -59,6 +59,20 @@ type TdynamicFormStepProps = {
   isLoadingSlots?: boolean
   timezones?: string[]
   isLoadingTimezones?: boolean
+  availableDates?: string[]
+  bookingRangeStart?: Date
+  bookingRangeEnd?: Date
+  isLoadingAvailability?: boolean
+  availabilityError?: string
+  appointmentDuration?: number
+}
+
+function fnFormatSlotEnd(iStartTime: string, iDuration: number): string {
+  const [LHour = 0, LMinute = 0] = iStartTime.split(":").map(Number)
+  const LEndMinutes = (LHour * 60 + LMinute + iDuration) % (24 * 60)
+  const LEndHour = Math.floor(LEndMinutes / 60).toString().padStart(2, "0")
+  const LEndMinute = (LEndMinutes % 60).toString().padStart(2, "0")
+  return `${LEndHour}:${LEndMinute}`
 }
 
 /**
@@ -78,7 +92,15 @@ export default function DynamicFormStep({
   isLoadingSlots = false,
   timezones = [],
   isLoadingTimezones = false,
+  availableDates = [],
+  bookingRangeStart,
+  bookingRangeEnd,
+  isLoadingAvailability = false,
+  availabilityError,
+  appointmentDuration = 60,
 }: TdynamicFormStepProps) {
+  const LAvailableDateSet = new Set(availableDates)
+
   const fnRenderField = (idField: TformFieldConfig): ReactNode => {
     switch (idField.type) {
       case "text":
@@ -200,8 +222,13 @@ export default function DynamicFormStep({
                       <Button
                         variant="outline"
                         className={cn("h-12 w-full text-left font-normal", !iField.value && "text-muted-foreground")}
+                        disabled={isLoadingAvailability || availableDates.length === 0}
                       >
-                        {iField.value ? format(iField.value as Date, "PPP") : idField.placeholder}
+                        {isLoadingAvailability
+                          ? idField.loading?.label ?? "Loading available dates..."
+                          : iField.value
+                            ? format(iField.value as Date, "PPP")
+                            : idField.placeholder}
                         <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                       </Button>
                     </FormControl>
@@ -211,11 +238,19 @@ export default function DynamicFormStep({
                       mode="single"
                       selected={iField.value as Date | undefined}
                       onSelect={iField.onChange}
-                      disabled={(idDate) => idDate < new Date()}
+                      defaultMonth={(iField.value as Date | undefined) ?? bookingRangeStart}
+                      fromDate={bookingRangeStart}
+                      toDate={bookingRangeEnd}
+                      disabled={(idDate) =>
+                        !LAvailableDateSet.has(format(idDate, "yyyy-MM-dd"))
+                      }
                       initialFocus
                     />
                   </PopoverContent>
                 </Popover>
+                {availabilityError && (
+                  <p className="mt-2 text-sm text-red-500">{availabilityError}</p>
+                )}
                 {idField.name !== "date" && <FormMessage />}
               </FormItem>
             )}
@@ -262,7 +297,7 @@ export default function DynamicFormStep({
                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                 <div className="grid grid-cols-3 gap-2">
                   {isLoadingSlots ? (
-                    <p className="col-span-3 text-muted-foreground text-sm">{idField.loading.label ?? "Loading slots..."}</p>
+                    <p className="col-span-3 text-muted-foreground text-sm">{idField.loading?.label ?? "Loading slots..."}</p>
                   ) : timeSlots.length === 0 ? (
                     <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">
                       {idField.loading.description ?? "No slots available"}
@@ -270,10 +305,8 @@ export default function DynamicFormStep({
                   ) : (
                     timeSlots.map(({ time, availability }) => {
                       const fromTime = time.slice(11, 16)
-                      const [hourStr = "00", minuteStr = "00"] = fromTime.split(":")
-                      const hour = Number.parseInt(hourStr, 10)
-                      const slotLabel = `${fromTime} - ${(hour + 1) % 24}:${minuteStr}`
-                      const formattedValue = `${fromTime}:00`
+                      const slotLabel = `${fromTime} - ${fnFormatSlotEnd(fromTime, appointmentDuration)}`
+                      const formattedValue = time.slice(11, 19)
 
                       return (
                         <Button

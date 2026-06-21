@@ -5,29 +5,26 @@ import { TapiResponse } from "@repo/middleware/types"
 import { PostHog } from "posthog-node"
 
 const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com"
 })
 
-
 // Function to verify reCAPTCHA token using Google's siteverify API
-async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
-  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
-  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
+async function fnVerifyRecaptcha(
+  iToken: string,
+): Promise<{ isHuman: boolean; score: number }> {
+  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`;
 
   try {
-    const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" })
-    const LdData = await LdRecaptchaResponse.json()
-    posthog.capture({
-      event: "communication_recaptcha_verified",
-      properties: {
-        recaptcha_score: String(LdData.score),
-      },
-    });
-    // Return true only if verification is successful and the score is above threshold
-    return LdData.success && LdData.score >= 0.5
+    const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" });
+    const LdData = await LdRecaptchaResponse.json();
+    return {
+      isHuman: LdData.success && LdData.score >= 0.5,
+      score: LdData.score ?? 0,
+    };
   } catch (error) {
-    console.error("reCAPTCHA verification error:", error)
-    return false
+    console.error("reCAPTCHA verification error:", error);
+    return { isHuman: false, score: 0 };
   }
 }
 
@@ -62,7 +59,20 @@ export async function sendCommunicationAction(
   const { email, notes, option, recaptchaToken } = idFormData
 
   // Verify that the user is not a bot
-  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
+  const { isHuman: LIsHuman, score: LRecaptchaScore } =
+    await fnVerifyRecaptcha(recaptchaToken)
+
+  posthog.capture({
+    distinctId: email,
+    event: "communication_recaptcha_verified",
+    properties: {
+      recaptcha_score: String(LRecaptchaScore),
+      recaptcha_passed: LIsHuman,
+      $set: {
+        email,
+      }
+    }
+  })
   if (!LIsHuman) {
     return { error: "reCAPTCHA verification failed" }
   }

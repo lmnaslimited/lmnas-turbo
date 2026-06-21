@@ -20,6 +20,7 @@ import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 import { fnSubmitAppointmentBooking, fnSubmitContact } from "@repo/ui/components/form";
 import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot";
 import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone";
+import { fetchAppointmentAvailability } from "@repo/ui/api/appointment/fetch-appointment-availability";
 import { format } from "date-fns/format";
 import type { Tslot } from "@repo/middleware/types";
 
@@ -28,6 +29,14 @@ import { useDetectedRegion } from "./useDetectedRegion";
 import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
 import type { TdynamicContactFormProps } from "./contact-form.types";
 import { useKnownVisitorProfile } from "../../hooks/use-known-visitor-profile";
+
+function fnParseCalendarDate(iDate: string): Date {
+  return new Date(`${iDate}T00:00:00`);
+}
+
+function fnSlotValue(idSlot: Tslot): string {
+  return idSlot.time.slice(11, 19);
+}
 /**
  * Inner multi-step contact form.
  *
@@ -104,6 +113,12 @@ function InnerDynamicForm({
   const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([]);
   const [IsLoadingSlots, fnSetIsLoadingSlots] = useState(false);
   const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false);
+  const [AvailableDates, fnSetAvailableDates] = useState<string[]>([]);
+  const [BookingRangeStart, fnSetBookingRangeStart] = useState<Date>();
+  const [BookingRangeEnd, fnSetBookingRangeEnd] = useState<Date>();
+  const [AppointmentDuration, fnSetAppointmentDuration] = useState(60);
+  const [IsLoadingAvailability, fnSetIsLoadingAvailability] = useState(false);
+  const [AvailabilityError, fnSetAvailabilityError] = useState<string>();
 
   const LdForm = useForm<z.infer<typeof config.schema>>({
     resolver: zodResolver(config.schema),
@@ -201,45 +216,132 @@ function InnerDynamicForm({
         : Timezones.find((z) => z.includes("CET")) || "UTC";
       LdForm.setValue("timezone", LPreferred);
     }
-  }, [Timezones, LdForm]);
+  }, [config.formId, Timezones, LDetectedTimezone, LdForm]);
+
+  useEffect(() => {
+    if (config.formId !== "booking") return;
+    if (!SelectedTimezone) return;
+
+    let LIsCancelled = false;
+
+    const fnLoadAvailability = async (): Promise<void> => {
+      fnSetIsLoadingAvailability(true);
+      fnSetAvailabilityError(undefined);
+      fnSetAvailableDates([]);
+      fnSetTimeSlots([]);
+      fnSetShowTimeSlots(false);
+      LdForm.setValue("date", undefined as never, {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+      LdForm.setValue("timeSlot", "", {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+
+      const LdResult = await fetchAppointmentAvailability(SelectedTimezone);
+      if (LIsCancelled) return;
+
+      if (!LdResult.data) {
+        fnSetAvailabilityError(
+          LdResult.error ?? "Unable to load appointment availability.",
+        );
+        fnSetIsLoadingAvailability(false);
+        return;
+      }
+
+      const LdAvailability = LdResult.data;
+      fnSetAvailableDates(LdAvailability.availableDates);
+      fnSetBookingRangeStart(fnParseCalendarDate(LdAvailability.rangeStart));
+      fnSetBookingRangeEnd(fnParseCalendarDate(LdAvailability.rangeEnd));
+      fnSetAppointmentDuration(LdAvailability.settings.appointment_duration);
+
+      const LFirstDate = LdAvailability.availableDates[0];
+      if (!LFirstDate) {
+        fnSetAvailabilityError("No appointments are available in the booking range.");
+        fnSetIsLoadingAvailability(false);
+        return;
+      }
+
+      const LaFirstDateSlots = LdAvailability.slotsByDate[LFirstDate] ?? [];
+      const LdFirstSlot = LaFirstDateSlots.find((idSlot) => idSlot.availability);
+      fnSetTimeSlots(LaFirstDateSlots);
+      fnSetShowTimeSlots(true);
+      LdForm.setValue("date", fnParseCalendarDate(LFirstDate), {
+        shouldDirty: false,
+        shouldValidate: true,
+      });
+      if (LdFirstSlot) {
+        LdForm.setValue("timeSlot", fnSlotValue(LdFirstSlot), {
+          shouldDirty: false,
+          shouldValidate: true,
+        });
+      }
+      fnSetIsLoadingAvailability(false);
+    };
+
+    fnLoadAvailability();
+
+    return () => {
+      LIsCancelled = true;
+    };
+  }, [config.formId, SelectedTimezone, LdForm]);
 
   useEffect(() => {
     if (config.formId !== "booking") return;
 
+    let LIsCancelled = false;
+
     const fnLoadTimeSlots = async (): Promise<void> => {
-      if (SelectedDate && SelectedTimezone) {
-        fnSetIsLoadingSlots(true);
-        try {
-          const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd");
-          const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone);
-          if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
-            fnSetTimeSlots(LdSlotResult.data);
-          } else {
-            fnSetTimeSlots([]);
+      if (!SelectedDate || !SelectedTimezone) {
+        fnSetShowTimeSlots(false);
+        return;
+      }
+
+      fnSetIsLoadingSlots(true);
+      fnSetShowTimeSlots(true);
+      LdForm.setValue("timeSlot", "", {
+        shouldDirty: false,
+        shouldValidate: false,
+      });
+
+      try {
+        const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd");
+        const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone);
+        if (LIsCancelled) return;
+
+        if (LdSlotResult?.data && Array.isArray(LdSlotResult.data)) {
+          fnSetTimeSlots(LdSlotResult.data);
+          const LdFirstAvailableSlot = LdSlotResult.data.find(
+            (idSlot) => idSlot.availability,
+          );
+          if (LdFirstAvailableSlot) {
+            LdForm.setValue("timeSlot", fnSlotValue(LdFirstAvailableSlot), {
+              shouldDirty: false,
+              shouldValidate: true,
+            });
           }
-        } catch (error) {
+        } else {
+          fnSetTimeSlots([]);
+        }
+      } catch (error) {
+        if (!LIsCancelled) {
           console.error("Error loading slots:", error);
           fnSetTimeSlots([]);
-        } finally {
+        }
+      } finally {
+        if (!LIsCancelled) {
           fnSetIsLoadingSlots(false);
         }
       }
     };
 
     fnLoadTimeSlots();
-  }, [SelectedDate, SelectedTimezone]);
 
-  useEffect(() => {
-    if (config.formId !== "booking") return;
-    if (SelectedDate && SelectedTimezone) {
-      fnSetShowTimeSlots(true);
-    } else {
-      fnSetShowTimeSlots(false);
-      if (LdForm.getValues("timeSlot")) {
-        LdForm.setValue("timeSlot", "");
-      }
-    }
-  }, [SelectedDate, SelectedTimezone, LdForm]);
+    return () => {
+      LIsCancelled = true;
+    };
+  }, [config.formId, SelectedDate, SelectedTimezone, LdForm]);
 
   /**
    * Validates only the fields of the current step and advances if they pass.
@@ -271,6 +373,26 @@ function InnerDynamicForm({
     }
 
     try {
+      if (config.formId === "booking") {
+        const LSelectedDate = format(new Date(idFormData.date), "yyyy-MM-dd");
+        const LSelectedTimezone = String(idFormData.timezone ?? "");
+        const LSelectedTimeSlot = String(idFormData.timeSlot ?? "");
+        const LdLatestSlots = await fetchTimeSlots(
+          LSelectedDate,
+          LSelectedTimezone,
+        );
+        const LIsStillAvailable = LdLatestSlots.data?.some(
+          (idSlot) =>
+            idSlot.availability && fnSlotValue(idSlot) === LSelectedTimeSlot,
+        );
+
+        if (!LIsStillAvailable) {
+          throw new Error(
+            "This appointment slot is no longer available. Please select another slot.",
+          );
+        }
+      }
+
       const LdRecaptchaToken = await executeRecaptcha("submit");
       const LdResponse =
         config.formId === "booking"
@@ -353,8 +475,16 @@ function InnerDynamicForm({
                 isLoadingSlots={IsLoadingSlots}
                 timezones={Timezones}
                 isLoadingTimezones={IsLoadingTimezones}
+                availableDates={AvailableDates}
+                bookingRangeStart={BookingRangeStart}
+                bookingRangeEnd={BookingRangeEnd}
+                isLoadingAvailability={IsLoadingAvailability}
+                availabilityError={AvailabilityError}
+                appointmentDuration={AppointmentDuration}
               />
             )}
+
+            
 
           {/* Navigation */}
           <div className="space-y-4 mt-2">

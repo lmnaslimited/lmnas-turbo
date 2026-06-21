@@ -442,6 +442,25 @@ export type TslotResponse = {
   error?: string
 }
 
+export type TappointmentSettings = {
+  advance_booking_days: number
+  appointment_duration: number
+  success_redirect_url?: string
+}
+
+export type TappointmentAvailability = {
+  settings: TappointmentSettings
+  rangeStart: string
+  rangeEnd: string
+  availableDates: string[]
+  slotsByDate: Record<string, Tslot[]>
+}
+
+export type TappointmentAvailabilityResponse = {
+  data?: TappointmentAvailability
+  error?: string
+}
+
 //API
 export type TcontactApi = {
   formData: {

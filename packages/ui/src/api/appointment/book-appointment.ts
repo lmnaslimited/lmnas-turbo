@@ -3,15 +3,16 @@
 import { z } from "zod";
 import { TapiResponse } from "@repo/middleware/types";
 import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link";
-import {PostHog} from "posthog-node";
-
+import { PostHog } from "posthog-node";
 
 const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com",
 });
 
 // Function to verify reCAPTCHA token using Google's siteverify API
-async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
+async function fnVerifyRecaptcha(
+  iToken: string,
+): Promise<{ isHuman: boolean; score: number }> {
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const LSecretKey = process.env.RECAPTCHA_SECRET_KEY;
   const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`;
@@ -19,17 +20,13 @@ async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
   try {
     const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" });
     const LdData = await LdResponse.json();
-      posthog.capture({
-      event: "booking_recaptcha_verified",
-      properties: {
-      recaptcha_score: String(LdData.score),
-    },
-  });
-    // Return true only if verification is successful and the score is above threshold
-    return LdData.success && LdData.score >= 0.5;
+    return {
+      isHuman: LdData.success && LdData.score >= 0.5,
+      score: LdData.score ?? 0,
+    };
   } catch (error) {
     console.error("reCAPTCHA verification error:", error);
-    return false;
+    return { isHuman: false, score: 0 };
   }
 }
 
@@ -67,8 +64,24 @@ export async function bookAppointmentAction(
   const { date, time, timezone, contact, recaptchaToken } = idFormData;
 
   // Verify if the form submission is made by a human
-  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken);
-  if (!LIsHuman) {
+  const { isHuman, score } = await fnVerifyRecaptcha(recaptchaToken);
+
+  // Capture reCAPTCHA result tied to the person's email
+  posthog.capture({
+    distinctId: contact.email,
+    event: "booking_recaptcha_verified",
+    properties: {
+      recaptcha_score: String(score),
+      recaptcha_passed: isHuman,
+      $set: {
+        email: contact.email,
+        name: contact.name,
+        phone: contact.phone,
+      },
+    },
+  });
+
+  if (!isHuman) {
     return { error: "reCAPTCHA verification failed" };
   }
 
