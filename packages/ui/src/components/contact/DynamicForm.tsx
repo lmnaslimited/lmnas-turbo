@@ -52,7 +52,7 @@ function InnerDynamicForm({
   onSuccessfulSubmit,
   className = "",
   defaultValues,
-}: TdynamicContactFormProps): ReactElement {
+}: TdynamicContactFormProps): ReactElement | null {
   const [CurrentStep, fnSetCurrentStep] = useState(0);
   const [IsSubmitting, fnSetIsSubmitting] = useState(false);
   const { executeRecaptcha } = useReCaptcha();
@@ -125,6 +125,8 @@ function InnerDynamicForm({
     defaultValues: LdInitialValues,
     mode: "onTouched",
   });
+
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const SelectedDate = LdForm.watch("date");
   const SelectedTimezone = LdForm.watch("timezone");
@@ -417,6 +419,8 @@ function InnerDynamicForm({
       LdForm.reset(LdInitialValues);
       fnSetCurrentStep(0);
       onSuccess(config.successMessage, config.successTitle);
+      // hide the form until the page is manually refreshed
+      setIsSubmitted(true);
     } catch (error) {
       LdForm.setError("root", {
         type: "manual",
@@ -440,6 +444,8 @@ function InnerDynamicForm({
   } else if (LStepsRemaining === 1) {
     LProgressCaption = LdStepCaptions?.oneMoreInput ?? "One More Input";
   }
+
+  if (isSubmitted) return null
 
   return (
     <div className={cn("w-full", className)}>

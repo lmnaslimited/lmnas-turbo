@@ -30,14 +30,13 @@ export function useDetectedRegion(): TdetectedRegion {
   useEffect(() => {
     try {
       const LTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-      console.log("Detected timezone:", LTimezone)
+  
       if (!LTimezone) return
 
       // Shared timezones resolve to multiple countries; the package orders them
       // by relevance, so the first entry is the most statistically likely.
       const LaCountries = getCountriesForTimezone(LTimezone)
       const LCountryIso = LaCountries?.[0]?.id?.toLowerCase()
-      console.log("Inferred country from timezone:", LCountryIso)
 
       fnSetRegion({ timezone: LTimezone, countryIso: LCountryIso })
     } catch {

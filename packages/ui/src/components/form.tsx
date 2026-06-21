@@ -344,7 +344,7 @@ function InnerSectionForm({
     hideCardHeader = false,
     data,
     pdfData
-}: TdynamicFormProps): ReactElement {
+}: TdynamicFormProps): ReactElement | null {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
     const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([])
@@ -377,6 +377,8 @@ function InnerSectionForm({
         defaultValues: LdInitialValues,
         mode: "onTouched",
     })
+
+    const [isSubmitted, setIsSubmitted] = useState(false)
 
     // Watches specific form fields to react to their changes
     const SelectedDate = LdForm.watch("date")
@@ -492,6 +494,8 @@ function InnerSectionForm({
 
             LdForm.reset(LdInitialValues)
             onSuccess(config.successMessage, config.successTitle)
+            // hide the form until page refresh
+            setIsSubmitted(true)
         } catch (error: any) {
             LdForm.setError("root", {
                 type: "manual",
@@ -744,6 +748,11 @@ function InnerSectionForm({
             default:
                 return null
         }
+    }
+
+    if (isSubmitted) {
+        // Success UI is handled by the page-level handler (onSuccess). Hide the form until a manual refresh.
+        return null
     }
 
     return (

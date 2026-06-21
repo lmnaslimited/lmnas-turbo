@@ -60,7 +60,6 @@ async function fnFetchAppointmentSettings(): Promise<TappointmentSettings> {
   ) {
     throw new Error("Invalid appointment settings from ERPNext.")
   }
-console.log("Fetched appointment settings:", LdSettings)  
   return LdSettings as TappointmentSettings
 }
 
