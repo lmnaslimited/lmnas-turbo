@@ -5,10 +5,9 @@ import { Input } from "@repo/ui/components/ui/input";
 import { TNewsletterSubscriptionProps } from "@repo/middleware/types";
 import posthog from "posthog-js";
 import { useEffect, useState } from "react";
-import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
+import { useReCaptcha } from "next-recaptcha-v3"
 import { fnSubscribewithCaptcha } from "@repo/ui/api/newsletter/subscription-captcha";
 import { TnewsletterSubscriptionState } from "@repo/ui/api/newsletter/create-subscription";
-import { useParams } from "next/navigation";
 
 const LdVariants = {
   sm: {
