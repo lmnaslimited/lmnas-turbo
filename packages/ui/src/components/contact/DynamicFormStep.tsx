@@ -28,23 +28,25 @@ import type { Tslot } from "@repo/middleware/types"
 // https://github.com/strapi/strapi/issues/7904
 function fnGetClassNameFromFriendlyName(iStrapiValue: string): string {
   const LdClassNameMap: Record<string, string> = {
-    Half_Width_Right_Padding: "w-1/2 pr-2 mb-3",
-    Half_Width_Left_Padding: "w-1/2 pl-2 mb-3",
-    Full_Width_Small_Bottom_Space: "w-full mb-3",
-    Half_Width_on_Tablet_Right_Padding: "md:w-1/2 w-full md:pr-2 mb-3",
-    Half_Width_on_Tablet_Left_Padding: "md:w-1/2 w-full md:pl-2 mb-3",
-    Full_Width_Larger_Bottom_Space: "w-full mb-4",
-    Half_Width_on_Tablet_Right_Padding_Medium_2_5: "w-full md:w-1/2 md:pr-2.5 mb-3",
-    Half_Width_on_Tablet_Left_Padding_Medium_2_5: "w-full md:w-1/2 md:pl-2.5 mb-3",
-    Half_Width_on_Tablet_Right_Padding_Small: "w-full md:w-1/2 md:pr-2 mb-3",
-    Half_Width_on_Tablet_Left_Padding_Small: "w-full md:w-1/2 md:pl-2 mb-3",
-    Half_Width_on_Tablet_Small_Bottom_Space: "w-full md:w-1/2 mb-3",
-    Full_Width_Medium_Right_Padding_2_5: "w-full md:pr-2.5 mb-3",
-    Full_Width_Medium_Left_Padding_2_5: "w-full md:pl-2.5 mb-3",
+
+
+    Half_Width_Right_Padding: "w-1/2 pr-3 mb-5",
+    Half_Width_Left_Padding: "w-1/2 pl-3 mb-5",
+    Full_Width_Small_Bottom_Space: "w-full mb-5",
+    Half_Width_on_Tablet_Right_Padding: "md:w-1/2 w-full md:pr-3 mb-5",
+    Half_Width_on_Tablet_Left_Padding: "md:w-1/2 w-full md:pl-3 mb-5",
+    Full_Width_Larger_Bottom_Space: "w-full mb-6",
+    Half_Width_on_Tablet_Right_Padding_Medium_2_5: "w-full md:w-1/2 md:pr-3 mb-5",
+    Half_Width_on_Tablet_Left_Padding_Medium_2_5: "w-full md:w-1/2 md:pl-3 mb-5",
+    Half_Width_on_Tablet_Right_Padding_Small: "w-full md:w-1/2 md:pr-3 mb-5",
+    Half_Width_on_Tablet_Left_Padding_Small: "w-full md:w-1/2 md:pl-3 mb-5",
+    Half_Width_on_Tablet_Small_Bottom_Space: "w-full md:w-1/2 mb-5",
+    Full_Width_Medium_Right_Padding_2_5: "w-full md:pr-3 mb-5",
+    Full_Width_Medium_Left_Padding_2_5: "w-full md:pl-3 mb-5",
     Half_Width_on_Tablet_No_Margin: "w-full md:w-1/2",
     Full_Width_No_Margin: "w-full",
   }
-  return LdClassNameMap[iStrapiValue] || "w-full mb-3"
+  return LdClassNameMap[iStrapiValue] || "w-full mb-5"
 }
 
 type TdynamicFormStepProps = {
@@ -114,6 +116,7 @@ export default function DynamicFormStep({
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
                 <FormControl>
                   <FloatingLabelInput
+                    stackedLabel
                     label={idField.label || idField.placeholder || ""}
                     type={idField.type}
                     error={!!iFieldState.error}
@@ -136,6 +139,9 @@ export default function DynamicFormStep({
             name={idField.name}
             render={({ field: iField }) => (
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {(idField.label || idField.placeholder) && (
+                  <FormLabel>{idField.label || idField.placeholder}</FormLabel>
+                )}
                 <FormControl>
                   <PhoneInput
                     // Remount when detection resolves so the new default country
@@ -166,10 +172,13 @@ export default function DynamicFormStep({
             name={idField.name}
             render={({ field: iField }) => (
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {(idField.label || idField.placeholder) && (
+                  <FormLabel>{idField.label || idField.placeholder}</FormLabel>
+                )}
                 <Select onValueChange={iField.onChange} value={(iField.value as string) || idField.defaultValue}>
                   <FormControl>
                     <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
-                      <SelectValue placeholder={idField.placeholder} />
+                      <SelectValue placeholder={idField.label ? idField.placeholder : undefined} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -194,9 +203,12 @@ export default function DynamicFormStep({
             name={idField.name}
             render={({ field: iField, fieldState: iFieldState }) => (
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {(idField.label || idField.placeholder) && (
+                  <FormLabel>{idField.label || idField.placeholder}</FormLabel>
+                )}
                 <FormControl>
                   <Textarea
-                    placeholder={idField.placeholder}
+                    placeholder={idField.label ? idField.placeholder : undefined}
                     className={cn("min-h-[100px]", idField.inputClassName, iFieldState.error && "border-red-400")}
                     {...iField}
                     value={(iField.value as string) || ""}
@@ -216,6 +228,9 @@ export default function DynamicFormStep({
             name={idField.name}
             render={({ field: iField }) => (
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {(idField.label || idField.placeholder) && (
+                  <FormLabel>{idField.label || idField.placeholder}</FormLabel>
+                )}
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -265,10 +280,13 @@ export default function DynamicFormStep({
             name={idField.name}
             render={({ field: iField }) => (
               <FormItem className={fnGetClassNameFromFriendlyName(idField.fieldDisplay)}>
+                {(idField.label || idField.placeholder) && (
+                  <FormLabel>{idField.label || idField.placeholder}</FormLabel>
+                )}
                 <Select onValueChange={iField.onChange} value={(iField.value as string) || ""} disabled={isLoadingTimezones}>
                   <FormControl>
                     <SelectTrigger className="h-12" aria-label={`Select ${idField.name}`}>
-                      <SelectValue placeholder={isLoadingTimezones ? "Loading timezones..." : idField.placeholder} />
+                      <SelectValue placeholder={isLoadingTimezones ? "Loading timezones..." : idField.label ? idField.placeholder : undefined} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -365,7 +383,7 @@ export default function DynamicFormStep({
     }
   }
 
-  return <div className="flex flex-wrap -mx-2">{step.fields.map(fnRenderField)}</div>
+  return <div className="flex flex-wrap -mx-3">{step.fields.map(fnRenderField)}</div>
 }
 
 export { fnGetClassNameFromFriendlyName }

@@ -48,7 +48,7 @@ export async function sendCommunicationAction(
   idFormData: z.infer<typeof LdCommunicationSchema>
 ): Promise<TapiResponse> {
   // Prepare necessary headers for API request
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
@@ -103,6 +103,7 @@ export async function sendCommunicationAction(
 
     // Parse successful response and return success message
     const LdResult = await LdResponse.json()
+    console.log("Communication sent successfully:", LdResult)
     return {
       message: "Thank you for your message",
       data: LdResult,
