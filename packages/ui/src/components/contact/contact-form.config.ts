@@ -1,6 +1,5 @@
 import type { TformFieldConfig } from "@repo/middleware/types"
-import type { TresolvedContactStep } from "./contact-form.types"
-
+import type { TresolvedContactStep } from "@repo/middleware/types"
 /**
  * Maximum number of fields rendered per step in the multi-step contact form.
  */

@@ -27,7 +27,7 @@ import type { Tslot } from "@repo/middleware/types";
 import DynamicFormStep from "./DynamicFormStep";
 import { useDetectedRegion } from "./useDetectedRegion";
 import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
-import type { TdynamicContactFormProps } from "./contact-form.types";
+import type { TdynamicContactFormProps } from "@repo/middleware/types";
 import { useKnownVisitorProfile } from "../../hooks/use-known-visitor-profile";
 
 function fnParseCalendarDate(iDate: string): Date {

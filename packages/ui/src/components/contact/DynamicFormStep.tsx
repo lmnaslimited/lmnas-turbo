@@ -19,7 +19,7 @@ import "react-international-phone/style.css"
 import { PhoneInput } from "react-international-phone"
 
 import type { TformFieldConfig } from "@repo/middleware/types"
-import type { TresolvedContactStep } from "./contact-form.types"
+import type { TresolvedContactStep } from "@repo/middleware/types"
 import type { Tslot } from "@repo/middleware/types"
 
 // Strapi's enumerate field value is returned with underscores (in place of

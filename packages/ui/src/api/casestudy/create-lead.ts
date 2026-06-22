@@ -12,7 +12,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
 async function fnVerifyRecaptchaToken(
   iRecaptchaToken: string,
 ): Promise<{ isHuman: boolean; score: number }> {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   try {
     const LRecaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
 

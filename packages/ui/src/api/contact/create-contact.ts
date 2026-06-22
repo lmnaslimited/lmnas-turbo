@@ -11,7 +11,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
 async function fnVerifyRecaptcha(
   iToken: string,
 ): Promise<{ isHuman: boolean; score: number }> {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
   const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
 

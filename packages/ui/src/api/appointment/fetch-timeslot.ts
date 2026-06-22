@@ -13,7 +13,7 @@ export async function fetchTimeSlots(
   iSelectedDate: string,
   iTimezone: string
 ): Promise<TslotResponse> {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   try {
     // Validate required parameters
     if (!iSelectedDate || !iTimezone) {
