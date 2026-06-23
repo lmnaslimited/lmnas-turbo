@@ -389,7 +389,7 @@ export default function DynamicFormStep({
     }
   }
 
-  return <div className="flex flex-wrap">{step.fields.map(fnRenderField)}</div>
+  return <div className="flex flex-wrap -mx-2">{step.fields.map(fnRenderField)}</div>
 }
 
 export { fnGetClassNameFromFriendlyName }

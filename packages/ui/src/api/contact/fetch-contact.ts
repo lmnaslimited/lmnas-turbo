@@ -115,7 +115,7 @@ export async function sendCommunicationAction(
         const LdLeadName = LdLead?.name || LdLead?.lead_id || null
         const LMessage = LdLeadName
           ? `Thanks for contacting us !, \n Your Lead id ${LdLeadName} is Generated, \n Our team will reach you shortly `
-          : "Thank you for your message"
+          : "Thank you for your message....."
 
         return {
           message: LMessage,
@@ -127,7 +127,7 @@ export async function sendCommunicationAction(
     }
 
     return {
-      message: "Thank you for your message",
+      message: "Thank you for your message????",
       data: LdResult,
     }
   } catch (error) {

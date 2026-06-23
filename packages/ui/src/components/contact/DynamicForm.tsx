@@ -124,7 +124,7 @@ function InnerDynamicForm({
   const [AppointmentDuration, fnSetAppointmentDuration] = useState(60);
   const [IsLoadingAvailability, fnSetIsLoadingAvailability] = useState(false);
   const [AvailabilityError, fnSetAvailabilityError] = useState<string>();
-
+  const FormRef = useRef<HTMLDivElement>(null)
   const LdForm = useForm<z.infer<typeof config.schema>>({
     resolver: zodResolver(config.schema),
     defaultValues: LdInitialValues,
@@ -446,10 +446,12 @@ function InnerDynamicForm({
 
       // If submit returned a message (for contact forms this may include a Lead id), use it
       if (config.formId === "booking") {
-                LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
-        // config.successTitle = LdResponse.title ? LdResponse.title : "";
+         LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
+        config.successMessage = LdResponse.message ? LdResponse.message : ""
+        config.successTitle = LdResponse.title ? LdResponse.title : ""
       } else if (config.formId === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
+                config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage;
       }
         else if (config.formId === "download") {
           LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
@@ -507,7 +509,7 @@ function InnerDynamicForm({
   if (isSubmitted) return null
 
   return (
-    <div className={cn("w-full", className)}>
+    <div ref={FormRef} className={cn("w-full max-w-xl mx-auto shadow-md border border-border", className)}>
       {!hideCardHeader && (
         <div className="bg-foreground text-background p-4">
           <h2 className="text-2xl font-bold">{config.title}</h2>
@@ -516,10 +518,11 @@ function InnerDynamicForm({
           )}
         </div>
       )}
+      <div className="p-6">
       <Form {...LdForm}>
         <form onSubmit={LdForm.handleSubmit(fnHandleSubmit)}>
           {/* Progress indicator */}
-          <div className="mb-6 mt-4">
+          <div className="mb-6">
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-foreground transition-all duration-300 ease-out"
@@ -643,6 +646,7 @@ function InnerDynamicForm({
           </div>
         </form>
       </Form>
+      </div>
     </div>
   );
 }
