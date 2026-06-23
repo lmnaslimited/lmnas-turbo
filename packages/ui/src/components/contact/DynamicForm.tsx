@@ -110,6 +110,7 @@ function InnerDynamicForm({
 
   const [Timezones, fnSetTimezones] = useState<string[]>([]);
   const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true);
+  const [IsEmailSubscribed, setIsEmailSubscribed] = useState<boolean | null>(null);
   const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([]);
   const [IsLoadingSlots, fnSetIsLoadingSlots] = useState(false);
   const [ShowTimeSlots, fnSetShowTimeSlots] = useState(false);
@@ -487,6 +488,18 @@ function InnerDynamicForm({
                 isLoadingAvailability={IsLoadingAvailability}
                 availabilityError={AvailabilityError}
                 appointmentDuration={AppointmentDuration}
+                isEmailSubscribed={IsEmailSubscribed}
+                onEmailCheck={(val: boolean) => {
+                  setIsEmailSubscribed(val)
+                  if (val) {
+                    // Already subscribed: the checkbox is hidden, so keep the
+                    // underlying value true to reflect the existing subscription.
+                    LdForm.setValue("newsletter" as never, true as never, {
+                      shouldDirty: false,
+                      shouldValidate: false,
+                    })
+                  }
+                }}
               />
             )}
 

@@ -18,6 +18,8 @@ import { format } from "date-fns/format"
 import "react-international-phone/style.css"
 import { PhoneInput } from "react-international-phone"
 
+import { checkNewsletterSubscription } from "@repo/ui/api/newsletter/check-subscription"
+
 import type { TformFieldConfig } from "@repo/middleware/types"
 import type { TresolvedContactStep } from "@repo/middleware/types"
 import type { Tslot } from "@repo/middleware/types"
@@ -67,6 +69,10 @@ type TdynamicFormStepProps = {
   isLoadingAvailability?: boolean
   availabilityError?: string
   appointmentDuration?: number
+  // parent-provided flag indicating if the entered email is already subscribed
+  isEmailSubscribed?: boolean | null
+  // callback invoked when the email subscription check completes
+  onEmailCheck?: (isSubscribed: boolean) => void
 }
 
 function fnFormatSlotEnd(iStartTime: string, iDuration: number): string {
@@ -100,6 +106,9 @@ export default function DynamicFormStep({
   isLoadingAvailability = false,
   availabilityError,
   appointmentDuration = 60,
+  // optional prop: parent callback when email check completes
+  isEmailSubscribed,
+  onEmailCheck,
 }: TdynamicFormStepProps) {
   const LAvailableDateSet = new Set(availableDates)
 
@@ -123,6 +132,29 @@ export default function DynamicFormStep({
                     inputClassName={idField.inputClassName}
                     {...iField}
                     value={(iField.value as string) || ""}
+                    onBlur={async (e: any) => {
+                      try {
+                        // react-hook-form field onBlur expects no args in this project
+                        iField.onBlur()
+                      } catch (err) {
+                        // ignore
+                      }
+
+                      // Only run check for email fields and when a non-empty value exists.
+                      // Calls the isolated "Email Group Member" GET check directly as a
+                      // server action (same pattern as the appointment fetchers).
+                      if (idField.type === "email") {
+                        const LVal = String((e?.target?.value ?? iField.value ?? "")).trim().toLowerCase()
+                        if (!LVal) return
+                        try {
+                          const res = await checkNewsletterSubscription(LVal)
+                          onEmailCheck?.(Boolean(res?.subscribed))
+                        } catch (err) {
+                          // network error - do not block the user
+                          onEmailCheck?.(false)
+                        }
+                      }
+                    }}
                   />
                 </FormControl>
                 <FormMessage />
@@ -352,6 +384,9 @@ export default function DynamicFormStep({
         )
 
       case "checkbox":
+        // Hide the newsletter checkbox entirely when the entered email is
+        // already subscribed — there is nothing for the user to opt into.
+        if (idField.name === "newsletter" && isEmailSubscribed === true) return null
         return (
           <FormField
             key={idField.name}
