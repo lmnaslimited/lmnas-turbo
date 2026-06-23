@@ -81,7 +81,6 @@ function fnFormatSlotEnd(iStartTime: string, iDuration: number): string {
 
 /**
  * Renders the fields belonging to a single step of the multi-step contact form.
- *
  * Field rendering mirrors the shared <SectionForm /> markup so the look & feel
  * (floating labels, phone input, selects, error states) is identical. The
  * parent form's `control` is used directly, so values persist across steps with
@@ -390,7 +389,7 @@ export default function DynamicFormStep({
     }
   }
 
-  return <div className="flex flex-wrap -mx-3">{step.fields.map(fnRenderField)}</div>
+  return <div className="flex flex-wrap">{step.fields.map(fnRenderField)}</div>
 }
 
 export { fnGetClassNameFromFriendlyName }

@@ -51,8 +51,11 @@ function InnerDynamicForm({
   config,
   onSuccess,
   onSuccessfulSubmit,
-  className = "",
-  defaultValues,
+    className = "",
+    defaultValues,
+    hideCardHeader = false,
+    data,
+    pdfData
 }: TdynamicContactFormProps): ReactElement | null {
   const [CurrentStep, fnSetCurrentStep] = useState(0);
   const [IsSubmitting, fnSetIsSubmitting] = useState(false);
@@ -494,6 +497,14 @@ function InnerDynamicForm({
 
   return (
     <div className={cn("w-full", className)}>
+      {!hideCardHeader && (
+        <div className="bg-foreground text-background p-4">
+          <h2 className="text-2xl font-bold">{config.title}</h2>
+          {config.description && (
+            <p className="mt-2  text-background">{config.description}</p>
+          )}
+        </div>
+      )}
       <Form {...LdForm}>
         <form onSubmit={LdForm.handleSubmit(fnHandleSubmit)}>
           {/* Progress indicator */}
@@ -515,28 +526,25 @@ function InnerDynamicForm({
             </p>
           )}
 
-          
-            {LdCurrentStep && (
-              <DynamicFormStep
-                step={LdCurrentStep}
-                control={LdForm.control}
-                countryIso={LDetectedCountry}
-                showTimeSlots={ShowTimeSlots}
-                timeSlots={TimeSlots}
-                isLoadingSlots={IsLoadingSlots}
-                timezones={Timezones}
-                isLoadingTimezones={IsLoadingTimezones}
-                availableDates={AvailableDates}
-                bookingRangeStart={BookingRangeStart}
-                bookingRangeEnd={BookingRangeEnd}
-                isLoadingAvailability={IsLoadingAvailability}
-                availabilityError={AvailabilityError}
-                appointmentDuration={AppointmentDuration}
-                isEmailSubscribed={IsEmailSubscribed}
-              />
-            )}
-
-            
+          {LdCurrentStep && (
+            <DynamicFormStep
+              step={LdCurrentStep}
+              control={LdForm.control}
+              countryIso={LDetectedCountry}
+              showTimeSlots={ShowTimeSlots}
+              timeSlots={TimeSlots}
+              isLoadingSlots={IsLoadingSlots}
+              timezones={Timezones}
+              isLoadingTimezones={IsLoadingTimezones}
+              availableDates={AvailableDates}
+              bookingRangeStart={BookingRangeStart}
+              bookingRangeEnd={BookingRangeEnd}
+              isLoadingAvailability={IsLoadingAvailability}
+              availabilityError={AvailabilityError}
+              appointmentDuration={AppointmentDuration}
+              isEmailSubscribed={IsEmailSubscribed}
+            />
+          )}
 
           {/* Navigation */}
           <div className="space-y-4 mt-2">
