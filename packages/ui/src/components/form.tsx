@@ -467,6 +467,8 @@ function InnerSectionForm({
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.formId === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
+                // Use any message returned by the contact submit (e.g. lead id)
+                config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage
             }
             else if (config.formId === "download") {
                 LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)

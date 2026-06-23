@@ -104,6 +104,28 @@ export async function sendCommunicationAction(
     // Parse successful response and return success message
     const LdResult = await LdResponse.json()
     console.log("Communication sent successfully:", LdResult)
+    // Try to fetch the Lead record that may have been created for this email
+    try {
+      const LFfilters = encodeURIComponent(JSON.stringify([["Lead","email_id","=", email]]))
+      const LdLeadUrl = `${process.env.SUBSCRIBE_URL}/api/resource/Lead?filters=${LFfilters}&order_by=creation%20desc&limit_page_length=1`
+      const LdLeadResp = await fetch(LdLeadUrl, { method: "GET", headers: ldHeaders })
+      if (LdLeadResp && LdLeadResp.ok) {
+        const LdLeadJson = await LdLeadResp.json()
+        const LdLead = Array.isArray(LdLeadJson?.data) ? LdLeadJson.data[0] : undefined
+        const LdLeadName = LdLead?.name || LdLead?.lead_id || null
+        const LMessage = LdLeadName
+          ? `Thanks for contacting us !, \n Your Lead id ${LdLeadName} is Generated, \n Our team will reach you shortly `
+          : "Thank you for your message"
+
+        return {
+          message: LMessage,
+          data: LdResult,
+        }
+      }
+    } catch (e) {
+      console.warn("Failed to fetch Lead record after communication:", e)
+    }
+
     return {
       message: "Thank you for your message",
       data: LdResult,

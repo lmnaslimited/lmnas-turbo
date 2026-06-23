@@ -104,13 +104,6 @@ export async function fetchAppointmentAvailability(
         }
       })
     }
-console.log("Fetched appointment availability:", {
-  settings: LdSettings,
-  rangeStart: LRangeStart,
-  rangeEnd: LRangeEnd,
-  availableDates: LaAvailableDates,
-  slotsByDate: LdSlotsByDate,
-})
     return {
       data: {
         settings: LdSettings,

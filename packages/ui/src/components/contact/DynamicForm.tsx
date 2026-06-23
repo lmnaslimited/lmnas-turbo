@@ -447,9 +447,12 @@ function InnerDynamicForm({
         throw new Error(LdResponse.error);
       }
 
+      // If submit returned a message (for contact forms this may include a Lead id), use it
       if (config.formId === "booking") {
         config.successMessage = LdResponse.message ? LdResponse.message : "";
         // config.successTitle = LdResponse.title ? LdResponse.title : "";
+      } else if (config.formId === "contact") {
+        config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage;
       }
 
       await onSuccessfulSubmit?.({
