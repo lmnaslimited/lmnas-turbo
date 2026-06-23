@@ -23,9 +23,6 @@ export async function checkNewsletterSubscription(
 
   const LEmail = LdParsed.data.email
 
-  // The subscription backend runs behind a self-signed cert in dev
-  // (https://...docker.localhost). Without this, Node's server-side fetch
-  // rejects the cert and the check silently fails (returns not-subscribed).
   // Mirrors the other LENS backend actions (e.g. fetch-contact).
   process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
@@ -43,14 +40,6 @@ export async function checkNewsletterSubscription(
     )
 
     const LdCheckData = await LdCheckEmailGroup.json()
-
-    console.log(
-      "checkNewsletterSubscription",
-      LEmail,
-      "status:",
-      LdCheckEmailGroup.status,
-      LdCheckData,
-    )
 
     if (LdCheckData?.data?.length > 0) {
       return { subscribed: true, email: LEmail }

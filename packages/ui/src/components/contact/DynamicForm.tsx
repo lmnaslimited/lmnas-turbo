@@ -21,6 +21,7 @@ import { fnSubmitAppointmentBooking, fnSubmitContact } from "@repo/ui/components
 import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot";
 import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone";
 import { fetchAppointmentAvailability } from "@repo/ui/api/appointment/fetch-appointment-availability";
+import { checkNewsletterSubscription } from "@repo/ui/api/newsletter/check-subscription";
 import { format } from "date-fns/format";
 import type { Tslot } from "@repo/middleware/types";
 
@@ -176,6 +177,46 @@ function InnerDynamicForm({
   const LEmailValue = LEmailFieldName
     ? (LdForm.watch(LEmailFieldName as never) as unknown as string | undefined)
     : undefined;
+
+  // Newsletter "already subscribed" check — runs in the parent so it behaves
+  // identically for the contact and booking forms, regardless of which step the
+  // email/newsletter fields land on and regardless of whether the email was
+  // typed or prefilled (a prefilled email never fires the field's onBlur).
+  // Debounced so we don't hit the backend on every keystroke.
+  useEffect(() => {
+    const LEmail = (LEmailValue ?? "").trim().toLowerCase();
+    // Basic shape check before calling the backend; avoids needless requests.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(LEmail)) {
+      setIsEmailSubscribed(null);
+      return;
+    }
+
+    let LIsCancelled = false;
+    const LTimer = setTimeout(async () => {
+      try {
+        const LdResult = await checkNewsletterSubscription(LEmail);
+        if (LIsCancelled) return;
+        const LIsSubscribed = Boolean(LdResult?.subscribed);
+        setIsEmailSubscribed(LIsSubscribed);
+        if (LIsSubscribed) {
+          // The checkbox is hidden when subscribed; keep the underlying value
+          // true so the submission reflects the existing subscription.
+          LdForm.setValue("newsletter" as never, true as never, {
+            shouldDirty: false,
+            shouldValidate: false,
+          });
+        }
+      } catch {
+        if (!LIsCancelled) setIsEmailSubscribed(false);
+      }
+    }, 500);
+
+    return () => {
+      LIsCancelled = true;
+      clearTimeout(LTimer);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [LEmailValue]);
 
   useEffect(() => {
     if (!LEmailFieldName || !LAutoFillTargetName) return;
@@ -489,17 +530,6 @@ function InnerDynamicForm({
                 availabilityError={AvailabilityError}
                 appointmentDuration={AppointmentDuration}
                 isEmailSubscribed={IsEmailSubscribed}
-                onEmailCheck={(val: boolean) => {
-                  setIsEmailSubscribed(val)
-                  if (val) {
-                    // Already subscribed: the checkbox is hidden, so keep the
-                    // underlying value true to reflect the existing subscription.
-                    LdForm.setValue("newsletter" as never, true as never, {
-                      shouldDirty: false,
-                      shouldValidate: false,
-                    })
-                  }
-                }}
               />
             )}
 
