@@ -571,7 +571,7 @@ function InnerDynamicForm({
                   onClick={fnHandlePrevious}
                   disabled={IsSubmitting}
                 >
-                  Previous
+                  {config.navPrevious}
                 </Button>
               )}
 
@@ -581,7 +581,7 @@ function InnerDynamicForm({
                   className="h-12 flex-1 rounded-full"
                   onClick={fnHandleNext}
                 >
-                  Next
+                  {config.navNext}
                 </Button>
               )}
 

@@ -391,6 +391,8 @@ export type TformConfig = {
   submitText: string
   schema: z.ZodObject<any>
   successTitle: string
+  navNext: String
+  navPrevious: String
   successMessage: string
   verifiedMessage?: Titems
   unVerifiedMessage?: Titems

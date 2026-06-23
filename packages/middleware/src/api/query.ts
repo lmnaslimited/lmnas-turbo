@@ -1054,6 +1054,8 @@ export class clQueryContact extends clQuery<TcontactSource> {
   }
   forms(filters: $filters) {
     title
+    navNext
+    navPrevious
     terms {
       label
       href
@@ -1626,6 +1628,8 @@ export class clQueryForms extends clQuery<TformsPageSource> {
     showTerms
     successMessage
     successTitle
+    navNext
+    navPrevious
     verifiedMessage {
       label
       description

@@ -114,7 +114,7 @@ export async function sendCommunicationAction(
         const LdLead = Array.isArray(LdLeadJson?.data) ? LdLeadJson.data[0] : undefined
         const LdLeadName = LdLead?.name || LdLead?.lead_id || null
         const LMessage = LdLeadName
-          ? `Thanks for contacting us !, \n Your Lead id ${LdLeadName} is Generated, \n Our team will reach you shortly `
+          ? `Thanks for contacting us !, Your Lead id ${LdLeadName} is Generated, \n Our team will reach you shortly `
           : "Thank you for your message....."
 
         return {
