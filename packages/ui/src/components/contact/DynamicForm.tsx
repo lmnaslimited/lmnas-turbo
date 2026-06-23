@@ -17,7 +17,7 @@ import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3";
 // Reuse the shared contact submit handler — same payload, reCAPTCHA verification,
 // newsletter subscription, PostHog link and success/error handling as the
 // existing Contact Us form. The shared form component itself is NOT modified.
-import { fnSubmitAppointmentBooking, fnSubmitContact } from "@repo/ui/components/form";
+import { fnSubmitAppointmentBooking, fnSubmitContact,fnDownload,fnSubmitWebinar } from "@repo/ui/components/form";
 import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot";
 import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone";
 import { fetchAppointmentAvailability } from "@repo/ui/api/appointment/fetch-appointment-availability";
@@ -28,7 +28,7 @@ import type { Tslot } from "@repo/middleware/types";
 import DynamicFormStep from "./DynamicFormStep";
 import { useDetectedRegion } from "./useDetectedRegion";
 import { fnResolveContactSteps, fnDeriveNameFromEmail } from "./contact-form.config";
-import type { TdynamicContactFormProps } from "@repo/middleware/types";
+import type {TdynamicFormProps } from "@repo/middleware/types";
 import { useKnownVisitorProfile } from "../../hooks/use-known-visitor-profile";
 
 function fnParseCalendarDate(iDate: string): Date {
@@ -56,7 +56,7 @@ function InnerDynamicForm({
     hideCardHeader = false,
     data,
     pdfData
-}: TdynamicContactFormProps): ReactElement | null {
+}: TdynamicFormProps): ReactElement | null {
   const [CurrentStep, fnSetCurrentStep] = useState(0);
   const [IsSubmitting, fnSetIsSubmitting] = useState(false);
   const { executeRecaptcha } = useReCaptcha();
@@ -441,27 +441,38 @@ function InnerDynamicForm({
       }
 
       const LdRecaptchaToken = await executeRecaptcha("submit");
-      const LdResponse =
-        config.formId === "booking"
-          ? await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
-          : await fnSubmitContact(idFormData, LdRecaptchaToken);
 
-      if (LdResponse.error) {
-        throw new Error(LdResponse.error);
-      }
+      let LdResponse
 
       // If submit returned a message (for contact forms this may include a Lead id), use it
       if (config.formId === "booking") {
-        config.successMessage = LdResponse.message ? LdResponse.message : "";
+                LdResponse = await fnSubmitAppointmentBooking(idFormData, LdRecaptchaToken, config)
         // config.successTitle = LdResponse.title ? LdResponse.title : "";
       } else if (config.formId === "contact") {
-        config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage;
+                LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
       }
+        else if (config.formId === "download") {
+          LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
+            }
+        else if (config.formId === "webinar") {
+          LdResponse = await fnSubmitWebinar(idFormData, data, LdRecaptchaToken)
+            }
+        else {
+                throw new Error("Unsupported form type")
+            }
+        if (LdResponse.error) {
+                throw new Error(LdResponse.error)
+            }
+
 
       await onSuccessfulSubmit?.({
         formData: fnSanitizeFormData(idFormData),
         formId: config.formId,
         formTitle: config.title,
+                        meta: {
+                    case_study_name: pdfData?.caseStudies?.[0]?.name,
+                    webinar_title: data?.title,
+                },
       });
 
       LdForm.reset(LdInitialValues);
@@ -641,7 +652,7 @@ function InnerDynamicForm({
  * provider and reloads the reCAPTCHA script on locale change — identical to the
  * shared <SectionForm /> wrapper, so reCAPTCHA behaviour is unchanged.
  */
-export const DynamicForm = (props: TdynamicContactFormProps): ReactElement => {
+export const DynamicForm = (props: TdynamicFormProps): ReactElement => {
   const LdParams = useParams();
   const Locale = LdParams.locale as string;
   const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
