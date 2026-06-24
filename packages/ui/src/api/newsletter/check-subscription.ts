@@ -11,7 +11,7 @@ export type TCheckSubscriptionResult = {
 const LdSchema = z.object({
   email: z.string().email("Please enter a valid email"),
 })
-
+//checks if the email is subscribed to the newsletter by querying the LENS backend  
 export async function checkNewsletterSubscription(
   iEmail: string,
 ): Promise<TCheckSubscriptionResult> {
@@ -24,7 +24,7 @@ export async function checkNewsletterSubscription(
   const LEmail = LdParsed.data.email
 
   // Mirrors the other LENS backend actions (e.g. fetch-contact).
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
   const LdHeaders = {
     Authorization: `${process.env.AUTH_BASE_64}`,
@@ -32,7 +32,7 @@ export async function checkNewsletterSubscription(
     Cookie:
       "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
   }
-
+  // Query the LENS backend to check if the email is subscribed to the "Website" email group
   try {
     const LdCheckEmailGroup = await fetch(
       `${process.env.SUBSCRIBE_URL}/api/resource/Email Group Member?fields=["email"]&filters={"email":"${LEmail}","email_group":"Website"}`,

@@ -48,7 +48,7 @@ export async function sendCommunicationAction(
   idFormData: z.infer<typeof LdCommunicationSchema>
 ): Promise<TapiResponse> {
   // Prepare necessary headers for API request
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   const ldHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
@@ -103,7 +103,6 @@ export async function sendCommunicationAction(
 
     // Parse successful response and return success message
     const LdResult = await LdResponse.json()
-    console.log("Communication sent successfully:", LdResult)
     // Try to fetch the Lead record that may have been created for this email
     try {
       const LFfilters = encodeURIComponent(JSON.stringify([["Lead","email_id","=", email]]))
@@ -114,7 +113,7 @@ export async function sendCommunicationAction(
         const LdLead = Array.isArray(LdLeadJson?.data) ? LdLeadJson.data[0] : undefined
         const LdLeadName = LdLead?.name || LdLead?.lead_id || null
         const LMessage = LdLeadName
-          ? `Thanks for contacting us !, Your Lead id ${LdLeadName} is Generated, \n Our team will reach you shortly `
+          ? `Thanks for contacting us!\n1. Your Lead ID (${LdLeadName}) has been generated. ✔\n2. A confirmation email has been sent to you. ✔\n3. Our team will reach out to you shortly. ✔\n4. Please check your email for further communication. ✔`
           : "Thank you for your message....."
 
         return {
