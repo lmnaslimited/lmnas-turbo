@@ -71,7 +71,6 @@ export async function fnSubscribewithCaptcha(
       },
     });
 
-    await posthog.shutdown();
   } catch (idError) {
     console.error(
       "PostHog capture failed for newsletter_recaptcha_verified:",

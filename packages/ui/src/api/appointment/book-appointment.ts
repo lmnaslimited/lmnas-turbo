@@ -81,8 +81,6 @@ export async function bookAppointmentAction(
         },
       },
     });
-
-    await posthog.shutdown();
   } catch (idError) {
     console.error(
       "PostHog capture failed for booking_recaptcha_verified:",

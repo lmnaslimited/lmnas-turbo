@@ -87,7 +87,6 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
         },
       });
 
-      await posthog.shutdown();
     } catch (idError) {
       console.error(
         "PostHog capture failed for casestudy_recaptcha_verified:",

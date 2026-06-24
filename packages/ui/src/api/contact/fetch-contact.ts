@@ -74,7 +74,6 @@ export async function sendCommunicationAction(
       },
     })
 
-    await posthog.shutdown()
   } catch (idError) {
     console.error(
       "PostHog capture failed for communication_recaptcha_verified:",
