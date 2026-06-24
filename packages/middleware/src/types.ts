@@ -1049,12 +1049,3 @@ export type TresolvedContactStep = {
   id: string
   fields: TformFieldConfig[]
 }
-
-/**
- * Props for the multi-step Contact form. Intentionally mirrors the relevant
- * subset of the shared form's props (`TdynamicFormProps`) so the Contact page
- * integration stays a drop-in replacement.
- *
- * `config` is the exact same `TformConfig` object the shared <SectionForm />
- * receives, so validation schema, payload structure and copy stay identical.
- */
