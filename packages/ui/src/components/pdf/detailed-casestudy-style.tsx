@@ -161,6 +161,15 @@ export const styles = StyleSheet.create({
     textDecoration: "none",
     color: "#0f4c81",
   },
+  metaContainer: {
+    flexDirection: "row",
+    marginTop: 8,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: "#e2e8f0",
+    paddingBottom: 10,
+    gap: 15,
+  },
 })
 
 // svg used in pdf
@@ -261,3 +270,33 @@ export const CalendarIcon = () => (
       />
     </Svg>
   );
+
+// Author / Profile Icon
+export const AuthorIcon = () => (
+  <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
+  <Path
+    fill="#64748b"
+    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"
+  />
+</Svg>
+);
+
+// Date Icon
+export const DateIcon = () => (
+  <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
+    <Path
+      fill="#64748b"
+      d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
+    />
+    </Svg>
+);
+
+// Download / User Accountability Icon
+export const UserDownloadIcon = () => (
+  <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
+  <Path
+    fill="#64748b"
+    d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"
+  />
+</Svg>
+);

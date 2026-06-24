@@ -5,7 +5,7 @@ import { Input } from "@repo/ui/components/ui/input";
 import { TNewsletterSubscriptionProps } from "@repo/middleware/types";
 import posthog from "posthog-js";
 import { useEffect, useState } from "react";
-import { ReCaptchaProvider, useReCaptcha } from "next-recaptcha-v3"
+import { useReCaptcha } from "next-recaptcha-v3"
 import { fnSubscribewithCaptcha } from "@repo/ui/api/newsletter/subscription-captcha";
 import { TnewsletterSubscriptionState } from "@repo/ui/api/newsletter/create-subscription";
 
@@ -155,15 +155,5 @@ export function NewsletterSubscriptionForm({
         <p className="mt-2 text-sm text-primary">{LState.message}</p>
       ) : null}
     </>
-  );
-}
-// Wraps the newsletter subscription form with a reCAPTCHA provider, ensuring that the reCAPTCHA key is available for the form to function correctly.
-export function NewsletterSubscription(props: TNewsletterSubscriptionProps) {
-  return (
-    <ReCaptchaProvider
-      reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
-    >
-      <NewsletterSubscriptionForm {...props} />
-    </ReCaptchaProvider>
   );
 }
