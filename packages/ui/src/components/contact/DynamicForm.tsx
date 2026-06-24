@@ -659,11 +659,6 @@ function InnerDynamicForm({
   );
 }
 
-/**
- * Public multi-step Contact form. Wraps the inner form with the reCAPTCHA
- * provider and reloads the reCAPTCHA script on locale change — identical to the
- * shared <SectionForm /> wrapper, so reCAPTCHA behaviour is unchanged.
- */
 export const DynamicForm = (props: TdynamicFormProps): ReactElement => {
   
   return (
