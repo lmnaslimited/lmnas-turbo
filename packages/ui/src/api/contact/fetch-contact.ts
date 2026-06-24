@@ -122,7 +122,7 @@ export async function sendCommunicationAction(
          
           data: {
             ...LdResult,
-            lead: LdLeadName || null,
+            lead_id: LdLeadName || null,
           },
         }
       }
@@ -134,7 +134,7 @@ export async function sendCommunicationAction(
       message: "Thank you for your message",
       data: {
             ...LdResult,
-            lead: null,
+            lead_id: null,
           },
     }
   } catch (error) {

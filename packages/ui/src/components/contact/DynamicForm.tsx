@@ -457,9 +457,11 @@ function InnerDynamicForm({
                 const LLeadId = LdResponse.data.lead_id ?? ""
 
               config.successMessage = config.successMessage.replace(
-                "{${lead_id}}",
+                "(${lead_id})",
                 LLeadId,
               )
+
+              console.log("message sucess",config.successMessage)
       }
         else if (config.formId === "download") {
           LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
