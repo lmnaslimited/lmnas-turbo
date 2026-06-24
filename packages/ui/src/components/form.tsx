@@ -344,7 +344,7 @@ function InnerSectionForm({
     hideCardHeader = false,
     data,
     pdfData
-}: TdynamicFormProps): ReactElement | null {
+}: TdynamicFormProps): ReactElement {
     const [Timezones, fnSetTimezones] = useState<string[]>([])
     const [IsLoadingTimezones, fnSetIsLoadingTimezones] = useState(true)
     const [TimeSlots, fnSetTimeSlots] = useState<Tslot[]>([])
@@ -377,8 +377,6 @@ function InnerSectionForm({
         defaultValues: LdInitialValues,
         mode: "onTouched",
     })
-
-    const [isSubmitted, setIsSubmitted] = useState(false)
 
     // Watches specific form fields to react to their changes
     const SelectedDate = LdForm.watch("date")
@@ -467,8 +465,6 @@ function InnerSectionForm({
                 config.successTitle = LdResponse.title ? LdResponse.title : ""
             } else if (config.formId === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-                // Use any message returned by the contact submit (e.g. lead id)
-                config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage
             }
             else if (config.formId === "download") {
                 LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
@@ -496,8 +492,6 @@ function InnerSectionForm({
 
             LdForm.reset(LdInitialValues)
             onSuccess(config.successMessage, config.successTitle)
-            // hide the form until page refresh
-            setIsSubmitted(true)
         } catch (error: any) {
             LdForm.setError("root", {
                 type: "manual",
@@ -751,12 +745,7 @@ function InnerSectionForm({
                 return null
         }
     }
-
-    if (isSubmitted) {
-        // Success UI is handled by the page-level handler (onSuccess). Hide the form until a manual refresh.
-        return null
-    }
-
+    
     return (
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto shadow-md border border-border", className)}>
             {!hideCardHeader && (

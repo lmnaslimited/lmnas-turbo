@@ -80,7 +80,6 @@ export async function ContactApi(idFormdata: TcontactApi) {
       },
     });
 
-    await posthog.shutdown();
   } catch (idError) {
     console.error(
       "PostHog capture failed for contact_recaptcha_verified:",
