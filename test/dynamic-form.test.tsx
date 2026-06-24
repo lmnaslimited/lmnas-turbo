@@ -1,6 +1,8 @@
-// @ts-nocheck
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, render, screen, waitFor, type RenderResult } from "@testing-library/react"
 import "@testing-library/jest-dom"
+import userEvent from "@testing-library/user-event"
+import type { ComponentProps, ReactNode } from "react"
+import type { Control, FieldValues, UseFormReturn } from "react-hook-form"
 import { z } from "zod"
 
 import {
@@ -13,10 +15,56 @@ import { fetchTimeSlots } from "@repo/ui/api/appointment/fetch-timeslot"
 import { fetchTimezones } from "@repo/ui/api/appointment/fetch-timezone"
 import { fetchAppointmentAvailability } from "@repo/ui/api/appointment/fetch-appointment-availability"
 import { checkNewsletterSubscription } from "@repo/ui/api/newsletter/check-subscription"
+import type { TdynamicFormProps, TfieldType, TformConfig, TformFieldConfig, Tslot } from "@repo/middleware/types"
+import { fnDeriveNameFromEmail } from "../packages/ui/src/components/contact/contact-form.config"
 import { useKnownVisitorProfile } from "../packages/ui/src/hooks/use-known-visitor-profile"
 import { useDetectedRegion } from "../packages/ui/src/components/contact/useDetectedRegion"
 
 const fnExecuteRecaptcha = jest.fn()
+let LdUser: ReturnType<typeof userEvent.setup>
+
+type TfieldValue = string | boolean | Date | undefined
+
+type TmockControllerField = {
+    value: TfieldValue
+    onChange: (iValue: unknown) => void
+}
+
+type TmockDynamicStep = {
+    id: string
+    fields: TformFieldConfig[]
+}
+
+type TmockDynamicFormStepProps = {
+    step: TmockDynamicStep
+    control: Control<FieldValues>
+    countryIso?: string
+    showTimeSlots?: boolean
+    timeSlots?: Tslot[]
+    isLoadingSlots?: boolean
+    timezones?: string[]
+    isLoadingTimezones?: boolean
+    availabilityError?: string
+    appointmentDuration?: number
+    isEmailSubscribed?: boolean | null
+}
+
+type TmockButtonProps = ComponentProps<"button"> & {
+    children: ReactNode
+}
+
+type TmockFormProviderProps = UseFormReturn<FieldValues> & {
+    children: ReactNode
+}
+
+type TrenderOptions = Partial<Omit<TdynamicFormProps, "config" | "onSuccess">> & {
+    configOverrides?: Partial<TformConfig>
+}
+
+type TrenderResult = RenderResult & {
+    fnOnSuccess: jest.Mock<void, [string, string]>
+    fnOnSuccessfulSubmit: jest.Mock<Promise<void>, [Parameters<NonNullable<TdynamicFormProps["onSuccessfulSubmit"]>>[0]]>
+}
 
 // This suite is intentionally written at the parent-component level.
 // DynamicForm owns the business behavior we care about here: splitting fields
@@ -29,7 +77,7 @@ const fnExecuteRecaptcha = jest.fn()
 // not in styling, icons, animations, or the child field layout component.
 jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
     const React = jest.requireActual("react")
-    const { Controller } = jest.requireActual("react-hook-form")
+    const { Controller } = jest.requireActual<typeof import("react-hook-form")>("react-hook-form")
 
     // Booking slots are returned as ISO-like strings, while the UI shows a
     // readable range. Keeping this formatter in the mock lets the tests assert
@@ -46,8 +94,11 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
     // Field configs may use label, placeholder, or only a name depending on
     // the CMS shape. This helper mirrors the priority the mock should expose
     // through aria-labels so assertions stay accessible and readable.
-    const fnFieldLabel = (idField: any): string =>
+    const fnFieldLabel = (idField: TformFieldConfig): string =>
         idField.label || idField.placeholder || idField.name
+
+    const fnInputValue = (iValue: TfieldValue): string =>
+        typeof iValue === "string" ? iValue : ""
 
     return {
         __esModule: true,
@@ -63,9 +114,9 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
             availabilityError,
             appointmentDuration = 60,
             isEmailSubscribed,
-        }: any) => (
+        }: TmockDynamicFormStepProps) => (
             <div data-testid="dynamic-step" data-step-id={step.id} data-country={countryIso || ""}>
-                {step.fields.map((idField: any) => {
+                {step.fields.map((idField) => {
                     const LLabel = fnFieldLabel(idField)
 
                     // DynamicForm hides the newsletter field once the lookup
@@ -83,7 +134,7 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                                 key={idField.name}
                                 name={idField.name}
                                 control={control}
-                                render={({ field: iField }: any) => (
+                                render={({ field: iField }: { field: TmockControllerField }) => (
                                     <label>
                                         <input
                                             aria-label={LLabel}
@@ -104,8 +155,8 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                                 key={idField.name}
                                 name={idField.name}
                                 control={control}
-                                render={({ field: iField }: any) => (
-                                    <textarea aria-label={LLabel} {...iField} value={iField.value || ""} />
+                                render={({ field: iField }: { field: TmockControllerField }) => (
+                                    <textarea aria-label={LLabel} {...iField} value={fnInputValue(iField.value)} />
                                 )}
                             />
                         )
@@ -117,11 +168,11 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                                 key={idField.name}
                                 name={idField.name}
                                 control={control}
-                                render={({ field: iField }: any) => (
+                                render={({ field: iField }: { field: TmockControllerField }) => (
                                     <select
                                         aria-label="Select timezone"
                                         disabled={isLoadingTimezones}
-                                        value={iField.value || ""}
+                                        value={fnInputValue(iField.value)}
                                         onChange={iField.onChange}
                                     >
                                         <option value="">{isLoadingTimezones ? "Loading timezones..." : LLabel}</option>
@@ -140,7 +191,7 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                                 key={idField.name}
                                 name={idField.name}
                                 control={control}
-                                render={({ field: iField }: any) => (
+                                render={({ field: iField }: { field: TmockControllerField }) => (
                                     <div>
                                         {/* A deterministic date keeps booking tests stable across machines and timezones. */}
                                         <button
@@ -169,9 +220,9 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                                 key={idField.name}
                                 name={idField.name}
                                 control={control}
-                                render={({ field: iField }: any) => (
+                                render={({ field: iField }: { field: TmockControllerField }) => (
                                     <div aria-label={LLabel}>
-                                        {timeSlots.map((idSlot: any) => {
+                                        {timeSlots.map((idSlot) => {
                                             const LValue = idSlot.time.slice(11, 19)
                                             return (
                                                 <button
@@ -196,12 +247,12 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
                             key={idField.name}
                             name={idField.name}
                             control={control}
-                            render={({ field: iField }: any) => (
+                            render={({ field: iField }: { field: TmockControllerField }) => (
                                 <input
                                     aria-label={LLabel}
                                     type={idField.type === "email" ? "email" : "text"}
                                     {...iField}
-                                    value={iField.value || ""}
+                                    value={fnInputValue(iField.value)}
                                 />
                             )}
                         />
@@ -216,22 +267,18 @@ jest.mock("../packages/ui/src/components/contact/DynamicFormStep", () => {
 // need their behavior-facing contracts: links render hrefs, buttons click, and
 // ReCaptcha exposes executeRecaptcha. These small mocks avoid coupling this
 // behavior suite to Next.js routing internals or design-system markup.
-jest.mock("next/link", () => ({
-    __esModule: true,
-    default: ({ children, href, ...props }: any) => <a href={href} {...props}>{children}</a>,
-}))
 jest.mock("next/navigation", () => ({ useParams: () => ({ locale: "en" }) }))
 jest.mock("next-recaptcha-v3", () => ({
-    ReCaptchaProvider: ({ children }: any) => <>{children}</>,
+    ReCaptchaProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
     useReCaptcha: () => ({ executeRecaptcha: fnExecuteRecaptcha }),
 }))
 jest.mock("@repo/ui/components/ui/button", () => ({
-    Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
+    Button: ({ children, ...props }: TmockButtonProps) => <button {...props}>{children}</button>,
 }))
 jest.mock("@repo/ui/components/ui/form", () => {
-    const ReactHookForm = jest.requireActual("react-hook-form")
+    const ReactHookForm = jest.requireActual<typeof import("react-hook-form")>("react-hook-form")
     return {
-        Form: ({ children, ...methods }: any) => <ReactHookForm.FormProvider {...methods}>{children}</ReactHookForm.FormProvider>,
+        Form: ({ children, ...methods }: TmockFormProviderProps) => <ReactHookForm.FormProvider {...methods}>{children}</ReactHookForm.FormProvider>,
     }
 })
 
@@ -269,7 +316,11 @@ const DynamicForm = require("../packages/ui/src/components/contact/DynamicForm")
 // Build field definitions with production-like defaults. Tests override only
 // the part that matters for the scenario, which keeps each case focused on the
 // behavior under test instead of repeating full CMS field objects.
-const fnField = (iName: string, iType: string, idOverrides: Record<string, unknown> = {}) => ({
+const fnField = (
+    iName: string,
+    iType: TfieldType,
+    idOverrides: Partial<TformFieldConfig> = {},
+): TformFieldConfig => ({
     name: iName,
     type: iType,
     label: iName,
@@ -282,7 +333,7 @@ const fnField = (iName: string, iType: string, idOverrides: Record<string, unkno
 // The base config describes the common two-step contact form. This is the
 // default fixture for most scenarios, while booking/download/webinar tests
 // change only formId, fields, schema, or supporting data as needed.
-const fnCreateConfig = (idOverrides: Record<string, unknown> = {}) => ({
+const fnCreateConfig = (idOverrides: Partial<TformConfig> = {}): TformConfig => ({
     formId: "contact",
     title: "Dynamic contact",
     description: "Tell us about your project",
@@ -318,24 +369,59 @@ const fnCreateConfig = (idOverrides: Record<string, unknown> = {}) => ({
 // Render through one helper so all tests get the same callback spies and the
 // same default config. Returning the spies lets submit scenarios assert both
 // the helper call and the post-submit callback contract.
-const fnRenderDynamicForm = (idProps: Record<string, unknown> = {}) => {
+const fnRenderDynamicForm = (idProps: TrenderOptions = {}): TrenderResult => {
     const fnOnSuccess = jest.fn()
     const fnOnSuccessfulSubmit = jest.fn()
 
-    render(
+    const LdRenderResult = render(
         <DynamicForm
-            config={fnCreateConfig(idProps.configOverrides as Record<string, unknown>) as any}
+            config={fnCreateConfig(idProps.configOverrides)}
             onSuccess={fnOnSuccess}
             onSuccessfulSubmit={fnOnSuccessfulSubmit}
-            data={idProps.data as any}
-            pdfData={idProps.pdfData as any}
-            defaultValues={idProps.defaultValues as any}
-            hideCardHeader={idProps.hideCardHeader as any}
-            className={idProps.className as any}
+            data={idProps.data}
+            pdfData={idProps.pdfData}
+            defaultValues={idProps.defaultValues}
+            hideCardHeader={idProps.hideCardHeader}
+            className={idProps.className}
         />,
     )
 
-    return { fnOnSuccess, fnOnSuccessfulSubmit }
+    return { ...LdRenderResult, fnOnSuccess, fnOnSuccessfulSubmit }
+}
+
+const fnTypeByLabel = async (iLabel: string, iValue: string): Promise<void> => {
+    await LdUser.type(screen.getByLabelText(iLabel), iValue)
+}
+
+const fnTypeByFoundLabel = async (iLabel: string, iValue: string): Promise<void> => {
+    await LdUser.type(await screen.findByLabelText(iLabel), iValue)
+}
+
+const fnClickButton = async (iName: string): Promise<void> => {
+    await LdUser.click(screen.getByRole("button", { name: iName }))
+}
+
+const fnClickFoundButton = async (iName: string): Promise<void> => {
+    await LdUser.click(await screen.findByRole("button", { name: iName }))
+}
+
+const fnSelectByLabel = async (iLabel: string, iValue: string): Promise<void> => {
+    await LdUser.selectOptions(screen.getByLabelText(iLabel), iValue)
+}
+
+const fnClearByLabel = async (iLabel: string): Promise<void> => {
+    await LdUser.clear(screen.getByLabelText(iLabel))
+}
+
+const fnUseFakeTimers = (): void => {
+    jest.useFakeTimers()
+    LdUser = userEvent.setup({ advanceTimers: jest.advanceTimersByTime })
+}
+
+const fnAdvanceTimers = async (iMilliseconds: number): Promise<void> => {
+    await act(async () => {
+        jest.advanceTimersByTime(iMilliseconds)
+    })
 }
 
 // Booking scenarios share the same field order and schema. Keeping them in
@@ -359,14 +445,14 @@ const fnBookingSchema = () => z.object({
 // Booking is still rendered through DynamicForm, but this wrapper switches the
 // config into booking mode and leaves per-test overrides available for edge
 // cases such as timezone fallback or API failures.
-const fnRenderBookingForm = (idOverrides: Record<string, unknown> = {}) =>
+const fnRenderBookingForm = (idOverrides: TrenderOptions = {}) =>
     fnRenderDynamicForm({
         ...idOverrides,
         configOverrides: {
             formId: "booking",
             fields: fnBookingFields(),
             schema: fnBookingSchema(),
-            ...(idOverrides.configOverrides as Record<string, unknown>),
+            ...(idOverrides.configOverrides ?? {}),
         },
     })
 
@@ -376,6 +462,7 @@ beforeEach(() => {
     // scenario's pending debounce or mock response from leaking into the next.
     jest.clearAllMocks()
     jest.useRealTimers()
+    LdUser = userEvent.setup()
     document.body.innerHTML = ""
     process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY = "site-key"
 
@@ -383,12 +470,12 @@ beforeEach(() => {
     // dependency they are exercising, which makes failure messages point at the
     // scenario-specific branch instead of broad setup noise.
     fnExecuteRecaptcha.mockResolvedValue("recaptcha-token")
-    clSubmitContact.mockResolvedValue({ data: { id: 1 }, message: "Contact created" } as any)
-    clSubmitAppointmentBooking.mockResolvedValue({ data: { id: "BOOKING-1" }, title: "Booked", message: "Confirmed" } as any)
-    clDownload.mockResolvedValue({ title: "Download Success", message: "Downloaded" } as any)
-    clSubmitWebinar.mockResolvedValue({ data: { id: "WEBINAR-1" } } as any)
-    clFetchTimeSlots.mockResolvedValue({ data: [] } as any)
-    clFetchTimezones.mockResolvedValue({ data: ["UTC", "Europe/Berlin CET"] } as any)
+    clSubmitContact.mockResolvedValue({ data: { id: 1 }, message: "Contact created" })
+    clSubmitAppointmentBooking.mockResolvedValue({ data: { id: "BOOKING-1" }, title: "Booked", message: "Confirmed" })
+    clDownload.mockResolvedValue({ title: "Download Success", message: "Downloaded" })
+    clSubmitWebinar.mockResolvedValue({ data: { id: "WEBINAR-1" } })
+    clFetchTimeSlots.mockResolvedValue({ data: [] })
+    clFetchTimezones.mockResolvedValue({ data: ["UTC", "Europe/Berlin CET"] })
     clFetchAppointmentAvailability.mockResolvedValue({
         data: {
             availableDates: ["2026-12-15"],
@@ -402,8 +489,8 @@ beforeEach(() => {
                 ],
             },
         },
-    } as any)
-    clCheckNewsletterSubscription.mockResolvedValue({ subscribed: false } as any)
+    })
+    clCheckNewsletterSubscription.mockResolvedValue({ subscribed: false })
     clUseKnownVisitorProfile.mockReturnValue({ IsReady: true, Profile: {} })
     clUseDetectedRegion.mockReturnValue({ countryIso: "in", timezone: "Europe/Berlin CET" })
 })
@@ -418,7 +505,7 @@ describe("DynamicForm", () => {
     // Render and navigation scenarios prove that DynamicForm builds the correct
     // visible form from CMS config before any submit helper is involved.
     it("renders the first step, policy links, locale reCAPTCHA script, and progress copy", async () => {
-        fnRenderDynamicForm()
+        const { baseElement } = fnRenderDynamicForm()
 
         // The first render should show CMS title/description and only the first chunk of fields.
         expect(screen.getByRole("heading", { name: "Dynamic contact" })).toBeInTheDocument()
@@ -432,7 +519,7 @@ describe("DynamicForm", () => {
         expect(screen.getByText("One more")).toBeInTheDocument()
         expect(screen.getByRole("link", { name: "Terms" })).toHaveAttribute("href", "/terms-and-conditions")
         expect(screen.getByRole("link", { name: "Privacy" })).toHaveAttribute("href", "/privacy-policy")
-        await waitFor(() => expect(document.querySelector("#google-recaptcha-v3")).toHaveAttribute(
+        await waitFor(() => expect(baseElement.querySelector("#google-recaptcha-v3")).toHaveAttribute(
             "src",
             "https://www.google.com/recaptcha/api.js?render=site-key&hl=en",
         ))
@@ -442,7 +529,7 @@ describe("DynamicForm", () => {
         fnRenderDynamicForm()
 
         // Empty required fields should block the Next button from advancing to the message step.
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnClickButton("Next")
 
         await waitFor(() => expect(screen.queryByLabelText("Message")).not.toBeInTheDocument())
         expect(screen.getByLabelText("Name")).toBeInTheDocument()
@@ -451,15 +538,15 @@ describe("DynamicForm", () => {
     it("moves forward and backward while preserving values", async () => {
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada Lovelace" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Name", "Ada Lovelace")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Once step one validates, DynamicForm should render the second field chunk.
         expect(await screen.findByLabelText("Message")).toBeInTheDocument()
         expect(screen.getByRole("button", { name: "Previous" })).toBeInTheDocument()
 
-        fireEvent.click(screen.getByRole("button", { name: "Previous" }))
+        await fnClickButton("Previous")
         expect(await screen.findByLabelText("Name")).toHaveValue("Ada Lovelace")
         expect(screen.getByLabelText("Email")).toHaveValue("ada@example.com")
     })
@@ -467,10 +554,11 @@ describe("DynamicForm", () => {
     it("derives the name from email while the name field is still untouched", async () => {
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "yuvaraj.shanmugam@example.com" } })
+        const LsEmail = "yuvaraj.shanmugam@example.com"
+        await fnTypeByLabel("Email", LsEmail)
 
         // Email-to-name autofill is client-side and should preserve the readable local-part format.
-        await waitFor(() => expect(screen.getByLabelText("Name")).toHaveValue("Yuvaraj Shanmugam"))
+        await waitFor(() => expect(screen.getByLabelText("Name")).toHaveValue(fnDeriveNameFromEmail(LsEmail)))
     })
 
     it("prefills known visitor profile values without marking the first step dirty", async () => {
@@ -488,18 +576,16 @@ describe("DynamicForm", () => {
     })
 
     it("checks newsletter subscription after a valid email and hides the checkbox when already subscribed", async () => {
-        jest.useFakeTimers()
-        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: true } as any)
+        fnUseFakeTimers()
+        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: true })
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "subscribed@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
+        await fnTypeByLabel("Email", "subscribed@example.com")
+        await fnAdvanceTimers(500)
 
         // Move to the second step where the newsletter field lives; subscribed users should not see the checkbox.
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Subscribed User" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Name", "Subscribed User")
+        await fnClickButton("Next")
 
         expect(await screen.findByTestId("newsletter-hidden")).toBeInTheDocument()
         expect(clCheckNewsletterSubscription).toHaveBeenCalledWith("subscribed@example.com")
@@ -511,11 +597,11 @@ describe("DynamicForm", () => {
     it("submits a contact form, sanitizes callback data, and hides after success", async () => {
         const { fnOnSuccess, fnOnSuccessfulSubmit } = fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
-        fireEvent.change(await screen.findByLabelText("Message"), { target: { value: "Hello" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
+        await fnTypeByFoundLabel("Message", "Hello")
+        await fnClickButton("Submit")
 
         // Contact forms should route through fnSubmitContact with the reCAPTCHA token from the provider.
         await waitFor(() => expect(clSubmitContact).toHaveBeenCalledWith(expect.objectContaining({
@@ -533,13 +619,13 @@ describe("DynamicForm", () => {
     })
 
     it("shows the helper error and keeps the form visible when contact submission fails", async () => {
-        clSubmitContact.mockResolvedValue({ error: "CRM down" } as any)
+        clSubmitContact.mockResolvedValue({ error: "CRM down" })
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
-        fireEvent.click(await screen.findByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
+        await fnClickFoundButton("Submit")
 
         // Root form errors should be rendered without hiding or resetting the form.
         expect(await screen.findByText("CRM down")).toBeInTheDocument()
@@ -553,10 +639,10 @@ describe("DynamicForm", () => {
             pdfData: LdPdfData,
         })
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
-        fireEvent.click(await screen.findByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
+        await fnClickFoundButton("Submit")
 
         await waitFor(() => expect(clDownload).toHaveBeenCalledWith(expect.objectContaining({
             name: "Ada",
@@ -575,10 +661,10 @@ describe("DynamicForm", () => {
             data: LdWebinarData,
         })
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
-        fireEvent.click(await screen.findByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
+        await fnClickFoundButton("Submit")
 
         await waitFor(() => expect(clSubmitWebinar).toHaveBeenCalledWith(expect.objectContaining({
             name: "Ada",
@@ -596,7 +682,7 @@ describe("DynamicForm", () => {
     it("loads booking defaults from timezone and availability APIs", async () => {
         clFetchTimeSlots.mockResolvedValueOnce({ data: [
             { time: "2026-12-15T09:30:00", availability: true },
-        ] } as any)
+        ] })
 
         fnRenderDynamicForm({
             configOverrides: {
@@ -620,9 +706,9 @@ describe("DynamicForm", () => {
 
         // Detected timezone should be preferred when it appears in the backend timezone list.
         expect(await screen.findByDisplayValue("Europe/Berlin CET")).toBeInTheDocument()
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
         expect(await screen.findByRole("button", { name: "09:30 - 10:30" })).toHaveAttribute("data-selected", "true")
         expect(clFetchAppointmentAvailability).toHaveBeenCalledWith("Europe/Berlin CET")
     })
@@ -631,10 +717,10 @@ describe("DynamicForm", () => {
         clFetchTimeSlots
             .mockResolvedValueOnce({ data: [
                 { time: "2026-12-15T09:30:00", availability: true },
-            ] } as any)
+            ] })
             .mockResolvedValueOnce({ data: [
                 { time: "2026-12-15T09:30:00", availability: false },
-            ] } as any)
+            ] })
 
         fnRenderDynamicForm({
             configOverrides: {
@@ -656,11 +742,11 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
         await screen.findByRole("button", { name: "09:30 - 10:30" })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnClickButton("Submit")
 
         // Slot revalidation happens before reCAPTCHA and before the booking helper is called.
         expect(await screen.findByText("This appointment slot is no longer available. Please select another slot.")).toBeInTheDocument()
@@ -674,10 +760,10 @@ describe("DynamicForm", () => {
         clFetchTimeSlots
             .mockResolvedValueOnce({ data: [
                 { time: "2026-12-15T09:30:00", availability: true },
-            ] } as any)
+            ] })
             .mockResolvedValueOnce({ data: [
                 { time: "2026-12-15T09:30:00", availability: true },
-            ] } as any)
+            ] })
         const { fnOnSuccessfulSubmit } = fnRenderDynamicForm({
             configOverrides: {
                 formId: "booking",
@@ -698,11 +784,11 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
         await screen.findByRole("button", { name: "09:30 - 10:30" })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnClickButton("Submit")
 
         await waitFor(() => expect(clSubmitAppointmentBooking).toHaveBeenCalledWith(expect.objectContaining({
             name: "Ada",
@@ -747,9 +833,9 @@ describe("DynamicForm", () => {
     it("uses custom submit text on the final step", async () => {
         fnRenderDynamicForm({ configOverrides: { submitText: "Send request" } })
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // The final-step button label comes from config.submitText.
         expect(await screen.findByRole("button", { name: "Send request" })).toBeInTheDocument()
@@ -833,9 +919,9 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // The final step has zero steps remaining, so it should use the almost-done caption.
         expect(await screen.findByText("Almost done")).toBeInTheDocument()
@@ -868,43 +954,36 @@ describe("DynamicForm", () => {
     // Newsletter scenarios focus on the debounced parent effect. Fake timers
     // make the debounce deterministic and keep the tests fast.
     it("does not run newsletter subscription lookup for an invalid email", async () => {
-        jest.useFakeTimers()
+        fnUseFakeTimers()
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "not-an-email" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
+        await fnTypeByLabel("Email", "not-an-email")
+        await fnAdvanceTimers(500)
 
         // The component performs a basic email-shape check before calling the backend.
         expect(clCheckNewsletterSubscription).not.toHaveBeenCalled()
     })
 
     it("normalizes email before checking newsletter subscription", async () => {
-        jest.useFakeTimers()
+        fnUseFakeTimers()
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "  ADA@Example.COM  " } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
+        await fnTypeByLabel("Email", "  ADA@Example.COM  ")
+        await fnAdvanceTimers(500)
 
         // The lookup trims and lowercases the email to avoid duplicate subscription checks.
         expect(clCheckNewsletterSubscription).toHaveBeenCalledWith("ada@example.com")
     })
 
     it("debounces newsletter lookup and uses the latest email value", async () => {
-        jest.useFakeTimers()
+        fnUseFakeTimers()
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "first@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(250)
-        })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "second@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
+        await fnTypeByLabel("Email", "first@example.com")
+        await fnAdvanceTimers(250)
+        await fnClearByLabel("Email")
+        await fnTypeByLabel("Email", "second@example.com")
+        await fnAdvanceTimers(500)
 
         // The cleanup inside the effect should cancel the first pending lookup.
         expect(clCheckNewsletterSubscription).toHaveBeenCalledTimes(1)
@@ -912,49 +991,44 @@ describe("DynamicForm", () => {
     })
 
     it("keeps the newsletter checkbox visible when subscription lookup returns false", async () => {
-        jest.useFakeTimers()
-        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: false } as any)
+        fnUseFakeTimers()
+        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: false })
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "new@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Person" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Email", "new@example.com")
+        await fnAdvanceTimers(500)
+        await fnTypeByLabel("Name", "New Person")
+        await fnClickButton("Next")
 
         // The DynamicFormStep mock exposes the field label first, so the visible opt-in is found by its field name.
         expect(await screen.findByLabelText("newsletter")).toBeInTheDocument()
     })
 
     it("keeps the newsletter checkbox visible when subscription lookup fails", async () => {
-        jest.useFakeTimers()
+        fnUseFakeTimers()
         clCheckNewsletterSubscription.mockRejectedValue(new Error("lookup failed"))
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "new@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "New Person" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByLabel("Email", "new@example.com")
+        await fnAdvanceTimers(500)
+        await fnTypeByLabel("Name", "New Person")
+        await fnClickButton("Next")
 
         // Lookup failure becomes a safe false state so users can still opt in manually.
         expect(await screen.findByLabelText("newsletter")).toBeInTheDocument()
     })
 
     it("submits newsletter as true when an already-subscribed email hides the checkbox", async () => {
-        jest.useFakeTimers()
-        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: true } as any)
+        fnUseFakeTimers()
+        clCheckNewsletterSubscription.mockResolvedValue({ subscribed: true })
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "subscribed@example.com" } })
-        await act(async () => {
-            jest.advanceTimersByTime(500)
-        })
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Subscribed User" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
-        fireEvent.click(await screen.findByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "subscribed@example.com")
+        await fnAdvanceTimers(500)
+        await fnClearByLabel("Name")
+        await fnTypeByLabel("Name", "Subscribed User")
+        await fnClickButton("Next")
+        await fnClickFoundButton("Submit")
 
         // Hidden newsletter state is still set to true so submission reflects the existing subscription.
         await waitFor(() => expect(clSubmitContact).toHaveBeenCalledWith(expect.objectContaining({
@@ -967,8 +1041,8 @@ describe("DynamicForm", () => {
     it("preserves a manually typed name when email changes", async () => {
         fnRenderDynamicForm()
 
-        fireEvent.change(screen.getByLabelText("Name"), { target: { value: "Manual Name" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "derived.name@example.com" } })
+        await fnTypeByLabel("Name", "Manual Name")
+        await fnTypeByLabel("Email", "derived.name@example.com")
 
         // Dirty name fields must not be overwritten by the email-derived fallback.
         await waitFor(() => expect(screen.getByLabelText("Name")).toHaveValue("Manual Name"))
@@ -1031,13 +1105,13 @@ describe("DynamicForm", () => {
                 config={fnCreateConfig({
                     fields: [fnField("email", "email", { label: "Email" })],
                     schema: z.object({ email: z.string().email() }),
-                }) as any}
+                })}
                 onSuccess={fnOnSuccess}
             />,
         )
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Optional callback chaining should not block the success path.
         await waitFor(() => expect(clSubmitContact).toHaveBeenCalled())
@@ -1052,8 +1126,8 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // DynamicForm should use the same "submit" action label as the shared SectionForm.
         await waitFor(() => expect(fnExecuteRecaptcha).toHaveBeenCalledWith("submit"))
@@ -1068,8 +1142,8 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Thrown helper errors are surfaced through the root form error region.
         expect(await screen.findByText("network failed")).toBeInTheDocument()
@@ -1082,10 +1156,10 @@ describe("DynamicForm", () => {
                 schema: z.object({ email: z.string().email() }),
             },
         })
-        clSubmitContact.mockResolvedValue({ data: { id: 2 } } as any)
+        clSubmitContact.mockResolvedValue({ data: { id: 2 } })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Contact responses without a message should preserve config.successMessage.
         await waitFor(() => expect(fnOnSuccess).toHaveBeenCalledWith("We will be in touch", "Thanks"))
@@ -1101,15 +1175,15 @@ describe("DynamicForm", () => {
             pdfData: { caseStudies: [{ name: "Turbo Study" }] },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Download helper data is used for errors/meta, while final success copy remains config-driven.
         await waitFor(() => expect(fnOnSuccess).toHaveBeenCalledWith("We will be in touch", "Thanks"))
     })
 
     it("shows download helper errors", async () => {
-        clDownload.mockResolvedValue({ error: "Download failed" } as any)
+        clDownload.mockResolvedValue({ error: "Download failed" })
         fnRenderDynamicForm({
             configOverrides: {
                 formId: "download",
@@ -1119,15 +1193,15 @@ describe("DynamicForm", () => {
             pdfData: { caseStudies: [{ name: "Turbo Study" }] },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Helper-declared errors are converted to root errors by the submit handler.
         expect(await screen.findByText("Download failed")).toBeInTheDocument()
     })
 
     it("shows webinar helper errors", async () => {
-        clSubmitWebinar.mockResolvedValue({ error: "Webinar full" } as any)
+        clSubmitWebinar.mockResolvedValue({ error: "Webinar full" })
         fnRenderDynamicForm({
             configOverrides: {
                 formId: "webinar",
@@ -1137,8 +1211,8 @@ describe("DynamicForm", () => {
             data: { id: "EVENT-1", title: "AI Webinar" },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Webinar helper errors should keep the form visible and explain the failure.
         expect(await screen.findByText("Webinar full")).toBeInTheDocument()
@@ -1153,8 +1227,8 @@ describe("DynamicForm", () => {
             },
         })
 
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Submit")
 
         // Unknown form ids are guarded explicitly so a bad CMS value does not call the wrong helper.
         expect(await screen.findByText("Unsupported form type")).toBeInTheDocument()
@@ -1166,15 +1240,15 @@ describe("DynamicForm", () => {
     // API response or timezone condition being exercised.
     it("uses booking helper success title and message for onSuccess", async () => {
         clFetchTimeSlots
-            .mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] } as any)
-            .mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] } as any)
+            .mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] })
+            .mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] })
         const { fnOnSuccess } = fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
         await screen.findByRole("button", { name: "09:30 - 10:30" })
-        fireEvent.click(screen.getByRole("button", { name: "Submit" }))
+        await fnClickButton("Submit")
 
         // Booking submit mutates config success copy from the helper response.
         await waitFor(() => expect(fnOnSuccess).toHaveBeenCalledWith("Confirmed", "Booked"))
@@ -1189,7 +1263,7 @@ describe("DynamicForm", () => {
 
     it("falls back to a CET timezone when detected timezone is unavailable", async () => {
         clUseDetectedRegion.mockReturnValue({ countryIso: "in", timezone: "Asia/Kolkata" })
-        clFetchTimezones.mockResolvedValue({ data: ["UTC", "Europe/Berlin CET"] } as any)
+        clFetchTimezones.mockResolvedValue({ data: ["UTC", "Europe/Berlin CET"] })
         fnRenderBookingForm()
 
         // If the detected timezone is not in the backend list, the CET-like option is preferred.
@@ -1198,7 +1272,7 @@ describe("DynamicForm", () => {
 
     it("falls back to UTC when no detected or CET timezone is available", async () => {
         clUseDetectedRegion.mockReturnValue({ countryIso: "in", timezone: undefined })
-        clFetchTimezones.mockResolvedValue({ data: ["UTC", "Asia/Tokyo"] } as any)
+        clFetchTimezones.mockResolvedValue({ data: ["UTC", "Asia/Tokyo"] })
         fnRenderBookingForm()
 
         // UTC is the final default when no detected/CET timezone can be selected.
@@ -1206,12 +1280,12 @@ describe("DynamicForm", () => {
     })
 
     it("renders an appointment availability API error", async () => {
-        clFetchAppointmentAvailability.mockResolvedValue({ error: "Calendar unavailable" } as any)
+        clFetchAppointmentAvailability.mockResolvedValue({ error: "Calendar unavailable" })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Availability errors are passed down to the date field renderer.
         expect(await screen.findByText("Calendar unavailable")).toBeInTheDocument()
@@ -1226,24 +1300,24 @@ describe("DynamicForm", () => {
                 settings: { appointment_duration: 60 },
                 slotsByDate: {},
             },
-        } as any)
+        })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Empty availability is converted into explicit user-facing copy.
         expect(await screen.findByText("No appointments are available in the booking range.")).toBeInTheDocument()
     })
 
     it("fetches slots when the selected booking date changes", async () => {
-        clFetchTimeSlots.mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] } as any)
+        clFetchTimeSlots.mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
         await screen.findByRole("button", { name: "09:30 - 10:30" })
 
         // The date effect fetches slots using yyyy-MM-dd and the selected timezone.
@@ -1254,12 +1328,12 @@ describe("DynamicForm", () => {
         clFetchTimeSlots.mockResolvedValueOnce({ data: [
             { time: "2026-12-15T09:30:00", availability: true },
             { time: "2026-12-15T10:30:00", availability: false },
-        ] } as any)
+        ] })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Unavailable slots stay visible but cannot be selected.
         expect(await screen.findByRole("button", { name: "10:30 - 11:30" })).toBeDisabled()
@@ -1276,13 +1350,13 @@ describe("DynamicForm", () => {
                     "2026-12-15": [{ time: "2026-12-15T09:30:00", availability: true }],
                 },
             },
-        } as any)
-        clFetchTimeSlots.mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] } as any)
+        })
+        clFetchTimeSlots.mockResolvedValueOnce({ data: [{ time: "2026-12-15T09:30:00", availability: true }] })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // The mocked step uses appointmentDuration from the parent when composing labels.
         expect(await screen.findByRole("button", { name: "09:30 - 10:00" })).toBeInTheDocument()
@@ -1292,19 +1366,19 @@ describe("DynamicForm", () => {
         fnRenderBookingForm()
 
         expect(await screen.findByDisplayValue("Europe/Berlin CET")).toBeInTheDocument()
-        fireEvent.change(screen.getByLabelText("Select timezone"), { target: { value: "UTC" } })
+        await fnSelectByLabel("Select timezone", "UTC")
 
         // Changing timezone should trigger a fresh availability lookup for that timezone.
         await waitFor(() => expect(clFetchAppointmentAvailability).toHaveBeenCalledWith("UTC"))
     })
 
     it("shows no slots message when slot API returns an empty array", async () => {
-        clFetchTimeSlots.mockResolvedValueOnce({ data: [] } as any)
+        clFetchTimeSlots.mockResolvedValueOnce({ data: [] })
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Empty slot data should render a clear no-slots state.
         expect(await screen.findByText("No slots available")).toBeInTheDocument()
@@ -1315,11 +1389,15 @@ describe("DynamicForm", () => {
         clFetchTimeSlots.mockRejectedValueOnce(new Error("slot service down"))
         fnRenderBookingForm()
 
-        fireEvent.change(await screen.findByLabelText("Name"), { target: { value: "Ada" } })
-        fireEvent.change(screen.getByLabelText("Email"), { target: { value: "ada@example.com" } })
-        fireEvent.click(screen.getByRole("button", { name: "Next" }))
+        await fnTypeByFoundLabel("Name", "Ada")
+        await fnTypeByLabel("Email", "ada@example.com")
+        await fnClickButton("Next")
 
         // Slot loading failures are caught and reduced to an empty slot state.
         expect(await screen.findByText("No slots available")).toBeInTheDocument()
     })
 })
+
+
+
+

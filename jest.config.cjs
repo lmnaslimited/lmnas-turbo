@@ -2,6 +2,8 @@
 module.exports = {
     testEnvironment: "jsdom",
     testMatch: ["<rootDir>/test/**/*.test.ts?(x)"],
+    setupFiles: ["<rootDir>/test/setup-env.js"],
+    setupFilesAfterEnv: ["<rootDir>/test/setup-env.js"],
     transform: {
         "^.+\\.(ts|tsx)$": [
             "ts-jest",
@@ -20,6 +22,7 @@ module.exports = {
         ],
     },
     moduleNameMapper: {
+        "^next/link$": "<rootDir>/test/mocks/next-link.tsx",
         "^next/navigation$": "<rootDir>/test/mocks/next-navigation.ts",
         "^@repo/ui/(.*)$": "<rootDir>/packages/ui/src/$1",
         "^@repo/middleware/(.*)$": "<rootDir>/packages/middleware/src/$1",
