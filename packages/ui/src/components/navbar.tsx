@@ -23,21 +23,22 @@ import {
   navigationMenuTriggerStyle,
 } from "@repo/ui/components/ui/navigation-menu"
 import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
+import { useAuth } from "./auth/authContext"
+import { ProfileDropdown } from "./profile"
 
 export default function Navbar({
   idNavbar,
 }: {
   idNavbar: TnavbarTarget
 }): React.ReactElement {
-  // commented because Language is moved to footer
-  // const [Language, fnSetLanguage] = React.useState("en")
+
+  const { user, loading, logout } = useAuth();
+  
   const [LMobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
   const [LMobileIndustriesOpen, fnSetMobileIndustriesOpen] =
     React.useState(false)
   const [LMobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
     React.useState(false)
-  // const router = useRouter()
-  // const pathname = usePathname()
   const [LDesktopMenuOpen, fnSetDesktopMenuOpen] = React.useState<
     string | undefined
   >(undefined)
@@ -47,21 +48,6 @@ export default function Navbar({
     const IconComponent = getIconComponent(iconName)
     return <IconComponent className="w-6 h-6" />
   }
-
-  // commented because Language is moved to footer
-  // //middleware
-  // React.useEffect(() => {
-  //   const currentLang = pathname.split("/")[1] // get "en" from /en/trending-now
-  //   fnSetLanguage(currentLang ?? "EN")
-  // }, [pathname])
-
-  // const fnHandleLanguageChange = (newLang: string) => {
-  //   const Segments = pathname.split("/")
-  //   Segments[1] = newLang // replace language segment
-  //   const NewPath = Segments.join("/")
-  //   fnSetLanguage(newLang)
-  //   router.push(NewPath) // navigate to new lang route
-  // }
 
   React.useEffect(() => {
     const fnHandleScroll = () => {
@@ -90,15 +76,12 @@ export default function Navbar({
     }
   }, [])
 
-  // commented because Language is moved to footer
-  // const fnGetCurrentLanguageDisplay = (): string => {
-  //   const CurrentLang = idNavbar.navbar.language.find(
-  //     (idLang) => idLang.label === Language
-  //   )
-  //   return CurrentLang && CurrentLang.label
-  //     ? CurrentLang.label.toUpperCase()
-  //     : "EN"
-  // }
+  // Get the Sign In label form dumps
+  // the one with no href and icon
+  const LdSignInItem = idNavbar.navbar.menu.find(
+    (idItem) => !idItem.href && !idItem.icon
+  );
+
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full bg-background")}>
@@ -306,85 +289,17 @@ export default function Navbar({
               </NavigationMenu>
             </div>
           </div>
-
+          <div className="lg:flex lg:items-center lg:gap-4">
           {/* Right side controls */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
-            {/* commented because Language and Theme switcher is moved to footer */}
-            {/* Theme Switcher */}
-            {/* <div className="flex items-center gap-2">
-              <ThemeToggle />
-            </div> */}
-
-            {/* Language Switcher */}
-            {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1 h-10 flex items-center  bg-transparent border-none shadow-none cursor-pointer hover:bg-transparent"
-                >
-                  <Globe className="h-4 w-4" />
-                  <span className="text-md">
-                    {fnGetCurrentLanguageDisplay()}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[160px] border border-border  shadow-sm"
-              >
-                <div className="grid grid-cols-1 gap-0">
-                  {idNavbar.navbar.language.map((idLang) => (
-                    <DropdownMenuItem
-                      key={idLang.label ?? "EN"}
-                      onClick={() =>
-                        fnHandleLanguageChange(idLang.label ?? "EN")
-                      }
-                      className={cn(
-                        "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : ""
-                      )}
-                    >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">
-                        {idLang.icon}
-                      </span>
-                      <span>{idLang.description}</span>
-                      {idLang.label === Language && (
-                        <svg
-                          className="ml-auto h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu> */}
-
-            {/* comment out and changed to dynamic */}
-            {/* <Link href={idNavbar.navbar.menu[5]?.href!}>
-              <Button
-                variant="default"
-                className="rounded-lg h-10 flex items-center"
-              >
-                {idNavbar.navbar.menu[5]?.label}
-              </Button>
-            </Link> */}
+            
             {/* we have consider the menus, with href and without icon to be button */}
             {idNavbar.navbar.menu
               .filter((idItem) => !idItem.icon && idItem.href)
               .map((idItem, iIndex) => (
                 <Link key={iIndex} href={idItem.href!}>
                   <Button
-                    variant="default"
+                    variant={idItem.variant || "default"}
                     className="rounded-lg h-10 flex items-center"
                   >
                     {idItem.label}
@@ -392,70 +307,48 @@ export default function Navbar({
                 </Link>
               ))}
           </div>
-
-          {/* commented because Language and Theme switcher is moved to footer */}
-          {/* Mobile menu button - removed hamburger menu */}
-          {/* <div className="flex lg:hidden items-center gap-2"> */}
-          {/* Theme Switcher for Mobile */}
-          {/* <div className="flex items-center">
-              <ThemeToggle />
-            </div> */}
-
-          {/* Language Switcher for Mobile */}
-          {/* <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  className="gap-1 h-8 flex items-center "
-                >
-                  <Globe className="h-4 w-4" />
-                  <span className="text-xs">
-                    {fnGetCurrentLanguageDisplay()}
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                className="w-[160px] border border-border shadow-sm"
-              >
-                <div className="grid grid-cols-1 gap-0">
-                  {idNavbar.navbar.language.map((idLang) => (
-                    <DropdownMenuItem
-                      key={idLang.label ?? "EN"}
-                      // onClick={() => fnSetLanguage(idLang.label ?? "EN")}
-                      onClick={() =>
-                        fnHandleLanguageChange(idLang.label ?? "EN")
-                      }
-                      className={cn(
-                        "flex items-center py-2 px-2 text-md font-normal text-center ",
-                        idLang.label === Language ? "bg-muted " : ""
-                      )}
+          {/* 3. Central Dynamic Auth Render
+            last of the menu should be Sign In
+           */}
+          <div className="flex items-center justify-center gap-2">
+              {loading ? (
+                /* 2. Sleek inline spinning ring template while validating cookie states */
+                
+                    <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
                     >
-                      <span className="flex items-center justify-center w-6 h-6 text-base">
-                        {idLang.icon}
-                      </span>
-                      <span>{idLang.description}</span>
-                      {idLang.label === Language && (
-                        <svg
-                          className="ml-auto h-4 w-4"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                      )}
-                    </DropdownMenuItem>
-                  ))}
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div> */}
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        ></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+               
+        ) :user ? (
+              <ProfileDropdown user={user} logout={logout} />
+            ) : (
+              <Link href="/api/auth/login">
+                <Button 
+                  variant="default"
+                  className="rounded-lg h-10 flex items-center"
+                >
+                {LdSignInItem?.label}
+                </Button>
+              </Link>
+            )}
+            </div>
+          </div>
         </div>
       </header>
 
