@@ -76,7 +76,6 @@ export async function fnSubscribewithCaptcha(
       status: "error",
     }
   }
-
     // re-use existing newsletter logic
   return subscribeNewsletter(idPrevState, idFormData)
 }

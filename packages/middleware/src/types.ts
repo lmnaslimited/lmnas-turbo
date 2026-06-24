@@ -443,13 +443,13 @@ export type TslotResponse = {
   data?: Tslot[]
   error?: string
 }
-
+//types for appointment settings response
 export type TappointmentSettings = {
   advance_booking_days: number
   appointment_duration: number
   success_redirect_url?: string
 }
-
+//types for appointment availability 
 export type TappointmentAvailability = {
   settings: TappointmentSettings
   rangeStart: string
