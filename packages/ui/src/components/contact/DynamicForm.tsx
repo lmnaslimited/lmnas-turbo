@@ -221,6 +221,8 @@ function InnerDynamicForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [LEmailValue]);
 
+
+  // Autofill the name-like field from the email as the user types, but only if
   useEffect(() => {
     if (!LEmailFieldName || !LAutoFillTargetName) return;
     if (LdForm.formState.dirtyFields[LAutoFillTargetName as never]) return;
@@ -233,6 +235,7 @@ function InnerDynamicForm({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [LEmailValue, LEmailFieldName, LAutoFillTargetName]);
 
+  // reCAPTCHA site key is required for all forms, even if the form doesn't have
   useEffect(() => {
     if (config.formId !== "booking") return;
 
@@ -264,7 +267,7 @@ function InnerDynamicForm({
       LdForm.setValue("timezone", LPreferred);
     }
   }, [config.formId, Timezones, LDetectedTimezone, LdForm]);
-
+  //booking form render based on the available time slot based on the timezone
   useEffect(() => {
     if (config.formId !== "booking") return;
     if (!SelectedTimezone) return;
@@ -334,6 +337,7 @@ function InnerDynamicForm({
     };
   }, [config.formId, SelectedTimezone, LdForm]);
 
+  //fetch and mounting the available time slots in the form
   useEffect(() => {
     if (config.formId !== "booking") return;
 
@@ -351,7 +355,6 @@ function InnerDynamicForm({
         shouldDirty: false,
         shouldValidate: false,
       });
-
       try {
         const LFormattedDate = format(new Date(SelectedDate), "yyyy-MM-dd");
         const LdSlotResult = await fetchTimeSlots(LFormattedDate, SelectedTimezone);
@@ -451,7 +454,12 @@ function InnerDynamicForm({
         config.successTitle = LdResponse.title ? LdResponse.title : ""
       } else if (config.formId === "contact") {
                 LdResponse = await fnSubmitContact(idFormData, LdRecaptchaToken)
-                config.successMessage = LdResponse.message ? LdResponse.message : config.successMessage;
+                const LLeadId = LdResponse.data.lead_id ?? ""
+
+              config.successMessage = config.successMessage.replace(
+                "{${lead_id}}",
+                LLeadId,
+              )
       }
         else if (config.formId === "download") {
           LdResponse = await fnDownload(idFormData, pdfData, LdRecaptchaToken)
@@ -657,38 +665,9 @@ function InnerDynamicForm({
  * shared <SectionForm /> wrapper, so reCAPTCHA behaviour is unchanged.
  */
 export const DynamicForm = (props: TdynamicFormProps): ReactElement => {
-  const LdParams = useParams();
-  const Locale = LdParams.locale as string;
-  const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
-
-  /*
-    On switching the language, useRouter remounts the client component (including
-    this form), but ReCaptchaProvider only injects its <script> once. So we
-    remove the old script and inject one using the new language.
-    github ref: https://github.com/snelsi/next-recaptcha-v3/issues/164
-  */
-  const fnReloadRecaptchaScript = (iKey: string, iLang: string) => {
-    const ExistingScript = document.getElementById("google-recaptcha-v3");
-    if (ExistingScript) {
-      ExistingScript.remove();
-    }
-
-    const LdScript = document.createElement("script");
-    LdScript.src = `https://www.google.com/recaptcha/api.js?render=${iKey}&hl=${iLang}`;
-    LdScript.id = "google-recaptcha-v3";
-    LdScript.async = true;
-    LdScript.defer = true;
-    document.body.appendChild(LdScript);
-  };
-
-  useEffect(() => {
-    fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
-  }, [Locale, LRecaptchaSiteKey]);
-
+  
   return (
-    <ReCaptchaProvider reCaptchaKey={LRecaptchaSiteKey}>
       <InnerDynamicForm {...props} />
-    </ReCaptchaProvider>
   );
 };
 

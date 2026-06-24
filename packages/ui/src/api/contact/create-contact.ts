@@ -66,20 +66,26 @@ export async function ContactApi(idFormdata: TcontactApi) {
   );
 
   // Capture reCAPTCHA result tied to the person's email
-  posthog.capture({
-    distinctId: idFormdata.formData.email,
-    event: "contact_recaptcha_verified",
-    properties: {
-      recaptcha_score: String(LRecaptchaScore),
-      recaptcha_passed: LIsHuman,
-      $set: {
-        email: idFormdata.formData.email,
-        name: idFormdata.formData.name,
+  try {
+    posthog.capture({
+      distinctId: idFormdata.formData.email,
+      event: "contact_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LRecaptchaScore),
+        recaptcha_passed: LIsHuman,
+        $set: {
+          email: idFormdata.formData.email,
+          name: idFormdata.formData.name,
+        },
       },
-    },
-  });
-  if (!LIsHuman) {
-    return { error: "reCAPTCHA verification failed" }
+    });
+
+    await posthog.shutdown();
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for contact_recaptcha_verified:",
+      idError,
+    );
   }
 
   try {

@@ -67,19 +67,28 @@ export async function bookAppointmentAction(
   const { isHuman, score } = await fnVerifyRecaptcha(recaptchaToken);
 
   // Capture reCAPTCHA result tied to the person's email
-  posthog.capture({
-    distinctId: contact.email,
-    event: "booking_recaptcha_verified",
-    properties: {
-      recaptcha_score: String(score),
-      recaptcha_passed: isHuman,
-      $set: {
-        email: contact.email,
-        name: contact.name,
-        phone: contact.phone,
+  try {
+    posthog.capture({
+      distinctId: contact.email,
+      event: "booking_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(score),
+        recaptcha_passed: isHuman,
+        $set: {
+          email: contact.email,
+          name: contact.name,
+          phone: contact.phone,
+        },
       },
-    },
-  });
+    });
+
+    await posthog.shutdown();
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for booking_recaptcha_verified:",
+      idError,
+    );
+  }
 
   if (!isHuman) {
     return { error: "reCAPTCHA verification failed" };

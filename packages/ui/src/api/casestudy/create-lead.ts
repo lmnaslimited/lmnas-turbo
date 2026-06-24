@@ -72,18 +72,28 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
       await fnVerifyRecaptchaToken(idLeadFormData.recaptchaToken);
 
     // Capture reCAPTCHA result tied to the person's email
-    posthog.capture({
-      distinctId: idLeadFormData.email,
-      event: "casestudy_recaptcha_verified",
-      properties: {
-        recaptcha_score: String(LRecaptchaScore),
-        recaptcha_passed: LIsHumanUser,
-        $set: {
-          email: idLeadFormData.email,
-          name: idLeadFormData.name,
+    // Capture reCAPTCHA result tied to the person's email
+    try {
+      posthog.capture({
+        distinctId: idLeadFormData.email,
+        event: "casestudy_recaptcha_verified",
+        properties: {
+          recaptcha_score: String(LRecaptchaScore),
+          recaptcha_passed: LIsHumanUser,
+          $set: {
+            email: idLeadFormData.email,
+            name: idLeadFormData.name,
+          },
         },
-      },
-    });
+      });
+
+      await posthog.shutdown();
+    } catch (idError) {
+      console.error(
+        "PostHog capture failed for casestudy_recaptcha_verified:",
+        idError,
+      );
+    }
 
     if (!LIsHumanUser) {
       return {

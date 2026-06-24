@@ -58,17 +58,26 @@ export async function fnSubscribewithCaptcha(
     LdParsed.data.recaptchaToken,
   );
 
-  posthog.capture({
-    distinctId: LdParsed.data.email,
-    event: "newsletter_recaptcha_verified",
-    properties: {
-      recaptcha_score: String(LRecaptchaScore),
-      recaptcha_passed: LIsHuman,
-      $set: {
-        email: LdParsed.data.email,
+  try {
+    posthog.capture({
+      distinctId: LdParsed.data.email,
+      event: "newsletter_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LRecaptchaScore),
+        recaptcha_passed: LIsHuman,
+        $set: {
+          email: LdParsed.data.email,
+        },
       },
-    },
-  });
+    });
+
+    await posthog.shutdown();
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for newsletter_recaptcha_verified:",
+      idError,
+    );
+  }
 
   if (!LIsHuman) {
     return {

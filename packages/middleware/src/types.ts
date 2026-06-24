@@ -1058,16 +1058,3 @@ export type TresolvedContactStep = {
  * `config` is the exact same `TformConfig` object the shared <SectionForm />
  * receives, so validation schema, payload structure and copy stay identical.
  */
-export type TdynamicContactFormProps = {
-  config: TformConfig
-  onSuccess: (message: string, title: string) => void
-  onSuccessfulSubmit?: (payload: {
-    formData: Record<string, unknown>
-    formId: string
-    formTitle?: string
-    source?: string
-    meta?: Record<string, unknown>
-  }) => void | Promise<void>
-  className?: string
-  defaultValues?: Record<string, unknown>
-}

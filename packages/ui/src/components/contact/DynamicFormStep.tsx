@@ -325,24 +325,25 @@ export default function DynamicFormStep({
                     </p>
                   ) : (
                     timeSlots.map(({ time, availability }) => {
-                      const fromTime = time.slice(11, 16)
-                      const slotLabel = `${fromTime} - ${fnFormatSlotEnd(fromTime, appointmentDuration)}`
-                      const formattedValue = time.slice(11, 19)
+                      const LfromTime = time.slice(11, 16)
+                      const LslotLabel = `${LfromTime} - ${fnFormatSlotEnd(LfromTime, appointmentDuration)}`
+                      const LformattedValue = time.slice(11, 19)
 
                       return (
+                        // Render each time slot as a button, styled based on availability and selection state. Disabled the dates if not available in calender.
                         <Button
                           key={time}
                           type="button"
                           variant="default"
                           className={`h-10
                                   ${!availability ? "bg-accent text-foreground cursor-not-allowed" : ""}
-                                  ${availability && iField.value !== formattedValue ? "bg-accent text-foreground hover:border hover:ring-2 hover:ring-ring hover:bg-foreground hover:text-background" : ""}
-                                  ${iField.value === formattedValue ? "border ring-2 ring-ring" : ""}
+                                  ${availability && iField.value !== LformattedValue ? "bg-accent text-foreground hover:border hover:ring-2 hover:ring-ring hover:bg-foreground hover:text-background" : ""}
+                                  ${iField.value === LformattedValue ? "border ring-2 ring-ring" : ""}
                               `}
-                          onClick={() => iField.onChange(formattedValue)}
+                          onClick={() => iField.onChange(LformattedValue)}
                           disabled={!availability}
                         >
-                          {slotLabel}
+                          {LslotLabel}
                         </Button>
                       )
                     })

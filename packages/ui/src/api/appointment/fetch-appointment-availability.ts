@@ -7,8 +7,11 @@ import type {
 } from "@repo/middleware/types"
 import { fetchTimeSlots } from "./fetch-timeslot"
 
+
+// Constants request batch size for fetching appointment availability in chunks to avoid overwhelming the server
 const AVAILABILITY_REQUEST_BATCH_SIZE = 7
 
+//fetches the current date in the specified timezone and formats it as YYYY-MM-DD
 function fnDateInTimezone(iTimezone: string): string {
   const LaParts = new Intl.DateTimeFormat("en-US", {
     timeZone: iTimezone,
@@ -24,6 +27,7 @@ function fnDateInTimezone(iTimezone: string): string {
   return `${LdParts.year}-${LdParts.month}-${LdParts.day}`
 }
 
+// Adds a specified number of days to a given date string (YYYY-MM-DD) and returns the new date in the same format
 function fnAddDays(iDate: string, iDays: number): string {
   const [LYear = 0, LMonth = 1, LDay = 1] = iDate
     .split("-")
@@ -33,11 +37,13 @@ function fnAddDays(iDate: string, iDays: number): string {
   return LDate.toISOString().slice(0, 10)
 }
 
+// Fetches appointment settings from the backend API, ensuring that the response is valid and contains the necessary fields
 async function fnFetchAppointmentSettings(): Promise<TappointmentSettings> {
   const LdHeaders = new Headers({
     Authorization: `${process.env.AUTH_BASE_64}`,
     "Content-Type": "application/json",
   })
+  // Fetch appointment settings from the backend API to get configuration details like advance booking days and appointment duration
   const LSettingsUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.get_appointment_settings`
   const LdResponse = await fetch(LSettingsUrl, {
     method: "GET",
@@ -63,6 +69,8 @@ async function fnFetchAppointmentSettings(): Promise<TappointmentSettings> {
   return LdSettings as TappointmentSettings
 }
 
+
+// Fetches available appointment slots for a given timezone, batching requests to avoid overwhelming the server and returning structured availability data
 export async function fetchAppointmentAvailability(
   iTimezone: string,
 ): Promise<TappointmentAvailabilityResponse> {
@@ -79,7 +87,8 @@ export async function fetchAppointmentAvailability(
     )
     const LdSlotsByDate: Record<string, Tslot[]> = {}
     const LaAvailableDates: string[] = []
-
+    
+    // Batch processing to fetch time slots for each date, ensuring that the server is not overwhelmed with too many requests at once
     for (
       let LIndex = 0;
       LIndex < LaDates.length;
@@ -95,7 +104,7 @@ export async function fetchAppointmentAvailability(
           result: await fetchTimeSlots(LDate, iTimezone),
         })),
       )
-
+      // Process the results of the batch request, storing available slots and identifying dates with available appointments      
       LaResults.forEach(({ date: LDate, result: LdResult }) => {
         const LaSlots = Array.isArray(LdResult.data) ? LdResult.data : []
         LdSlotsByDate[LDate] = LaSlots

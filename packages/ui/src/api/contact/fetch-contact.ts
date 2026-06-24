@@ -38,7 +38,6 @@ const LdCommunicationSchema = z.object({
 
 /**
  * Handles website communication messages (e.g., contact form submissions).
- *
  * Steps:
  * 1. Validate form data
  * 2. Verify reCAPTCHA to ensure it's submitted by a human
@@ -62,19 +61,25 @@ export async function sendCommunicationAction(
   const { isHuman: LIsHuman, score: LRecaptchaScore } =
     await fnVerifyRecaptcha(recaptchaToken)
 
-  posthog.capture({
-    distinctId: email,
-    event: "communication_recaptcha_verified",
-    properties: {
-      recaptcha_score: String(LRecaptchaScore),
-      recaptcha_passed: LIsHuman,
-      $set: {
-        email,
-      }
-    }
-  })
-  if (!LIsHuman) {
-    return { error: "reCAPTCHA verification failed" }
+  try {
+    posthog.capture({
+      distinctId: email,
+      event: "communication_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LRecaptchaScore),
+        recaptcha_passed: LIsHuman,
+        $set: {
+          email,
+        },
+      },
+    })
+
+    await posthog.shutdown()
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for communication_recaptcha_verified:",
+      idError,
+    )
   }
 
   try {
@@ -112,13 +117,14 @@ export async function sendCommunicationAction(
         const LdLeadJson = await LdLeadResp.json()
         const LdLead = Array.isArray(LdLeadJson?.data) ? LdLeadJson.data[0] : undefined
         const LdLeadName = LdLead?.name || LdLead?.lead_id || null
-        const LMessage = LdLeadName
-          ? `Thanks for contacting us!\n1. Your Lead ID (${LdLeadName}) has been generated. ✔\n2. A confirmation email has been sent to you. ✔\n3. Our team will reach out to you shortly. ✔\n4. Please check your email for further communication. ✔`
-          : "Thank you for your message....."
-
+        
         return {
-          message: LMessage,
-          data: LdResult,
+          message: "Thank you for your message",
+         
+          data: {
+            ...LdResult,
+            lead: LdLeadName || null,
+          },
         }
       }
     } catch (e) {
@@ -126,8 +132,11 @@ export async function sendCommunicationAction(
     }
 
     return {
-      message: "Thank you for your message????",
-      data: LdResult,
+      message: "Thank you for your message",
+      data: {
+            ...LdResult,
+            lead: null,
+          },
     }
   } catch (error) {
     console.error("Server-side error:", error)
