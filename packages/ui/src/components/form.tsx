@@ -688,7 +688,7 @@ function InnerSectionForm({
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <div className="grid grid-cols-3 gap-2">
                                     {IsLoadingSlots ? (
-                                        <p className="col-span-3 text-muted-foreground text-sm">{idField.loading.label ?? "Loading slots..."}</p>
+                                        <p className="col-span-3 text-muted-foreground text-sm">{idField.loading?.label ?? "Loading slots..."}</p>
                                     ) : TimeSlots.length === 0 ? (
                                         <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">{idField.loading.description ?? "No slots available"}</p>
                                     ) : (
@@ -745,7 +745,7 @@ function InnerSectionForm({
                 return null
         }
     }
-
+    
     return (
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto shadow-md border border-border", className)}>
             {!hideCardHeader && (

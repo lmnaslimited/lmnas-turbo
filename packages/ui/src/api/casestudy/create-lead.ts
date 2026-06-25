@@ -2,17 +2,23 @@
 
 import { TleadApi } from "@repo/middleware/types"
 import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { PostHog } from "posthog-node"
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+});
 
 // Verifies the Google reCAPTCHA token received from the client
 async function fnVerifyRecaptchaToken(
   iRecaptchaToken: string,
-): Promise<boolean> {
+): Promise<{ isHuman: boolean; score: number }> {
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   try {
     const LRecaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
 
     if (!LRecaptchaSecretKey) {
       console.error("Missing RECAPTCHA_SECRET_KEY")
-      return false
+      return { isHuman: false, score: 0 }
     }
 
     // Send token to Google for verification
@@ -27,16 +33,20 @@ async function fnVerifyRecaptchaToken(
         "reCAPTCHA API request failed:",
         LdVerificationResponse.status,
       )
-      return false
+      return { isHuman: false, score: 0 };
     }
 
     const LdVerificationResult = await LdVerificationResponse.json()
 
     // Accept only if success is true and score >= 0.5
-    return LdVerificationResult.success && LdVerificationResult.score >= 0.5
+    return {
+      isHuman:
+        LdVerificationResult.success && LdVerificationResult.score >= 0.5,
+      score: LdVerificationResult.score ?? 0,
+    };
   } catch (idError) {
     console.error("reCAPTCHA verification error:", idError)
-    return false
+    return { isHuman: false, score: 0 }
   }
 }
 
@@ -58,9 +68,31 @@ export async function fnLeadCreation(idLeadFormData: TleadApi) {
     }
 
     // Verify the reCAPTCHA token
-    const LIsHumanUser = await fnVerifyRecaptchaToken(
-      idLeadFormData.recaptchaToken,
-    )
+    const { isHuman: LIsHumanUser, score: LRecaptchaScore } =
+      await fnVerifyRecaptchaToken(idLeadFormData.recaptchaToken);
+
+    // Capture reCAPTCHA result tied to the person's email
+    // Capture reCAPTCHA result tied to the person's email
+    try {
+      posthog.capture({
+        distinctId: idLeadFormData.email,
+        event: "casestudy_recaptcha_verified",
+        properties: {
+          recaptcha_score: String(LRecaptchaScore),
+          recaptcha_passed: LIsHumanUser,
+          $set: {
+            email: idLeadFormData.email,
+            name: idLeadFormData.name,
+          },
+        },
+      });
+
+    } catch (idError) {
+      console.error(
+        "PostHog capture failed for casestudy_recaptcha_verified:",
+        idError,
+      );
+    }
 
     if (!LIsHumanUser) {
       return {

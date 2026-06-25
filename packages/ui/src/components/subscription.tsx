@@ -29,11 +29,10 @@ export function NewsletterSubscriptionForm({
   buttonLabel,
   buttonPendingLabel = "Subscribing...",
   variant = "lg",
-  source
+  source,
 }: TNewsletterSubscriptionProps) {
-
-  const { executeRecaptcha } = useReCaptcha()
-  const [LPosthogReady, fnSetPosthogReady] = useState(false)
+  const { executeRecaptcha } = useReCaptcha();
+  const [LPosthogReady, fnSetPosthogReady] = useState(false);
 
   // Ensure PostHog is fully initialized before enabling newsletter subscriptions,
   // so identify and capture events are not lost during SDK startup.
@@ -56,11 +55,10 @@ export function NewsletterSubscriptionForm({
 
   // Tracks form submission loading state and API response status/message
   const [LPending, fnSetPending] = useState(false);
-  const [LState, fnSetState] =
-    useState<TnewsletterSubscriptionState>({
-      message: "",
-      status: "error",
-    });
+  const [LState, fnSetState] = useState<TnewsletterSubscriptionState>({
+    message: "",
+    status: "error",
+  });
 
   // Handles newsletter form submission:
   // - Prevents default form submit behavior
@@ -69,9 +67,7 @@ export function NewsletterSubscriptionForm({
   // - Sends analytics events to PostHog (identify + capture)
   // - Submits data to newsletter subscription API
   // - Updates UI state based on success or failure
-  const fnHandleSubmit = async (
-    idEvent: React.FormEvent<HTMLFormElement>,
-  ) => {
+  const fnHandleSubmit = async (idEvent: React.FormEvent<HTMLFormElement>) => {
     idEvent.preventDefault();
     const LForm = idEvent.currentTarget;
 
@@ -82,41 +78,47 @@ export function NewsletterSubscriptionForm({
       });
       return;
     }
-  
+
     try {
       fnSetPending(true);
-  
+
       const LToken = await executeRecaptcha("newsletter");
-  
+
       const LdFormData = new FormData(LForm);
       const LEmail = LdFormData.get("email");
-  
+
       LdFormData.append("recaptchaToken", LToken);
-  
+
       if (typeof LEmail === "string" && LEmail.trim()) {
         // Posthog analytics
-        const LNormalizedEmail =
-          LEmail.trim().toLowerCase();
-  
+        const LNormalizedEmail = LEmail.trim().toLowerCase();
+
         posthog.identify(LNormalizedEmail, {
           email: LNormalizedEmail,
           newsletterOptIn: true,
         });
-  
-        posthog.capture("newsletter_submitted",{
+
+        posthog.capture("newsletter_submitted", {
           email: LNormalizedEmail,
-          source
+          source,
         });
+
+        window.dispatchEvent(
+          new CustomEvent("posthog-user-updated", {
+            detail: LNormalizedEmail,
+          }),
+        );
       }
+
       // subscription apis
       const LdResult = await fnSubscribewithCaptcha(
         { message: "", status: "error" },
         LdFormData,
       );
-  
+
       fnSetState(LdResult);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       fnSetState({
         message: "Something went wrong",
         status: "error",
@@ -130,10 +132,7 @@ export function NewsletterSubscriptionForm({
 
   return (
     <>
-      <form
-        onSubmit={fnHandleSubmit}
-        className={LVariant.form}
-      >
+      <form onSubmit={fnHandleSubmit} className={LVariant.form}>
         <Input
           type="email"
           name="email"
