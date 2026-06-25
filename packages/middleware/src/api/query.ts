@@ -1139,7 +1139,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
 
   getQuery(): string {
     return `
-  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus, $caseStudiesPagination: PaginationArg) {
+  query Solution($locale: I18NLocaleCode,$caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus, $pagination: PaginationArg) {
   solution(locale: $locale, status: $status) {
   heroSection {
       heading {
@@ -1362,7 +1362,7 @@ export class clQuerySolution extends clQuery<TsolutionPageSource> {
       schemaData
     }
   }
-  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status, pagination: $caseStudiesPagination) {
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status, pagination: $pagination) {
     solutionSection {
       successCard {
         header {
@@ -2192,7 +2192,7 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
 
   getQuery(): string {
     return `
- query Query($locale: I18NLocaleCode, $status: PublicationStatus, $blogsLocale2: I18NLocaleCode, $blogsStatus2: PublicationStatus) {
+ query Query($locale: I18NLocaleCode, $status: PublicationStatus, $blogsLocale2: I18NLocaleCode, $blogsStatus2: PublicationStatus, $pagination: PaginationArg) {
    ${this.contentType}(locale: $locale, status: $status) {
     blogHeader {
       title
@@ -2241,7 +2241,7 @@ export class clQueryBlogHome extends clQuery<TblogPageSource> {
       schemaData
     }
   }
-  blogs(locale: $blogsLocale2, status: $blogsStatus2, sort: ["blogHeader.publishingDate:desc"]) {
+  blogs(locale: $blogsLocale2, status: $blogsStatus2, sort: ["blogHeader.publishingDate:desc"], pagination: $pagination) {
   featuredBlog
   slug
     blogHeader {
