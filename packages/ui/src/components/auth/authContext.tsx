@@ -114,11 +114,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // 2. Clear old timer
       if (LdTimeoutRef.current) clearTimeout(LdTimeoutRef.current);
 
-      // 3. One-Line Timer: Refresh 60 seconds early. If time is already up, fallback to 10 seconds.
-      const LDelayMs = (LdData.expiresInSeconds - 60) * 1000;
-      const LSafeDelayMs = LDelayMs > 0 ? LDelayMs : 10000;
+      // // 3. One-Line Timer: Refresh 60 seconds early. If time is already up, fallback to 10 seconds.
+      // const LDelayMs = (LdData.expiresInSeconds - 60) * 1000;
+      // const LSafeDelayMs = LDelayMs > 0 ? LDelayMs : 10000;
 
-      LdTimeoutRef.current = setTimeout(() => fnRefreshAuthLifecycle(true), LSafeDelayMs);
+      // LdTimeoutRef.current = setTimeout(() => fnRefreshAuthLifecycle(true), LSafeDelayMs);
+      const LSecondsLeft = LdData.expiresInSeconds;
+
+      // 🌟 THE SLEEP BUG FIX:
+      if (LSecondsLeft > 60) {
+        // Safe zone: Schedule a background refresh exactly 60 seconds before expiration
+        const LDelayMs = (LSecondsLeft - 60) * 1000;
+        LdTimeoutRef.current = setTimeout(() => fnRefreshAuthLifecycle(true), LDelayMs);
+      } else {
+        // Critical zone: Laptop just woke up from sleep and token is expiring right now.
+        // Instantly force a true rotation cycle instead of waiting or looping!
+        fnRefreshAuthLifecycle(true);
+      }
 
     } catch (err) {
       console.error('Lifecycle dynamic manager failure:', err);
@@ -150,19 +162,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Revalidate authentication whenever the user returns to the tab.
     // This protects against missed refresh timers caused by laptop sleep
     // or browser tab suspension.
+    // function fnHandleVisibilityOrFocus() {
+    //   if (document.visibilityState !== 'visible') return;
+  
+    //   const LNow = Date.now();
+  
+    //   // Prevent duplicate refresh requests when focus and visibility events
+    //   // fire back-to-back during the same tab activation.
+    //   if (LNow - LLastRefreshTime < 2000) return;
+  
+    //   LLastRefreshTime = LNow;
+  
+    //   // Force a server-side auth verification using the refresh token if needed.
+    //   fnRefreshAuthLifecycle(true);
+    // }
+
     function fnHandleVisibilityOrFocus() {
       if (document.visibilityState !== 'visible') return;
   
       const LNow = Date.now();
-  
-      // Prevent duplicate refresh requests when focus and visibility events
-      // fire back-to-back during the same tab activation.
+      // Throttle rapid double-firing from browser tab switching
       if (LNow - LLastRefreshTime < 2000) return;
-  
       LLastRefreshTime = LNow;
   
-      // Force a server-side auth verification using the refresh token if needed.
-      fnRefreshAuthLifecycle(true);
+      // TAB FOCUS FIX: Check current session state naturally. 
+      // Do not hard-force a rotation unless the lifecycle manager above evaluates a true need.
+      fnRefreshAuthLifecycle(false);
     }
   
     window.addEventListener('focus', fnHandleVisibilityOrFocus);
@@ -173,8 +198,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearTimeout(LdTimeoutRef.current);
       }
   
-      window.removeEventListener('focus', fnHandleVisibilityOrFocus);
-      document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
+      // window.removeEventListener('focus', fnHandleVisibilityOrFocus);
+      // document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
     };
   }, []);
 
