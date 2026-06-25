@@ -57,7 +57,7 @@ export type Tcontext = {
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
-  caseStudiesPagination?: { limit: number },
+  pagination?: { limit: number },
   caseStudiesFilters2?: {
     heroSection?: {
       tag: {
