@@ -57,6 +57,7 @@ export type Tcontext = {
   status?: string
   caseStudiesLocale2?: string
   footerLocale2?: string
+  pagination?: { limit: number },
   caseStudiesFilters2?: {
     heroSection?: {
       tag: {
@@ -391,6 +392,8 @@ export type TformConfig = {
   submitText: string
   schema: z.ZodObject<any>
   successTitle: string
+  navNext: String
+  navPrevious: String
   successMessage: string
   verifiedMessage?: Titems
   unVerifiedMessage?: Titems
@@ -398,6 +401,13 @@ export type TformConfig = {
   terms?: Tbutton
   privacy?: Tbutton
   policyDescription?: string
+  // Optional Strapi-driven, locale-safe progress captions for the multi-step
+  // contact form. Chosen by steps remaining; falls back to English if absent.
+  stepCaptions?: {
+    fewToComplete?: string
+    oneMoreInput?: string
+    almostDone?: string
+  }
 }
 
 export type TdynamicFormProps = {
@@ -432,6 +442,25 @@ export type Tslot = {
 export type TslotResponse = {
   message?: string
   data?: Tslot[]
+  error?: string
+}
+//types for appointment settings response
+export type TappointmentSettings = {
+  advance_booking_days: number
+  appointment_duration: number
+  success_redirect_url?: string
+}
+//types for appointment availability 
+export type TappointmentAvailability = {
+  settings: TappointmentSettings
+  rangeStart: string
+  rangeEnd: string
+  availableDates: string[]
+  slotsByDate: Record<string, Tslot[]>
+}
+
+export type TappointmentAvailabilityResponse = {
+  data?: TappointmentAvailability
   error?: string
 }
 
@@ -977,3 +1006,47 @@ export type TNewsletterSubscriptionProps = {
   variant?: "sm" | "lg";
   source:string
 };
+// This file defines TypeScript types and interfaces used throughout the multi-step contact form implementation.
+
+export interface ContactFormData {
+    fullName: string;
+    email: string;
+    companyName: string;
+    phone: string;
+    message: string;
+    newsletter: boolean;
+}
+
+export interface StepProps {
+    formData: ContactFormData;
+    setFormData: React.Dispatch<React.SetStateAction<ContactFormData>>;
+    nextStep: () => void;
+    prevStep: () => void;
+}
+
+export interface MultiStepFormProps {
+    onSubmit: (data: ContactFormData) => Promise<void>;
+    initialData?: ContactFormData;
+}
+
+export interface Step {
+    id: string;
+    component: React.FC<StepProps>;
+}
+
+export type TContactFormValues = {
+    fullName: string;
+    email: string;
+    companyName: string;
+    phone: string;
+    message: string;
+    newsletter: boolean;
+};
+/**
+ * A step in the multi-step contact form. Steps are derived at runtime from the
+ * Strapi field configuration (chunked into groups), so nothing here is hardcoded.
+ */
+export type TresolvedContactStep = {
+  id: string
+  fields: TformFieldConfig[]
+}
