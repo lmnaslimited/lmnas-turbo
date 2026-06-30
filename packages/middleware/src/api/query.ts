@@ -1560,6 +1560,13 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         description
       }
     }
+    faqSection {
+      title
+      list {
+        label
+        description
+      }
+    }
     ctaSectionHeader {
       title
       subtitle
@@ -1784,6 +1791,13 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         label
         formMode
         icon
+      }
+    }
+    faqSection {
+      title
+      list {
+        label
+        description
       }
     }
     successStoryHeaderFooter {
