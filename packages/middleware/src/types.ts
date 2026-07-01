@@ -977,3 +977,15 @@ export type TNewsletterSubscriptionProps = {
   variant?: "sm" | "lg";
   source:string
 };
+
+export type TUserProfile = {
+  name: string;
+  email: string;
+  picture: string;
+}
+
+export type TAuthContextProps = {
+  user: TUserProfile | null;
+  loading: boolean;
+  logout: () => void;
+}

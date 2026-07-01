@@ -1,29 +1,18 @@
 'use client';
 
+import { TAuthContextProps, TUserProfile } from '@repo/middleware/types';
 import posthog from 'posthog-js';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
-import { boolean } from 'zod';
 
-interface IUserProfile {
-  name: string;
-  email: string;
-  picture: string;
-}
-
-interface AuthContextProps {
-  user: IUserProfile | null;
-  loading: boolean;
-  logout: () => void;
-}
-
-const AuthContext = createContext<AuthContextProps>({
+// Creation of hook for easy access
+const AuthContext = createContext<TAuthContextProps>({
   user: null,
   loading: true,
   logout: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, fnSetUser] = useState<IUserProfile | null>(null);
+  const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
  
   const LdTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -53,44 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       LdLastIdentifiedEmailRef.current = null;
     }
   }, [user]);
-  // ------------------------------------------------------------------------
-
-
-// async function fnRefreshAuthLifecycle(forceRefresh = false) {
-//     try {
-//       // 1. Target endpoint changes based on whether this call was scheduled or an initial mount
-//       const LTargetUrl = forceRefresh ? '/api/auth/me?force=true' : '/api/auth/me';
-//       const LdResult = await fetch(LTargetUrl, { cache: 'no-store' });
-      
-//       if (LdResult.ok) {
-//         const LdData = await LdResult.json();
-//         fnSetUser(LdData.user);
-  
-//         // 2. Tighten cushion window for 1-minute test cycles
-//         const LSafetyCushionSeconds = 60; 
-//         const LDelayMs = (LdData.expiresInSeconds - LSafetyCushionSeconds) * 1000;
-  
-//         if (LdTimeoutRef.current) clearTimeout(LdTimeoutRef.current);
-  
-//         if (LDelayMs > 0) {
-//           LdTimeoutRef.current = setTimeout(() => {
-//             fnRefreshAuthLifecycle(true); // 3. Trigger true token rotation on timeout fire
-//           }, LDelayMs);
-//         } else {
-//           // 4. Defensive boundary: if network lag puts us past the cushion, wait 10 seconds before retry
-//           LdTimeoutRef.current = setTimeout(() => {
-//             fnRefreshAuthLifecycle(true);
-//           }, 10000);
-//         }
-//       } else {
-//         fnSetUser(null);
-//       }
-//     } catch (err) {
-//       console.error('Lifecycle dynamic manager failure:', err);
-//       fnSetUser(null);
-//     }
-//   }
-
+ 
 // Inside your AuthProvider component in apps/web/context/AuthContext.tsx
 
   async function fnRefreshAuthLifecycle(forceRefresh = false) {
@@ -98,30 +50,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const LTargetUrl = `/api/auth/me${forceRefresh ? '?force=true' : ''}`;
       const LdResult = await fetch(LTargetUrl, { cache: 'no-store' });
       
-      // 1. Guard Clause: If server errors or user is missing, clear state and STOP
+      //Guard Clause: If server errors or user is missing, clear state and STOP
       if (!LdResult.ok) {
         fnSetUser(null);
-        fnSetLoading(false); // 2. Turn off loading if call fails
+        fnSetLoading(false); //Turn off loading if call fails
         return;
       }
       
       const LdData = await LdResult.json();
       fnSetUser(LdData.user);
-      fnSetLoading(false); // 3. Turn off loading when user data finishes resolving
+      fnSetLoading(false); //Turn off loading when user data finishes resolving
 
       if (!LdData.user) return;
 
-      // 2. Clear old timer
+      //Clear old timer
       if (LdTimeoutRef.current) clearTimeout(LdTimeoutRef.current);
 
-      // // 3. One-Line Timer: Refresh 60 seconds early. If time is already up, fallback to 10 seconds.
-      // const LDelayMs = (LdData.expiresInSeconds - 60) * 1000;
-      // const LSafeDelayMs = LDelayMs > 0 ? LDelayMs : 10000;
-
-      // LdTimeoutRef.current = setTimeout(() => fnRefreshAuthLifecycle(true), LSafeDelayMs);
       const LSecondsLeft = LdData.expiresInSeconds;
 
-      // 🌟 THE SLEEP BUG FIX:
+      // THE SLEEP BUG FIX:
       if (LSecondsLeft > 60) {
         // Safe zone: Schedule a background refresh exactly 60 seconds before expiration
         const LDelayMs = (LSecondsLeft - 60) * 1000;
@@ -135,7 +82,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch (err) {
       console.error('Lifecycle dynamic manager failure:', err);
       fnSetUser(null);
-      fnSetLoading(false); // 4. Turn off loading if network crashes
+      fnSetLoading(false); //Turn off loading if network crashes
     }
   }
 
@@ -162,21 +109,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // Revalidate authentication whenever the user returns to the tab.
     // This protects against missed refresh timers caused by laptop sleep
     // or browser tab suspension.
-    // function fnHandleVisibilityOrFocus() {
-    //   if (document.visibilityState !== 'visible') return;
-  
-    //   const LNow = Date.now();
-  
-    //   // Prevent duplicate refresh requests when focus and visibility events
-    //   // fire back-to-back during the same tab activation.
-    //   if (LNow - LLastRefreshTime < 2000) return;
-  
-    //   LLastRefreshTime = LNow;
-  
-    //   // Force a server-side auth verification using the refresh token if needed.
-    //   fnRefreshAuthLifecycle(true);
-    // }
-
     function fnHandleVisibilityOrFocus() {
       if (document.visibilityState !== 'visible') return;
   
@@ -198,8 +130,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         clearTimeout(LdTimeoutRef.current);
       }
   
-      // window.removeEventListener('focus', fnHandleVisibilityOrFocus);
-      // document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
+      window.removeEventListener('focus', fnHandleVisibilityOrFocus);
+      document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
     };
   }, []);
 
