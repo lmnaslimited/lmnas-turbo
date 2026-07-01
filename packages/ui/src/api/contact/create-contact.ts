@@ -2,20 +2,30 @@
 
 import { TcontactApi } from "@repo/middleware/types"
 import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { PostHog } from "posthog-node"
 
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+});
 // Function to verify reCAPTCHA token using Google's siteverify API
-async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
+async function fnVerifyRecaptcha(
+  iToken: string,
+): Promise<{ isHuman: boolean; score: number }> {
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
   const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
   const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
 
   try {
-    const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" })
-    const LdData = await LdRecaptchaResponse.json()
-    // Return true only if verification is successful and the score is above threshold
-    return LdData.success && LdData.score >= 0.5
+    const LdRecaptchaResponse = await fetch(LRecaptchaUrl, { method: "POST" });
+    const LdData = await LdRecaptchaResponse.json();
+
+    return {
+      isHuman: LdData.success && LdData.score >= 0.5,
+      score: LdData.score ?? 0,
+    };
   } catch (error) {
-    console.error("reCAPTCHA verification error:", error)
-    return false
+    console.error("reCAPTCHA verification error:", error);
+    return { isHuman: false, score: 0 };
   }
 }
 
@@ -51,9 +61,30 @@ export async function ContactApi(idFormdata: TcontactApi) {
   }
 
   // Step 1: Verify reCAPTCHA
-  const LIsHuman = await fnVerifyRecaptcha(idFormdata.recaptchaToken)
-  if (!LIsHuman) {
-    return { error: "reCAPTCHA verification failed" }
+  const { isHuman: LIsHuman, score: LRecaptchaScore } = await fnVerifyRecaptcha(
+    idFormdata.recaptchaToken,
+  );
+
+  // Capture reCAPTCHA result tied to the person's email
+  try {
+    posthog.capture({
+      distinctId: idFormdata.formData.email,
+      event: "contact_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(LRecaptchaScore),
+        recaptcha_passed: LIsHuman,
+        $set: {
+          email: idFormdata.formData.email,
+          name: idFormdata.formData.name,
+        },
+      },
+    });
+
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for contact_recaptcha_verified:",
+      idError,
+    );
   }
 
   try {

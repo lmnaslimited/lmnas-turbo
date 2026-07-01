@@ -280,7 +280,7 @@ export async function fnDownload(
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(idPdfData),
+            body: JSON.stringify({...idPdfData, email: idFormData.email}),
         });
         
         if (!LdResponse.ok) {
@@ -688,7 +688,7 @@ function InnerSectionForm({
                                 {idField.label && <FormLabel>{idField.label}</FormLabel>}
                                 <div className="grid grid-cols-3 gap-2">
                                     {IsLoadingSlots ? (
-                                        <p className="col-span-3 text-muted-foreground text-sm">{idField.loading.label ?? "Loading slots..."}</p>
+                                        <p className="col-span-3 text-muted-foreground text-sm">{idField.loading?.label ?? "Loading slots..."}</p>
                                     ) : TimeSlots.length === 0 ? (
                                         <p className="col-span-3 text-sm text-red-500 text-center py-4 font-medium">{idField.loading.description ?? "No slots available"}</p>
                                     ) : (
@@ -745,7 +745,7 @@ function InnerSectionForm({
                 return null
         }
     }
-
+    
     return (
         <div ref={FormRef} className={cn("w-full max-w-xl mx-auto shadow-md border border-border", className)}>
             {!hideCardHeader && (
@@ -825,46 +825,46 @@ function InnerSectionForm({
 * returns React element with ReCaptcha provider and inner form
 */
 export const SectionForm = (props: TdynamicFormProps): ReactElement => {
-    const LdParams = useParams();
-    const Locale = LdParams.locale as string;
-    /*
-    on switching the language using useRouter will remount the client component 
-    which include Form component too in app router, but the recaptchaProvider will not re render due
-    to its default behaviour of only inserting the <script> once,
-    so we need to remove the script and inject with script that use new lang
+    // const LdParams = useParams();
+    // const Locale = LdParams.locale as string;
+    // /*
+    // on switching the language using useRouter will remount the client component 
+    // which include Form component too in app router, but the recaptchaProvider will not re render due
+    // to its default behaviour of only inserting the <script> once,
+    // so we need to remove the script and inject with script that use new lang
 
-    github ref: https://github.com/snelsi/next-recaptcha-v3/issues/164
-    */
-    const fnReloadRecaptchaScript = (ikey: string, iLang: string) => {
-        const ExistingScript = document.getElementById("google-recaptcha-v3");
-        if (ExistingScript) {
-            ExistingScript.remove(); // remove old script
-        }
+    // github ref: https://github.com/snelsi/next-recaptcha-v3/issues/164
+    // */
+    // const fnReloadRecaptchaScript = (ikey: string, iLang: string) => {
+    //     const ExistingScript = document.getElementById("google-recaptcha-v3");
+    //     if (ExistingScript) {
+    //         ExistingScript.remove(); // remove old script
+    //     }
 
-        const LdScript = document.createElement("script");
-        LdScript.src = `https://www.google.com/recaptcha/api.js?render=${ikey}&hl=${iLang}`;
-        LdScript.id = "google-recaptcha-v3";
-        LdScript.async = true;
-        LdScript.defer = true;
-        document.body.appendChild(LdScript);
-    };
-    const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
+    //     const LdScript = document.createElement("script");
+    //     LdScript.src = `https://www.google.com/recaptcha/api.js?render=${ikey}&hl=${iLang}`;
+    //     LdScript.id = "google-recaptcha-v3";
+    //     LdScript.async = true;
+    //     LdScript.defer = true;
+    //     document.body.appendChild(LdScript);
+    // };
+    // const LRecaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? "";
 
-    useEffect(() => {
-        fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
-    }, [Locale, LRecaptchaSiteKey]);
+    // useEffect(() => {
+    //     fnReloadRecaptchaScript(LRecaptchaSiteKey, Locale);
+    // }, [Locale, LRecaptchaSiteKey]);
     /**
      * Inner component that wraps the form with ReCaptcha provider
      * innerProps - Props passed to the inner form component
      * returns React element with ReCaptcha provider and inner form
      */
-    const WrappedComponent = (innerProps: TdynamicFormProps) => {
-        return (
-            <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
-            >
-                <InnerSectionForm {...innerProps} />
-            </ReCaptchaProvider>
-        )
-    }
-    return <WrappedComponent {...props} />
+    // const WrappedComponent = (innerProps: TdynamicFormProps) => {
+    //     return (
+    //         // <ReCaptchaProvider reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY ?? ""}
+    //         // >
+    //             <InnerSectionForm {...innerProps} />
+    //         // </ReCaptchaProvider>
+    //     )
+    // }
+    return <InnerSectionForm {...props} />
 }

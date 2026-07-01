@@ -290,9 +290,9 @@ export default function Navbar({
             </div>
           </div>
           <div className="lg:flex lg:items-center lg:gap-4">
-          {/* Right side controls */}
+          {/* Right side controls ex: contact button */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
-            
+
             {/* we have consider the menus, with href and without icon to be button */}
             {idNavbar.navbar.menu
               .filter((idItem) => !idItem.icon && idItem.href)
@@ -306,6 +306,7 @@ export default function Navbar({
                   </Button>
                 </Link>
               ))}
+              
           </div>
           {/* 3. Central Dynamic Auth Render
             last of the menu should be Sign In

@@ -1,22 +1,32 @@
-"use server"
+"use server";
 
-import { z } from "zod"
-import { TapiResponse } from "@repo/middleware/types"
-import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { z } from "zod";
+import { TapiResponse } from "@repo/middleware/types";
+import { linkFrappeRecordByEmailToPostHog } from "@repo/ui/api/crm/posthog-link";
+import { PostHog } from "posthog-node";
+
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+});
 
 // Function to verify reCAPTCHA token using Google's siteverify API
-async function fnVerifyRecaptcha(iToken: string): Promise<boolean> {
-  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY
-  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`
+async function fnVerifyRecaptcha(
+  iToken: string,
+): Promise<{ isHuman: boolean; score: number }> {
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  const LSecretKey = process.env.RECAPTCHA_SECRET_KEY;
+  const LRecaptchaUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${LSecretKey}&response=${iToken}`;
 
   try {
-    const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" })
-    const LdData = await LdResponse.json()
-    // Return true only if verification is successful and the score is above threshold
-    return LdData.success && LdData.score >= 0.5
+    const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" });
+    const LdData = await LdResponse.json();
+    return {
+      isHuman: LdData.success && LdData.score >= 0.5,
+      score: LdData.score ?? 0,
+    };
   } catch (error) {
-    console.error("reCAPTCHA verification error:", error)
-    return false
+    console.error("reCAPTCHA verification error:", error);
+    return { isHuman: false, score: 0 };
   }
 }
 
@@ -32,7 +42,7 @@ const LdAppointmentSchema = z.object({
     notes: z.string().optional(),
   }),
   recaptchaToken: z.string(),
-})
+});
 
 /**
  * Handles appointment booking by:
@@ -41,7 +51,7 @@ const LdAppointmentSchema = z.object({
  * 3. Sending booking data to the LENS API
  */
 export async function bookAppointmentAction(
-  idFormData: z.infer<typeof LdAppointmentSchema>
+  idFormData: z.infer<typeof LdAppointmentSchema>,
 ): Promise<TapiResponse> {
   // Prepare API headers including authentication and session cookies
   const ldHeaders = new Headers({
@@ -49,14 +59,37 @@ export async function bookAppointmentAction(
     "Content-Type": "application/json",
     Cookie:
       "full_name=Guest; sid=Guest; system_user=no; user_id=Guest; user_image=",
-  })
+  });
 
-  const { date, time, timezone, contact, recaptchaToken } = idFormData
+  const { date, time, timezone, contact, recaptchaToken } = idFormData;
 
   // Verify if the form submission is made by a human
-  const LIsHuman = await fnVerifyRecaptcha(recaptchaToken)
-  if (!LIsHuman) {
-    return { error: "reCAPTCHA verification failed" }
+  const { isHuman, score } = await fnVerifyRecaptcha(recaptchaToken);
+
+  // Capture reCAPTCHA result tied to the person's email
+  try {
+    posthog.capture({
+      distinctId: contact.email,
+      event: "booking_recaptcha_verified",
+      properties: {
+        recaptcha_score: String(score),
+        recaptcha_passed: isHuman,
+        $set: {
+          email: contact.email,
+          name: contact.name,
+          phone: contact.phone,
+        },
+      },
+    });
+  } catch (idError) {
+    console.error(
+      "PostHog capture failed for booking_recaptcha_verified:",
+      idError,
+    );
+  }
+
+  if (!isHuman) {
+    return { error: "reCAPTCHA verification failed" };
   }
 
   try {
@@ -66,9 +99,9 @@ export async function bookAppointmentAction(
       time,
       tz: timezone,
       contact: JSON.stringify(contact),
-    }
+    };
 
-    const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`
+    const LBookingUrl = `${process.env.SUBSCRIBE_URL}/api/method/erpnext.www.book_appointment.index.create_appointment`;
 
     // Send the appointment request
     const LdResponse = await fetch(LBookingUrl, {
@@ -76,24 +109,24 @@ export async function bookAppointmentAction(
       headers: ldHeaders,
       redirect: "follow",
       body: JSON.stringify(LdPayload),
-    })
+    });
 
     // If request fails, return error details
     if (!LdResponse.ok) {
-      const lErrorText = await LdResponse.text()
-      return { error: lErrorText }
+      const lErrorText = await LdResponse.text();
+      return { error: lErrorText };
     }
 
     // On success, return the booking confirmation
-    const LdResult = await LdResponse.json()
-    await linkFrappeRecordByEmailToPostHog(contact.email)
+    const LdResult = await LdResponse.json();
+    await linkFrappeRecordByEmailToPostHog(contact.email);
 
     return {
       message: "Booking confirmed successfully",
       data: LdResult,
-    }
+    };
   } catch (error) {
-    console.error("Booking error:", error)
-    return { error: "Server error occurred" }
+    console.error("Booking error:", error);
+    return { error: "Server error occurred" };
   }
 }
