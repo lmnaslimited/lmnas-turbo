@@ -1050,3 +1050,15 @@ export type TresolvedContactStep = {
   id: string
   fields: TformFieldConfig[]
 }
+
+export type TUserProfile = {
+  name: string;
+  email: string;
+  picture: string;
+}
+
+export type TAuthContextProps = {
+  user: TUserProfile | null;
+  loading: boolean;
+  logout: () => void;
+}
