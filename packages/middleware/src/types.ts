@@ -681,6 +681,7 @@ export type Tindustry = {
   allFeatureHeader: Theader
   allFeatureCard: TcardProps[]
   cta: TcalloutProps
+  faqSection: TcalloutProps
   successStoryHeaderFooter: TcalloutProps
   successStoryCard: TcardProps[]
   metaData: TpageMetadata
@@ -787,6 +788,7 @@ export type Tproducts = {
   successStoryHighlight: Titems[]
   pricingSectionHeaderFooter: TcalloutProps
   pricingHighlight: TcalloutProps
+  faqSection: TcalloutProps
   ctaSectionHeader: Theader
   ctaSection: TcalloutProps
   metaData: TpageMetadata

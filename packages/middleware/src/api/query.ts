@@ -23,30 +23,53 @@ import {
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
+import { PostHog } from "posthog-node";
 
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+});
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
-export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType>
-{
+export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSourceType> {
   query: string;
+  versionQuery: string;
   contentType: string;
   locale: string;
   variables?: Record<string, any>;
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
 
+  // By default, the version query is the same as the standard query.
+  // Subclasses can override this to keep the stable standard query separate from the changeable version query.
+  getVersionQuery(): string {
+    return this.getQuery();
+  }
+
   async executeQuery(): Promise<DynamicSourceType> {
-    // Set params of the query
-    // this.setVariables({locale: this.locale})
+    try {
+      return await this.fetchQuery(this.versionQuery);
+    } catch (error) {
+          await  posthog.captureException(error,"clQuery.executeQuery")
+      await posthog.flush();
+      // Try the stable standard query if the version query is different
+      if (this.versionQuery !== this.query) {
+        return await this.fetchQuery(this.query);
+      }
+
+      throw error;
+    }
+  }
+
+  private async fetchQuery(query: string): Promise<DynamicSourceType> {
     const { data } = await client.query({
       query: gql`
-        ${this.query}
+        ${query}
       `,
       variables: this.variables || {},
       fetchPolicy: "no-cache",
     });
     return data as DynamicSourceType;
   }
+
   setVariables(variables: Record<string, any>): void {
     this.variables = variables;
   }
@@ -54,6 +77,7 @@ export abstract class clQuery<DynamicSourceType>
     this.contentType = iContentType;
     this.locale = "en";
     this.query = this.getQuery();
+    this.versionQuery = this.getVersionQuery();
   }
 }
 
@@ -1610,6 +1634,221 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
   }
 }`;
   }
+  // ========================================================== VERSION QUERY FOR PRODUCTS ==============================================================
+  getVersionQuery(): string {
+    return `  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        badge
+      }
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+      image {
+        source
+        alternate
+      }
+    }
+    problemsHeader {
+      title
+      subtitle
+    }
+    problemsSection {
+      title
+      list {
+        icon
+        label
+        description
+      }
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        variant
+        label
+        href
+        formMode
+        icon
+      }
+    }
+    solutionsHeaderFooter {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        variant
+        formMode
+      }
+    }
+    solutionsCard {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+      }
+    }
+    guideSectionHeaderFooter {
+      header {
+        title
+      }
+      title
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    guideFeature {
+      highlight {
+        icon
+        label
+      }
+      heading {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+      }
+      image {
+        svg
+        source
+        alternate
+        sourceId
+      }
+    }
+    successStoryHeaderFooter {
+      header {
+        title
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    successStoryCard {
+      header {
+        subtitle
+      }
+      avatar {
+        source
+        alternate
+      }
+      link {
+        label
+      }
+    }
+    successStoryHighlight {
+      label
+      description
+    }
+    pricingSectionHeaderFooter {
+      header {
+        title
+        subtitle
+        badge
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    pricingHighlight {
+      header {
+        title
+        subtitle
+        badge
+      }
+      list {
+        label
+        description
+      }
+    }
+    faqSection {
+      title
+      list {
+        label
+        description
+      }
+    }
+    ctaSectionHeader {
+      title
+      subtitle
+      badge
+    }
+    ctaSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+}`
+  }
 }
 
 export class clQueryForms extends clQuery<TformsPageSource> {
@@ -1851,6 +2090,188 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
   }
 }`;
   }
+  getVersionQuery(): string {
+    return `query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
+    name
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+      highlight {
+        label
+        icon
+      }
+      image {
+       source
+        alternate
+      }
+      buttons {
+        formMode
+        href
+        icon
+        label
+        variant
+      }
+    }
+    problemSection {
+      header {
+        highlight
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    featuresSectionHeader {
+      title
+      subtitle
+    }
+    feature {
+      header {
+        title
+        subtitle
+      }
+      image {
+        source
+        alternate
+      }
+      card {
+        header {
+          title
+          subtitle
+        }
+        buttons {
+          label
+          href
+          icon
+        }
+      }
+    }
+    allFeatureHeader {
+      title
+      highlight
+      badge
+    }
+    allFeatureCard {
+      header {
+        title
+        subtitle
+      }
+      image {
+        svg
+        alternate
+      }
+      category
+      link {
+        label
+        href
+      }
+    }
+    cta {
+      header {
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      buttons {
+        label
+        formMode
+        icon
+      }
+    }
+    faqSection {
+      title
+      list {
+        label
+        description
+      }
+    }
+    successStoryHeaderFooter {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        label
+        formMode
+      }
+      list {
+        label
+        description
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      category
+      image {
+        source
+        alternate
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+  }
+}`;}
 }
 
 export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
