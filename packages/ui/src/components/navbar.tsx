@@ -337,9 +337,20 @@ export default function Navbar({
                     </svg>
                
         ) :user ? (
+          <>
+          <Link href="http://localhost:8000/desk/">
+                <Button 
+                  variant="default"
+                  className="rounded-lg h-10 flex items-center"
+                >
+                Go to Desk
+                </Button>
+              </Link>
+
               <ProfileDropdown user={user} logout={logout} />
+              </>
             ) : (
-              <Link href="/api/auth/login">
+              <Link href="/login">
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
