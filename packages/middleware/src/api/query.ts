@@ -29,24 +29,46 @@ export abstract class clQuery<DynamicSourceType>
   implements IQuery<DynamicSourceType>
 {
   query: string;
+  fallbackQuery: string;
   contentType: string;
   locale: string;
   variables?: Record<string, any>;
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
 
-  async executeQuery(): Promise<DynamicSourceType> {
-    // Set params of the query
-    // this.setVariables({locale: this.locale})
+  // By default, the fallback query is the same as the primary query.
+  // Subclasses can override this to keep the stable OG query separate from the changeable query.
+  getFallbackQuery(): string {
+    return this.getQuery();
+  }
+
+async executeQuery(): Promise<DynamicSourceType> {
+  try {
+    return await this.fetchQuery(this.query);
+  } catch (error) {
+    console.warn("Primary query failed:", error);
+
+    // Try the OG query if it's different
+    if (this.fallbackQuery !== this.query) {
+      console.warn("Trying fallback query...");
+      return await this.fetchQuery(this.fallbackQuery);
+    }
+
+    throw error;
+  }
+}
+
+  private async fetchQuery(query: string): Promise<DynamicSourceType> {
     const { data } = await client.query({
       query: gql`
-        ${this.query}
+        ${query}
       `,
       variables: this.variables || {},
       fetchPolicy: "no-cache",
     });
     return data as DynamicSourceType;
   }
+
   setVariables(variables: Record<string, any>): void {
     this.variables = variables;
   }
@@ -54,6 +76,7 @@ export abstract class clQuery<DynamicSourceType>
     this.contentType = iContentType;
     this.locale = "en";
     this.query = this.getQuery();
+    this.fallbackQuery = this.getFallbackQuery();
   }
 }
 
@@ -1616,6 +1639,214 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
     }
   }
 }`;
+  }
+  // ========================================================== FALLBACK QUERY FOR PRODUCTS ==============================================================
+  getFallbackQuery(): string {
+    return `  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        badge
+      }
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+      image {
+        source
+        alternate
+      }
+    }
+    problemsHeader {
+      title
+      subtitle
+    }
+    problemsSection {
+      title
+      list {
+        icon
+        label
+        description
+      }
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        variant
+        label
+        href
+        formMode
+        icon
+      }
+    }
+    solutionsHeaderFooter {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        variant
+        formMode
+      }
+    }
+    solutionsCard {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+      }
+    }
+    guideSectionHeaderFooter {
+      header {
+        title
+      }
+      title
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    guideFeature {
+      highlight {
+        icon
+        label
+      }
+      heading {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+      }
+      image {
+        svg
+        source
+        alternate
+        sourceId
+      }
+    }
+    successStoryHeaderFooter {
+      header {
+        title
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    successStoryCard {
+      header {
+        subtitle
+      }
+      avatar {
+        source
+        alternate
+      }
+      link {
+        label
+      }
+    }
+    successStoryHighlight {
+      label
+      description
+    }
+    pricingSectionHeaderFooter {
+      header {
+        title
+        subtitle
+        badge
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    pricingHighlight {
+      header {
+        title
+        subtitle
+        badge
+      }
+      list {
+        label
+        description
+      }
+    }
+    ctaSectionHeader {
+      title
+      subtitle
+      badge
+    }
+    ctaSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+}`
   }
 }
 
