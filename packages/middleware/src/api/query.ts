@@ -2096,6 +2096,181 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
   }
 }`;
   }
+  getFallbackQuery(): string {
+    return `query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
+    name
+    slug
+    heroSection {
+      heading {
+        title
+        subtitle
+        highlight
+        badge
+      }
+      highlight {
+        label
+        icon
+      }
+      image {
+       source
+        alternate
+      }
+      buttons {
+        formMode
+        href
+        icon
+        label
+        variant
+      }
+    }
+    problemSection {
+      header {
+        highlight
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      subtitle
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+    }
+    featuresSectionHeader {
+      title
+      subtitle
+    }
+    feature {
+      header {
+        title
+        subtitle
+      }
+      image {
+        source
+        alternate
+      }
+      card {
+        header {
+          title
+          subtitle
+        }
+        buttons {
+          label
+          href
+          icon
+        }
+      }
+    }
+    allFeatureHeader {
+      title
+      highlight
+      badge
+    }
+    allFeatureCard {
+      header {
+        title
+        subtitle
+      }
+      image {
+        svg
+        alternate
+      }
+      category
+      link {
+        label
+        href
+      }
+    }
+    cta {
+      header {
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      buttons {
+        label
+        formMode
+        icon
+      }
+    }
+    successStoryHeaderFooter {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        label
+        formMode
+      }
+      list {
+        label
+        description
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+  caseStudies(locale: $caseStudiesLocale2, filters: $caseStudiesFilters2, status: $status) {
+    solutionSection {
+      successCard {
+        header {
+        title
+        subtitle
+      }
+      category
+      image {
+        source
+        alternate
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+      }
+    }
+  }
+}`}
 }
 
 export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
