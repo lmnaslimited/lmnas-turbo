@@ -23,40 +23,41 @@ import {
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
+import { PostHog } from "posthog-node";
 
+const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+  host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+});
 // The clQuery class implements the Iquery interface and provides a base implementation for executing GraphQL queries.
-export abstract class clQuery<DynamicSourceType>
-  implements IQuery<DynamicSourceType>
-{
+export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSourceType> {
   query: string;
-  fallbackQuery: string;
+  versionQuery: string;
   contentType: string;
   locale: string;
   variables?: Record<string, any>;
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
 
-  // By default, the fallback query is the same as the primary query.
-  // Subclasses can override this to keep the stable OG query separate from the changeable query.
-  getFallbackQuery(): string {
+  // By default, the version query is the same as the standard query.
+  // Subclasses can override this to keep the stable standard query separate from the changeable version query.
+  getVersionQuery(): string {
     return this.getQuery();
   }
 
-async executeQuery(): Promise<DynamicSourceType> {
-  try {
-    return await this.fetchQuery(this.query);
-  } catch (error) {
-    console.warn("Primary query failed:", error);
+  async executeQuery(): Promise<DynamicSourceType> {
+    try {
+      return await this.fetchQuery(this.versionQuery);
+    } catch (error) {
+          await  posthog.captureException(error,"clQuery.executeQuery")
+      await posthog.flush();
+      // Try the stable standard query if the version query is different
+      if (this.versionQuery !== this.query) {
+        return await this.fetchQuery(this.query);
+      }
 
-    // Try the OG query if it's different
-    if (this.fallbackQuery !== this.query) {
-      console.warn("Trying fallback query...");
-      return await this.fetchQuery(this.fallbackQuery);
+      throw error;
     }
-
-    throw error;
   }
-}
 
   private async fetchQuery(query: string): Promise<DynamicSourceType> {
     const { data } = await client.query({
@@ -76,7 +77,7 @@ async executeQuery(): Promise<DynamicSourceType> {
     this.contentType = iContentType;
     this.locale = "en";
     this.query = this.getQuery();
-    this.fallbackQuery = this.getFallbackQuery();
+    this.versionQuery = this.getVersionQuery();
   }
 }
 
@@ -1583,13 +1584,6 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         description
       }
     }
-    faqSection {
-      title
-      list {
-        label
-        description
-      }
-    }
     ctaSectionHeader {
       title
       subtitle
@@ -1640,8 +1634,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
   }
 }`;
   }
-  // ========================================================== FALLBACK QUERY FOR PRODUCTS ==============================================================
-  getFallbackQuery(): string {
+  // ========================================================== VERSION QUERY FOR PRODUCTS ==============================================================
+  getVersionQuery(): string {
     return `  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     slug
@@ -1793,6 +1787,13 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         subtitle
         badge
       }
+      list {
+        label
+        description
+      }
+    }
+    faqSection {
+      title
       list {
         label
         description
@@ -2024,13 +2025,6 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         icon
       }
     }
-    faqSection {
-      title
-      list {
-        label
-        description
-      }
-    }
     successStoryHeaderFooter {
       header {
         title
@@ -2096,7 +2090,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
   }
 }`;
   }
-  getFallbackQuery(): string {
+  getVersionQuery(): string {
     return `query Industries($locale: I18NLocaleCode, $filters: IndustryFiltersInput, $caseStudiesLocale2: I18NLocaleCode, $caseStudiesFilters2: CaseStudyFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
     name
@@ -2207,6 +2201,13 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
         icon
       }
     }
+    faqSection {
+      title
+      list {
+        label
+        description
+      }
+    }
     successStoryHeaderFooter {
       header {
         title
@@ -2270,7 +2271,7 @@ export class clQueryIndustries extends clQuery<TindustriesPageSource> {
       }
     }
   }
-}`}
+}`;}
 }
 
 export class clQueryCaseStudies extends clQuery<TcaseStudiesPageSource> {
