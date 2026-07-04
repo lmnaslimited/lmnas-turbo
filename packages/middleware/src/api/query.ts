@@ -39,7 +39,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
   abstract getQuery(): string;
 
   // By default, the version query is the changable query.
-  // if version version query fails, the standard query will be executed.
+  // if version query fails, the standard query will be executed.
   getVersionQuery(): string {
     return this.getQuery();
   }
