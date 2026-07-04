@@ -38,8 +38,8 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
 
-  // By default, the version query is the same as the standard query.
-  // Subclasses can override this to keep the stable standard query separate from the changeable version query.
+  // By default, the version query is the changable query.
+  // if version version query fails, the standard query will be executed.
   getVersionQuery(): string {
     return this.getQuery();
   }
