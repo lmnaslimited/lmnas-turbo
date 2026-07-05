@@ -25,7 +25,7 @@ import {
 import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
-import { usePathname } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 
 export default function Navbar({
   idNavbar,
@@ -33,6 +33,7 @@ export default function Navbar({
   idNavbar: TnavbarTarget
 }): React.ReactElement {
 
+  const { locale } = useParams<{ locale: string }>();
   const LPathname = usePathname(); // 2. Read the current path
   // Checks if the route matches or ends with '/login' (handles dynamic locales like /en/login)
   const LbHideLoginButton = LPathname?.endsWith('/login');
@@ -352,7 +353,7 @@ export default function Navbar({
             ) : (
               /* 3. Wrap the login button fallback condition with the pathname check */
         !LbHideLoginButton && (
-              <Link href="/login">
+              <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
