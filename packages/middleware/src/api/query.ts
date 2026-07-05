@@ -187,6 +187,52 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       description
       icon
     }
+  }
+}`;
+  }
+
+  // version query for navbar
+  getVersionQuery(): string {
+    return `
+  query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
+    locale
+    logo {
+      label
+      href
+    }
+    menu {
+      label
+      href
+      icon
+    }
+    product {
+      label
+      href
+      description
+      icon
+    }
+    accelerator {
+      label
+      href
+      description
+      icon
+    }
+    industry {
+      label
+      href
+      description
+      icon
+    }
+    more {
+      label
+      href
+    }
+    language {
+      label
+      description
+      icon
+    }
     profileSettings {
       label
       href
