@@ -1,9 +1,9 @@
 import { NextResponse } from 'next/server';
 
 export async function login(request: Request) {
-  if (process.env.NODE_ENV !== 'production') {
+
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-  }
+
 
   const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
 

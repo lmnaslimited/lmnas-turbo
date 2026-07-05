@@ -25,12 +25,17 @@ import {
 import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
+import { usePathname } from 'next/navigation';
 
 export default function Navbar({
   idNavbar,
 }: {
   idNavbar: TnavbarTarget
 }): React.ReactElement {
+
+  const LPathname = usePathname(); // 2. Read the current path
+  // Checks if the route matches or ends with '/login' (handles dynamic locales like /en/login)
+  const LbHideLoginButton = LPathname?.endsWith('/login');
 
   const { user, loading, logout } = useAuth();
   
@@ -76,11 +81,6 @@ export default function Navbar({
     }
   }, [])
 
-  // Get the Sign In label form dumps
-  // the one with no href and icon
-  const LdSignInItem = idNavbar.navbar.menu.find(
-    (idItem) => !idItem.href && !idItem.icon
-  );
 
   return (
     <>
@@ -338,26 +338,29 @@ export default function Navbar({
                
         ) :user ? (
           <>
-          <Link href="http://localhost:8000/desk/">
+          <Link href={idNavbar.navbar.profileSettings?.[2]?.href!}>
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
-                Go to Desk
+                  { idNavbar.navbar.profileSettings?.[2]?.label ?? "Dashboard" }
                 </Button>
-              </Link>
+          </Link>
 
-              <ProfileDropdown user={user} logout={logout} />
+              <ProfileDropdown user={user} logout={logout} data={idNavbar.navbar.profileSettings?.[1]?.label || "Sign Out"} />
               </>
             ) : (
+              /* 3. Wrap the login button fallback condition with the pathname check */
+        !LbHideLoginButton && (
               <Link href="/login">
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
-                {LdSignInItem?.label}
+                { idNavbar.navbar.profileSettings?.[0]?.label ?? "Login" }
                 </Button>
               </Link>
+        )
             )}
             </div>
           </div>

@@ -497,6 +497,7 @@ export type Tnavbar = {
   industry: Tbutton[]
   more: Tbutton[]
   language: Tbutton[]
+  profileSettings?: Tbutton[]
 }
 
 // Footer
@@ -1061,4 +1062,56 @@ export type TAuthContextProps = {
   user: TUserProfile | null;
   loading: boolean;
   logout: () => void;
+}
+
+// Main single type configuration dictionary matching your Strapi structure
+export type TLoginForm = {
+  loginTitle: string;
+  loginSubtitle: string;
+  signupTitle: string;
+  signupSubtitle: string;
+  
+  usernameLabel: string;
+  usernamePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  passwordLabel: string;
+  passwordPlaceholder: string;
+  
+  loginSubmitButton: string;
+  loginSubmittingButton: string;
+  signupSubmitButton: string;
+  signupSubmittingButton: string;
+  
+  googleButtonText: string;
+  dividerText: string;
+  
+  loginFooterText: string;
+  loginFooterAction: string;
+  signupFooterText: string;
+  signupFooterAction: string;
+  
+  signupSuccessMessage: string;
+
+  errDefaultFallback?: string;
+
+  resetTitle: string;
+  resetSubtitle: string;
+  resetSubmitButton: string;
+  resestSubmittingButton: string;
+  resetFooterText: string;
+  resetFooterAction: string;
+  resetPwdSuccessMessage: string
+  resetLabel:string
+
+  signupSuccessTitle: string
+  resetSuccessTitle: string
+  redirectButton: Tbutton
+}
+
+export type TLoginSource = {
+  loginAndSignUp: TLoginForm
+}
+export type TLoginTarget = {
+  loginAndSignUp: TLoginForm
 }

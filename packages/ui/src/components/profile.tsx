@@ -11,9 +11,10 @@ interface IUserProfile {
 interface IProfileDropdownProps {
   user: IUserProfile;
   logout: () => void;
+  data: string
 }
 
-export function ProfileDropdown({ user, logout }: IProfileDropdownProps) {
+export function ProfileDropdown({ user, logout, data }: IProfileDropdownProps) {
   const [LIsDropdownOpen, fnSetIsDropdownOpen] = useState(false);
   const LDropdownRef = useRef<HTMLDivElement>(null);
 
@@ -82,7 +83,7 @@ export function ProfileDropdown({ user, logout }: IProfileDropdownProps) {
               }}
               className="w-full text-left px-3 py-2 text-sm text-destructive font-medium rounded-md hover:bg-accent transition-colors focus:outline-none"
             >
-              Log Out
+              {data || "Sign Out"}
             </button>
           </div>
         </div>

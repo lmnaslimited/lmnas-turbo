@@ -20,6 +20,7 @@ import {
   TsubtitleSource,
   TblogPageSource,
   TblogArticleSource,
+  TLoginSource,
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
@@ -161,6 +162,10 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       label
       description
       icon
+    }
+    profileSettings {
+      label
+      href
     }
   }
 }`;
@@ -2382,6 +2387,56 @@ query Query(
   }
 }
 
+export class clQueryLogin extends clQuery<TLoginSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+ query LoginAndSignUp($status: PublicationStatus, $locale: I18NLocaleCode) {
+   ${this.contentType}(status: $status, locale: $locale) {
+    usernamePlaceholder
+    usernameLabel
+    signupTitle
+    signupSuccessMessage
+    signupSubtitle
+    signupSubmitButton
+    signupFooterText
+    signupFooterAction
+    signupSubmittingButton
+    passwordPlaceholder
+    passwordLabel
+    loginTitle
+    loginSubtitle
+    loginSubmittingButton
+    loginSubmitButton
+    loginFooterText
+    loginFooterAction
+    emailPlaceholder
+    emailLabel
+    dividerText
+    errDefaultFallback
+    googleButtonText
+    resetTitle
+    resetSubtitle
+    resetSubmitButton
+    resestSubmittingButton
+    resetFooterText
+    resetFooterAction
+    resetPwdSuccessMessage
+    resetLabel
+    signupSuccessTitle
+    resetSuccessTitle
+    redirectButton{
+      label
+      href
+      icon
+    }
+  }
+}`;
+  }
+}
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
@@ -2406,6 +2461,7 @@ export class clQueryFactory {
     subtitles: clQuerySubtitles,
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
+    loginAndSignUp: clQueryLogin
     // Add more mappings here
   };
 
