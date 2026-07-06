@@ -419,7 +419,8 @@ export class clBlogArticleTransformer extends clTransformer<
     return this.targetData
   }}
 
-  export class clLoginTransformer extends clTransformer<
+// Transformer class for Login and Sign Up data
+export class clLoginTransformer extends clTransformer<
   TLoginSource,
   TLoginTarget
 > {

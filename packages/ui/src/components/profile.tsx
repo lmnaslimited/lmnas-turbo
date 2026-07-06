@@ -14,8 +14,15 @@ interface IProfileDropdownProps {
   data: string
 }
 
+/**
+ * Displays the authenticated user's avatar and profile dropdown.
+ * Provides quick access to user information and the sign-out action,
+ * while automatically closing the menu when clicking outside.
+ */
 export function ProfileDropdown({ user, logout, data }: IProfileDropdownProps) {
+  // Stores the open/closed state of the profile dropdown.
   const [LIsDropdownOpen, fnSetIsDropdownOpen] = useState(false);
+  // References the dropdown container for outside-click detection.
   const LDropdownRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown instantly if clicking outside of it
@@ -29,6 +36,7 @@ export function ProfileDropdown({ user, logout, data }: IProfileDropdownProps) {
     return () => document.removeEventListener('mousedown', fnHandleClickOutside);
   }, []);
 
+  // Generates up to two initials to display when no profile picture is available.
   function fnGetInitials(iName: string){
     if (!iName) return 'U';
     return iName
@@ -39,6 +47,7 @@ export function ProfileDropdown({ user, logout, data }: IProfileDropdownProps) {
       .slice(0, 2);
   };
 
+  // Retrieves the configured Frappe server URL for resolving profile image paths.
   const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL || '';
 
   return (

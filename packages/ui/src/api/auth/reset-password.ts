@@ -4,14 +4,16 @@ export async function resetPassword(request: Request) {
   try {
     const { email } = await request.json();
 
+    // email validation before proceeding
     if (!email) {
       return NextResponse.json({ error: 'Email field is required.' }, { status: 400 });
     }
 
     const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
+    // Frappe whitelist method for password reset
     const LTargetEndpoint = `${LFrappeUrl}/api/method/frappe.core.doctype.user.user.reset_password`;
 
-    // Whitelisted methods in Frappe expect standard form urlencoding parameter matching 'user'
+    // Send the email using the parameter name expected by Frappe's password reset endpoint.
     const LdPayloadBody = new URLSearchParams({ user: email }).toString();
 
     const LdResponse = await fetch(LTargetEndpoint, {

@@ -6,8 +6,8 @@ export async function verifyAuthenticity(request: NextRequest) {
 
   const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
   
-  // 1. First Check: Look for 'sid' inside the incoming cookies
   const LdsidCookie = request.cookies.get('sid');
+  // Reject unauthenticated requests before making any backend calls.
   if (!LdsidCookie || !LdsidCookie.value) {
     return NextResponse.json({ user: null }, { status: 401 });
   }
@@ -15,7 +15,7 @@ export async function verifyAuthenticity(request: NextRequest) {
   const LdCookieHeader = request.headers.get('cookie') || '';
 
   try {
-    // 2. Step 1: Use get_logged_user to check if they are a valid, active user
+    // Verify that the session cookie still represents an authenticated Frappe user.
     const LdAuthCheck = await fetch(`${LFrappeUrl}/api/method/frappe.auth.get_logged_user`, {
       method: 'GET',
       headers: {
@@ -32,11 +32,13 @@ export async function verifyAuthenticity(request: NextRequest) {
     const LdAuthData = await LdAuthCheck.json();
     const LUserEmail = LdAuthData.message;
 
-    // Safety guard: If Frappe responds with 'Guest' or empty, reject right here
+   // Treat missing or guest sessions as unauthenticated.
     if (!LUserEmail || LUserEmail === 'Guest') {
       return NextResponse.json({ user: null }, { status: 401 });
     }
 
+    // construct the params for fetching full_name and profile picture
+    // of the authorized user from Frappe site
     const LdParams = new URLSearchParams({
       doctype: "User",
       filters: JSON.stringify({
@@ -46,7 +48,8 @@ export async function verifyAuthenticity(request: NextRequest) {
     });
     
     
-    // 3. Step 2: Now that they are 100% verified, fetch their lightweight open profile
+    // Retrieve the minimal profile information required by the frontend.
+    // like full_name and profile picture
     const LdProfileResponse = await fetch(
       `${LFrappeUrl}/api/method/frappe.client.get_value?${LdParams.toString()}`, 
       {
@@ -66,7 +69,7 @@ export async function verifyAuthenticity(request: NextRequest) {
     const LdProfileData = await LdProfileResponse.json();
     const LdUserInfo = LdProfileData.message || {};
 
-    // Clean UI output mapping
+    // Return a frontend-friendly representation of the authenticated user.
     return NextResponse.json({
       user: {
         email: LUserEmail,

@@ -191,7 +191,7 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
 }`;
   }
 
-  // version query for navbar
+  // version query for navbar, included profileSettings
   getVersionQuery(): string {
     return `
   query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
@@ -2854,6 +2854,7 @@ query Query(
   }
 }
 
+// graphql query for Login and Sign Up data
 export class clQueryLogin extends clQuery<TLoginSource> {
   constructor(iContentType: string) {
     super(iContentType);

@@ -33,9 +33,9 @@ export default function Navbar({
   idNavbar: TnavbarTarget
 }): React.ReactElement {
 
-  const { locale } = useParams<{ locale: string }>();
-  const LPathname = usePathname(); // 2. Read the current path
-  // Checks if the route matches or ends with '/login' (handles dynamic locales like /en/login)
+  const { locale } = useParams<{ locale: string }>();  //Read the locale (en / de)
+  const LPathname = usePathname(); // Read the current path
+  // Checks if the route matches or ends with '/login' to hide login button
   const LbHideLoginButton = LPathname?.endsWith('/login');
 
   const { user, loading, logout } = useAuth();
@@ -309,13 +309,11 @@ export default function Navbar({
               ))}
               
           </div>
-          {/* 3. Central Dynamic Auth Render
-            last of the menu should be Sign In
+          {/* Login /sign up Button
            */}
           <div className="flex items-center justify-center gap-2">
               {loading ? (
-                /* 2. Sleek inline spinning ring template while validating cookie states */
-                
+                /*Sleek inline spinning ring template while validating cookie states */
                     <svg
                         className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary"
                         xmlns="http://www.w3.org/2000/svg"
@@ -351,7 +349,7 @@ export default function Navbar({
               <ProfileDropdown user={user} logout={logout} data={idNavbar.navbar.profileSettings?.[1]?.label || "Sign Out"} />
               </>
             ) : (
-              /* 3. Wrap the login button fallback condition with the pathname check */
+              /* Dont show Login Button when user is on login page */
         !LbHideLoginButton && (
               <Link href={`/${locale}/login`}>
                 <Button 
