@@ -48,7 +48,9 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
     try {
       return await this.fetchQuery(this.versionQuery);
     } catch (error) {
-          await  posthog.captureException(error,"clQuery.executeQuery")
+      await  posthog.captureException(error,"clQuery.executeQuery",{
+            "contentType": this.contentType
+          })
       await posthog.flush();
       // Try the stable standard query if the version query is different
       if (this.versionQuery !== this.query) {
