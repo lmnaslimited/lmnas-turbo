@@ -46,16 +46,41 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
 
   async executeQuery(): Promise<DynamicSourceType> {
     try {
+      // first try the version query
       return await this.fetchQuery(this.versionQuery);
-    } catch (error) {
-          await  posthog.captureException(error,"clQuery.executeQuery")
-      await posthog.flush();
-      // Try the stable standard query if the version query is different
+    } catch (versionError) {
+      try {
+        posthog.captureException(versionError, undefined, {
+          location: "clQuery.executeQuery",
+          contentType: this.contentType,
+          queryType: "versionQuery",
+          operation: "executeQuery",
+        });
+  
+        await posthog.flush();
+      } catch {}
+  
       if (this.versionQuery !== this.query) {
-        return await this.fetchQuery(this.query);
+        try {
+          // Try the stable standard query if the version query is different
+          return await this.fetchQuery(this.query);
+        } catch (fallbackError) {
+          try {
+            posthog.captureException(fallbackError, undefined, {
+              location: "clQuery.executeQuery",
+              contentType: this.contentType,
+              queryType: "defaultQuery",
+              operation: "executeQuery",
+            });
+  
+            await posthog.flush();
+          } catch {}
+  
+          throw fallbackError;
+        }
       }
-
-      throw error;
+  
+      throw versionError;
     }
   }
 
@@ -772,7 +797,117 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
   }
 }`;
   }
-}
+  getVersionQuery(): string {
+  return `
+  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
+    heroSection {
+      heading {
+        title
+        subtitle
+      }
+      description
+      highlight {
+        label
+      }
+    }
+    valuesSectionHeaderFooter {
+      header {
+        title
+        subtitle
+        badge
+      }
+      title
+    }
+    valuesSection {
+      title
+      subtitle
+      highlight
+      badge
+    }
+    previousYears {
+      label
+      icon
+      description
+    }
+    currentAndBeyondYears {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      highlight {
+        label
+      }
+    }
+    timeLineHeader {
+      title
+      subtitle
+    }
+    testimonialHeader {
+      title
+      subtitle
+    }
+    testimonalCard {
+      header {
+        subtitle
+      }
+      image {
+        svg
+        alternate
+      }
+      avatar {
+        source
+        alternate
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    ctaSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        icon
+        label
+        href
+        formMode
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage 
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+}`;
+}}
 
 export class clQueryPricing extends clQuery<TpricingPageSource> {
   constructor(iContentType: string) {
