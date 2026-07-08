@@ -46,16 +46,41 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
 
   async executeQuery(): Promise<DynamicSourceType> {
     try {
+      // first try the version query
       return await this.fetchQuery(this.versionQuery);
-    } catch (error) {
-          await  posthog.captureException(error,"clQuery.executeQuery")
-      await posthog.flush();
-      // Try the stable standard query if the version query is different
+    } catch (versionError) {
+      try {
+        posthog.captureException(versionError, undefined, {
+          location: "clQuery.executeQuery",
+          contentType: this.contentType,
+          queryType: "versionQuery",
+          operation: "executeQuery",
+        });
+  
+        await posthog.flush();
+      } catch {}
+  
       if (this.versionQuery !== this.query) {
-        return await this.fetchQuery(this.query);
+        try {
+          // Try the stable standard query if the version query is different
+          return await this.fetchQuery(this.query);
+        } catch (fallbackError) {
+          try {
+            posthog.captureException(fallbackError, undefined, {
+              location: "clQuery.executeQuery",
+              contentType: this.contentType,
+              queryType: "defaultQuery",
+              operation: "executeQuery",
+            });
+  
+            await posthog.flush();
+          } catch {}
+  
+          throw fallbackError;
+        }
       }
-
-      throw error;
+  
+      throw versionError;
     }
   }
 
