@@ -1,5 +1,7 @@
 "use server"
-// Function to verify reCAPTCHA token using Google's siteverify API
+
+// Verifies the provided Google reCAPTCHA v3 token using the siteverify API
+// and returns the verification result along with the calculated score.
 async function fnVerifyRecaptcha(
     iToken: string
   ): Promise<{ isHuman: boolean; score: number }> {
@@ -9,6 +11,7 @@ async function fnVerifyRecaptcha(
     try {
       const LdResponse = await fetch(LRecaptchaUrl, { method: "POST" });
       const LdData = await LdResponse.json();
+      // return the scrore and success status
       return {
         isHuman: LdData.success && LdData.score >= 0.5,
         score: LdData.score ?? 0,
@@ -19,7 +22,9 @@ async function fnVerifyRecaptcha(
     }
   }
 
-  export async function validateRecaptcha(
+// Validates the reCAPTCHA token and returns a standardized response
+// indicating whether the verification succeeded or failed.
+export async function validateRecaptcha(
     iRecaptcha: string
 ): Promise<{
     success: boolean

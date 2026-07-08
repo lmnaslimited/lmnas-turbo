@@ -46,6 +46,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
 
   async executeQuery(): Promise<DynamicSourceType> {
     try {
+      // first try the version query
       return await this.fetchQuery(this.versionQuery);
     } catch (versionError) {
       try {
@@ -61,6 +62,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
   
       if (this.versionQuery !== this.query) {
         try {
+          // Try the stable standard query if the version query is different
           return await this.fetchQuery(this.query);
         } catch (fallbackError) {
           try {

@@ -9,14 +9,14 @@ import { Input } from "./ui/input";
 
 const Li18n = {
     en: {
-      earlyAccess: "Early Access — limited launch slots",
+      earlyAccess: "Limited launch slots",
       titleMain: "LENS ( ERPNext ) Hosting, ",
       titleAccent: "Zero Overhead.",
       description: "Opt in to the upcoming LensCloud platform before the general release. Secure early access to our permanently free tier, built for production-grade vanilla Frappe deployments.",
       placeholderEmail: "Enter your professional email",
       btnSecureSpot: "Secure My Spot",
       noCreditCard: "No credit card required. Instance setup links sent on launch day.",
-      signals: ["Free forever tier", "Fully managed hosting", "Cancel anytime"],
+      signals: ["Free forever tier", "Provisioned in under 5 minutes", "Cancel anytime"],
       ribbonText: "Recommended",
       planName: "Free Plan",
       freeForever: "Free forever",
@@ -38,14 +38,14 @@ const Li18n = {
         ],
     },
     de: {
-      earlyAccess: "Frühzeitiger Zugriff — begrenzte Startplätze",
+      earlyAccess: "Begrenzte Startplätze",
       titleMain: "Vanilla ERPNext Hosting, ",
       titleAccent: "Null Overhead.",
       description: "Melden Sie sich vor der offiziellen Veröffentlichung für die kommende LensCloud-Plattform an. Sichern Sie sich den frühzeitigen Zugriff auf unsere dauerhaft kostenlose Stufe, die für produktionsbereite Vanilla-Frappe-Bereitstellungen entwickelt wurde.",
       placeholderEmail: "Geben Sie Ihre geschäftliche E-Mail ein",
       btnSecureSpot: "Meinen Platz sichern",
       noCreditCard: "Keine Kreditkarte erforderlich. Links zur Instanz-Einrichtung werden am Starttag gesendet.",
-      signals: ["Dauerhaft kostenlose Stufe", "Vollständig verwaltetes Hosting", "Jederzeit kündbar"],
+      signals: ["Dauerhaft kostenlose Stufe", "Bereit in unter 5 Minuten", "Jederzeit kündbar"],
       ribbonText: "Beliebtestens · Frühzeitiger Zugriff",
       planName: "Starter-Plan",
       freeForever: "Dauerhaft kostenlos",
@@ -69,21 +69,33 @@ const Li18n = {
   };
 
 export default function FreeOptIn(){
+    // Stores the user's email address entered in the opt-in form.
     const [Email, fnSetEmail] = useState<string> ("")
+    // Stores validation or reCAPTCHA error messages displayed to the user.
     const [LError, fnSetError] = useState("");
+
+    // Provides the function to generate a Google reCAPTCHA v3 token.
     const { executeRecaptcha } = useReCaptcha()
+    // Retrieves the current locale from the route parameters.
     const LdParams = useParams<{ locale: keyof typeof Li18n }>();
-    //Access the property cleanly
+    // Extract the locale value from the route parameters.
     const LLocale = LdParams.locale;
     
+    // Handles the beta opt-in process, including email validation,
+    // reCAPTCHA verification, PostHog tracking, and launching the Early Access widget.
     const fnHandleOptIn = async () => {
+        // Clear any previous error message.
         fnSetError("");
+        // Normalize the email before processing.
         const LTrimmedEmail = Email.trim().toLowerCase()
+        // Stop if the email field is empty.
         if (!LTrimmedEmail) return
+        // Generate a reCAPTCHA token for bot verification.
         const LRecaptchaToken = await executeRecaptcha("beta_opt_in")
         try {
-            // Validate recaptcha
+            // Verify the generated reCAPTCHA token with the backend.
             const LdResponse = await validateRecaptcha(LRecaptchaToken)
+            // Capture the verification result in PostHog for analytics.
             posthog.capture("opt-in-recaptcha",{
                 recaptcha_score: String(LdResponse.score),
                 recaptcha_passed: LdResponse.success,
@@ -91,19 +103,23 @@ export default function FreeOptIn(){
                 email: LTrimmedEmail,
         },
             })
+            // Stop the flow if reCAPTCHA verification fails.
             if (!LdResponse.success) {
                 //reset the email
                 fnSetError(LdResponse.message ?? "reCAPTCHA verification failed.");
                 // fnSetEmail("")
                 return
             }
+
+            // Identify the user in PostHog for future analytics.
             posthog.identify(LTrimmedEmail, {
                 email: LTrimmedEmail,
             })
-            // Trigger the Site App widget
+            // Trigger the hidden Site App widget to complete the beta opt-in.
             document.getElementById("new-pricing-beta")?.click()
 
-            fnSetEmail("")
+            // Reset the email field after a successful submission.
+            // fnSetEmail("")
         } catch (error) {
             console.error(error);
         }
