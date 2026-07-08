@@ -671,6 +671,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
         title
         subtitle
       }
+      description
       highlight {
         label
       }
