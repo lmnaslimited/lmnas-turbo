@@ -797,7 +797,117 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
   }
 }`;
   }
-}
+  getVersionQuery(): string {
+  return `
+  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
+    heroSection {
+      heading {
+        title
+        subtitle
+      }
+      description
+      highlight {
+        label
+      }
+    }
+    valuesSectionHeaderFooter {
+      header {
+        title
+        subtitle
+        badge
+      }
+      title
+    }
+    valuesSection {
+      title
+      subtitle
+      highlight
+      badge
+    }
+    previousYears {
+      label
+      icon
+      description
+    }
+    currentAndBeyondYears {
+      heading {
+        title
+        subtitle
+        highlight
+      }
+      highlight {
+        label
+      }
+    }
+    timeLineHeader {
+      title
+      subtitle
+    }
+    testimonialHeader {
+      title
+      subtitle
+    }
+    testimonalCard {
+      header {
+        subtitle
+      }
+      image {
+        svg
+        alternate
+      }
+      avatar {
+        source
+        alternate
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    ctaSection {
+      header {
+        title
+        subtitle
+      }
+      title
+      buttons {
+        icon
+        label
+        href
+        formMode
+      }
+    }
+    metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage 
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+}`;
+}}
 
 export class clQueryPricing extends clQuery<TpricingPageSource> {
   constructor(iContentType: string) {
