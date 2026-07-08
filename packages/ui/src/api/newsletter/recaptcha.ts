@@ -1,3 +1,4 @@
+"use server"
 // Function to verify reCAPTCHA token using Google's siteverify API
 async function fnVerifyRecaptcha(
     iToken: string
@@ -37,6 +38,7 @@ async function fnVerifyRecaptcha(
 
     return {
         success: true,
+        message: "reCAPTCHA verification was successfull",
         score,
     }
 }
