@@ -157,7 +157,7 @@ export default function FreeOptIn(){
               {LdContent.description}
             </p>
 
-            <div className="max-w-lg space-y-4">
+            <div className="max-w-lg space-y-6">
               <div className="flex flex-col gap-3 sm:flex-row">
                 <Input
                   type="email"
@@ -165,7 +165,7 @@ export default function FreeOptIn(){
                   placeholder={LdContent.placeholderEmail}
                   value={Email}
                   onChange={(e) => fnSetEmail(e.target.value)}
-                  className="h-12 md:flex-1 rounded-lg border border-border bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                  className="h-12 md:flex-1 rounded-lg border border-primary bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
                 />
                 <button
                   disabled={!Email.trim()}

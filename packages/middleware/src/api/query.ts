@@ -20,6 +20,7 @@ import {
   TsubtitleSource,
   TblogPageSource,
   TblogArticleSource,
+  TbannerSource,
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
@@ -2938,6 +2939,42 @@ query Query(
   }
 }
 
+export class clQueryBanner extends clQuery<TbannerSource>{
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+  getQuery(): string {
+    return `
+    query BannerSetting($status: PublicationStatus, $locale: I18NLocaleCode) {
+  ${this.contentType}(status: $status, locale: $locale) {
+    gobalBannerContent {
+      title
+      subtitle
+      buttons {
+        id
+        description
+        label
+        href
+        variant
+      }
+    }
+    forAllPages
+    specificPageControl {
+      title
+      subtitle
+      buttons {
+        icon
+        description
+        label
+        href
+        variant
+      }
+    }
+  }
+}
+    `}
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
@@ -2962,6 +2999,7 @@ export class clQueryFactory {
     subtitles: clQuerySubtitles,
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
+    bannerSetting: clQueryBanner
     // Add more mappings here
   };
 
