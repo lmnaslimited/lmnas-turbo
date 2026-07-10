@@ -663,7 +663,7 @@ export type Tpricing = {
   guideCallout: Theader
   ctaSection: TheroSection
   metaData: TpageMetadata
-  json?: any
+  json?: Record<string, unknown>
 }
 
 // industries
