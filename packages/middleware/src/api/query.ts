@@ -20,6 +20,7 @@ import {
   TsubtitleSource,
   TblogPageSource,
   TblogArticleSource,
+  TbannerSource,
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
@@ -1074,6 +1075,198 @@ query Pricing($locale: I18NLocaleCode, $status: PublicationStatus) {
         icon
     }
   }
+  metaData {
+      title
+      description
+      keywords {
+        description
+      }
+      canonical
+      ogTitle
+      ogDescription
+      ogUrl
+      ogType
+      ogSiteName
+      ogLocale
+      ogImages {
+        url
+        width
+        height
+        alt
+      }
+      twitterCard
+      twitterTitle
+      twitterDescription
+      twitterImage
+      twitterCreator
+      category
+      schemaData
+    }
+  }
+}`;
+  }
+
+  getVersionQuery(): string {
+    return `
+query Pricing($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
+    heroSection {
+      heading {
+        title
+        subtitle
+      }
+      description
+      buttons {
+        label
+        href
+        variant
+        icon
+        formMode
+      }
+    }
+    problemSection {
+      header {
+        title
+        subtitle
+      }
+      list {
+        icon
+        label
+        description
+      }
+      title
+      buttons {
+        label
+        href
+        formMode
+        variant
+        icon
+      }
+    }
+    planHeader {
+      title
+      badge
+      subtitle
+    }
+    planSection {
+      tableHead
+      pricingPlans {
+        name
+        users
+        warranty
+        support
+        maintenance
+        db
+        consulting
+      }
+      features {
+        label
+      }
+    }
+    planFooter {
+      title
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        variant
+        formMode
+        icon
+      }
+      list {
+        label
+      }
+    }
+    testimonialHeader {
+      header {
+        title
+      }
+      buttons {
+        label
+        href
+        icon
+      }
+    }
+    testimonialSection {
+      header {
+        title
+        subtitle
+      }
+      avatar {
+        source
+        alternate
+      }
+      avatarDetails {
+        label
+        description
+      }
+    }
+    faqSection {
+      heading {
+        title
+        subtitle
+        badge
+      }
+      point {
+        label
+        description
+      }
+    }
+    guideHeader {
+      title
+      subtitle
+      badge
+    }
+    guideCategories {
+      label
+    }
+    guideTableHeader {
+      label
+    }
+    guideSection {
+      badge
+      title
+      highlight
+      subtitle
+    }
+    guideFooter {
+      header {
+        title
+        subtitle
+      }
+      buttons {
+        label
+        href
+        icon
+        formMode
+        variant
+      }
+    }
+    guideCallout {
+      highlight
+      subtitle
+      badge
+  }
+  ctaSection {
+    heading {
+        title
+        subtitle
+        badge
+      }
+      description
+      buttons {
+        description
+        label
+        href
+        formMode
+        variant
+        icon
+    }
+  }
+    json
   metaData {
       title
       description
@@ -2938,6 +3131,42 @@ query Query(
   }
 }
 
+export class clQueryBanner extends clQuery<TbannerSource>{
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+  getQuery(): string {
+    return `
+    query BannerSetting($status: PublicationStatus, $locale: I18NLocaleCode) {
+  ${this.contentType}(status: $status, locale: $locale) {
+    gobalBannerContent {
+      title
+      subtitle
+      buttons {
+        id
+        description
+        label
+        href
+        variant
+      }
+    }
+    forAllPages
+    specificPageControl {
+      title
+      subtitle
+      buttons {
+        icon
+        description
+        label
+        href
+        variant
+      }
+    }
+  }
+}
+    `}
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
@@ -2962,6 +3191,7 @@ export class clQueryFactory {
     subtitles: clQuerySubtitles,
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
+    bannerSetting: clQueryBanner
     // Add more mappings here
   };
 
