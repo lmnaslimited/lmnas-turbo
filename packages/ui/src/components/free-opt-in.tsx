@@ -325,14 +325,14 @@ export default function FreeOptIn({idContent}:Record<string, any>){
 
                         <div className="mt-6 text-sm">
                           <span className="text-muted-foreground mr-1.5">
-                          {/* {LdContent.exploreBtnLabel}  */}
-                          Ready to see what LensCloud can really do?
+                          {LdContent.exploreBtnLabel || "Ready to see what LensCloud can really do?"}
+                          
                           </span>
                           <span><Link 
                             href={`/${LLocale}/products/lenscloud-platform`}
                             className="font-medium text-black hover:underline inline-flex items-center gap-0.5 whitespace-nowrap"
                           >
-                            {LdContent.explorebtn} Explore More <span>&rarr;</span>
+                            {LdContent.explorebtn || "Explore More"} <span>&rarr;</span>
                           </Link> </span>
                         </div>
                       </div>
