@@ -6,6 +6,7 @@ import posthog from "posthog-js";
 import { useState } from "react";
 import { validateRecaptcha } from "../api/newsletter/recaptcha";
 import { Input } from "./ui/input";
+import Link from "next/link";
 
 // const Li18n = {
 //     en: {
@@ -321,6 +322,19 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                         <p className="text-sm text-muted-foreground">
                           {LdContent.noCreditCard}
                         </p>
+
+                        <div className="mt-6 text-sm">
+                          <span className="text-muted-foreground mr-1.5">
+                          {/* {LdContent.exploreBtnLabel}  */}
+                          Ready to see what LensCloud can really do?
+                          </span>
+                          <span><Link 
+                            href={`/${LLocale}/products/lenscloud-platform`}
+                            className="font-medium text-black hover:underline inline-flex items-center gap-0.5 whitespace-nowrap"
+                          >
+                            {LdContent.explorebtn} Explore More <span>&rarr;</span>
+                          </Link> </span>
+                        </div>
                       </div>
                     </div>
                   </div>
