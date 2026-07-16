@@ -109,7 +109,7 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                 //reset the email
                 // fnSetError(LdResponse.message ?? "reCAPTCHA verification failed.");
                 fnSetError(
-                  idContent.errorMessage || LdResponse.message
+                  LdContent.errorMessage || LdResponse.message
                 );
                 // fnSetEmail("")
                 return
@@ -275,7 +275,7 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                             htmlFor="email"
                             className="text-sm text-muted-foreground"
                           >
-                            {idContent.emailLabel || ""}
+                            {LdContent.emailLabel || ""}
                           </Label>
 
                           <div className="flex flex-col gap-3">
