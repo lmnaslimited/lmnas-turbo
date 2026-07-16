@@ -6,7 +6,7 @@ import posthog from "posthog-js";
 import { useState } from "react";
 import { validateRecaptcha } from "../api/newsletter/recaptcha";
 import { Input } from "./ui/input";
-import Link from "next/link";
+import { Label } from "@radix-ui/react-label";
 
 // const Li18n = {
 //     en: {
@@ -107,7 +107,10 @@ export default function FreeOptIn({idContent}:Record<string, any>){
             // Stop the flow if reCAPTCHA verification fails.
             if (!LdResponse.success) {
                 //reset the email
-                fnSetError(LdResponse.message ?? "reCAPTCHA verification failed.");
+                // fnSetError(LdResponse.message ?? "reCAPTCHA verification failed.");
+                fnSetError(
+                  idContent.errorMessage || LdResponse.message
+                );
                 // fnSetEmail("")
                 return
             }
@@ -156,34 +159,6 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                 <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
                   {LdContent.description}
                 </p>
-
-                {/* <div className="max-w-lg space-y-6">
-              <div className="flex flex-col gap-3 sm:flex-row">
-                <Input
-                  type="email"
-                  name="email"
-                  placeholder={LdContent.placeholderEmail}
-                  value={Email}
-                  onChange={(e) => fnSetEmail(e.target.value)}
-                  className="h-12 md:flex-1 rounded-lg border border-primary bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-                />
-                <button
-                  disabled={!Email.trim()}
-                  onClick={fnHandleOptIn}
-                  className="h-12 px-6 bg-primary text-primary-foreground font-medium rounded-lg disabled:opacity-50 hover:bg-primary/90 transition"
-                >
-                  {LdContent.btnSecureSpot}
-                </button>
-              </div>
-              {LError && (
-                    <p className="text-sm text-destructive">
-                    {LError}
-                    </p>
-                )}
-              <p className="text-sm text-muted-foreground">
-                {LdContent.noCreditCard}
-              </p>
-                </div> */}
 
                 <div className="flex flex-wrap gap-x-6 gap-y-3 pt-2">
                   {LdContent.signals.map((iSignal: string) => (
@@ -294,25 +269,35 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                             e.preventDefault();
                             await fnHandleOptIn();
                           }}
-                          className="flex flex-col gap-3 sm:flex-row"
+                          className="flex flex-col gap-3"
                         >
-                          <Input
-                            type="email"
-                            name="email"
-                            required
-                            autoComplete="email"
-                            placeholder={LdContent.placeholderEmail}
-                            value={Email}
-                            onChange={(e) => fnSetEmail(e.target.value)}
-                            className="h-12 md:flex-1 rounded-lg border border-primary bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
-                          />
-
-                          <button
-                            type="submit"
-                            className="h-12 px-4 bg-primary text-primary-foreground font-medium rounded-lg"
+                          <Label
+                            htmlFor="email"
+                            className="text-sm text-muted-foreground"
                           >
-                            {LdContent.btnSecureSpot}
-                          </button>
+                            {idContent.emailLabel || ""}
+                          </Label>
+
+                          <div className="flex flex-col gap-3">
+                            <Input
+                              id="email"
+                              type="email"
+                              name="email"
+                              required
+                              autoComplete="off"
+                              placeholder={LdContent.placeholderEmail}
+                              value={Email}
+                              onChange={(e) => fnSetEmail(e.target.value)}
+                              className="h-12 rounded-lg border border-primary bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                            />
+
+                            <button
+                              type="submit"
+                              className="h-12 px-4 bg-primary text-primary-foreground font-medium rounded-lg"
+                            >
+                              {LdContent.btnSecureSpot}
+                            </button>
+                          </div>
                         </form>
 
                         {LError && (
@@ -322,19 +307,6 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                         <p className="text-sm text-muted-foreground">
                           {LdContent.noCreditCard}
                         </p>
-
-                        <div className="mt-6 text-sm">
-                          <span className="text-muted-foreground mr-1.5">
-                          {LdContent.exploreBtnLabel || "Ready to see what LensCloud can really do?"}
-                          
-                          </span>
-                          <span><Link 
-                            href={`/${LLocale}/products/lenscloud-platform`}
-                            className="font-medium text-black hover:underline inline-flex items-center gap-0.5 whitespace-nowrap"
-                          >
-                            {LdContent.explorebtn || "Explore More"} <span>&rarr;</span>
-                          </Link> </span>
-                        </div>
                       </div>
                     </div>
                   </div>
