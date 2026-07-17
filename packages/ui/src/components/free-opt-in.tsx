@@ -1,6 +1,6 @@
 "use client"
 import { useReCaptcha } from "next-recaptcha-v3"
-import { CircleCheckBig, CircleX } from "lucide-react";
+import { CircleCheckBig, CircleX, Loader2, X } from "lucide-react";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
 import { useState } from "react";
@@ -8,67 +8,7 @@ import { validateRecaptcha } from "../api/newsletter/recaptcha";
 import { Input } from "./ui/input";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
-
-// const Li18n = {
-//     en: {
-//       earlyAccess: "Limited launch slots",
-//       titleMain: "LENS ( ERPNext ) Hosting, ",
-//       titleAccent: "Zero Overhead.",
-//       description: "Opt in to the upcoming LensCloud platform before the general release. Secure early access to our permanently free tier, built for production-grade vanilla Frappe deployments.",
-//       placeholderEmail: "Enter your professional email",
-//       btnSecureSpot: "Secure My Spot",
-//       noCreditCard: "No credit card required. Instance setup links sent on launch day.",
-//       signals: ["Start at $0", "Your ERP under 5 minutes", "Cancel anytime"],
-//       ribbonText: "Recommended",
-//       planName: "Free Plan",
-//       freeForever: "Free forever",
-//       perMonth: "/month",
-//       whatsIncluded: "What's included",
-      
-//       // Extracted pure text parts clearly
-//       incInstanceTitle: "1 Production Instance",
-//       incInstanceDesc: " — fully managed and ready for live deployment.",
-//       incPlatformTitle: "Unlimited Users",
-//       incPlatformDesc: "— Add as many users as your business needs.",
-      
-//       capabilities: "Capabilities",
-//         capabilityList: [
-//             { label: "Free SSO", available: true },
-//             { label: "ERPNext Hosting", available: true },
-//             { label: "Free Migration", available: true },
-//             { label: "Free Upgrade", available: true },
-//         ],
-//     },
-//     de: {
-//       earlyAccess: "Begrenzte Startplätze",
-//       titleMain: "Vanilla ERPNext Hosting, ",
-//       titleAccent: "Null Overhead.",
-//       description: "Melden Sie sich vor der offiziellen Veröffentlichung für die kommende LensCloud-Plattform an. Sichern Sie sich den frühzeitigen Zugriff auf unsere dauerhaft kostenlose Stufe, die für produktionsbereite Vanilla-Frappe-Bereitstellungen entwickelt wurde.",
-//       placeholderEmail: "Geben Sie Ihre geschäftliche E-Mail ein",
-//       btnSecureSpot: "Meinen Platz sichern",
-//       noCreditCard: "Keine Kreditkarte erforderlich. Links zur Instanz-Einrichtung werden am Starttag gesendet.",
-//       signals: ["Ab 0 € starten", "Ihr ERP in unter 5 Minuten", "Jederzeit kündbar"],
-//       ribbonText: "Beliebtestens · Frühzeitiger Zugriff",
-//       planName: "Starter-Plan",
-//       freeForever: "Dauerhaft kostenlos",
-//       perMonth: "/Monat",
-//       whatsIncluded: "Was enthalten ist",
-      
-//       // Extracted pure text parts clearly
-//       incInstanceTitle: "1 Produktionsinstanz",
-//       incInstanceDesc: " — vollständig verwaltet und bereit für den Live-Einsatz.",
-//       incPlatformTitle: "Verwaltete Plattform",
-//       incPlatformDesc: " — Betriebssystem, Netzwerk und Datenbank werden für Sie übernommen.",
-      
-//       capabilities: "Funktionen",
-//       capabilityList: [
-//         { label: "SSO inklusive", available: true },
-//         { label: "ERPNext-Hosting", available: true },
-//         { label: "Kostenlose Migration", available: true },
-//         { label: "Kostenlose Upgrades", available: true },
-//       ],
-//     }
-//   };
+import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
 
 export default function FreeOptIn({idContent}:Record<string, any>){
     // Stores the user's email address entered in the opt-in form.
@@ -76,6 +16,9 @@ export default function FreeOptIn({idContent}:Record<string, any>){
     // Stores validation or reCAPTCHA error messages displayed to the user.
     const [LError, fnSetError] = useState("");
     const [LHasConsent, fnSetHasConsent] = useState(false);
+    // store success and submitting state
+    const [LIsSuccess, fnSetIsSuccess] = useState(false);
+    const [LIsSubmitting, fnSetIsSubmitting] = useState(false);
 
     // Provides the function to generate a Google reCAPTCHA v3 token.
     const { executeRecaptcha } = useReCaptcha()
@@ -93,6 +36,17 @@ export default function FreeOptIn({idContent}:Record<string, any>){
         const LTrimmedEmail = Email.trim().toLowerCase()
         // Stop if the email field is empty.
         if (!LTrimmedEmail) return
+
+        fnSetIsSubmitting(true);
+        // Parse a readable name out of the email string
+        // e.g., "jane.doe@example.com" -> "Jane Doe"
+        const LEmailPrefix = LTrimmedEmail.split("@")[0];
+        const LGeneratedName = LEmailPrefix
+          ? LEmailPrefix
+              .split(/[\._\-]/)
+              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ")
+          : "";
         // Generate a reCAPTCHA token for bot verification.
         const LRecaptchaToken = await executeRecaptcha("beta_opt_in")
         try {
@@ -123,13 +77,39 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                 email: LTrimmedEmail,
             })
             // Trigger the hidden Site App widget to complete the beta opt-in.
-            document.getElementById("new-pricing-beta")?.click()
+            // document.getElementById("new-pricing-beta")?.click()
+
+            // custom posthog beta early access, instead of default pop up model
+            posthog.updateEarlyAccessFeatureEnrollment("new-pricing-beta", true)
 
             // Reset the email field after a successful submission.
             // fnSetEmail("")
+
+            // Show success state
+            fnSetIsSuccess(true)
+
+            //call the backend to handle creation of
+            // Lead --> opportunity --> email
+            fnLeadToOpportunity({
+              email: LTrimmedEmail,
+              name: LGeneratedName,
+              recaptchaToken: LRecaptchaToken,
+              createOpportunity: true,
+              sendEmail: true,
+              emailTemplate: "LensCloud Beta Welcome",
+              humanVerfied: true
+          }).catch((err) => {
+              // Logs silently to server monitor if Frappe goes down, 
+              // without breaking the user's optimistic success UI state.
+              console.error("Background Frappe synchronization failed:", err);
+          });
+
         } catch (error) {
             console.error(error);
-        }
+        }finally {
+        // Always turn off the spinner, even on failures
+        fnSetIsSubmitting(false);
+      }
     }
     const LCurrentLocale = (LLocale && LLocale in idContent) ? LLocale : 'en';
     // Fallback to English if the requested locale doesn't exist
@@ -267,6 +247,39 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                         )}
                       </div>
                       <div className="max-w-lg space-y-6 mt-8">
+                      {LIsSuccess ? (
+                        /* Dedicated Success State Layout - Clears form clutter completely */
+                        <div className="relative rounded-xl bg-primary/5 border border-primary/20 p-6 text-center space-y-3 animate-in fade-in zoom-in-95 duration-200">
+                          {/* Close Button */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              fnSetIsSuccess(false);
+                              fnSetEmail("");
+                              fnSetHasConsent(false);
+                            }}
+                            className="absolute top-3 right-3 p-1 rounded-md text-muted-foreground bg-accent hover:text-foreground transition-colors"
+                            aria-label="Close success message"
+                          >
+                            <X className="h-4 w-4 text-primary" />
+                          </button>
+                          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+                            <CircleCheckBig className="h-6 w-6 text-green-600" />
+                          </div>
+                          <h4 className="text-lg font-semibold text-foreground">
+                            {LdContent.successTitle || "Spot Secured!"}
+                          </h4>
+                          {/* Displaying the confirmed email right under the title */}
+                          <p className="inline-block text-xs font-medium bg-primary/10 text-primary rounded-full px-3 py-1 mt-1">
+                            {Email.trim().toLowerCase()}
+                          </p>
+                          <p className="text-sm text-muted-foreground leading-relaxed">
+                            {LdContent.successMessage || "Thank you for opting in! We’ll send you an email when LensCloud launches. Please check your spam folder if you don't see it in your inbox."}
+                          </p>
+                        </div>
+                      ) : (
+                        /* Interactive Form State */
+                        <>
                         <form
                           onSubmit={async (e) => {
                             e.preventDefault();
@@ -322,9 +335,16 @@ export default function FreeOptIn({idContent}:Record<string, any>){
 
                             <button
                               type="submit"
-                              className="h-12 px-4 bg-primary text-primary-foreground font-medium rounded-lg"
+                              className="h-12 px-4 bg-primary text-primary-foreground font-medium rounded-lg flex items-center justify-center"
                             >
-                              {LdContent.btnSecureSpot}
+                             {LIsSubmitting ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                </>
+                              ) : (
+                                <span>{LdContent.btnSecureSpot}</span>
+                              )}
+                              
                             </button>
                           </div>
                         </form>
@@ -336,6 +356,8 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                         <p className="text-sm text-muted-foreground">
                           {LdContent.noCreditCard}
                         </p>
+                        </>
+                      )}
                       </div>
                     </div>
                   </div>
@@ -343,7 +365,7 @@ export default function FreeOptIn({idContent}:Record<string, any>){
               </div>
             </div>
           </div>
-          <button id="new-pricing-beta" className="hidden" type="button" />
+          {/* <button id="new-pricing-beta" className="hidden" type="button" /> */}
         </section>
       </>
     );
