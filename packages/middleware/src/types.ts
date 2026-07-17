@@ -664,6 +664,7 @@ export type Tpricing = {
   guideCallout: Theader
   ctaSection: TheroSection
   metaData: TpageMetadata
+  json?: Record<string, unknown>
 }
 
 // industries
@@ -1053,6 +1054,21 @@ export type TresolvedContactStep = {
   id: string
   fields: TformFieldConfig[]
 }
+
+export type TbannerProps = {
+  forAllPages: boolean;
+  gobalBannerContent: TcalloutProps;
+  specificPageControl: TcalloutProps[];
+};
+
+export type TbannerSource = {
+  bannerSetting : TbannerProps
+}
+
+export type TbannerTarget = {
+  bannerSetting : TbannerProps
+}
+
 
 export type TUserProfile = {
   name: string;

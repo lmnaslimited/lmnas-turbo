@@ -43,6 +43,8 @@ import {
   TblogPageTarget,
   TblogArticleSource,
   TblogArticleTarget,
+  TbannerSource,
+  TbannerTarget,
   TLoginSource,
   TLoginTarget,
 } from "../types"
@@ -419,6 +421,16 @@ export class clBlogArticleTransformer extends clTransformer<
     return this.targetData
   }}
 
+export class clBannerTransformer extends clTransformer<
+  TbannerSource,
+  TbannerTarget>{
+  async performTransformation(
+    idSourceData: TbannerSource,
+  ): Promise<TbannerTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+}}
+
 // Transformer class for Login and Sign Up data
 export class clLoginTransformer extends clTransformer<
   TLoginSource,
@@ -456,6 +468,7 @@ interface ITransformerMap {
   subtitles: clSubtitlesTransformer
   blogHome: clBlogHomeTransformer
   blogs: clBlogArticleTransformer
+  bannerSetting: clBannerTransformer
   loginAndSignUp: clLoginTransformer
   // Add other content types and corresponding transformers
 }
@@ -485,6 +498,7 @@ export class clTransformerFactory {
     subtitles: clSubtitlesTransformer,
     blogHome: clBlogHomeTransformer,
     blogs: clBlogArticleTransformer,
+    bannerSetting: clBannerTransformer,
     loginAndSignUp: clLoginTransformer
     // Add other content types and corresponding transformers
   }
