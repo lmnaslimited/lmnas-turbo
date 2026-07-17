@@ -51,6 +51,7 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
       return await this.fetchQuery(this.versionQuery);
     } catch (versionError) {
       try {
+        console.dir(versionError, { depth: null });
         posthog.captureException(versionError, undefined, {
           location: "clQuery.executeQuery",
           contentType: this.contentType,
@@ -66,17 +67,8 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
           // Try the stable standard query if the version query is different
           return await this.fetchQuery(this.query);
         } catch (fallbackError) {
-          try {
-            posthog.captureException(fallbackError, undefined, {
-              location: "clQuery.executeQuery",
-              contentType: this.contentType,
-              queryType: "defaultQuery",
-              operation: "executeQuery",
-            });
-  
-            await posthog.flush();
-          } catch {}
-  
+          console.log("fallback query exception")
+          console.dir(fallbackError, { depth: null });
           throw fallbackError;
         }
       }
@@ -800,7 +792,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
   }
   getVersionQuery(): string {
   return `
-  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus) {
+  query AboutUs($locale: I18NLocaleCode, $status: PublicationStatus, $pagination: PaginationArg) {
   ${this.contentType}(locale: $locale, status: $status) {
     heroSection {
       heading {
@@ -826,7 +818,7 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
       highlight
       badge
     }
-    previousYears {
+    previousYears(pagination: $pagination) {
       label
       icon
       description
