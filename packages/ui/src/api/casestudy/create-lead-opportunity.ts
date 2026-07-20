@@ -217,12 +217,13 @@ async function fnCreateLead(
   iName: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
-  iCampaign: string
+  iCampaign: string,
+  iSource: string
 ) {
   const LdResponse = await fetch(`${iBaseUrl}/api/resource/Lead`, {
     method: "POST",
     headers: idHeaders,
-    body: JSON.stringify({ email_id: iEmail, first_name: iName, campaign_name: iCampaign }),
+    body: JSON.stringify({ email_id: iEmail, first_name: iName, campaign_name: iCampaign, source: iSource }),
   })
 
   if (!LdResponse.ok) {
@@ -251,6 +252,7 @@ async function fnGetOrCreateLead(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign:string,
+  iSource: string
 ) {
   const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders, iCampaign)
 
@@ -258,7 +260,7 @@ async function fnGetOrCreateLead(
     return { lead: LdExistingLead, created: false }
   }
 
-  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign)
+  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource)
   return { lead: LdNewLead, created: true }
 }
 
@@ -493,7 +495,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
      * Find the Lead by email or create a new Lead when no match
      * is found.
      */
-    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!,)
+    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!)
 
     /**
    * Find an existing matching Opportunity or create a new one.
