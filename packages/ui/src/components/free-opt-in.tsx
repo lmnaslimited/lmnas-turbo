@@ -19,6 +19,14 @@ export default function FreeOptIn({idContent}:Record<string, any>){
     // store success and submitting state
     const [LIsSuccess, fnSetIsSuccess] = useState(false);
     const [LIsSubmitting, fnSetIsSubmitting] = useState(false);
+    // store success message
+    const [LdSuccessMessage, fnSetSuccessMessage] = useState<{
+        label: string;
+        description: string;
+    }>({
+        label: "",
+        description: "",
+    })
 
     // Provides the function to generate a Google reCAPTCHA v3 token.
     const { executeRecaptcha } = useReCaptcha()
@@ -30,8 +38,12 @@ export default function FreeOptIn({idContent}:Record<string, any>){
     // Handles the beta opt-in process, including email validation,
     // reCAPTCHA verification, PostHog tracking, and launching the Early Access widget.
     const fnHandleOptIn = async () => {
-        // Clear any previous error message.
+        // Clear any previous error/success message.
         fnSetError("");
+        fnSetSuccessMessage({
+          label: "",
+          description:"",
+      })
         // Normalize the email before processing.
         const LTrimmedEmail = Email.trim().toLowerCase()
         // Stop if the email field is empty.
@@ -85,25 +97,53 @@ export default function FreeOptIn({idContent}:Record<string, any>){
             // Reset the email field after a successful submission.
             // fnSetEmail("")
 
-            // Show success state
-            fnSetIsSuccess(true)
-
             //call the backend to handle creation of
             // Lead --> opportunity --> email
-            fnLeadToOpportunity({
-              email: LTrimmedEmail,
-              name: LGeneratedName,
-              recaptchaToken: LRecaptchaToken,
-              createOpportunity: true,
-              sendEmail: true,
-              emailTemplate: "LensCloud Beta Welcome",
-              humanVerfied: true
-          }).catch((err) => {
-              // Logs silently to server monitor if Frappe goes down, 
-              // without breaking the user's optimistic success UI state.
-              console.error("Background Frappe synchronization failed:", err);
-          });
 
+              if (LdContent.LeadProcess.IsNeeded) {
+                  try {
+                      const LdLeadResult = await fnLeadToOpportunity({
+                          email: LTrimmedEmail,
+                          name: LGeneratedName,
+                          recaptchaToken: LRecaptchaToken,
+                          createOpportunity: true,
+                          sendEmail: true,
+                          emailTemplate: LdContent.LeadProcess.emailTemplate,
+                          humanVerfied: true,
+                          opportType: LdContent.LeadProcess.opportType,
+                          source: LdContent.LeadProcess.source,
+                          campaign: LdContent.campaign,
+                          itemName: LdContent.itemName,
+                      })
+
+                      if (LdLeadResult.message === "success") {
+                        const LIsNewOpportunity =
+                        LdLeadResult.meta?.opportunityCreated === true
+                       
+                        fnSetSuccessMessage(
+                            LIsNewOpportunity
+                                ? {
+                                      label: LdContent.successNewLabel,
+                                      description: LdContent.successNewDescrip,
+                                  }
+                                : {
+                                      label: LdContent.successExistLabel,
+                                      description: LdContent.successExistDescript,
+                                  },
+                        )
+                        // Show success state
+                        fnSetIsSuccess(true)
+
+                      }
+                  } catch (err) {
+                      // Log the synchronization error without breaking
+                      // the user's optimistic success state.
+                      console.error(
+                          "Background Frappe synchronization failed:",
+                          err,
+                      )
+                  }
+              }
         } catch (error) {
             console.error(error);
         }finally {
@@ -267,14 +307,14 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                             <CircleCheckBig className="h-6 w-6 text-green-600" />
                           </div>
                           <h4 className="text-lg font-semibold text-foreground">
-                            {LdContent.successTitle || "Spot Secured!"}
+                            {LdSuccessMessage.label || ""}
                           </h4>
                           {/* Displaying the confirmed email right under the title */}
                           <p className="inline-block text-xs font-medium bg-primary/10 text-primary rounded-full px-3 py-1 mt-1">
                             {Email.trim().toLowerCase()}
                           </p>
                           <p className="text-sm text-muted-foreground leading-relaxed">
-                            {LdContent.successMessage || "Thank you for opting in! We’ll send you an email when LensCloud launches. Please check your spam folder if you don't see it in your inbox."}
+                            {LdSuccessMessage.description || ""}
                           </p>
                         </div>
                       ) : (

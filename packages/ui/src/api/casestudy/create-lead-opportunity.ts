@@ -7,7 +7,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
   });
 
-type TApi = {
+  type TApi = {
     email: string;
     name: string;
     recaptchaToken: string;
@@ -15,7 +15,11 @@ type TApi = {
     sendEmail?: boolean;
     emailTemplate?: string;
     humanVerfied?: boolean;
-  }
+    opportType?: string;
+    source?: string;
+    campaign?: string;
+    itemName?: string;
+}
 
 
 /**
@@ -97,9 +101,12 @@ async function fnGetLeadByEmail(
   iEmail: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
+  iCampaign:string,
 ){
-  const LFilters = JSON.stringify([["email_id", "=", iEmail]])
-
+  const LFilters = JSON.stringify([
+    ["email_id", "=", iEmail],
+    // ["campaign_name", "=", iCampaign]
+])
   // Limit the response to one record because only the first matching
   // Lead is required for this workflow.
   const LUrl = `${iBaseUrl}/api/resource/Lead?filters=${encodeURIComponent(LFilters)}&fields=["*"]&limit_page_length=1`
@@ -119,6 +126,87 @@ async function fnGetLeadByEmail(
 }
 
 /**
+ * Find an existing Open or Replied Opportunity for the Lead
+ * that contains the specified item and campaign.
+ *
+ * Since the item details are stored in the Opportunity child table,
+ * the parent Opportunities are retrieved first and their detailed
+ * records are then checked until the first matching Opportunity is found.
+ */
+async function fnGetOpportunity(
+  iLeadId: string,
+  iBaseUrl: string,
+  idHeaders: Record<string, string>,
+  iCampaign: string,
+  iItemName: string,
+) {
+  const LFilters = JSON.stringify([
+    ["party_name", "=", iLeadId],
+    ["status", "in", ["Open", "Replied"]],
+  ])
+
+  const LUrl =
+    `${iBaseUrl}/api/resource/Opportunity` +
+    `?filters=${encodeURIComponent(LFilters)}` +
+    `&fields=["name"]` +
+    `&limit_page_length=100`
+
+  const LdResponse = await fetch(LUrl, {
+    method: "GET",
+    headers: idHeaders,
+  })
+
+  if (!LdResponse.ok) {
+    throw new Error(`Opportunity lookup failed: ${LdResponse.status}`)
+  }
+
+  const LdResult = await LdResponse.json()
+
+  // Check each Opportunity one by one and fetch its detailed record.
+  // Return immediately when the first Opportunity containing the matching
+  // item code and campaign is found.
+  for (const LOpportunity of LdResult.data ?? []) {
+    const LOpportunityDetailResponse = await fetch(
+      `${iBaseUrl}/api/resource/Opportunity/${encodeURIComponent(
+        LOpportunity.name,
+      )}`,
+      {
+        method: "GET",
+        headers: idHeaders,
+      },
+    )
+
+    if (!LOpportunityDetailResponse.ok) {
+      throw new Error(
+        `Opportunity detail lookup failed: ${LOpportunityDetailResponse.status}`,
+      )
+    }
+
+    const LOpportunityDetailResult =
+      await LOpportunityDetailResponse.json()
+
+    const LOpportunityDetail = LOpportunityDetailResult.data
+
+    // Check whether any item in the child table matches both the requested
+    // item and campaign.
+    const LIsMatchingOpportunity = LOpportunityDetail.items?.some(
+      (iItem: {
+        item_code: string
+        custom_campaign?: string
+      }) =>
+        iItem.item_code === iItemName &&
+        iItem.custom_campaign === iCampaign,
+    )
+
+    if (LIsMatchingOpportunity) {
+      return LOpportunityDetail
+    }
+  }
+
+  return null
+}
+
+/**
  * Create a new Lead in the CRM.
  *
  * This function is called only when no existing Lead matches
@@ -129,11 +217,12 @@ async function fnCreateLead(
   iName: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
+  iCampaign: string
 ) {
   const LdResponse = await fetch(`${iBaseUrl}/api/resource/Lead`, {
     method: "POST",
     headers: idHeaders,
-    body: JSON.stringify({ email_id: iEmail, first_name: iName }),
+    body: JSON.stringify({ email_id: iEmail, first_name: iName, campaign_name: iCampaign }),
   })
 
   if (!LdResponse.ok) {
@@ -161,14 +250,15 @@ async function fnGetOrCreateLead(
   iName: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
+  iCampaign:string,
 ) {
-  const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders)
+  const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders, iCampaign)
 
   if (LdExistingLead) {
     return { lead: LdExistingLead, created: false }
   }
 
-  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders)
+  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign)
   return { lead: LdNewLead, created: true }
 }
 
@@ -183,23 +273,45 @@ async function fnCreateOpportunity(
   iLeadName: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
+  iOpportunityType: string,
+  iSource: string,
+  iCampaign: string,
+  iItemName: string,
 ) {
-  const LdResponse = await fetch(`${iBaseUrl}/api/resource/Opportunity`, {
-    method: "POST",
-    headers: idHeaders,
-    body: JSON.stringify({
-      opportunity_from: "Lead",
-      party_name: iLeadName, // Explicitly linking to document ID string
-      opportunity_type: "Sales",
-      transaction_date: new Date().toISOString().split("T")[0],
-    }),
-  })
+  const LdResponse = await fetch(
+      `${iBaseUrl}/api/resource/Opportunity`,
+      {
+          method: "POST",
+          headers: idHeaders,
+          body: JSON.stringify({
+              opportunity_from: "Lead",
+              party_name: iLeadName,
+              opportunity_type: iOpportunityType,
+              source: iSource,
+              transaction_date: new Date()
+                  .toISOString()
+                  .split("T")[0],
+
+              items: [
+                  {
+                      item_code: iItemName,
+                      qty: 1,
+                      custom_campaign: iCampaign,
+                      rate:0
+                  },
+              ],
+          }),
+      },
+  )
 
   if (!LdResponse.ok) {
-    throw new Error(`Opportunity creation failed: ${LdResponse.status}`)
+      throw new Error(
+          `Opportunity creation failed: ${LdResponse.status}`,
+      )
   }
 
   const LdResult = await LdResponse.json()
+
   return LdResult.data
 }
 
@@ -357,9 +469,13 @@ function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolea
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-    const { email, name, recaptchaToken, createOpportunity, sendEmail, emailTemplate, humanVerfied } = idLeadFormData
-    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders } = fnGetCrmConfiguration()
-    
+    const {email, name, recaptchaToken, createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
+      campaign,
+      itemName,
+    } = idLeadFormData
+  
+    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration()
+      
     /**
      * Verify the user unless the request has already been verified
      * by a trusted internal process.
@@ -377,17 +493,28 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
      * Find the Lead by email or create a new Lead when no match
      * is found.
      */
-    const { lead: LdLead, created: LLeadCreated } = await fnGetOrCreateLead(email, name, LBaseUrl, LdCrmRequestHeaders)
+    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!,)
 
     /**
-     * Optionally create an Opportunity for the Lead.
-     *
-     * The returned Opportunity object is retained and reused later
-     * when creating the Communication reference.
-     */
+   * Find an existing matching Opportunity or create a new one.
+   *
+   * The existing or newly created Opportunity is retained and reused later
+   * when creating the Communication reference.
+   */
     let LdOpportunity = null
+    let LOpportunityCreated = false
+
     if (createOpportunity) {
-      LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders)
+        const LExistingOpportunity = await fnGetOpportunity( LdLead.name, LBaseUrl, LdCrmRequestHeaders, campaign!, itemName!,)
+
+        if (LExistingOpportunity) {
+          
+            LdOpportunity = LExistingOpportunity
+        } else {
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,)
+
+            LOpportunityCreated = true
+        }
     }
 
      /**
@@ -398,7 +525,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
     let LdCommunication = null
     if (sendEmail) {
 
-      if(!emailTemplate){ return }
+      if(!emailTemplate){ throw new Error("Email template is required") }
       LdCommunication = await fnCreateCommunication(
         email,
         LdLead,
@@ -420,7 +547,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
       message: "success",
       meta: {
         leadCreated: LLeadCreated,
-        opportunityCreated: Boolean(LdOpportunity),
+        opportunityCreated: LOpportunityCreated,
         emailSent: Boolean(LdCommunication),
       },
     }
