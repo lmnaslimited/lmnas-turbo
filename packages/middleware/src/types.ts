@@ -485,9 +485,23 @@ export type TleadApi = {
 // Navbar
 export type TnavbarSource = {
   navbar: Tnavbar
+  loginAndSignUp?:{
+    OnlyInTestingPhase?: boolean
+    TestUserAllowed?: {
+      label?: string
+      value?: string
+    }[]
+  }
 }
 export type TnavbarTarget = {
   navbar: Tnavbar
+  loginAndSignUp?:{
+    OnlyInTestingPhase?: boolean
+    TestUserAllowed?: {
+      label?: string
+      value?: string
+    }[]
+  }
 }
 export type Tnavbar = {
   logo: Tbutton

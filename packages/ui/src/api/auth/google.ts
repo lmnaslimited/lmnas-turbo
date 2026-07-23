@@ -10,7 +10,7 @@ export async function loginViaGoogle(request:Request) {
     // Request a Google OAuth authorization URL from Frappe.
     // Frappe generates the required OAuth state and validates the post-login redirect.
     const LdResponse = await fetch(
-      `${LFrappeUrl}/api/method/brandkit.api.integration.get_google_auth_link?i_redirect_to_nextjs=${encodeURIComponent(LRedirectToUrl)}`
+      `${LFrappeUrl}/api/method/lenscloud.api.integration.get_google_auth_link?i_redirect_to_nextjs=${encodeURIComponent(LRedirectToUrl)}`
     );
     const LdResult = await LdResponse.json();
     

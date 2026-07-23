@@ -256,6 +256,13 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       href
     }
   }
+  loginAndSignUp(status: $status, locale: $locale) {
+    TestUserAllowed {
+      label
+      value
+    }
+    OnlyInTestingPhase
+  }
 }`;
   }
 }
@@ -3285,6 +3292,8 @@ export class clQueryFactory {
     subtitles: clQuerySubtitles,
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
+    bannerSetting: clQueryBanner,
+    loginAndSignUp: clQueryLogin
     // Add more mappings here
   };
 

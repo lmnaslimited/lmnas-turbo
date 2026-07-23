@@ -26,6 +26,7 @@ import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
 import { useParams, usePathname } from 'next/navigation';
+import posthog from "posthog-js"
 
 export default function Navbar({
   idNavbar,
@@ -82,6 +83,15 @@ export default function Navbar({
     }
   }, [])
 
+  const userId = posthog.get_distinct_id();
+
+  const loginAndSignUpConfig = idNavbar.loginAndSignUp;
+
+  const shouldShowButton =
+    loginAndSignUpConfig?.OnlyInTestingPhase === false ||
+    loginAndSignUpConfig?.TestUserAllowed?.some(
+      (user) => user.label === userId
+    );
 
   return (
     <>
@@ -350,7 +360,7 @@ export default function Navbar({
               </>
             ) : (
               /* Dont show Login Button when user is on login page */
-        !LbHideLoginButton && (
+        !LbHideLoginButton && shouldShowButton  && (
               <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"
