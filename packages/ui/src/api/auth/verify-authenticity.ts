@@ -9,7 +9,7 @@ export async function verifyAuthenticity(request: NextRequest) {
   const LdsidCookie = request.cookies.get('sid');
   // Reject unauthenticated requests before making any backend calls.
   if (!LdsidCookie || !LdsidCookie.value) {
-    return NextResponse.json({ user: null }, { status: 401 });
+    return NextResponse.json({ user: null });
   }
 
   const LdCookieHeader = request.headers.get('cookie') || '';
@@ -26,7 +26,7 @@ export async function verifyAuthenticity(request: NextRequest) {
     });
 
     if (!LdAuthCheck.ok) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null });
     }
 
     const LdAuthData = await LdAuthCheck.json();
@@ -34,7 +34,7 @@ export async function verifyAuthenticity(request: NextRequest) {
 
    // Treat missing or guest sessions as unauthenticated.
     if (!LUserEmail || LUserEmail === 'Guest') {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null });
     }
 
     // construct the params for fetching full_name and profile picture
@@ -63,7 +63,7 @@ export async function verifyAuthenticity(request: NextRequest) {
     );
 
     if (!LdProfileResponse.ok) {
-      return NextResponse.json({ user: null }, { status: 401 });
+      return NextResponse.json({ user: null });
     }
 
     const LdProfileData = await LdProfileResponse.json();

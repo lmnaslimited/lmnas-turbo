@@ -77,31 +77,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     fnCheckAuthStatus();
     
-    // Prevent multiple authentication checks from running within a short time.
-    let LLastRefreshTime = 0;
+    // // Prevent multiple authentication checks from running within a short time.
+    // let LLastRefreshTime = 0;
 
-    // Refresh the user's sign-in status when the browser tab becomes active.
-    function fnHandleVisibilityOrFocus() {
-      // Ignore refresh requests while the browser tab is hidden.
-      if (document.visibilityState !== 'visible') return;
+    // // Refresh the user's sign-in status when the browser tab becomes active.
+    // function fnHandleVisibilityOrFocus() {
+    //   // Ignore refresh requests while the browser tab is hidden.
+    //   if (document.visibilityState !== 'visible') return;
   
-      const LNow = Date.now();
-      // Skip repeated refreshes triggered by rapid focus and visibility events.
-      if (LNow - LLastRefreshTime < 2000) return;
-      LLastRefreshTime = LNow;  // Remember when the last authentication check was performed.
+    //   const LNow = Date.now();
+    //   // Skip repeated refreshes triggered by rapid focus and visibility events.
+    //   if (LNow - LLastRefreshTime < 2000) return;
+    //   LLastRefreshTime = LNow;  // Remember when the last authentication check was performed.
   
-      fnCheckAuthStatus();
-    }
+    //   fnCheckAuthStatus();
+    // }
   
-    // Monitor browser focus changes to keep the user's sign-in status up to date.
-    window.addEventListener('focus', fnHandleVisibilityOrFocus);
-    document.addEventListener('visibilitychange', fnHandleVisibilityOrFocus);
+    // // Monitor browser focus changes to keep the user's sign-in status up to date.
+    // window.addEventListener('focus', fnHandleVisibilityOrFocus);
+    // document.addEventListener('visibilitychange', fnHandleVisibilityOrFocus);
   
-    // Clean up event listeners when the provider is removed.
-    return () => {
-      window.removeEventListener('focus', fnHandleVisibilityOrFocus);
-      document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
-    };
+    // // Clean up event listeners when the provider is removed.
+    // return () => {
+    //   window.removeEventListener('focus', fnHandleVisibilityOrFocus);
+    //   document.removeEventListener('visibilitychange', fnHandleVisibilityOrFocus);
+    // };
   }, []);
 
   return (
