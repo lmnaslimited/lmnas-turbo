@@ -83,14 +83,18 @@ export default function Navbar({
     }
   }, [])
 
-  const userId = posthog.get_distinct_id();
+  // get the current user's id from posthog
+  const LUserId = posthog.get_distinct_id();
 
-  const loginAndSignUpConfig = idNavbar.loginAndSignUp;
+  // get the login in and sign up configuration
+  const LdLoginAndSignUpConfig = idNavbar.loginAndSignUp;
 
-  const shouldShowButton =
-    loginAndSignUpConfig?.OnlyInTestingPhase === false ||
-    loginAndSignUpConfig?.TestUserAllowed?.some(
-      (user) => user.label === userId
+  // if its in test phase only show to specific tester
+  // if its not in test phase, show to all
+  const LShouldShowButton =
+    LdLoginAndSignUpConfig?.OnlyInTestingPhase === false ||
+    LdLoginAndSignUpConfig?.TestUserAllowed?.some(
+      (user) => user.label === LUserId
     );
 
   return (
@@ -360,7 +364,7 @@ export default function Navbar({
               </>
             ) : (
               /* Dont show Login Button when user is on login page */
-        !LbHideLoginButton && shouldShowButton  && (
+        !LbHideLoginButton && LShouldShowButton  && (
               <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"
