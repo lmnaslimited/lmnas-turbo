@@ -470,7 +470,7 @@ function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolea
  */
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
     const {email, name, recaptchaToken, createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
       campaign,
       itemName,
