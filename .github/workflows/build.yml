@@ -29,6 +29,8 @@ jobs:
           PREVIEW_SECRET: ${{ secrets.PREVIEW_SECRET }}
           NEXT_PUBLIC_POSTHOG_KEY: ${{ secrets.NEXT_PUBLIC_POSTHOG_KEY }}
           NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
+          NEXT_PUBLIC_FRAPPE_URL: ${{ secrets.NEXT_PUBLIC_FRAPPE_URL }}
+          NEXT_PUBLIC_FRAPPE_DOMAIN: ${{ secrets.NEXT_PUBLIC_FRAPPE_DOMAIN }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
