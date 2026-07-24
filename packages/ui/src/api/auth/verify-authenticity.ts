@@ -5,9 +5,7 @@ export async function verifyAuthenticity(request: NextRequest) {
   // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
-    console.log("port", request.headers.get('x-forwarded-proto'))
-    console.log("host", request.headers.get('x-forwarded-host'))
-    console.log("hhost", request.headers.get('host'))
+  
   const LdsidCookie = request.cookies.get('sid');
   // Reject unauthenticated requests before making any backend calls.
   if (!LdsidCookie || !LdsidCookie.value) {
