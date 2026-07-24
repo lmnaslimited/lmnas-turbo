@@ -1,11 +1,23 @@
 import { NextResponse } from 'next/server';
 
 export async function loginViaGoogle(request:Request) {
+
+  // Determine the current application url so users can be redirected back after authentication.
+  const LProtocol =
+      request.headers.get('x-forwarded-proto') ||
+      new URL(request.url).protocol.replace(':', '');
+
+    const LHost =
+      request.headers.get('x-forwarded-host') ||
+      request.headers.get('host');
+
+    const LOrigin = `${LProtocol}://${LHost}`;
+    const LRedirectToUrl = `${LOrigin}/`;
+
   try {
     const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
     // Determine the current application origin so users can be redirected back after authentication.
-    const { origin } = new URL(request.url); 
-    const LRedirectToUrl = `${origin}/`;
+    // const { origin } = new URL(request.url); 
     
     // Request a Google OAuth authorization URL from Frappe.
     // Frappe generates the required OAuth state and validates the post-login redirect.
@@ -20,10 +32,10 @@ export async function loginViaGoogle(request:Request) {
     }
     
     // Fall back to a controlled error when an authorization URL cannot be generated.
-    return NextResponse.redirect(`${origin}?error=google_auth_failed`);
+    return NextResponse.redirect(`${LRedirectToUrl}?error=google_auth_failed`);
   } catch (idError) {
     // Handle unexpected failures while communicating with the backend.
     console.error("OAuth generation failure:", idError);
-    return NextResponse.redirect(`${origin}?error=connection_error`);
+    return NextResponse.redirect(`${LRedirectToUrl}?error=connection_error`);
   }
 }
