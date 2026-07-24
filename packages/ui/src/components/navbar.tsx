@@ -23,21 +23,29 @@ import {
   navigationMenuTriggerStyle,
 } from "@repo/ui/components/ui/navigation-menu"
 import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
+import { useAuth } from "./auth/authContext"
+import { ProfileDropdown } from "./profile"
+import { useParams, usePathname } from 'next/navigation';
+import posthog from "posthog-js"
 
 export default function Navbar({
   idNavbar,
 }: {
   idNavbar: TnavbarTarget
 }): React.ReactElement {
-  // commented because Language is moved to footer
-  // const [Language, fnSetLanguage] = React.useState("en")
+
+  const { locale } = useParams<{ locale: string }>();  //Read the locale (en / de)
+  const LPathname = usePathname(); // Read the current path
+  // Checks if the route matches or ends with '/login' to hide login button
+  const LbHideLoginButton = LPathname?.endsWith('/login');
+
+  const { user, loading, logout } = useAuth();
+  
   const [LMobileProductsOpen, fnSetMobileProductsOpen] = React.useState(false)
   const [LMobileIndustriesOpen, fnSetMobileIndustriesOpen] =
     React.useState(false)
   const [LMobileModeDropdownOpen, fnSetMobileModeDropdownOpen] =
     React.useState(false)
-  // const router = useRouter()
-  // const pathname = usePathname()
   const [LDesktopMenuOpen, fnSetDesktopMenuOpen] = React.useState<
     string | undefined
   >(undefined)
@@ -74,6 +82,20 @@ export default function Navbar({
       window.removeEventListener("touchstart", fnHandleClickOutside)
     }
   }, [])
+
+  // get the current user's id from posthog
+  const LUserId = posthog.get_distinct_id();
+
+  // get the login in and sign up configuration
+  const LdLoginAndSignUpConfig = idNavbar.loginAndSignUp;
+
+  // if its in test phase only show to specific tester
+  // if its not in test phase, show to all
+  const LShouldShowButton =
+    LdLoginAndSignUpConfig?.OnlyInTestingPhase === false ||
+    LdLoginAndSignUpConfig?.TestUserAllowed?.some(
+      (user) => user.label === LUserId
+    );
 
   return (
     <>
@@ -282,7 +304,7 @@ export default function Navbar({
               </NavigationMenu>
             </div>
           </div>
-
+          <div className="lg:flex lg:items-center lg:gap-4">
           {/* Right side controls ex: contact button */}
           <div className="hidden lg:flex lg:items-center lg:gap-4">
 
@@ -292,7 +314,7 @@ export default function Navbar({
               .map((idItem, iIndex) => (
                 <Link key={iIndex} href={idItem.href!}>
                   <Button
-                    variant="default"
+                    variant={idItem.variant || "default"}
                     className="rounded-lg h-10 flex items-center"
                   >
                     {idItem.label}
@@ -301,9 +323,60 @@ export default function Navbar({
               ))}
               
           </div>
+          {/* Login /sign up Button
+           */}
+          <div className="flex items-center justify-center gap-2">
+              {loading ? (
+                /*Sleek inline spinning ring template while validating cookie states */
+                    <svg
+                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-primary"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                        ></circle>
+                        <path
+                            className="opacity-75"
+                            fill="currentColor"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                    </svg>
+               
+        ) :user ? (
+          <>
+          <Link href={idNavbar.navbar.profileSettings?.[2]?.href!}>
+                <Button 
+                  variant="default"
+                  className="rounded-lg h-10 flex items-center"
+                >
+                  { idNavbar.navbar.profileSettings?.[2]?.label ?? "Dashboard" }
+                </Button>
+          </Link>
 
-
-
+              <ProfileDropdown user={user} logout={logout} data={idNavbar.navbar.profileSettings?.[1]?.label || "Sign Out"} />
+              </>
+            ) : (
+              /* Dont show Login Button when user is on login page */
+        !LbHideLoginButton && LShouldShowButton  && (
+              <Link href={`/${locale}/login`}>
+                <Button 
+                  variant="default"
+                  className="rounded-lg h-10 flex items-center"
+                >
+                { idNavbar.navbar.profileSettings?.[0]?.label ?? "Login" }
+                </Button>
+              </Link>
+        )
+            )}
+            </div>
+          </div>
         </div>
       </header>
 

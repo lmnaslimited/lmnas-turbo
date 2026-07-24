@@ -21,6 +21,7 @@ import {
   TblogPageSource,
   TblogArticleSource,
   TbannerSource,
+  TLoginSource,
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
@@ -204,6 +205,63 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
       description
       icon
     }
+  }
+}`;
+  }
+
+  // version query for navbar, included profileSettings
+  getVersionQuery(): string {
+    return `
+  query Navbar($locale: I18NLocaleCode, $status: PublicationStatus) {
+  ${this.contentType}(locale: $locale, status: $status) {
+    locale
+    logo {
+      label
+      href
+    }
+    menu {
+      label
+      href
+      icon
+    }
+    product {
+      label
+      href
+      description
+      icon
+    }
+    accelerator {
+      label
+      href
+      description
+      icon
+    }
+    industry {
+      label
+      href
+      description
+      icon
+    }
+    more {
+      label
+      href
+    }
+    language {
+      label
+      description
+      icon
+    }
+    profileSettings {
+      label
+      href
+    }
+  }
+  loginAndSignUp(status: $status, locale: $locale) {
+    TestUserAllowed {
+      label
+      value
+    }
+    OnlyInTestingPhase
   }
 }`;
   }
@@ -3159,6 +3217,57 @@ export class clQueryBanner extends clQuery<TbannerSource>{
     `}
 }
 
+// graphql query for Login and Sign Up data
+export class clQueryLogin extends clQuery<TLoginSource> {
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+ query LoginAndSignUp($status: PublicationStatus, $locale: I18NLocaleCode) {
+   ${this.contentType}(status: $status, locale: $locale) {
+    usernamePlaceholder
+    usernameLabel
+    signupTitle
+    signupSuccessMessage
+    signupSubtitle
+    signupSubmitButton
+    signupFooterText
+    signupFooterAction
+    signupSubmittingButton
+    passwordPlaceholder
+    passwordLabel
+    loginTitle
+    loginSubtitle
+    loginSubmittingButton
+    loginSubmitButton
+    loginFooterText
+    loginFooterAction
+    emailPlaceholder
+    emailLabel
+    dividerText
+    errDefaultFallback
+    googleButtonText
+    resetTitle
+    resetSubtitle
+    resetSubmitButton
+    resestSubmittingButton
+    resetFooterText
+    resetFooterAction
+    resetPwdSuccessMessage
+    resetLabel
+    signupSuccessTitle
+    resetSuccessTitle
+    redirectButton{
+      label
+      href
+      icon
+    }
+  }
+}`;
+  }
+}
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
@@ -3183,7 +3292,8 @@ export class clQueryFactory {
     subtitles: clQuerySubtitles,
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
-    bannerSetting: clQueryBanner
+    bannerSetting: clQueryBanner,
+    loginAndSignUp: clQueryLogin
     // Add more mappings here
   };
 
