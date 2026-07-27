@@ -31,6 +31,8 @@ jobs:
           NEXT_PUBLIC_POSTHOG_HOST: ${{ secrets.NEXT_PUBLIC_POSTHOG_HOST }}
           NEXT_PUBLIC_FRAPPE_URL: ${{ secrets.NEXT_PUBLIC_FRAPPE_URL }}
           NEXT_PUBLIC_FRAPPE_DOMAIN: ${{ secrets.NEXT_PUBLIC_FRAPPE_DOMAIN }}
+          LENSCLOUD_TRUSTED_LOGIN_SECRET: ${{ secrets.LENSCLOUD_TRUSTED_LOGIN_SECRET }}
+          LMNAS_SESSION_SECRET: ${{ secrets.LMNAS_SESSION_SECRET }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
