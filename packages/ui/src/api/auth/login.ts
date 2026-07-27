@@ -1,104 +1,197 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { setLmnasSession } from './session';
 
-export async function login(request: Request) {
+function requiredUrl(): string {
+  const LValue = process.env.NEXT_PUBLIC_FRAPPE_URL;
 
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-  const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
+  if (!LValue) {
+    throw new Error('NEXT_PUBLIC_FRAPPE_URL is not configured');
+  }
+
+  return LValue.replace(/\/+$/, '');
+}
+
+function cookieHeader(setCookies: string[]): string {
+  return setCookies
+    .map((cookie) => cookie.split(';', 1)[0])
+    .filter(Boolean)
+    .join('; ');
+}
+
+export async function login(request: NextRequest) {
+  const LLensCloudUrl = requiredUrl();
 
   try {
     const { usr, pwd } = await request.json();
-    // Proxy the login request to Frappe and preserve its authenticated session.
-    const LdFrappeResponse = await fetch(`${LFrappeUrl}/api/method/login`, {
-      method: 'POST',
-      credentials: "include",
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
+
+    if (!usr?.trim() || !pwd) {
+      return NextResponse.json(
+        {
+          error: 'Email and password are required',
+        },
+        {
+          status: 400,
+        },
+      );
+    }
+
+    const LdLoginResponse = await fetch(
+      `${LLensCloudUrl}/api/method/login`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          usr: usr.trim(),
+          pwd,
+        }),
+        cache: 'no-store',
       },
-      body: JSON.stringify({ usr, pwd }),
+    );
+
+
+    if (!LdLoginResponse.ok) {
+      return NextResponse.json(
+        {
+          error: 'Invalid credentials',
+        },
+        {
+          status: 401,
+        },
+      );
+    }
+
+
+    const LTemporaryCookies = cookieHeader(
+      LdLoginResponse.headers.getSetCookie(),
+    );
+
+
+    if (!LTemporaryCookies) {
+      return NextResponse.json(
+        {
+          error: 'LensCloud session missing',
+        },
+        {
+          status: 502,
+        },
+      );
+    }
+
+
+    // Get authenticated user email
+    const LdUserResponse = await fetch(
+      `${LLensCloudUrl}/api/method/frappe.auth.get_logged_user`,
+      {
+        headers: {
+          Cookie: LTemporaryCookies,
+          Accept: 'application/json',
+        },
+        cache: 'no-store',
+      },
+    );
+
+
+    const LdUserData = await LdUserResponse.json();
+
+    const LEmail = LdUserData.message;
+
+
+    if (
+      !LEmail ||
+      LEmail === 'Guest'
+    ) {
+      return NextResponse.json(
+        {
+          error: 'Unable to verify user',
+        },
+        {
+          status: 502,
+        },
+      );
+    }
+
+
+    // Fetch profile information
+    const LdParams = new URLSearchParams({
+      doctype: 'User',
+      filters: JSON.stringify({
+        name: LEmail,
+      }),
+      fieldname: JSON.stringify([
+        'full_name',
+        'user_image',
+      ]),
     });
 
-    if (!LdFrappeResponse.ok) {
-      return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
-    }
 
-    const LdCookies = LdFrappeResponse.headers.getSetCookie(); 
-    let LdSidValue: string = ''; 
-    // Mirror the session lifetime returned by Frappe instead of assuming a fixed expiry.
-    let LdMaxAgeSeconds: number = 612000; // Default to 7 days fallback
+    const LdProfileResponse = await fetch(
+      `${LLensCloudUrl}/api/method/frappe.client.get_value?${LdParams}`,
+      {
+        headers: {
+          Cookie: LTemporaryCookies,
+          Accept: 'application/json',
+        },
+        cache: 'no-store',
+      },
+    );
 
-    const LdFinalResponse = NextResponse.json({ 
-      success: true, 
-      message: "Logged in", 
-      sid: '', 
-      expiresInSeconds: LdMaxAgeSeconds 
+
+    const LdProfileData = await LdProfileResponse.json();
+
+    const LdProfile = LdProfileData.message || {};
+
+
+    // Logout temporary Frappe session
+    await fetch(
+      `${LLensCloudUrl}/api/method/logout`,
+      {
+        method: 'POST',
+        headers: {
+          Cookie: LTemporaryCookies,
+          Accept: 'application/json',
+        },
+        cache: 'no-store',
+      },
+    );
+
+
+    const LdResponse = NextResponse.json({
+      success: true,
+      user: {
+        email: LEmail,
+        name: LdProfile.full_name || LEmail.split('@')[0],
+        picture: LdProfile.user_image || null,
+      },
     });
 
-    // Read the session cookie expiry so all forwarded cookies share the same lifetime.
-    for (const cookie of LdCookies) {
-      if (cookie.trim().startsWith('sid=')) {
-        const LdMaxAgeMatch = cookie.match(/Max-Age=(\d+)/i);
-        if (LdMaxAgeMatch && LdMaxAgeMatch[1]) {
-          LdMaxAgeSeconds = parseInt(LdMaxAgeMatch[1], 10);
-        }
-        break;
-      }
-    }
 
-    // Convert the relative Max-Age into an absolute expiry required by Next.js cookies.
-    const LdAbsoluteExpiryDate = new Date(Date.now() + LdMaxAgeSeconds * 1000);
-
-   // Forward every cookie issued by Frappe to keep the browser session consistent.
-    for (const cookie of LdCookies) {
-      const LdCleanCookie = cookie.trim();
-      if (!LdCleanCookie) continue;
-
-      const LdMainParts = LdCleanCookie.split(';');
-      const LdKeyValuePair = LdMainParts[0];
-      
-      if (LdKeyValuePair) {
-        const [LdKey, LdValue] = LdKeyValuePair.split('=');
-        
-        if (LdKey && LdValue) {
-          const LdTargetKey = LdKey.trim();
-          const LdTargetValue = LdValue.trim();
-          const LdIsHttpOnly = LdTargetKey === 'sid';
-
-          // Keep the session identifier for the API response while storing it as an HttpOnly cookie
-          if (LdTargetKey === 'sid') {
-            LdSidValue = LdTargetValue;
-          }
-
-          // Apply security attributes based on the deployment environment.
-          LdFinalResponse.cookies.set(LdTargetKey, LdTargetValue, {
-            path: '/',
-            httpOnly: LdIsHttpOnly,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-            maxAge: LdMaxAgeSeconds,      // Relative duration in seconds
-            expires: LdAbsoluteExpiryDate, // Absolute expiration timestamp target
-          });
-        }
-      }
-    }
-
-    // Authentication is incomplete if the backend did not issue a session cookie.
-    if (!LdSidValue || LdSidValue === '') {
-      return NextResponse.json({ error: "Session token not provided by backend" }, { status: 401 });
-    }
-
-    // Return the login result while preserving the cookies received from Frappe.
-    return NextResponse.json({ 
-      success: true, 
-      message: "Logged in", 
-      sid: LdSidValue,
-      expiresInSeconds: LdMaxAgeSeconds 
-    }, {
-      headers: LdFinalResponse.headers 
+    setLmnasSession(LdResponse, {
+      email: LEmail,
+      name: LdProfile.full_name || LEmail.split('@')[0],
+      picture: LdProfile.user_image || null,
     });
 
-  } catch (err) {
-    console.error('BFF Login Proxy Failure:', err);
-    return NextResponse.json({ error: "Internal Error" }, { status: 500 });
+
+    return LdResponse;
+
+
+  } catch (error) {
+    console.error(
+      'LMNAS login failure:',
+      error,
+    );
+
+
+    return NextResponse.json(
+      {
+        error: 'Internal authentication error',
+      },
+      {
+        status: 500,
+      },
+    );
   }
 }

@@ -351,14 +351,14 @@ export default function Navbar({
                
         ) :user ? (
           <>
-          <Link href={idNavbar.navbar.profileSettings?.[2]?.href!}>
+          <a href="/api/auth/platform">
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
                   { idNavbar.navbar.profileSettings?.[2]?.label ?? "Dashboard" }
                 </Button>
-          </Link>
+          </a>
 
               <ProfileDropdown user={user} logout={logout} data={idNavbar.navbar.profileSettings?.[1]?.label || "Sign Out"} />
               </>
