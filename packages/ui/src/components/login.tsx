@@ -265,7 +265,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         </form>
 
         {/* Social Authentication Layer */}
-        {Lmode !== 'forgot' && (
+        {/* {Lmode !== 'forgot' && (
           <div className="mt-5 flex flex-col gap-4">
             <div className="relative flex items-center justify-center my-1 text-xs uppercase">
               <div className="absolute inset-0 flex items-center">
@@ -290,7 +290,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
               {idLogin.loginAndSignUp.googleButtonText}
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Global Footer Sub-navigation */}
         <div className="mt-6 text-center text-sm text-muted-foreground border-t border-border pt-4">
