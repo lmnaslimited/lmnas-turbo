@@ -12,7 +12,7 @@ export async function loginViaGoogle(request:Request) {
       request.headers.get('host');
 
     const LOrigin = `${LProtocol}://${LHost}`;
-    const LRedirectToUrl = `${LOrigin}/`;
+    const LRedirectToUrl = `${LOrigin}/api/auth/google/callback`;
 
   try {
     const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
@@ -32,10 +32,10 @@ export async function loginViaGoogle(request:Request) {
     }
     
     // Fall back to a controlled error when an authorization URL cannot be generated.
-    return NextResponse.redirect(`${LRedirectToUrl}?error=google_auth_failed`);
+    return NextResponse.redirect(`${LOrigin}/?error=google_auth_failed`);
   } catch (idError) {
     // Handle unexpected failures while communicating with the backend.
     console.error("OAuth generation failure:", idError);
-    return NextResponse.redirect(`${LRedirectToUrl}?error=connection_error`);
+    return NextResponse.redirect(`${LOrigin}/?error=connection_error`);
   }
 }
