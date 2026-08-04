@@ -11,6 +11,13 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     email: string;
     name: string;
     recaptchaToken: string;
+
+    companyName?: string;
+    companyDomain?: string;
+    companyWebsite?: string;
+    employeeCount?: string;
+
+    interestReason?: string;
     createOpportunity?: boolean;
     sendEmail?: boolean;
     emailTemplate?: string;
@@ -218,12 +225,20 @@ async function fnCreateLead(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign: string,
-  iSource: string
+  iSource: string,
+  iCompanyName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string
 ) {
   const LdResponse = await fetch(`${iBaseUrl}/api/resource/Lead`, {
     method: "POST",
     headers: idHeaders,
-    body: JSON.stringify({ email_id: iEmail, first_name: iName, campaign_name: iCampaign, source: iSource }),
+    body: JSON.stringify({
+       email_id: iEmail, first_name: iName, campaign_name: iCampaign, source: iSource,
+       company_name: iCompanyName,
+       website: iCompanyWebsite,
+       no_of_employees: iEmployeeCount
+      }),
   })
 
   if (!LdResponse.ok) {
@@ -252,7 +267,10 @@ async function fnGetOrCreateLead(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign:string,
-  iSource: string
+  iSource: string,
+  iCompanyName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string
 ) {
   const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders, iCampaign)
 
@@ -260,7 +278,7 @@ async function fnGetOrCreateLead(
     return { lead: LdExistingLead, created: false }
   }
 
-  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource)
+  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource, iCompanyName, iCompanyWebsite, iEmployeeCount)
   return { lead: LdNewLead, created: true }
 }
 
@@ -279,7 +297,30 @@ async function fnCreateOpportunity(
   iSource: string,
   iCampaign: string,
   iItemName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string,
+  iCompanyDomain: string,
+  iInterestReason: string,
+  iCompanyName: string
 ) {
+  const LComment = `
+              Beta Access Request Details:
+              
+              Company Name:
+              ${iCompanyName || "-"},
+              
+              Company Domain:
+              ${iCompanyDomain || "-"},
+              
+              Company Website:
+              ${iCompanyWebsite || "-"},
+              
+              Employee Count:
+              ${iEmployeeCount || "-"},
+              
+              Why interested:
+              ${iInterestReason || "-"}
+              `;
   const LdResponse = await fetch(
       `${iBaseUrl}/api/resource/Opportunity`,
       {
@@ -293,7 +334,8 @@ async function fnCreateOpportunity(
               transaction_date: new Date()
                   .toISOString()
                   .split("T")[0],
-
+              website: iCompanyWebsite,
+              no_of_employees: iEmployeeCount,
               items: [
                   {
                       item_code: iItemName,
@@ -302,6 +344,11 @@ async function fnCreateOpportunity(
                       rate:0
                   },
               ],
+              notes: [
+                {
+                  note: LComment
+                }
+              ]
           }),
       },
   )
@@ -315,6 +362,36 @@ async function fnCreateOpportunity(
   const LdResult = await LdResponse.json()
 
   return LdResult.data
+}
+
+async function fnCreateOpportunityComment(
+  iOpportunityName: string,
+  iComment: string,
+  iBaseUrl: string,
+  idHeaders: Record<string, string>
+) {
+
+  const LdResponse = await fetch(
+      `${iBaseUrl}/api/resource/Comment`,
+      {
+          method: "POST",
+          headers: idHeaders,
+          body: JSON.stringify({
+              comment_type: "Comment",
+              reference_doctype: "Opportunity",
+              reference_name: iOpportunityName,
+              content: iComment,
+          }),
+      }
+  );
+
+  if (!LdResponse.ok) {
+      throw new Error(
+          `Opportunity comment creation failed: ${LdResponse.status}`
+      );
+  }
+
+  return await LdResponse.json();
 }
 
 /**
@@ -470,8 +547,13 @@ function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolea
  */
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
-    // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-    const {email, name, recaptchaToken, createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
+    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+    const {email, name, recaptchaToken, 
+      companyName,
+      companyDomain,
+      companyWebsite,
+      employeeCount, interestReason,
+      createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
       campaign,
       itemName,
     } = idLeadFormData
@@ -495,7 +577,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
      * Find the Lead by email or create a new Lead when no match
      * is found.
      */
-    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!)
+    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!, companyName!, companyWebsite!, employeeCount!)
 
     /**
    * Find an existing matching Opportunity or create a new one.
@@ -513,8 +595,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
           
             LdOpportunity = LExistingOpportunity
         } else {
-            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,)
-
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!)
             LOpportunityCreated = true
         }
     }

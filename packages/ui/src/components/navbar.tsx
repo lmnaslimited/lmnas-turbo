@@ -83,19 +83,24 @@ export default function Navbar({
     }
   }, [])
 
-  // get the current user's id from posthog
-  const LUserId = posthog.get_distinct_id();
+  // completely changed the controll from starpi to posthog feature flag
+  // to controll the lenscloud beta access for granted user
+  const [LShouldShowButton, setLShouldShowButton] = React.useState(false);
 
-  // get the login in and sign up configuration
-  const LdLoginAndSignUpConfig = idNavbar.loginAndSignUp;
-
-  // if its in test phase only show to specific tester
-  // if its not in test phase, show to all
-  const LShouldShowButton =
-    LdLoginAndSignUpConfig?.OnlyInTestingPhase === false ||
-    LdLoginAndSignUpConfig?.TestUserAllowed?.some(
-      (user) => user.label === LUserId
-    );
+  React.useEffect(() => {
+    const updateAccess = () => {
+      setLShouldShowButton(
+        !!posthog.isFeatureEnabled(
+          "lenscloud-beta-access-granted-user"
+        )
+      );
+    };
+  
+    updateAccess();
+  
+    posthog.onFeatureFlags(updateAccess);
+  
+  }, []);
 
   return (
     <>
