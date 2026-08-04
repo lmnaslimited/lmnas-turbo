@@ -3,13 +3,32 @@ import { useReCaptcha } from "next-recaptcha-v3"
 import { CircleCheckBig, CircleX, Loader2, X, ArrowRight, Building2, Globe, Users, HelpCircle, CheckCircle2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import posthog from "posthog-js";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { validateRecaptcha } from "../api/newsletter/recaptcha";
 import { Input } from "./ui/input";
 import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
 import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
 import { Textarea } from "./ui/textarea";
+
+type BetaFieldType = "text" | "url" | "textarea" | "select";
+
+type BetaFormField = {
+    key: keyof CompanyDetails;
+    type: BetaFieldType;
+    label: string;
+    placeholder?: string;
+    required?: boolean;
+    options?: string[];
+};
+
+type CompanyDetails = {
+    companyName: string;
+    companyDomain: string;
+    companyWebsite: string;
+    employeeCount: string;
+    interestReason: string;
+};
 
 export default function FreeOptIn({ idContent }: Record<string, any>) {
     // Stores the user's email address entered in the opt-in form.
@@ -46,47 +65,58 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
     // Extract the locale value from the route parameters.
     const LLocale = LdParams.locale as string;
 
-    const fnCheckAccess = (iEmail: string): Promise<"approved" | "request"> => {
-        setLAccessStatus("checking");
-        posthog.identify(iEmail, {
-            email: iEmail,
-        });
-        return new Promise((resolve) => {
-            let LHasResolved = false;
-    
-            const evaluateAccess = () => {
-                if (LHasResolved) return;
-                LHasResolved = true;
-               
-                const approved = Boolean(
-                    posthog.isFeatureEnabled("lenscloud-beta-access-granted-user")
-                );
-                const LStatus: "approved" | "request" = approved ? "approved" : "request";
+    const [LHasBetaAccess, setLHasBetaAccess] = useState<boolean | null>(null);
+    const LIsIdentityCheckedRef = useRef(false);
 
-                setLAccessStatus(LStatus);
-                resolve(LStatus);
-            };
+    useEffect(() => {
+        const fnValidateBetaAccess = () => {
+            // Ignore anonymous user evaluation
+            if (!LIsIdentityCheckedRef.current) {
+                return;
+            }
+            const LFlagValue = Boolean(
+                posthog.isFeatureEnabled(
+                    "lenscloud-beta-access-granted-user"
+                )
+            );
     
-            // 2. Declare unsubscribe variable beforehand
-            let unsubscribe: (() => void) | undefined;
+            setLHasBetaAccess(LFlagValue);
+        };
     
-            // 3. Register listener and assign safely
-            unsubscribe = posthog.onFeatureFlags(() => {
-                if (typeof unsubscribe === "function") {
-                    unsubscribe();
-                }
-                evaluateAccess();
+        fnValidateBetaAccess();
+    
+        posthog.onFeatureFlags(fnValidateBetaAccess);
+    
+    }, []);
+
+    useEffect(() => {
+
+        if (LHasBetaAccess === true) {
+    
+            fnSetSuccessMessage({
+                label: LdContent.successExistLabel || "Welcome!",
+                description: LdContent.successExistDescript ||
+                    "Your platform experience has started. Please sign in using 'Get Started for Free' in the top right corner.",
             });
-            
-            // 5. Fallback timeout (2s) to prevent UI hanging
-            setTimeout(() => {
-                if (typeof unsubscribe === "function") {
-                    unsubscribe();
-                }
-                evaluateAccess();
-            }, 2000);
-        });
-    };
+    
+            fnSetIsSuccess(true);
+    
+            setLAccessStatus("initial");
+        }
+    
+    
+        if (LHasBetaAccess === false) {
+    
+            setLAccessStatus("request");
+    
+            posthog.updateEarlyAccessFeatureEnrollment(
+                "new-pricing-beta",
+                true
+            );
+        }
+    
+    
+    }, [LHasBetaAccess]);
 
     // Handles the beta opt-in process, including email validation,
     // reCAPTCHA verification, PostHog tracking.
@@ -123,27 +153,24 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
                 fnSetHasConsent(false)
                 return
             }
- 
-            const LAccessStatus = await fnCheckAccess(LTrimmedEmail);
+            // Start checking
+            setLAccessStatus("checking");
+            setLHasBetaAccess(null);
 
-            if (LAccessStatus === "approved") {
-                console.log("the access status is ", LAccessStatus)
-                fnSetSuccessMessage({
-                    label: "Welcome!",
-                    description:
-                        "Your platform experience has started. Please sign in using 'Get Started for Free' in the top right corner.",
-                });
-                fnSetIsSuccess(true);
-                return;
-            }
-            console.log("The access ststus", LAccessStatus)
-            // Only request users continue here
-            posthog.updateEarlyAccessFeatureEnrollment(
-                "new-pricing-beta",
-                true
-            );
 
-            setLAccessStatus("request");
+            // Switch identity
+            posthog.identify(LTrimmedEmail, {
+                email: LTrimmedEmail,
+            });
+
+
+            posthog.setPersonPropertiesForFlags({
+                email: LTrimmedEmail,
+            });
+
+            LIsIdentityCheckedRef.current = true;
+            // Fetch latest flag value
+            posthog.reloadFeatureFlags();
 
         } catch (error) {
             console.error(error);
@@ -186,16 +213,88 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
         });
 
         if (LdLeadResult.message === "success") {
-            fnSetSuccessMessage({ label: "Spot Secured!", description: "Thank you for opting in. We will review your application and reach out to you shortly." })
+            fnSetSuccessMessage({ label: LdContent.successNewLabel || "Spot Secured!", description: LdContent.successNewDescrip || "Thank you for opting in. We will review your application and reach out to you shortly." })
             fnSetIsSuccess(true);
         }
         fnSetIsSubmitting(false)
+        setLCompanyDetails({
+            companyName: "",
+            companyDomain: "",
+            companyWebsite: "",
+            employeeCount: "",
+            interestReason: "",
+        })
     };
 
     const LCurrentLocale = (LLocale && LLocale in idContent) ? LLocale : 'en';
     // Fallback to English if the requested locale doesn't exist
     const LdContent = idContent[LCurrentLocale] || idContent.en;
 
+    const renderField = (field: BetaFormField) => {
+        const value = LCompanyDetails[field.key];
+    
+        const updateValue = (value: string) => {
+            setLCompanyDetails({
+                ...LCompanyDetails,
+                [field.key]: value,
+            });
+        };
+    
+    
+        switch (field.type) {
+    
+            case "text":
+            case "url":
+                return (
+                    <Input
+                        type={field.type}
+                        placeholder={field.placeholder}
+                        value={value}
+                        required={field.required}
+                        onChange={(e) => updateValue(e.target.value)}
+                        className="h-10 rounded-lg text-sm bg-muted"
+                    />
+                );
+    
+    
+            case "textarea":
+                return (
+                    <Textarea
+                        placeholder={field.placeholder}
+                        value={value}
+                        required={field.required}
+                        rows={3}
+                        onChange={(e) => updateValue(e.target.value)}
+                        className="rounded-lg text-sm bg-muted resize-none"
+                    />
+                );
+    
+    
+            case "select":
+                return (
+                    <select
+                        value={value}
+                        required={field.required}
+                        onChange={(e) => updateValue(e.target.value)}
+                        className="flex h-10 w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm"
+                    >
+                        <option value="">
+                            {field.placeholder}
+                        </option>
+    
+                        {field.options?.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
+                );
+    
+    
+            default:
+                return null;
+        }
+    };
     return (
         <section className="relative  flex items-center overflow-hidden border-b border-border/40 bg-background py-20 md:py-24">
             {/* Background Glow Overlay */}
@@ -203,19 +302,19 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
             <div className="pointer-events-none absolute -bottom-40 -left-20 h-[500px] w-[500px] rounded-full bg-primary/5 blur-[120px]" />
 
             <div className="relative w-full px-4 md:px-8 mx-auto max-w-7xl">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
 
                     {/* Left Column - Dynamic Form View */}
-                    <div className="lg:col-span-7 space-y-8">
-                        <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-primary backdrop-blur-sm shadow-xs">
+                    <div className="lg:col-span-6 space-y-8">
+                        {/* <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-primary backdrop-blur-sm shadow-xs">
                             <span className="relative flex h-2 w-2">
                                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                                 <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                             </span>
                             <span>{LdContent.earlyAccess}</span>
-                        </div>
+                        </div> */}
 
-                        <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl leading-[1.1]">
+                        <h2 className="text-4xl font-bold text-foreground md:text-5xl lg:text-5xl leading-1">
                             {LdContent.titleMain}{" "}
                             <span className="text-primary">
                                 {LdContent.titleAccent}
@@ -256,7 +355,15 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
                                 </div>
                             ) : (
                                 /* Interactive Form Section */
-                                <div className="rounded-2xl  p-6 sm:p-8 space-y-6">
+                                <div className="space-y-6">
+                                    {LAccessStatus === "checking" && (
+                                        <div className="flex items-center justify-center py-6">
+                                            <Loader2 className="h-5 w-5 animate-spin" />
+                                            <span className="ml-2">
+                                                {LdContent.loadingText || "Checking your beta access..."}
+                                            </span>
+                                        </div>
+                                    )}
                                     {LAccessStatus === "initial" && (
                                         <form
                                             onSubmit={async (e) => {
@@ -278,18 +385,18 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
                                                     placeholder={LdContent.placeholderEmail || "name@company.com"}
                                                     value={Email}
                                                     onChange={(e) => fnSetEmail(e.target.value)}
-                                                    className="h-12 rounded-xl border border-primary bg-background/50 px-4 text-base text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
+                                                    className="h-14 rounded-xl border border-primary bg-muted px-4 text-base text-foreground transition-all duration-200 placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 focus:bg-background"
                                                 />
                                             </div>
 
-                                            <div className="flex items-start gap-3 py-1">
+                                            <div className="flex items-center gap-3 py-1">
                                                 <input
                                                     id="terms-consent"
                                                     type="checkbox"
                                                     required
                                                     checked={LHasConsent}
                                                     onChange={(e) => fnSetHasConsent(e.target.checked)}
-                                                    className="mt-1 h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+                                                    className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
                                                 />
                                                 <label
                                                     htmlFor="terms-consent"
@@ -333,98 +440,30 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
                                             className="space-y-5 animate-in fade-in duration-300"
                                         >
                                             <div className="border-b border-border pb-3">
-                                                <h3 className="text-lg font-semibold text-foreground">Verification Required</h3>
-                                                <p className="text-xs text-muted-foreground mt-0.5">
-                                                    Please provide additional details so we can verify and approve your access request.
+                                                <h3 className="text-lg font-semibold text-foreground"> {LdContent.betaVerification.title || "Verification Required" }</h3>
+                                                <p className="text-sm text-muted-foreground mt-1"> {LdContent.betaVerification.description ||
+                                                    "Please provide additional details so we can verify and approve your access request." }
                                                 </p>
                                             </div>
 
                                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-xs font-medium text-muted-foreground">Company Name</Label>
-                                                    <Input
-                                                        placeholder="Acme Corp"
-                                                        value={LCompanyDetails.companyName}
-                                                        onChange={(e) =>
-                                                            setLCompanyDetails({
-                                                                ...LCompanyDetails,
-                                                                companyName: e.target.value,
-                                                            })
-                                                        }
-                                                        className="h-10 rounded-lg text-sm bg-background/50 focus:bg-background"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-xs font-medium text-muted-foreground">Company Domain</Label>
-                                                    <Input
-                                                        placeholder="acme.com"
-                                                        value={LCompanyDetails.companyDomain}
-                                                        onChange={(e) =>
-                                                            setLCompanyDetails({
-                                                                ...LCompanyDetails,
-                                                                companyDomain: e.target.value,
-                                                            })
-                                                        }
-                                                        className="h-10 rounded-lg text-sm bg-background/50 focus:bg-background"
-                                                    />
-                                                </div>
-
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-xs font-medium text-primary">Website</Label>
-                                                    <Input
-                                                        placeholder="https://acme.com"
-                                                        value={LCompanyDetails.companyWebsite}
-                                                        onChange={(e) =>
-                                                            setLCompanyDetails({
-                                                                ...LCompanyDetails,
-                                                                companyWebsite: e.target.value,
-                                                            })
-                                                        }
-                                                        className="h-10 rounded-lg text-sm bg-background/50 focus:bg-background"
-                                                    />
-                                                </div>
-
-                                                {/* Employee Count Dropdown */}
-                                                <div className="space-y-1.5">
-                                                    <Label className="text-xs font-medium text-primary">Employee Count</Label>
-                                                    <select
-                                                        value={LCompanyDetails.employeeCount}
-                                                        onChange={(e) =>
-                                                            setLCompanyDetails({
-                                                                ...LCompanyDetails,
-                                                                employeeCount: e.target.value,
-                                                            })
-                                                        }
-                                                        className="flex h-10 w-full rounded-lg border border-input bg-background/50 px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary focus:bg-background transition-all"
-                                                    >
-                                                        <option value="" disabled>Select range...</option>
-                                                        <option value="1-10">1-10</option>
-                                                        <option value="11-50">11-50</option>
-                                                        <option value="51-200">51-200</option>
-                                                        <option value="201-500">201-500</option>
-                                                        <option value="501-1000">501-1000</option>
-                                                        <option value="1000+">1000+</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div className="space-y-1.5">
-                                                <Label className="text-xs font-medium text-muted-foreground">Why are you interested?</Label>
-                                                <Textarea
-                                                    placeholder="Tell us about your use case..."
-                                                    rows={3}
-                                                    value={LCompanyDetails.interestReason}
-                                                    onChange={(e) =>
-                                                        setLCompanyDetails({
-                                                            ...LCompanyDetails,
-                                                            interestReason: e.target.value,
-                                                        })
+                                            {LdContent.betaVerification.fields.map((field: BetaFormField) => (
+                                                <div
+                                                    key={field.key}
+                                                    className={
+                                                        field.type === "textarea"
+                                                            ? "sm:col-span-2 space-y-1.5"
+                                                            : "space-y-1.5"
                                                     }
-                                                    className="rounded-lg text-sm bg-background/50 focus:bg-background resize-none"
-                                                />
-                                            </div>
+                                                >
+                                                    <Label>
+                                                        {field.label}
+                                                    </Label>
 
+                                                    {renderField(field)}
+                                                </div>
+                                            ))}
+                                            </div>
                                             <button
                                                 type="submit"
                                                 disabled={LIsSubmitting}
@@ -433,7 +472,7 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
                                                 {LIsSubmitting ? (
                                                     <Loader2 className="h-4 w-4 animate-spin" />
                                                 ) : (
-                                                    <span>Submit Verification Request</span>
+                                                    <span>{ LdContent.betaVerification.submitButton || "Submit Verification Request"}</span>
                                                 )}
                                             </button>
                                         </form>
@@ -465,7 +504,7 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
 
                     {/* Right Column - Pricing Card */}
                     <div className="lg:col-span-5 w-full max-w-md mx-auto">
-                        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/80 shadow-2xl backdrop-blur-xl transition-all duration-300 hover:shadow-primary/5">
+                        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/80 transition-all duration-300 hover:shadow-primary/5">
                             <div className="bg-primary py-2.5 text-center">
                                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground">
                                     {LdContent.ribbonText}
@@ -557,3 +596,4 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
         </section>
     );
 }
+
