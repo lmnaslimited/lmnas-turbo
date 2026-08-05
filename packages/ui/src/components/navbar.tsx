@@ -26,7 +26,6 @@ import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
 import { useParams, usePathname } from 'next/navigation';
-import posthog from "posthog-js"
 
 export default function Navbar({
   idNavbar,
@@ -83,25 +82,30 @@ export default function Navbar({
     }
   }, [])
 
-  // completely changed the controll from starpi to posthog feature flag
-  // to controll the lenscloud beta access for granted user
-  const [LShouldShowButton, setLShouldShowButton] = React.useState(false);
-
+  function fnGetCookie(iName: string): string | null {
+    if (typeof document === "undefined") return null
+    const LMatch = document.cookie.match(new RegExp("(^| )" + iName + "=([^;]+)"))
+    const LValue = LMatch?.[2]
+  return LValue ? decodeURIComponent(LValue) : null
+  }
+  
+ const [LIsApproved, fnSetIsApproved] = React.useState(false)
   React.useEffect(() => {
-    const updateAccess = () => {
-      setLShouldShowButton(
-        !!posthog.isFeatureEnabled(
-          "lenscloud-beta-access-granted-user"
-        )
-      );
-    };
-  
-    updateAccess();
-  
-    posthog.onFeatureFlags(updateAccess);
-  
-  }, []);
+    // 1. Check permanent local storage on initial page load / refresh
+    const fnCheckAccess = () => {
+      const LStoredAccess = fnGetCookie("lenscloud_user_approved")
+      fnSetIsApproved(LStoredAccess === "true")
+    }
 
+    fnCheckAccess()
+
+    // 2. Listen for instant updates when verified in Pricing component
+    window.addEventListener("user_access_updated", fnCheckAccess)
+
+    return () => {
+      window.removeEventListener("user_access_updated", fnCheckAccess)
+    }
+  }, [])
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full bg-background")}>
@@ -369,7 +373,7 @@ export default function Navbar({
               </>
             ) : (
               /* Dont show Login Button when user is on login page */
-        !LbHideLoginButton && LShouldShowButton  && (
+        !LbHideLoginButton && LIsApproved  && (
               <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"

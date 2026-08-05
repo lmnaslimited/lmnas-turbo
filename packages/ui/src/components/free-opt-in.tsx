@@ -10,6 +10,7 @@ import { Label } from "@radix-ui/react-label";
 import Link from "next/link";
 import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
 import { Textarea } from "./ui/textarea";
+import { fnCheckUserApproval } from "../api/crm/check-user-approval";
 
 type BetaFieldType = "text" | "url" | "textarea" | "select";
 
@@ -65,59 +66,7 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
     // Extract the locale value from the route parameters.
     const LLocale = LdParams.locale as string;
 
-    const [LHasBetaAccess, setLHasBetaAccess] = useState<boolean | null>(null);
-    const LIsIdentityCheckedRef = useRef(false);
-
-    useEffect(() => {
-        const fnValidateBetaAccess = () => {
-            // Ignore anonymous user evaluation
-            if (!LIsIdentityCheckedRef.current) {
-                return;
-            }
-            const LFlagValue = Boolean(
-                posthog.isFeatureEnabled(
-                    "lenscloud-beta-access-granted-user"
-                )
-            );
-    
-            setLHasBetaAccess(LFlagValue);
-        };
-    
-        fnValidateBetaAccess();
-    
-        posthog.onFeatureFlags(fnValidateBetaAccess);
-    
-    }, []);
-
-    useEffect(() => {
-
-        if (LHasBetaAccess === true) {
-    
-            fnSetSuccessMessage({
-                label: LdContent.successExistLabel || "Welcome!",
-                description: LdContent.successExistDescript ||
-                    "Your platform experience has started. Please sign in using 'Get Started for Free' in the top right corner.",
-            });
-    
-            fnSetIsSuccess(true);
-    
-            setLAccessStatus("initial");
-        }
-    
-    
-        if (LHasBetaAccess === false) {
-    
-            setLAccessStatus("request");
-    
-            posthog.updateEarlyAccessFeatureEnrollment(
-                "new-pricing-beta",
-                true
-            );
-        }
-    
-    
-    }, [LHasBetaAccess]);
-
+   
     // Handles the beta opt-in process, including email validation,
     // reCAPTCHA verification, PostHog tracking.
     const fnHandleOptIn = async () => {
@@ -155,23 +104,41 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
             }
             // Start checking
             setLAccessStatus("checking");
-            setLHasBetaAccess(null);
-
-
+           
             // Switch identity
             posthog.identify(LTrimmedEmail, {
                 email: LTrimmedEmail,
             });
 
+            // Check approval against CRM as source of truth
+            const LApprovalResult = await fnCheckUserApproval(LTrimmedEmail)
 
-            posthog.setPersonPropertiesForFlags({
-                email: LTrimmedEmail,
-            });
+            if (LApprovalResult.approved) {
+                // Notify Navbar instantly without page reload
+                window.dispatchEvent(new Event("user_access_updated"));
 
-            LIsIdentityCheckedRef.current = true;
-            // Fetch latest flag value
-            posthog.reloadFeatureFlags();
-
+                fnSetSuccessMessage({
+                    label: LdContent.successExistLabel || "Welcome Back!",
+                    description: LdContent.successExistDescript || "Your access is active. You can sign in using the top-right navbar button.",
+                })
+                fnSetIsSuccess(true)
+                setLAccessStatus("initial")
+            } else if (LApprovalResult.reason === "NOT_QUALIFIED") {
+                fnSetSuccessMessage({
+                    label: "Approval is in Review!",
+                    description: "Your access is in review. we will email you once it has been approved",
+                })
+                fnSetIsSuccess(true)
+                setLAccessStatus("initial")
+            } else {
+                // LEAD_NOT_FOUND -> Show verification request form
+                setLAccessStatus("request")
+                posthog.updateEarlyAccessFeatureEnrollment(
+                    "new-pricing-beta",
+                    true
+                );
+            }
+    
         } catch (error) {
             console.error(error);
         } finally {
