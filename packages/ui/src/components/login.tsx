@@ -1,19 +1,30 @@
 'use client';
 
 import React, { useState } from 'react';
-import { AlertCircle, CheckCircle2, Eye, EyeOff } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Eye, EyeOff, Loader2, ArrowRight } from 'lucide-react';
 import { Tbutton, TLoginTarget } from '@repo/middleware/types';
 import { Button } from '@repo/ui/components/ui/button';
 import Link from 'next/link';
 import { getIconComponent } from '@repo/ui/lib/icon';
 import { useReCaptcha } from "next-recaptcha-v3"
 import { validateRecaptcha } from '@repo/ui/api/newsletter/recaptcha';
+import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
+import { fnCheckUserApproval } from "../api/crm/check-user-approval";
+import { Textarea } from "./ui/textarea";
+import posthog from "posthog-js";
+import { useParams } from 'next/navigation';
+import { Input } from './ui/input';
+
 
 type FormMode = 'login' | 'signup' | 'forgot';
+type AccessStage = 'verify_email' | 'approved_form' | 'request_details' | 'review_pending';
 
 // Manages the complete authentication flow, including login, registration,
 // password recovery, and post-action success states.
 export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
+  const [LAccessStage, fnSetAccessStage] = useState<AccessStage>('verify_email');
+  const [LHasConsent, fnSetHasConsent] = useState(false);
+
   // Tracks the currently active authentication flow.
   const [Lmode, fnSetMode] = useState<FormMode>('signup');
 
@@ -25,10 +36,34 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   // Controls UI feedback during form submission.
   const [LbSubmitting, fnSetSubmitting] = useState(false);
   const [LError, fnSetError] = useState<string | null>(null);
-  const [LSuccess, fnSetSuccess] = useState<string | null>(null);
+  // const [LSuccess, fnSetSuccess] = useState<string | null>(null);
+  const [LdSuccessMsg, fnSetSuccessMsg] = useState<{ title: string; description: string } | null>(null);
+  const [LdAccessMsg, fnSetAccessMsg] = useState<{ title: string; description: string } | null>(null)
 
   // Controls password visibility within the login form.
   const [LbShowPassword, fnSetShowPassword] = useState(false);
+
+  const [LdCompanyDetails, fnSetCompanyDetails] = useState({
+    companyName: "",
+    companyDomain: "",
+    companyWebsite: "",
+    employeeCount: "",
+    interestReason: "",
+  });
+
+  // Retrieves the current locale from the route parameters.
+  const LdParams = useParams();
+  // Extract the locale value from the route parameters.
+  const LLocale = LdParams.locale as string;
+
+  // Extract content safely from cms
+  const LAccessContent = idLogin?.loginAndSignUp?.accessVerifyContent;
+
+  const LCurrentLocale = (LLocale && LAccessContent && LLocale in LAccessContent) 
+    ? LLocale 
+    : 'en';
+
+  const LdContent = (LAccessContent?.[LCurrentLocale] || LAccessContent?.en) as Record<string, any>
 
   const { executeRecaptcha } = useReCaptcha();
 
@@ -36,7 +71,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const fnSwitchMode = (iNewMode: FormMode) => {
     fnSetMode(iNewMode);
     fnSetError(null);
-    fnSetSuccess(null);
+    fnSetSuccessMsg(null);
     fnSetPassword('');
   };
 
@@ -45,12 +80,148 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
     window.location.href = '/api/auth/google';
   }
 
+  /**
+ * Verifies whether the entered email already has beta access.
+ *
+ * Flow:
+ * 1. Validates the email and verifies reCAPTCHA.
+ * 2. Identifies the user in PostHog for analytics.
+ * 3. Checks the user's approval status from CRM.
+ * 4. Routes the user based on the result:
+ *    - Approved → Show Sign In / Sign Up form.
+ *    - Pending Review → Display review pending message.
+ *    - Not Found → Open the additional details request form and enroll for the beta flow.
+ */
+  async function fnHandleVerifyEmail(idEvent: React.FormEvent) {
+    // state clean up
+    idEvent.preventDefault();
+    fnSetError(null);
+    fnSetAccessMsg(null)
+    fnSetSuccessMsg(null)
+
+    // trim the email
+    const LTrimmedEmail = LEmail.trim().toLowerCase();
+    if (!LTrimmedEmail) return;
+
+    fnSetSubmitting(true);
+    try {
+      // Recaptcha verification
+      const LRecaptchaToken = await executeRecaptcha("verify_access_email");
+      const LdRecaptcha = await validateRecaptcha(LRecaptchaToken);
+      
+      if (!LdRecaptcha.success) {
+        fnSetError(LdContent.errorMessages.recaptchaFailed || "Sorry, we couldn't verify you're human, please try again.");
+        return;
+      }
+      // Identify the user in PostHog for future analytics.
+      posthog.identify(LTrimmedEmail, {
+          email: LTrimmedEmail,
+      })
+
+      const LApprovalResult = await fnCheckUserApproval(LTrimmedEmail);
+
+      if (LApprovalResult.approved) {
+        // CRM Approved -> Unlock Sign In / Sign Up form
+        fnSetAccessMsg({
+          title: LdContent.accessGrantedBanner.title || "Access Granted!",
+          description: LdContent.accessGrantedBanner.description || "Your email has been verified. Please sign in or register your account below."
+        });
+        fnSetAccessStage('approved_form');
+      } else if (LApprovalResult.reason === "NOT_QUALIFIED") {
+        // Lead exists, but opp is not qualified -> Review message
+        fnSetSuccessMsg({
+          title: LdContent.reviewPending.titlePending || "Request Pending!",
+          description: LdContent.reviewPending.descriptionPending || "Your request has been pending in review! Our team will send an update to your email."
+        });
+        fnSetAccessStage('review_pending');
+      } else {
+        // Lead Not Found -> Open More Details Form
+        fnSetAccessStage('request_details');
+        posthog.updateEarlyAccessFeatureEnrollment(
+            "new-pricing-beta",
+            true
+        );
+      }
+    } catch (idError) {
+      console.error('Email verification failure:', idError);
+      fnSetError(idLogin.loginAndSignUp.errDefaultFallback || 'An unexpected connection error occurred.');
+    } finally {
+      fnSetSubmitting(false);
+    }
+  }
+
+  /**
+ * Submits a beta access request for users who are not yet approved.
+ *
+ * Flow:
+ * 1. Generates a display name from the entered email.
+ * 2. Verifies the user with reCAPTCHA.
+ * 3. Creates or updates a CRM Lead and Opportunity with the provided company details.
+ * 4. Sends the beta access request for review.
+ * 5. Displays a success message if submitted, otherwise shows an error.
+ */
+  async function fnHandleBetaRequest(idEvent: React.FormEvent) {
+    // state clean up
+    idEvent.preventDefault();
+    fnSetError(null);
+    fnSetAccessMsg(null)
+    fnSetSubmitting(true);
+
+    try {
+      const LTrimmedEmail = LEmail.trim().toLowerCase();
+      const LEmailPrefix = LTrimmedEmail.split("@")[0];
+      const LGeneratedName = LEmailPrefix
+        ? LEmailPrefix.split(/[\._\-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
+        : "";
+
+      if(LdContent.LeadProcess.IsNeeded){
+        const LRecaptchaToken = await executeRecaptcha("beta_request");
+      
+        const LdLeadResult = await fnLeadToOpportunity({
+          email: LTrimmedEmail,
+              name: LGeneratedName,
+              recaptchaToken: LRecaptchaToken,
+              companyName: LdCompanyDetails.companyName,
+              companyDomain: LdCompanyDetails.companyDomain,
+              companyWebsite: LdCompanyDetails.companyWebsite,
+              employeeCount: LdCompanyDetails.employeeCount,
+              interestReason: LdCompanyDetails.interestReason,
+              createOpportunity: true,
+              sendEmail: true,
+              emailTemplate: LdContent.LeadProcess.emailTemplate,
+              humanVerfied: true,
+              opportType: LdContent.LeadProcess.opportType,
+              source: LdContent.LeadProcess.source,
+              campaign: LdContent.campaign,
+              itemName: LdContent.itemName,
+        });
+
+        if (LdLeadResult.message === "success") {
+          fnSetSuccessMsg({
+            title: LdContent.reviewPending.titleSubmitted || "Application Submitted Successfully!",
+            description: LdContent.reviewPending.descriptionSubmitted || "Thank you for applying. Our team will review your details and notify you via email once access is approved."
+          });
+          fnSetAccessStage('review_pending');
+        } else {
+          fnSetError(LdContent.errorMessages.requestFailed || "Failed to submit verification request. Please try again.");
+        }
+      }
+    } catch (idError) {
+      console.error('Beta request failure:', idError);
+      fnSetError(idLogin.loginAndSignUp.errDefaultFallback || 'An unexpected connection error occurred.');
+    } finally {
+      fnSetSubmitting(false);
+    }
+  }
+
+
   // Processes authentication requests for the active form mode.
   async function fnHandleSubmit(idEvent: React.FormEvent) {
     idEvent.preventDefault();
     fnSetSubmitting(true);
     fnSetError(null);
-    fnSetSuccess(null);
+    fnSetAccessMsg(null)
+    fnSetSuccessMsg(null);
     try{
         // Generate a reCAPTCHA token for bot verification.
         const LRecaptchaToken = await executeRecaptcha("ogin_and_signup")
@@ -89,9 +260,17 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       }
       
       if (Lmode === 'forgot') {
-        fnSetSuccess(idLogin.loginAndSignUp.resetPwdSuccessMessage || 'If this email is registered with us, we have sent password reset instructions to it. Please check your inbox.');
+        // fnSetSuccess(idLogin.loginAndSignUp.resetPwdSuccessMessage || 'If this email is registered with us, we have sent password reset instructions to it. Please check your inbox.');
+        fnSetSuccessMsg({
+          title: idLogin.loginAndSignUp.resetSuccessTitle || 'Action Required',
+          description: idLogin.loginAndSignUp.resetPwdSuccessMessage || 'If this email is registered with us, we have sent password reset instructions to it.'
+        });
       } else if (Lmode === 'signup') {
-        fnSetSuccess(idLogin.loginAndSignUp.signupSuccessMessage || 'Account created successfully! Redirecting...');
+        // fnSetSuccess(idLogin.loginAndSignUp.signupSuccessMessage || 'Account created successfully! Redirecting...');
+        fnSetSuccessMsg({
+          title: idLogin.loginAndSignUp.signupSuccessTitle || 'Registration Complete',
+          description: idLogin.loginAndSignUp.signupSuccessMessage || 'Account created successfully! Redirecting...'
+        });
         // setTimeout(() => { window.location.href = '/'; }, 1500);
       } else {
         window.location.href = '/';
@@ -135,21 +314,21 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   }[Lmode];
 
     // Displays the completion screen after successful registration or password recovery.
-    if (LSuccess && (Lmode === 'signup' || Lmode === 'forgot')) {
+    if (LdSuccessMsg && (Lmode === 'signup' || Lmode === 'forgot')) {
       // Dynamically map sentence text chunks into individual sequential rows
-      const LdStepLines = LSuccess.split(/(?<=[.!])\s+/).filter((line) => line.trim().length > 0);
+      const LdStepLines = LdSuccessMsg.description.split(/(?<=[.!])\s+/).filter((line) => line.trim().length > 0);
   
       return (
         <div className="flex min-h-screen items-center justify-center p-4 bg-background">
           <div className="w-full max-w-lg p-8 bg-card text-card-foreground border border-border rounded-2xl shadow-xl text-center animate-in fade-in zoom-in-95 duration-300">
-            
             {/* Action Success Header Icon Accent */}
             <div className="mx-auto w-16 h-16 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-full flex items-center justify-center mb-5">
               <CheckCircle2 className="w-10 h-10 stroke-[1.5]" />
             </div>
   
             <h2 className="text-2xl font-bold text-foreground tracking-tight mb-8">
-              {Lmode === 'signup' ? idLogin.loginAndSignUp.signupSuccessTitle || 'Registration Complete' : idLogin.loginAndSignUp.resetSuccessTitle || 'Action Required'}
+              {/* {Lmode === 'signup' ? idLogin.loginAndSignUp.signupSuccessTitle || 'Registration Complete' : idLogin.loginAndSignUp.resetSuccessTitle || 'Action Required'} */}
+              {LdSuccessMsg.title}
             </h2>
   
             {/* Checklist Dynamic Stack */}
@@ -188,7 +367,116 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <div className="w-full max-w-lg p-8 bg-card text-card-foreground border border-border rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl">
-        
+        {/* ========================================================= */}
+        {/* PHASE 1: INITIAL EMAIL & TERMS CHECKPOINT                 */}
+        {/* ========================================================= */}
+        {LAccessStage === 'verify_email' && (
+          <div>
+            <div className="flex flex-col items-center mb-6">
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">{LdContent?.accessVerification?.title ?? "Verify Access"}</h2>
+              <p className="text-sm text-muted-foreground mt-1 text-center">{LdContent?.accessVerification?.subtitle ?? "Enter your email address to check your status."}</p>
+            </div>
+
+            <form onSubmit={fnHandleVerifyEmail} className="flex flex-col gap-5">
+              {LError && <FormMessage 
+                variant="error" 
+                title="" 
+                description={LError} 
+              />}
+              <FormInput
+                label={idLogin.loginAndSignUp.emailLabel || "Email Address"}
+                type="email"
+                value={LEmail}
+                onChange={fnSetEmail}
+                placeholder="name@company.com"
+              />
+              {/* TERMS & PRIVACY CONSENT CHECKBOX */}
+              {LdContent?.accessVerification?.termsConsent && (
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="checkbox"
+                    id="terms-consent"
+                    required
+                    className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+                  />
+                  <label htmlFor="terms-consent" className="text-xs text-muted-foreground leading-none cursor-pointer">
+                    {LdContent.accessVerification.termsConsent.label}{' '}
+                    <a href="/terms" target="_blank" className="text-primary underline hover:text-primary/80">
+                      {LdContent.accessVerification.termsConsent.termsLinkText}
+                    </a>{' '}
+                    &{' '}
+                    <a href="/privacy" target="_blank" className="text-primary underline hover:text-primary/80">
+                      {LdContent.accessVerification.termsConsent.privacyLinkText}
+                    </a>
+                  </label>
+                </div>
+              )}
+              <Button
+                type="submit"
+                disabled={LbSubmitting}
+                className="h-11 mt-2 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+              >
+                {LbSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <><span>{(LdContent?.accessVerification?.submitButton ?? "Continue")}</span><ArrowRight className="h-4 w-4" /></>}
+              </Button>
+            </form>
+          </div>
+        )}
+        {/* ========================================================= */}
+        {/* PHASE 2: MORE DETAILS FORM (Lead Not Found)               */}
+        {/* ========================================================= */}
+        {LAccessStage === 'request_details' && (
+          <div>
+            <div className="border-b border-border pb-3 mb-5">
+              <h3 className="text-lg font-semibold text-foreground">{ LdContent?.additionalDetailsForm?.title || "Verification Required"}</h3>
+              <p className="text-sm text-muted-foreground mt-1">{ LdContent?.additionalDetailsForm?.subtitle || "Please provide additional details so we can verify and approve your access request"}</p>
+            </div>
+
+            <form onSubmit={fnHandleBetaRequest} className="space-y-4">
+              {LError && <FormMessage 
+                variant="error" 
+                title="" 
+                description={LError} 
+              />}
+              
+              {LdContent?.additionalDetailsForm?.fields?.map((field: any) => (
+                <FormInput
+                  key={field.name || field.key}
+                  label={field.label}
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  required={field.required}
+                  options={field.options}
+                  value={(LdCompanyDetails as Record<string, any>)[field.name || field.key] || ''}
+                  onChange={(val) =>
+                    fnSetCompanyDetails((idPrev) => ({
+                      ...idPrev,
+                      [field.name || field.key]: val,
+                    }))
+                  }
+                />
+              ))}
+
+              <Button
+                type="submit"
+                disabled={LbSubmitting}
+                className="w-full h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+              >
+                {LbSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : (LdContent?.additionalDetailsForm?.submitButton ?? "Submit Application")}
+              </Button>
+            </form>
+          </div>
+        )}
+        {LAccessStage === 'approved_form' && (
+          <div>
+            {LdAccessMsg && (
+              <div className='mb-2'>
+                <FormMessage 
+                  variant="success" 
+                  title={LdAccessMsg.title} 
+                  description={LdAccessMsg.description} 
+                />
+              </div>
+            )}
         {/* Header Block */}
         <div className="flex flex-col items-center mb-6">
           <h2 className="text-2xl font-bold text-foreground tracking-tight">{LdUiConfig.title}</h2>
@@ -197,8 +485,16 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         
         <form onSubmit={fnHandleSubmit} className="flex flex-col gap-5">
           {/* Status Banners */}
-          {LError && <FormMessage variant="error" msg={LError} />}
-          {LSuccess && <FormMessage variant="success" msg={LSuccess} />}
+          {LError && <FormMessage 
+              variant="error" 
+              title="" 
+              description={LError} 
+            />}
+          {LdSuccessMsg && <FormMessage 
+            variant="success" 
+            title={LdSuccessMsg.title} 
+            description={LdSuccessMsg.description} 
+          />}
 
           {/* Form Fields Rendering Contextually based on Mode */}
           {Lmode === 'signup' && (
@@ -319,70 +615,124 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             </p>
           )}
         </div>
-
+        </div>
+        )}
       </div>
     </div>
   );
 }
 
 // Reusable input field used throughout the authentication forms.
-function FormInput({ label, type, value, onChange, placeholder }: {
-  label: string;
-  type: string;
+function FormInput({
+  label,
+  type = 'text',
+  placeholder,
+  value,
+  onChange,
+  required = false,
+  options = [],
+  rows = 3,
+  className = '',
+}: {
+  label?: string;
+  type?: 'text' | 'email' | 'url' | 'password' | 'textarea' | 'select' | string;
+  placeholder?: string;
   value: string;
-  onChange: (val: string) => void;
-  placeholder: string;
+  onChange: (value: string) => void;
+  required?: boolean;
+  options?: string[];
+  rows?: number;
+  className?: string;
 }) {
+  const renderControl = () => {
+    switch (type) {
+      case 'select':
+        return (
+          <select
+            value={value || ''}
+            required={required}
+            onChange={(e) => onChange(e.target.value)}
+            className={`flex h-10 w-full rounded-lg border border-input bg-muted px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring ${className}`}
+          >
+            <option value="" disabled>
+              {placeholder}
+            </option>
+            {options.map((option) => (
+              <option key={option} value={option}>
+                {option}
+              </option>
+            ))}
+          </select>
+        );
+
+      case 'textarea':
+        return (
+          <Textarea
+            placeholder={placeholder}
+            value={value || ''}
+            required={required}
+            rows={rows}
+            onChange={(e) => onChange(e.target.value)}
+            className={`rounded-lg text-sm bg-muted ${className}`}
+          />
+        );
+
+      default:
+        // Handles text, email, url, password, etc.
+        return (
+          <Input
+            type={type}
+            placeholder={placeholder}
+            value={value || ''}
+            required={required}
+            onChange={(e) => onChange(e.target.value)}
+            className={`h-10 rounded-lg text-sm bg-muted ${className}`}
+          />
+        );
+    }
+  };
+
   return (
-    <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
-      <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{label}</label>
-      <input
-        type={type}
-        required
-        value={value}
-        onChange={(Le) => onChange(Le.target.value)}
-        placeholder={placeholder}
-        className="h-11 px-3.5 rounded-lg bg-background border border-border text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all"
-      />
+    <div className="flex flex-col gap-1.5 animate-in fade-in duration-200">
+      {label && (
+        <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          {label} {required && <span className="text-destructive">*</span>}
+        </label>
+      )}
+      {renderControl()}
     </div>
   );
 }
 
 // Reusable status message component for success and error notifications.
-function FormMessage({ variant, msg }: { variant: 'error' | 'success'; msg: string }) {
+function FormMessage({ 
+  variant, 
+  title, 
+  description 
+}: { 
+  variant: 'error' | 'success'; 
+  title?: string; 
+  description: string; 
+}) {
   const LIsError = variant === 'error';
   
   const LContainerStyles = LIsError 
     ? 'bg-destructive/5 text-destructive border-destructive/20' 
-    : 'bg-emerald-500/10 text-primary border-emerald-500/20';
-
+    : 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20';
   const Icon = LIsError ? AlertCircle : CheckCircle2;
-
-  // Split lines based on punctuation
-  const LaLines = msg
-    .split(/(?<=[.!])\s+/)
-    .filter((line) => line.trim().length > 0);
-
-  // Separate the first line to act as a title, and the rest as body
-  const [LTitle, ...LaBodyLines] = LaLines;
 
   return (
     <div className={`p-4 text-sm rounded-xl border flex items-start gap-3 animate-in fade-in-50 duration-200 ${LContainerStyles}`}>
-      {/* Icon aligns perfectly with the bold title */}
       <Icon className="w-5 h-5 shrink-0 mt-0.5" /> 
-      
-      <div className="flex-1 text-left flex flex-col gap-1 leading-relaxed">
-        {/* Render the first line slightly more emphasized */}
-        <span className="block font-semibold">
-          {LTitle}
-        </span>
-        
-        {/* Render the rest of the lines with a slightly softer font weight */}
-        {LaBodyLines.map((iLine, iIndex) => (
-          <span key={iIndex} className="block font-medium text-sm opacity-90 mt-0.5">
-            {iLine}
-          </span>
-        ))}
+      <div className="flex-1 text-left flex flex-col gap-0.5 leading-relaxed">
+        {title && (
+          <h3 className="font-bold text-sm tracking-tight">
+            {title}
+          </h3>
+        )}
+        <p className="font-medium text-xs opacity-90">
+          {description}
+        </p>
       </div>
     </div>
   );

@@ -3264,6 +3264,7 @@ export class clQueryLogin extends clQuery<TLoginSource> {
       href
       icon
     }
+    accessVerifyContent
   }
 }`;
   }

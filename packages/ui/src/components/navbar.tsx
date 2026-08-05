@@ -82,30 +82,6 @@ export default function Navbar({
     }
   }, [])
 
-  function fnGetCookie(iName: string): string | null {
-    if (typeof document === "undefined") return null
-    const LMatch = document.cookie.match(new RegExp("(^| )" + iName + "=([^;]+)"))
-    const LValue = LMatch?.[2]
-  return LValue ? decodeURIComponent(LValue) : null
-  }
-  
- const [LIsApproved, fnSetIsApproved] = React.useState(false)
-  React.useEffect(() => {
-    // 1. Check permanent local storage on initial page load / refresh
-    const fnCheckAccess = () => {
-      const LStoredAccess = fnGetCookie("lenscloud_user_approved")
-      fnSetIsApproved(LStoredAccess === "true")
-    }
-
-    fnCheckAccess()
-
-    // 2. Listen for instant updates when verified in Pricing component
-    window.addEventListener("user_access_updated", fnCheckAccess)
-
-    return () => {
-      window.removeEventListener("user_access_updated", fnCheckAccess)
-    }
-  }, [])
   return (
     <>
       <header className={cn("sticky top-0 z-50 w-full bg-background")}>
@@ -373,7 +349,7 @@ export default function Navbar({
               </>
             ) : (
               /* Dont show Login Button when user is on login page */
-        !LbHideLoginButton && LIsApproved  && (
+        !LbHideLoginButton && (
               <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"

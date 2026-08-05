@@ -1139,6 +1139,8 @@ export type TLoginForm = {
   signupSuccessTitle: string
   resetSuccessTitle: string
   redirectButton: Tbutton
+
+  accessVerifyContent?: Record<string, unknown>
 }
 
 export type TLoginSource = {
