@@ -26,6 +26,7 @@ import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
 import { useParams, usePathname } from 'next/navigation';
+import { useApproval } from "./auth/approvalContext"
 
 export default function Navbar({
   idNavbar,
@@ -81,6 +82,22 @@ export default function Navbar({
       window.removeEventListener("touchstart", fnHandleClickOutside)
     }
   }, [])
+  const { status, isCustomer } = useApproval();
+  
+  // 2. Helper to resolve Label & Link dynamically
+  const fnGetButtonConfig = () => {
+    if (status === "approved") {
+      if (isCustomer) {
+        return idNavbar.navbar.profileSettings?.[0]?.description || "Sign In"
+      }
+      return idNavbar.navbar.profileSettings?.[0]?.icon || "Sign Up"
+    }
+
+    // Default for 'unapproved', 'review_pending', or 'verifying'
+    return idNavbar.navbar.profileSettings?.[0]?.label
+  };
+
+  const label = fnGetButtonConfig();
 
   return (
     <>
@@ -355,7 +372,7 @@ export default function Navbar({
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
-                { idNavbar.navbar.profileSettings?.[0]?.label ?? "Login" }
+                { label ?? "Login" }
                 </Button>
               </Link>
         )

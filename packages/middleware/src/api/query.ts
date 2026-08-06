@@ -254,6 +254,8 @@ export class clQueryNavbar extends clQuery<TnavbarSource> {
     profileSettings {
       label
       href
+      description
+      icon
     }
   }
   loginAndSignUp(status: $status, locale: $locale) {
