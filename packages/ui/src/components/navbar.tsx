@@ -97,7 +97,7 @@ export default function Navbar({
     return idNavbar.navbar.profileSettings?.[0]?.label
   };
 
-  const label = fnGetButtonConfig();
+  const LLabel = fnGetButtonConfig();
 
   return (
     <>
@@ -372,7 +372,7 @@ export default function Navbar({
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
-                { label ?? "Login" }
+                { LLabel ?? "Login" }
                 </Button>
               </Link>
         )

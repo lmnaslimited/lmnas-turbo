@@ -226,7 +226,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             opportType: LdContent.LeadProcess.opportType,
             source: LdContent.LeadProcess.source,
             campaign: LdContent.campaign,
-            itemName: LdContent.itemName
+            itemName: LdContent.itemName,
+            doctype: idLogin?.loginAndSignUp?.doctypeDetails
             }
           }),
         });

@@ -15,23 +15,19 @@ export async function fnCheckUserApproval({
   iDistinctId: string;
 }) {
   // Prevent SSL errors in development if necessary
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
   const LBaseUrl = env.env.url || process.env.SUBSCRIBE_URL;
   const LAuthorizationHeader = env.env.token || process.env.AUTH_BASE_64;
 
-  const LLeadDoctype = doctype?.lead?.doctype || "Lead";
-  const LaLeadFields = doctype.lead.fields || ["name","email_id"];
-  const LLeadEmail = doctype.lead.filters.email_id || "email_id";
+  const LLeadDoctype = doctype.lead.doctype || "Lead";
+  const LdLeadFields = doctype.lead.field_name;
 
   const LCustomerDoctype = doctype.customer.doctype || "Customer";
-  const LaCustomerFields = doctype.customer.fields || ["name"]
-  const LCustomerEmail = doctype.customer.filters.email_id || "email_id"
+  const LdCustomerFields = doctype.customer.field_name;
 
   const LOpportunityDoctype = doctype.opportunity.doctype || "Opportunity";
-  const LaOpportunityFields = doctype.opportunity.fields || ["name","status","sales_stage"]
-  const LdOpportunityPartyName = doctype.opportunity.filters.party_name || "party_name"
-  const LdOpportunitySource = doctype.opportunity.filters.source || "source"
+  const LdOpportunityFields = doctype.opportunity.field_name;
 
   if (!LBaseUrl || !LAuthorizationHeader) {
     throw new Error("Missing required CRM environment variables");
@@ -44,8 +40,11 @@ export async function fnCheckUserApproval({
 
   try {
     // Fetch the lead matching the supplied email or identifier.
-    const LdLeadFilters = JSON.stringify([[LLeadEmail, "=", iDistinctId]]);
-    const LLeadUrl = `${LBaseUrl}/api/resource/${LLeadDoctype}?filters=${encodeURIComponent(LdLeadFilters)}&fields=${encodeURIComponent(JSON.stringify(LaLeadFields))}&limit_page_length=1`;
+    const LdLeadFilters = JSON.stringify([[LdLeadFields.email_id, "=", iDistinctId]]);
+    const LLeadUrl = `${LBaseUrl}/api/resource/${LLeadDoctype}?filters=${encodeURIComponent(LdLeadFilters)}&fields=${encodeURIComponent(JSON.stringify([
+      LdLeadFields.name,
+      LdLeadFields.email_id,
+    ]))}&limit_page_length=1`;
 
     const LdLeadRes = await fetch(LLeadUrl, { method: "GET", headers: idHeaders });
     // Return immediately if the lead lookup fails.
@@ -59,15 +58,17 @@ export async function fnCheckUserApproval({
       return { approved: false, is_customer: false, reason: "LEAD_NOT_FOUND" };
     }
 
-    const LEmailId = LdLead.email_id;
+    const LEmailId = LdLead[LdLeadFields.email_id];
 
      // Determine whether the lead is already a customer.
     let lIsCustomer = false;
     if (LEmailId) {
       const LdCustomerFilters = JSON.stringify([
-        [LCustomerEmail, "=", LEmailId]
+        [LdCustomerFields.email_id, "=", LEmailId]
       ]);
-      const LCustomerUrl = `${LBaseUrl}/api/resource/${LCustomerDoctype}?filters=${encodeURIComponent(LdCustomerFilters)}&fields=${encodeURIComponent(JSON.stringify(LaCustomerFields))}&limit_page_length=1`;
+      const LCustomerUrl = `${LBaseUrl}/api/resource/${LCustomerDoctype}?filters=${encodeURIComponent(LdCustomerFilters)}&fields=${encodeURIComponent(JSON.stringify([
+        LdCustomerFields.name,
+      ]))}&limit_page_length=1`;
 
       const LdCustomerRes = await fetch(LCustomerUrl, { method: "GET", headers: idHeaders });
       // Mark the user as a customer if a matching record exists.
@@ -81,10 +82,14 @@ export async function fnCheckUserApproval({
 
     // Fetch all website opportunities linked to the lead.
     const LdOppFilters = JSON.stringify([
-      [LdOpportunityPartyName, "=", LdLead.name],
-      [LdOpportunitySource, "=", "Website"]
+      [LdOpportunityFields.party_name, "=", LdLead.name],
+      [LdOpportunityFields.source, "=", "Website"]
     ]);
-    const LOppUrl = `${LBaseUrl}/api/resource/${LOpportunityDoctype}?filters=${encodeURIComponent(LdOppFilters)}&fields=${encodeURIComponent(JSON.stringify(LaOpportunityFields))}&limit_page_length=0`;
+    const LOppUrl = `${LBaseUrl}/api/resource/${LOpportunityDoctype}?filters=${encodeURIComponent(LdOppFilters)}&fields=${encodeURIComponent(JSON.stringify([
+      LdOpportunityFields.name,
+      LdOpportunityFields.status,
+      LdOpportunityFields.sales_stage,
+    ]))}&limit_page_length=0`;
 
     const LdOppRes = await fetch(LOppUrl, { method: "GET", headers: idHeaders });
     // Return if the opportunity lookup fails.
@@ -99,12 +104,12 @@ export async function fnCheckUserApproval({
 
     const LdOppData = await LdOppRes.json();
     // Extract the opportunity list from the CRM response.
-    const LdOppList: Array<{ name: string; status: string; sales_stage?: string }> = LdOppData.data ?? [];
+    const LdOppList: Array<Record<string, any>> = LdOppData.data ?? [];
     
     if(LdOppList.length > 0){
       // Check whether any opportunity has reached the Qualification stage.
       const LIsApproved = LdOppList.some(
-        (iOpp) => iOpp.sales_stage === "Qualification"
+        (iOpp) => iOpp[LdOpportunityFields.sales_stage] === "Qualification"
       );
 
       // Return an approved response if the user qualifies.
