@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useRef } from "react";
 import posthog from "posthog-js";
 import { fnCheckUserApproval } from "@repo/ui/api/crm/check-user-approval";
+import { TEnvSource, TLoginSource } from "@repo/middleware/types";
 
 export type TApprovalStatus = "verifying" | "approved" | "review_pending" | "unapproved";
 
@@ -27,7 +28,9 @@ const ApprovalContext = createContext<IApprovalContext>({
     refetch: async () => undefined,
 });
 
-export function ApprovalProvider({ children }: { children: React.ReactNode }) {
+export function ApprovalProvider({ children,loginSettings,
+    envSettings, }: { children: React.ReactNode , loginSettings: TLoginSource,
+        envSettings:TEnvSource}) {
     // Stores the current approval status.
     const [LStatus, fnSetStatus] = useState<TApprovalStatus>("verifying");
     // Indicates whether the identified user is an existing customer.
@@ -70,7 +73,11 @@ export function ApprovalProvider({ children }: { children: React.ReactNode }) {
 
         try {
              // Fetch the approval status from CRM.
-            const LdResult = await fnCheckUserApproval(LIdentifier);
+            const LdResult = await fnCheckUserApproval({
+                doctype: loginSettings.loginAndSignUp.doctypeDetails,
+                env: envSettings,
+                iDistinctId: LIdentifier,
+              });
             
             let lResolvedStatus: TApprovalStatus = "unapproved";
             // Use the CRM email when available.

@@ -12,7 +12,7 @@ import { Textarea } from "./ui/textarea";
 import posthog from "posthog-js";
 import { useParams } from 'next/navigation';
 import { Input } from './ui/input';
-import { useApproval } from './auth/approvalContext';
+import { TApprovalStatus, useApproval } from './auth/approvalContext';
 
 
 type FormMode = 'login' | 'signup' | 'forgot';
@@ -64,39 +64,32 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
 
   const { status, isCustomer, refetch } = useApproval()
 
-  // =========================================================
-  //AUTOMATED DISTINCT_ID ACCESS CHECK ON MOUNT
+ // =========================================================
+  // AUTOMATED MOUNT CHECK BASED ON POSTHOG & URL PARAMS
   // =========================================================
   useEffect(() => {
-    async function fnAutoCheckApproval() {
-      try {
-        fnSetError(null);
-        if (status === 'approved') {
-          // If customer exists, direct to Login mode, else Sign Up mode
-          if (isCustomer) {
-            fnSetMode('login');
-          } else {
-            fnSetMode('signup');
-          }
+    // Single view router for applying status
+    const fnApplyRoute = (iStatus: TApprovalStatus, iIsCustomer: boolean) => {
+      switch (iStatus) {
+        case 'approved':
+          fnSetMode(iIsCustomer ? 'login' : 'signup');
           fnSetAccessStage('approved_form');
+          break;
 
-        } else if (status === 'review_pending') {
+        case 'review_pending':
           fnSetSuccessMsg({
             title: LdContent?.reviewPending?.titlePending || "Request Pending!",
             description: LdContent?.reviewPending?.descriptionPending || "Your request is under review. Our team will send an update to your email."
           });
           fnSetAccessStage('review_pending');
+          break;
 
-        } else {
-          // New User / Not Found -> Go straight to Additional Details Form
+        case 'unapproved':
+        default:
           fnSetAccessStage('request_details');
-        }
-      } catch (idError) {
-        console.error('Automated approval check failure:', idError);
-        // Fallback to request_details so user isn't stuck
-        fnSetAccessStage('request_details');
+          break;
       }
-    }
+    };
 
     // Extract 'email' directly from window URL query parameters (no Suspense needed)
     let LUrlEmail = '';
@@ -104,14 +97,41 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       const LSearchParams = new URLSearchParams(window.location.search);
       LUrlEmail = LSearchParams.get('email')?.trim().toLowerCase() || '';
     }
-    // Pick email from URL parameter first, fallback to PostHog Distinct ID
-    const LTargetEmail = LUrlEmail || (LDistinctId?.includes("@") ? LDistinctId : "");
 
-    if(LDistinctId){
-      fnSetEmail(LTargetEmail);
-      fnAutoCheckApproval();
+    const LbPostHogIdentified = !!(LDistinctId && LDistinctId.includes('@'));
+
+    // CASE 1: No PostHog identity AND email in URL -> FORCE CRM FETCH
+    if (!LbPostHogIdentified && LUrlEmail) {
+      fnSetEmail(LUrlEmail);
+      posthog.identify(LUrlEmail, { email: LUrlEmail });
+      const fnRunCheck = async () => {
+        try {
+          const LResult = await refetch(LUrlEmail);
+          if (LResult?.status) {
+            fnApplyRoute(LResult.status, !!LResult.isCustomer);
+          } else {
+            fnSetAccessStage('request_details');
+            setLPhase(1);
+          }
+        } catch (idError) {
+          console.error('Forced CRM check failure:', idError);
+          fnSetAccessStage('request_details');
+          setLPhase(1);
+        }
+      };
+
+      fnRunCheck();
+      return;
     }
-  }, [LDistinctId]);
+
+    // CASE 2, 3 & 4: (Identified or No Email in URL) -> USE CACHED CONTEXT
+    const LTargetEmail = LUrlEmail || (LbPostHogIdentified ? LDistinctId : '');
+    if (LTargetEmail) {
+      fnSetEmail(LTargetEmail);
+    }
+
+    fnApplyRoute(status, isCustomer);
+  }, [LDistinctId, status, isCustomer]);
 
   const fnSwitchMode = (iNewMode: FormMode) => {
     fnSetMode(iNewMode);
@@ -309,6 +329,28 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
     },
   }[Lmode];
 
+  // Track current step for Phase 2 sub-forms (1-based index)
+  const [LSubStep, setLSubStep] = useState(1);
+
+  // Group CMS fields into chunks of 3 fields per step
+  const LFormFields = LdContent?.additionalDetailsForm?.fields || [];
+  const LChunkSize = 3;
+  const LTotalSubSteps = Math.ceil(LFormFields.length / LChunkSize) || 1;
+
+  const LCurrentStepFields = LFormFields.slice(
+    (LSubStep - 1) * LChunkSize,
+    LSubStep * LChunkSize
+  );
+
+  // Validate required fields for the active step before advancing
+  const fnCanAdvanceSubStep = () => {
+    return LCurrentStepFields.every((field: any) => {
+      if (!field.required) return true;
+      const keyName = field.name || field.key;
+      const val = LdCompanyDetails[keyName];
+      return val && val.toString().trim().length > 0;
+    });
+  };
   // Completion / Success Screen
   if (LdSuccessMsg && (Lmode === 'signup' || Lmode === 'forgot' || LAccessStage === 'review_pending')) {
     const LdStepLines = LdSuccessMsg.description.split(/(?<=[.!])\s+/).filter((line) => line.trim().length > 0);
@@ -372,14 +414,26 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         {/* ========================================================= */}
         {LAccessStage === 'request_details' && (
           <div>
-            <div className="border-b border-border pb-3 mb-5">
-              <h3 className="text-lg font-semibold text-foreground">
-                {LdContent?.additionalDetailsForm?.title || "Verification Required"}
-              </h3>
-              <p className="text-sm text-muted-foreground mt-1">
-                {LdContent?.additionalDetailsForm?.subtitle || "Please provide your details so we can verify and approve your access request."}
-              </p>
+            <div className="border-b border-border pb-3 mb-5 flex flex-col justify-between items-end">
+              <div className='mb-2'>
+                <h3 className="text-lg font-semibold text-foreground">
+                  {LdContent?.additionalDetailsForm?.title || "Verification Required"}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {LdContent?.additionalDetailsForm?.subtitle || "Please provide your details so we can verify and approve your access request."}
+                </p>
+              </div>
+              {/* STEP COUNTER BADGE */}
+            
+               <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+               <div
+                 className="bg-primary h-full transition-all duration-300 ease-in-out"
+                 style={{ width: `${(LSubStep / LTotalSubSteps) * 100}%` }}
+               />
+             </div>
+             
             </div>
+
             {/* PHASE 1: EMAIL VERIFICATION */}
             {LPhase === 1 ? (
               <form onSubmit={fnHandleVerifyEmail} className="space-y-4">
@@ -403,63 +457,98 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                 </Button>
               </form>
             ) : (
-              /* PHASE 2: EXTRA DETAILS (LOCKED EMAIL) */
-            <form onSubmit={fnHandleBetaRequest} className="space-y-4">
-              {LError && <FormMessage variant="error" description={LError} />}
+              /* PHASE 2: EXTRA DETAILS  */
+              <form onSubmit={fnHandleBetaRequest} className="space-y-4">
+                {LError && <FormMessage variant="error" description={LError} />}
 
-              {/* DYNAMIC FIELDS FROM CMS */}
-              {LdContent?.additionalDetailsForm?.fields?.map((field: any) => {
-                const keyName = field.name || field.key;
-                return (
-                  <FormInput
-                    key={keyName}
-                    label={field.label}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    options={field.options}
-                    rows={field.rows}
-                    value={LdCompanyDetails[keyName] || ''}
-                    onChange={(val) =>
-                      fnSetCompanyDetails((idPrev) => ({
-                        ...idPrev,
-                        [keyName]: val,
-                      }))
-                    }
-                  />
-                );
-              })}
+                {/* DYNAMIC FIELDS  */}
+                {LCurrentStepFields.map((field: any) => {
+                  const keyName = field.name || field.key;
+                  return (
+                    <FormInput
+                      key={keyName}
+                      label={field.label}
+                      type={field.type}
+                      placeholder={field.placeholder}
+                      required={field.required}
+                      options={field.options}
+                      rows={field.rows}
+                      value={LdCompanyDetails[keyName] || ''}
+                      onChange={(val) =>
+                        fnSetCompanyDetails((idPrev) => ({
+                          ...idPrev,
+                          [keyName]: val,
+                        }))
+                      }
+                    />
+                  );
+                })}
 
-              {/* TERMS CONSENT CHECKBOX */}
-              {LdContent?.accessVerification?.termsConsent && (
-                <div className="flex items-center gap-2 mt-1">
-                  <input
-                    type="checkbox"
-                    id="terms-consent"
-                    required
-                    className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
-                  />
-                  <label htmlFor="terms-consent" className="text-xs text-muted-foreground leading-none cursor-pointer">
-                    {LdContent.accessVerification.termsConsent.label}{' '}
-                    <a href={`/${LLocale}/terms-and-conditions`} target="_blank" className="text-primary underline hover:text-primary/80">
-                      {LdContent.accessVerification.termsConsent.termsLinkText}
-                    </a>{' '}
-                    &{' '}
-                    <a href={`/${LLocale}/privacy-policy`} target="_blank" className="text-primary underline hover:text-primary/80">
-                      {LdContent.accessVerification.termsConsent.privacyLinkText}
-                    </a>
-                  </label>
+                {/* TERMS CONSENT CHECKBOX (FINAL STEP ONLY) */}
+                {LSubStep === LTotalSubSteps && LdContent?.accessVerification?.termsConsent && (
+                  <div className="flex items-center gap-2 mt-1">
+                    <input
+                      type="checkbox"
+                      id="terms-consent"
+                      required
+                      className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+                    />
+                    <label htmlFor="terms-consent" className="text-xs text-muted-foreground leading-none cursor-pointer">
+                      {LdContent.accessVerification.termsConsent.label}{' '}
+                      <a href={`/${LLocale}/terms-and-conditions`} target="_blank" className="text-primary underline hover:text-primary/80">
+                        {LdContent.accessVerification.termsConsent.termsLinkText}
+                      </a>{' '}
+                      &{' '}
+                      <a href={`/${LLocale}/privacy-policy`} target="_blank" className="text-primary underline hover:text-primary/80">
+                        {LdContent.accessVerification.termsConsent.privacyLinkText}
+                      </a>
+                    </label>
+                  </div>
+                )}
+
+                {/* NAVIGATION BUTTONS */}
+                <div className="flex items-center gap-3 pt-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      if (LSubStep > 1) {
+                        setLSubStep((prev) => prev - 1);
+                      } else {
+                        setLPhase(1); // Go back to Phase 1 Email
+                      }
+                    }}
+                    className="w-2/4 h-11 text-xs font-semibold"
+                  >
+                    {LdContent.backBtnLabel || "Back"}
+                  </Button>
+
+                  {LSubStep < LTotalSubSteps ? (
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (fnCanAdvanceSubStep()) {
+                          fnSetError(null);
+                          setLSubStep((prev) => prev + 1);
+                        } else {
+                          fnSetError("Please fill out all required fields before proceeding.");
+                        }
+                      }}
+                      className="w-2/4 h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      {LdContent.nextBtnLabel || "Next"}
+                    </Button>
+                  ) : (
+                    <Button
+                      type="submit"
+                      disabled={LbSubmitting}
+                      className="w-2/3 h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                    >
+                      {LbSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : (LdContent?.additionalDetailsForm?.submitButton ?? "Submit Application")}
+                    </Button>
+                  )}
                 </div>
-              )}
-
-              <Button
-                type="submit"
-                disabled={LbSubmitting}
-                className="w-full h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
-              >
-                {LbSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : (LdContent?.additionalDetailsForm?.submitButton ?? "Submit Application")}
-              </Button>
-            </form>
+              </form>
             )}
           </div>
         )}

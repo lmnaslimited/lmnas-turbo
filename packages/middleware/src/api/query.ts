@@ -22,6 +22,7 @@ import {
   TblogArticleSource,
   TbannerSource,
   TLoginSource,
+  TEnvSource,
 } from "../types";
 import { client } from "../lib/apollo-client";
 import { gql } from "@apollo/client";
@@ -39,6 +40,10 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
   variables?: Record<string, any>;
   // The getQuery method is abstract and must be implemented by subclasses to return the actual GraphQL query string.
   abstract getQuery(): string;
+
+  // ADD to include authorization for
+  // certain content type, when required
+  protected authRequired = false;
 
   // By default, the version query is the changable query.
   // if version query fails, the standard query will be executed.
@@ -85,6 +90,16 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
       `,
       variables: this.variables || {},
       fetchPolicy: "no-cache",
+      // include authoriztaion only for
+      // sensitive content type
+      // using authRequired attr
+      context: this.authRequired
+      ? {
+          headers: {
+            Authorization: `Bearer ${process.env.STRAPI_TOKEN}`,
+          },
+        }
+      : undefined,
     });
     return data as DynamicSourceType;
   }
@@ -3267,10 +3282,29 @@ export class clQueryLogin extends clQuery<TLoginSource> {
       icon
     }
     accessVerifyContent
+    doctypeDetails
   }
 }`;
   }
 }
+
+export class clQueryEnv extends clQuery<TEnvSource> {
+  protected authRequired = true;
+  constructor(iContentType: string) {
+    super(iContentType);
+  }
+
+  getQuery(): string {
+    return `
+    query Env($status: PublicationStatus) {
+      ${this.contentType}(status: $status) {
+        url
+        token
+      }
+    }`;
+  }
+}
+
 export class clQueryFactory {
   private static queryMap: {
     [key: string]: new (icontentType: string) => IQuery<any>;
@@ -3296,7 +3330,8 @@ export class clQueryFactory {
     blogHome: clQueryBlogHome,
     blogs: clQueryBlogArticle,
     bannerSetting: clQueryBanner,
-    loginAndSignUp: clQueryLogin
+    loginAndSignUp: clQueryLogin,
+    env: clQueryEnv
     // Add more mappings here
   };
 

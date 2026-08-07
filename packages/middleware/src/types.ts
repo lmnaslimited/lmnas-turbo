@@ -1139,8 +1139,9 @@ export type TLoginForm = {
   signupSuccessTitle: string
   resetSuccessTitle: string
   redirectButton: Tbutton
-
+  // the content of login access form
   accessVerifyContent?: Record<string, unknown>
+  doctypeDetails: Record<string, any> //details of the doctype used for access verigication
 }
 
 export type TLoginSource = {
@@ -1148,4 +1149,17 @@ export type TLoginSource = {
 }
 export type TLoginTarget = {
   loginAndSignUp: TLoginForm
+}
+
+export type TEnvSource = {
+  env: {
+    url: string
+    token: string
+  }
+}
+export type TEnvTarget = {
+  env:  {
+    url: string
+    token: string
+  }
 }

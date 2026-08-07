@@ -1,14 +1,12 @@
 "use client"
 
 import { CircleCheckBig, CircleX,CheckCircle2, X, Loader2, Clock } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { useEffect, useState } from "react";
 import posthog from "posthog-js";
 import { useRouter } from "next/navigation";
-import { fnCheckUserApproval } from "../api/crm/check-user-approval";
 import { useApproval } from "./auth/approvalContext";
 
 type TApprovalStatus = "verifying" | "approved" | "review_pending" | "unapproved";
