@@ -303,7 +303,8 @@ async function fnCreateOpportunity(
   iEmployeeCount: string,
   iCompanyDomain: string,
   iInterestReason: string,
-  iCompanyName: string
+  iCompanyName: string,
+  iLeadEmail: string
 ) {
   const LComment = `
               Beta Access Request Details:
@@ -338,6 +339,7 @@ async function fnCreateOpportunity(
                   .split("T")[0],
               website: iCompanyWebsite,
               no_of_employees: iEmployeeCount,
+              contact_email: iLeadEmail,
               items: [
                   {
                       item_code: iItemName,
@@ -597,7 +599,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
           
             LdOpportunity = LExistingOpportunity
         } else {
-            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!)
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!, LdLead.email_id)
             LOpportunityCreated = true
         }
     }

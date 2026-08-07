@@ -232,6 +232,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         });
         const LdLeadResult = await LdLeadResponse.json()
         if (LdLeadResult?.message === "success") {
+          // REFETCH CRM STATUS NOW THAT OPPORTUNITY IS CREATED
+          await refetch(LTrimmedEmail);
           fnSetSuccessMsg({
             title: LdContent?.reviewPending?.titleSubmitted || "Application Submitted Successfully!",
             description: LdContent?.reviewPending?.descriptionSubmitted || "Thank you for applying. Our team will review your details and notify you via email once access is approved."
@@ -241,7 +243,6 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
           fnSetError(LdContent?.errorMessages?.requestFailed || "Failed to submit request. Please try again.");
         }
       }
-      await refetch(LTrimmedEmail);
     } catch (idError) {
       console.error('Beta request failure:', idError);
       fnSetError(idLogin.loginAndSignUp.errDefaultFallback || 'An unexpected error occurred.');
