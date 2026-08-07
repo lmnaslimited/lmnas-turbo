@@ -51,12 +51,12 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const LLocale = LdParams.locale as string;
 
   // Extract content safely from cms
-  const LAccessContent = idLogin?.loginAndSignUp?.accessVerifyContent;
+  const LdAccessContent = idLogin?.loginAndSignUp?.accessVerifyContent;
 
-  const LCurrentLocale = (LLocale && LAccessContent && LLocale in LAccessContent) 
+  const LCurrentLocale = (LLocale && LdAccessContent && LLocale in LdAccessContent) 
     ? LLocale 
     : 'en';
-  const LdContent = (LAccessContent?.[LCurrentLocale] || LAccessContent?.en) as Record<string, any>;
+  const LdContent = (LdAccessContent?.[LCurrentLocale] || LdAccessContent?.en) as Record<string, any>;
 
   const { executeRecaptcha } = useReCaptcha();
 
@@ -104,7 +104,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       const LSearchParams = new URLSearchParams(window.location.search);
       LUrlEmail = LSearchParams.get('email')?.trim().toLowerCase() || '';
     }
-    // 1. Pick email from URL parameter first, fallback to PostHog Distinct ID
+    // Pick email from URL parameter first, fallback to PostHog Distinct ID
     const LTargetEmail = LUrlEmail || (LDistinctId?.includes("@") ? LDistinctId : "");
 
     if(LDistinctId){
@@ -120,6 +120,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
     fnSetPassword('');
   };
 
+  // Verify the user's email against CRM to determine whether they can 
+  // sign in, sign up, submit an access request, or wait for approval.
   const fnHandleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     const LTrimmedEmail = LEmail.trim().toLowerCase();
@@ -175,13 +177,14 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         ? LEmailPrefix.split(/[\._\-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
         : "";
 
+      // Identify and opt-in to beta access in posthog
       posthog.identify(LTrimmedEmail, { email: LTrimmedEmail });
 
       posthog.updateEarlyAccessFeatureEnrollment("new-pricing-beta", true);
 
       if (LdContent?.LeadProcess?.IsNeeded) {
         const LRecaptchaToken = await executeRecaptcha("beta_request");
-      
+        // creation of Lead-> opportunity->notes -> email
         const LdLeadResult = await fnLeadToOpportunity({
           email: LTrimmedEmail,
           name: LGeneratedName,
@@ -359,7 +362,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <p className="text-sm font-medium text-muted-foreground">
-              Verifying access status...
+              {LdContent.loadingLabel ||"Verifying access status..."}
             </p>
           </div>
         )}
@@ -438,11 +441,11 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   />
                   <label htmlFor="terms-consent" className="text-xs text-muted-foreground leading-none cursor-pointer">
                     {LdContent.accessVerification.termsConsent.label}{' '}
-                    <a href="/terms" target="_blank" className="text-primary underline hover:text-primary/80">
+                    <a href={`/${LLocale}/terms-and-conditions`} target="_blank" className="text-primary underline hover:text-primary/80">
                       {LdContent.accessVerification.termsConsent.termsLinkText}
                     </a>{' '}
                     &{' '}
-                    <a href="/privacy" target="_blank" className="text-primary underline hover:text-primary/80">
+                    <a href={`/${LLocale}/privacy-policy`} target="_blank" className="text-primary underline hover:text-primary/80">
                       {LdContent.accessVerification.termsConsent.privacyLinkText}
                     </a>
                   </label>
@@ -499,7 +502,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                     }}
                     className="text-xs font-medium text-primary hover:underline focus:outline-none"
                   >
-                    Change Email
+                    {LdContent.emailChange || "Change Email"}
                   </button>
                 </div>
                 <Input

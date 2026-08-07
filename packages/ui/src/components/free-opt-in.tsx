@@ -41,6 +41,8 @@ export default function FreeOptIn({ idContent }: Record<string, any>) {
     const [LIsCustomer, fnSetIsCustomer] = useState(false);
     const { status, isCustomer, refetch } = useApproval()
 
+    // Setting up correct Flow based on the identifed email
+    // during the mount
     useEffect(() => {
         async function fnAutoCheckApproval() {
           try {

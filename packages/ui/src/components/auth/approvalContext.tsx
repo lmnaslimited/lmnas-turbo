@@ -28,30 +28,34 @@ const ApprovalContext = createContext<IApprovalContext>({
 });
 
 export function ApprovalProvider({ children }: { children: React.ReactNode }) {
-    const [status, setStatus] = useState<TApprovalStatus>("verifying");
-    const [isCustomer, setIsCustomer] = useState(false);
-    const isFetchingRef = useRef(false);
+    // Stores the current approval status.
+    const [LStatus, fnSetStatus] = useState<TApprovalStatus>("verifying");
+    // Indicates whether the identified user is an existing customer.
+    const [LIsCustomer, fnSetIsCustomer] = useState(false);
+    // Prevents multiple approval requests from running simultaneously.
+    const LiIsFetchingRef = useRef(false);
 
+    // Fetches the user's approval status from CRM.
     const fnFetchApproval = async (iTargetIdentifier?: string, forceRefresh = false) => {
-        // Resolve distinct ID dynamically at execution time
+        // Resolve the identifier that should be validated.
         const LIdentifier = iTargetIdentifier
 
         if (!LIdentifier) {
-            setStatus("unapproved");
+            fnSetStatus("unapproved");
             return;
         }
 
-        // 1. Check Session Cache (if not forcing refresh)
+        // Read from session storage unless a fresh lookup is requested.
         if (!forceRefresh) {
-            const cached = sessionStorage.getItem(STORAGE_KEY);
-            if (cached) {
+            const LdCachedSession = sessionStorage.getItem(STORAGE_KEY);
+            if (LdCachedSession) {
                 try {
-                    const parsed = JSON.parse(cached);
+                    const LdParsed = JSON.parse(LdCachedSession);
                     // Match against the queried identifier, not just email
-                    if (parsed.identifier === LIdentifier) {
-                        setStatus(parsed.status);
-                        setIsCustomer(parsed.isCustomer);
-                        return parsed
+                    if (LdParsed.identifier === LIdentifier) {
+                        fnSetStatus(LdParsed.status);
+                        fnSetIsCustomer(LdParsed.isCustomer);
+                        return LdParsed
                     }
                 } catch {
                     sessionStorage.removeItem(STORAGE_KEY);
@@ -59,55 +63,60 @@ export function ApprovalProvider({ children }: { children: React.ReactNode }) {
             }
         }
 
-        if (isFetchingRef.current) return;
-        isFetchingRef.current = true;
-        setStatus("verifying");
+        // Prevent duplicate API requests.
+        if (LiIsFetchingRef.current) return;
+        LiIsFetchingRef.current = true;
+        fnSetStatus("verifying");
 
         try {
-            const result = await fnCheckUserApproval(LIdentifier);
+             // Fetch the approval status from CRM.
+            const LdResult = await fnCheckUserApproval(LIdentifier);
             
-            let resolvedStatus: TApprovalStatus = "unapproved";
-            const userEmail = result?.email || LIdentifier;
-            const customerFlag = !!result?.is_customer;
+            let lResolvedStatus: TApprovalStatus = "unapproved";
+            // Use the CRM email when available.
+            const LUserEmail = LdResult?.email || LIdentifier;
+            const LCustomerFlag = !!LdResult?.is_customer;
 
-            if (result?.approved) {
-                resolvedStatus = "approved";
-            } else if (result?.reason === "NOT_QUALIFIED") {
-                resolvedStatus = "review_pending";
+            if (LdResult?.approved) {
+                lResolvedStatus = "approved";
+            } else if (LdResult?.reason === "NOT_QUALIFIED") {
+                lResolvedStatus = "review_pending";
             } else {
-                resolvedStatus = "unapproved";
+                lResolvedStatus = "unapproved";
             }
 
             // Update state
-            setStatus(resolvedStatus);
-            setIsCustomer(customerFlag);
+            fnSetStatus(lResolvedStatus);
+            fnSetIsCustomer(LCustomerFlag);
 
-            // 2. Write to Session Storage using the identifier as key
+            // Cache the latest approval result for future lookups.
             sessionStorage.setItem(
                 STORAGE_KEY,
                 JSON.stringify({
                     identifier: LIdentifier,
-                    status: resolvedStatus,
-                    email: userEmail,
-                    isCustomer: customerFlag,
+                    status: lResolvedStatus,
+                    email: LUserEmail,
+                    isCustomer: LCustomerFlag,
                 })
             );
 
             return {identifier: LIdentifier,
-                    status: resolvedStatus,
-                    email: userEmail,
-                    isCustomer: customerFlag,}
+                    status: lResolvedStatus,
+                    email: LUserEmail,
+                    isCustomer: LCustomerFlag,}
         } catch (error) {
             console.error("Approval check failed:", error);
-            setStatus("unapproved");
+            fnSetStatus("unapproved");
         } finally {
-            isFetchingRef.current = false;
+            LiIsFetchingRef.current = false;
         }
     };
 
-    // Handle initial mount check when PostHog initializes
+    // Check approval when the provider is mounted.
     useEffect(() => {
+        // Get the currently identified PostHog user.
         const LDistinctId = posthog.get_distinct_id();
+        // Proceed only when the distinct ID is an email.
         if (LDistinctId?.includes("@")) {
             fnFetchApproval(LDistinctId);
         } else {
@@ -124,10 +133,11 @@ export function ApprovalProvider({ children }: { children: React.ReactNode }) {
     return (
         <ApprovalContext.Provider
             value={{
-                status,
-                isCustomer,
+                status: LStatus,
+                isCustomer: LIsCustomer,
+                // Forces a fresh approval lookup by clearing the cache.
                 refetch: async (iTargetIdentifier?: string) => {
-                    isFetchingRef.current = false;
+                    LiIsFetchingRef.current = false;
                     sessionStorage.removeItem(STORAGE_KEY);
                     return await fnFetchApproval(iTargetIdentifier, true);
                 },
@@ -138,6 +148,7 @@ export function ApprovalProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
+// Hook used by components to access the approval context.
 export function useApproval() {
     return useContext(ApprovalContext);
 }
