@@ -1,5 +1,6 @@
 "use server"
 
+import { TEnvSource } from "@repo/middleware/types";
 import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
 import { PostHog } from "posthog-node"
 
@@ -26,6 +27,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     source?: string;
     campaign?: string;
     itemName?: string;
+    env: TEnvSource
 }
 
 
@@ -81,9 +83,9 @@ async function fnVerifyRecaptchaToken( iRecaptchaToken: string): Promise<{ isHum
  * The authentication header is kept in the server environment and
  * is never exposed to the browser.
  */
-function fnGetCrmConfiguration() {
-  const LBaseUrl = process.env.SUBSCRIBE_URL
-  const LAuthorizationHeader = process.env.AUTH_BASE_64
+function fnGetCrmConfiguration(idEnv:TEnvSource) {
+  const LBaseUrl = idEnv.env.url || process.env.SUBSCRIBE_URL
+  const LAuthorizationHeader = idEnv.env.token || process.env.AUTH_BASE_64
 
   if (!LBaseUrl || !LAuthorizationHeader) {
     throw new Error("Missing required CRM environment variables")
@@ -555,10 +557,10 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
       employeeCount, interestReason,
       createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
       campaign,
-      itemName,
+      itemName, env
     } = idLeadFormData
-  
-    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration()
+    
+    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration(env)
       
     /**
      * Verify the user unless the request has already been verified

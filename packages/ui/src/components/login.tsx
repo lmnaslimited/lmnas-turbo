@@ -205,25 +205,32 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       if (LdContent?.LeadProcess?.IsNeeded) {
         const LRecaptchaToken = await executeRecaptcha("beta_request");
         // creation of Lead-> opportunity->notes -> email
-        const LdLeadResult = await fnLeadToOpportunity({
-          email: LTrimmedEmail,
-          name: LGeneratedName,
-          recaptchaToken: LRecaptchaToken,
-          companyName: LdCompanyDetails.companyName,
-          companyDomain: LdCompanyDetails.companyDomain,
-          companyWebsite: LdCompanyDetails.companyWebsite,
-          employeeCount: LdCompanyDetails.employeeCount,
-          interestReason: LdCompanyDetails.interestReason,
-          createOpportunity: true,
-          sendEmail: true,
-          emailTemplate: LdContent.LeadProcess.emailTemplate,
-          humanVerfied: true,
-          opportType: LdContent.LeadProcess.opportType,
-          source: LdContent.LeadProcess.source,
-          campaign: LdContent.campaign,
-          itemName: LdContent.itemName,
+        // the /api/crm is located in braccoli-site
+        const LdLeadResponse = await fetch("/api/crm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            data:{
+            email: LTrimmedEmail,
+            name: LGeneratedName,
+            recaptchaToken: LRecaptchaToken,
+            companyName: LdCompanyDetails.companyName,
+            companyDomain: LdCompanyDetails.companyDomain,
+            companyWebsite: LdCompanyDetails.companyWebsite,
+            employeeCount: LdCompanyDetails.employeeCount,
+            interestReason: LdCompanyDetails.interestReason,
+            createOpportunity: true,
+            sendEmail: true,
+            emailTemplate: LdContent.LeadProcess.emailTemplate,
+            humanVerfied: true,
+            opportType: LdContent.LeadProcess.opportType,
+            source: LdContent.LeadProcess.source,
+            campaign: LdContent.campaign,
+            itemName: LdContent.itemName
+            }
+          }),
         });
-
+        const LdLeadResult = await LdLeadResponse.json()
         if (LdLeadResult?.message === "success") {
           fnSetSuccessMsg({
             title: LdContent?.reviewPending?.titleSubmitted || "Application Submitted Successfully!",
@@ -234,6 +241,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
           fnSetError(LdContent?.errorMessages?.requestFailed || "Failed to submit request. Please try again.");
         }
       }
+      await refetch(LTrimmedEmail);
     } catch (idError) {
       console.error('Beta request failure:', idError);
       fnSetError(idLogin.loginAndSignUp.errDefaultFallback || 'An unexpected error occurred.');

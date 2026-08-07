@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext, useEffect, useState, useRef } from "react";
 import posthog from "posthog-js";
-import { fnCheckUserApproval } from "@repo/ui/api/crm/check-user-approval";
-import { TEnvSource, TLoginSource } from "@repo/middleware/types";
+import { TLoginSource } from "@repo/middleware/types";
+import { useParams } from "next/navigation";
 
 export type TApprovalStatus = "verifying" | "approved" | "review_pending" | "unapproved";
 
@@ -28,9 +28,12 @@ const ApprovalContext = createContext<IApprovalContext>({
     refetch: async () => undefined,
 });
 
-export function ApprovalProvider({ children,loginSettings,
-    envSettings, }: { children: React.ReactNode , loginSettings: TLoginSource,
-        envSettings:TEnvSource}) {
+export function ApprovalProvider({ children,loginSettings, iStatus
+}: { children: React.ReactNode , loginSettings: TLoginSource, iStatus:string}) {
+    // Retrieves route parameters and query parameters
+    const LdParams = useParams();
+    // Extract the locale value from the route parameters.
+    const LLocale = LdParams.locale as string;
     // Stores the current approval status.
     const [LStatus, fnSetStatus] = useState<TApprovalStatus>("verifying");
     // Indicates whether the identified user is an existing customer.
@@ -72,13 +75,18 @@ export function ApprovalProvider({ children,loginSettings,
         fnSetStatus("verifying");
 
         try {
-             // Fetch the approval status from CRM.
-            const LdResult = await fnCheckUserApproval({
-                doctype: loginSettings.loginAndSignUp.doctypeDetails,
-                env: envSettings,
-                iDistinctId: LIdentifier,
+            // Fetch the approval status from CRM.
+            const LdVerifyApproval = await fetch("/api/approval-access", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  distinctId: LIdentifier,
+                  doctypeConfig: loginSettings.loginAndSignUp.doctypeDetails,
+                  locale: LLocale,
+                  LStatus: iStatus
+                }),
               });
-            
+            const LdResult = await LdVerifyApproval.json();
             let lResolvedStatus: TApprovalStatus = "unapproved";
             // Use the CRM email when available.
             const LUserEmail = LdResult?.email || LIdentifier;
