@@ -355,7 +355,7 @@ async function fnCreateOpportunity(
             ],
             [idDoctype.opportunity.field_name.notes]: [
               {
-                note: LComment,
+                [idDoctype.opportunity.field_name.note]: LComment,
               },
             ],
           }),
