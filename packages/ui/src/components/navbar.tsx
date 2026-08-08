@@ -26,7 +26,7 @@ import type { TnavbarTarget, Tbutton } from "@repo/middleware/types"
 import { useAuth } from "./auth/authContext"
 import { ProfileDropdown } from "./profile"
 import { useParams, usePathname } from 'next/navigation';
-import posthog from "posthog-js"
+import { useApproval } from "./auth/approvalContext"
 
 export default function Navbar({
   idNavbar,
@@ -82,20 +82,22 @@ export default function Navbar({
       window.removeEventListener("touchstart", fnHandleClickOutside)
     }
   }, [])
+  const { status, isCustomer } = useApproval();
+  
+  // 2. Helper to resolve Label & Link dynamically
+  const fnGetButtonConfig = () => {
+    if (status === "approved") {
+      if (isCustomer) {
+        return idNavbar.navbar.profileSettings?.[0]?.description || "Sign In"
+      }
+      return idNavbar.navbar.profileSettings?.[0]?.icon || "Sign Up"
+    }
 
-  // get the current user's id from posthog
-  const LUserId = posthog.get_distinct_id();
+    // Default for 'unapproved', 'review_pending', or 'verifying'
+    return idNavbar.navbar.profileSettings?.[0]?.label
+  };
 
-  // get the login in and sign up configuration
-  const LdLoginAndSignUpConfig = idNavbar.loginAndSignUp;
-
-  // if its in test phase only show to specific tester
-  // if its not in test phase, show to all
-  const LShouldShowButton =
-    LdLoginAndSignUpConfig?.OnlyInTestingPhase === false ||
-    LdLoginAndSignUpConfig?.TestUserAllowed?.some(
-      (user) => user.label === LUserId
-    );
+  const LLabel = fnGetButtonConfig();
 
   return (
     <>
@@ -364,13 +366,13 @@ export default function Navbar({
               </>
             ) : (
               /* Dont show Login Button when user is on login page */
-        !LbHideLoginButton && LShouldShowButton  && (
+        !LbHideLoginButton && (
               <Link href={`/${locale}/login`}>
                 <Button 
                   variant="default"
                   className="rounded-lg h-10 flex items-center"
                 >
-                { idNavbar.navbar.profileSettings?.[0]?.label ?? "Login" }
+                { LLabel ?? "Login" }
                 </Button>
               </Link>
         )

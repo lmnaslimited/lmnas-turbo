@@ -47,6 +47,8 @@ import {
   TbannerTarget,
   TLoginSource,
   TLoginTarget,
+  TEnvTarget,
+  TEnvSource,
 } from "../types"
 import { clQueryFactory } from "../api/query"
 
@@ -446,6 +448,21 @@ export class clLoginTransformer extends clTransformer<
     super(iContentType)
   }
 }
+
+export class clEnvTransformer extends clTransformer<
+  TEnvSource,
+  TEnvTarget
+> {
+  async performTransformation(
+    idSourceData: TEnvSource,
+  ): Promise<TEnvTarget> {
+    this.targetData = idSourceData
+    return this.targetData
+  }
+  constructor(iContentType: string) {
+    super(iContentType)
+  }
+}
 // An interface to hold the list of Transformer class
 interface ITransformerMap {
   navbar: clNavbarTransformer
@@ -470,6 +487,7 @@ interface ITransformerMap {
   blogs: clBlogArticleTransformer
   bannerSetting: clBannerTransformer
   loginAndSignUp: clLoginTransformer
+  env: clEnvTransformer
   // Add other content types and corresponding transformers
 }
 // A factory class to create a new instance for the transformation engine
@@ -499,7 +517,8 @@ export class clTransformerFactory {
     blogHome: clBlogHomeTransformer,
     blogs: clBlogArticleTransformer,
     bannerSetting: clBannerTransformer,
-    loginAndSignUp: clLoginTransformer
+    loginAndSignUp: clLoginTransformer,
+    env: clEnvTransformer
     // Add other content types and corresponding transformers
   }
 

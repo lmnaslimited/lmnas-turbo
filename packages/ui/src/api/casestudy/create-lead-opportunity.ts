@@ -1,6 +1,6 @@
 "use server"
 
-import { linkFrappeRecordToPostHog } from "@repo/ui/api/crm/posthog-link"
+import { TEnvSource } from "@repo/middleware/types";
 import { PostHog } from "posthog-node"
 
 const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
@@ -11,6 +11,13 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     email: string;
     name: string;
     recaptchaToken: string;
+
+    companyName?: string;
+    companyDomain?: string;
+    companyWebsite?: string;
+    employeeCount?: string;
+
+    interestReason?: string;
     createOpportunity?: boolean;
     sendEmail?: boolean;
     emailTemplate?: string;
@@ -19,6 +26,8 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     source?: string;
     campaign?: string;
     itemName?: string;
+    env: TEnvSource;
+    doctype: Record<string, any>
 }
 
 
@@ -74,9 +83,9 @@ async function fnVerifyRecaptchaToken( iRecaptchaToken: string): Promise<{ isHum
  * The authentication header is kept in the server environment and
  * is never exposed to the browser.
  */
-function fnGetCrmConfiguration() {
-  const LBaseUrl = process.env.SUBSCRIBE_URL
-  const LAuthorizationHeader = process.env.AUTH_BASE_64
+function fnGetCrmConfiguration(idEnv:TEnvSource) {
+  const LBaseUrl = idEnv.env.url || process.env.SUBSCRIBE_URL
+  const LAuthorizationHeader = idEnv.env.token || process.env.AUTH_BASE_64
 
   if (!LBaseUrl || !LAuthorizationHeader) {
     throw new Error("Missing required CRM environment variables")
@@ -102,14 +111,15 @@ async function fnGetLeadByEmail(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign:string,
+  idDoctype: Record<string, any>
 ){
   const LFilters = JSON.stringify([
-    ["email_id", "=", iEmail],
+    [idDoctype.lead.field_name.email_id, "=", iEmail],
     // ["campaign_name", "=", iCampaign]
 ])
   // Limit the response to one record because only the first matching
   // Lead is required for this workflow.
-  const LUrl = `${iBaseUrl}/api/resource/Lead?filters=${encodeURIComponent(LFilters)}&fields=["*"]&limit_page_length=1`
+  const LUrl = `${iBaseUrl}/api/resource/${idDoctype.lead.doctype || "Lead"}?filters=${encodeURIComponent(LFilters)}&fields=["*"]&limit_page_length=1`
 
   const LdResponse = await fetch(LUrl, {
     method: "GET",
@@ -139,14 +149,15 @@ async function fnGetOpportunity(
   idHeaders: Record<string, string>,
   iCampaign: string,
   iItemName: string,
+  idDoctype: Record<string, any>
 ) {
   const LFilters = JSON.stringify([
-    ["party_name", "=", iLeadId],
-    ["status", "in", ["Open", "Replied"]],
+    [idDoctype.opportunity.field_name.party_name, "=", iLeadId],
+    [idDoctype.opportunity.field_name.status, "in", ["Open", "Replied"]],
   ])
 
   const LUrl =
-    `${iBaseUrl}/api/resource/Opportunity` +
+    `${iBaseUrl}/api/resource/${idDoctype.opportunity.doctype}` +
     `?filters=${encodeURIComponent(LFilters)}` +
     `&fields=["name"]` +
     `&limit_page_length=100`
@@ -167,7 +178,7 @@ async function fnGetOpportunity(
   // item code and campaign is found.
   for (const LOpportunity of LdResult.data ?? []) {
     const LOpportunityDetailResponse = await fetch(
-      `${iBaseUrl}/api/resource/Opportunity/${encodeURIComponent(
+      `${iBaseUrl}/api/resource/${idDoctype.opportunity.doctype}/${encodeURIComponent(
         LOpportunity.name,
       )}`,
       {
@@ -190,12 +201,9 @@ async function fnGetOpportunity(
     // Check whether any item in the child table matches both the requested
     // item and campaign.
     const LIsMatchingOpportunity = LOpportunityDetail.items?.some(
-      (iItem: {
-        item_code: string
-        custom_campaign?: string
-      }) =>
-        iItem.item_code === iItemName &&
-        iItem.custom_campaign === iCampaign,
+      (iItem: Record<string, string>) =>
+        iItem[idDoctype.opportunity.field_name.item_code] === iItemName &&
+        iItem[idDoctype.opportunity.field_name.custom_campaign] === iCampaign,
     )
 
     if (LIsMatchingOpportunity) {
@@ -218,12 +226,24 @@ async function fnCreateLead(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign: string,
-  iSource: string
+  iSource: string,
+  iCompanyName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string,
+  idDoctype:Record<string, any>
 ) {
-  const LdResponse = await fetch(`${iBaseUrl}/api/resource/Lead`, {
+  const LdResponse = await fetch(`${iBaseUrl}/api/resource/${idDoctype.lead.doctype || "Lead"}`, {
     method: "POST",
     headers: idHeaders,
-    body: JSON.stringify({ email_id: iEmail, first_name: iName, campaign_name: iCampaign, source: iSource }),
+    body: JSON.stringify({
+      [idDoctype.lead.field_name.email_id]: iEmail,
+      [idDoctype.lead.field_name.first_name]: iName,
+      [idDoctype.lead.field_name.campaign_name]: iCampaign,
+      [idDoctype.lead.field_name.source]: iSource,
+      [idDoctype.lead.field_name.company_name]: iCompanyName,
+      [idDoctype.lead.field_name.website]: iCompanyWebsite,
+      [idDoctype.lead.field_name.no_of_employees]: iEmployeeCount,
+    }),
   })
 
   if (!LdResponse.ok) {
@@ -252,15 +272,19 @@ async function fnGetOrCreateLead(
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign:string,
-  iSource: string
+  iSource: string,
+  iCompanyName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string,
+  idDoctype: Record<string, any>
 ) {
-  const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders, iCampaign)
+  const LdExistingLead = await fnGetLeadByEmail(iEmail, iBaseUrl, idHeaders, iCampaign, idDoctype)
 
   if (LdExistingLead) {
     return { lead: LdExistingLead, created: false }
   }
 
-  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource)
+  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource, iCompanyName, iCompanyWebsite, iEmployeeCount, idDoctype)
   return { lead: LdNewLead, created: true }
 }
 
@@ -279,29 +303,61 @@ async function fnCreateOpportunity(
   iSource: string,
   iCampaign: string,
   iItemName: string,
+  iCompanyWebsite: string,
+  iEmployeeCount: string,
+  iCompanyDomain: string,
+  iInterestReason: string,
+  iCompanyName: string,
+  iLeadEmail: string,
+  idDoctype: Record<string, any>
 ) {
+  const LComment = `
+              Beta Access Request Details:
+              
+              Company Name:
+              ${iCompanyName || "-"},
+              
+              Company Domain:
+              ${iCompanyDomain || "-"},
+              
+              Company Website:
+              ${iCompanyWebsite || "-"},
+              
+              Employee Count:
+              ${iEmployeeCount || "-"},
+              
+              Why interested:
+              ${iInterestReason || "-"}
+              `;
   const LdResponse = await fetch(
-      `${iBaseUrl}/api/resource/Opportunity`,
+      `${iBaseUrl}/api/resource/${idDoctype.opportunity.doctype}`,
       {
           method: "POST",
           headers: idHeaders,
           body: JSON.stringify({
-              opportunity_from: "Lead",
-              party_name: iLeadName,
-              opportunity_type: iOpportunityType,
-              source: iSource,
-              transaction_date: new Date()
-                  .toISOString()
-                  .split("T")[0],
-
-              items: [
-                  {
-                      item_code: iItemName,
-                      qty: 1,
-                      custom_campaign: iCampaign,
-                      rate:0
-                  },
-              ],
+            [idDoctype.opportunity.field_name.opportunity_from]: "Lead",
+            [idDoctype.opportunity.field_name.party_name]: iLeadName,
+            [idDoctype.opportunity.field_name.opportunity_type]: iOpportunityType,
+            [idDoctype.opportunity.field_name.source]: iSource,
+            [idDoctype.opportunity.field_name.transaction_date]: new Date()
+              .toISOString()
+              .split("T")[0],
+            [idDoctype.opportunity.field_name.website]: iCompanyWebsite,
+            [idDoctype.opportunity.field_name.no_of_employees]: iEmployeeCount,
+            [idDoctype.opportunity.field_name.contact_email]: iLeadEmail,
+            [idDoctype.opportunity.field_name.items]: [
+              {
+                [idDoctype.opportunity.field_name.item_code]: iItemName,
+                [idDoctype.opportunity.field_name.qty]: 1,
+                [idDoctype.opportunity.field_name.custom_campaign]: iCampaign,
+                [idDoctype.opportunity.field_name.rate]: 0,
+              },
+            ],
+            [idDoctype.opportunity.field_name.notes]: [
+              {
+                [idDoctype.opportunity.field_name.note]: LComment,
+              },
+            ],
           }),
       },
   )
@@ -315,6 +371,37 @@ async function fnCreateOpportunity(
   const LdResult = await LdResponse.json()
 
   return LdResult.data
+}
+
+async function fnCreateOpportunityComment(
+  iOpportunityName: string,
+  iComment: string,
+  iBaseUrl: string,
+  idHeaders: Record<string, string>,
+  idDoctype: Record<string, any>
+) {
+
+  const LdResponse = await fetch(
+      `${iBaseUrl}/api/resource/${idDoctype.comment.doctype || "Comment"}`,
+      {
+          method: "POST",
+          headers: idHeaders,
+          body: JSON.stringify({
+            [idDoctype.comment.field_name.comment_type]: "Comment",
+            [idDoctype.comment.field_name.reference_doctype]: "Opportunity",
+            [idDoctype.comment.field_name.reference_name]: iOpportunityName,
+            [idDoctype.comment.field_name.content]: iComment,
+          }),
+      }
+  );
+
+  if (!LdResponse.ok) {
+      throw new Error(
+          `Opportunity comment creation failed: ${LdResponse.status}`
+      );
+  }
+
+  return await LdResponse.json();
 }
 
 /**
@@ -471,12 +558,17 @@ function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolea
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-    const {email, name, recaptchaToken, createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
+    const {email, name, recaptchaToken, 
+      companyName,
+      companyDomain,
+      companyWebsite,
+      employeeCount, interestReason,
+      createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
       campaign,
-      itemName,
+      itemName, env, doctype
     } = idLeadFormData
-  
-    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration()
+    
+    const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration(env)
       
     /**
      * Verify the user unless the request has already been verified
@@ -495,7 +587,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
      * Find the Lead by email or create a new Lead when no match
      * is found.
      */
-    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!)
+    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!, companyName!, companyWebsite!, employeeCount!, doctype)
 
     /**
    * Find an existing matching Opportunity or create a new one.
@@ -507,14 +599,13 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
     let LOpportunityCreated = false
 
     if (createOpportunity) {
-        const LExistingOpportunity = await fnGetOpportunity( LdLead.name, LBaseUrl, LdCrmRequestHeaders, campaign!, itemName!,)
+        const LExistingOpportunity = await fnGetOpportunity( LdLead.name, LBaseUrl, LdCrmRequestHeaders, campaign!, itemName!, doctype)
 
         if (LExistingOpportunity) {
           
             LdOpportunity = LExistingOpportunity
         } else {
-            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,)
-
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!, LdLead[doctype.lead.field_name.email_id], doctype)
             LOpportunityCreated = true
         }
     }

@@ -1,26 +1,31 @@
 "use client"
-import { useReCaptcha } from "next-recaptcha-v3"
-import { CircleCheckBig, CircleX, Loader2, X } from "lucide-react";
-import { useParams } from "next/navigation";
-import posthog from "posthog-js";
-import { useState } from "react";
-import { validateRecaptcha } from "../api/newsletter/recaptcha";
-import { Input } from "./ui/input";
-import { Label } from "@radix-ui/react-label";
-import Link from "next/link";
-import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
 
-export default function FreeOptIn({idContent}:Record<string, any>){
-    // Stores the user's email address entered in the opt-in form.
-    const [Email, fnSetEmail] = useState<string> ("")
-    // Stores validation or reCAPTCHA error messages displayed to the user.
+import { CircleCheckBig, CircleX,CheckCircle2, X, Loader2, Clock } from "lucide-react";
+import { useParams } from "next/navigation";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { useEffect, useState } from "react";
+import posthog from "posthog-js";
+import { useRouter } from "next/navigation";
+import { useApproval } from "./auth/approvalContext";
+
+type TApprovalStatus = "verifying" | "approved" | "review_pending" | "unapproved";
+export default function FreeOptIn({ idContent }: Record<string, any>) { 
+    // Retrieves the current locale from the route parameters.
+    const LdParams = useParams();
+    // Extract the locale value from the route parameters.
+    const LLocale = LdParams.locale as string;
+    const LCurrentLocale = (LLocale && LLocale in idContent) ? LLocale : 'en';
+    const router = useRouter();
+    // Fallback to English if the requested locale doesn't exist
+    const LdContent = idContent[LCurrentLocale] || idContent.en;
+    const [Email, fnSetEmail] = useState("")
+    const [LIsSuccess, fnSetIsSuccess] = useState(false);
     const [LError, fnSetError] = useState("");
     const [LHasConsent, fnSetHasConsent] = useState(false);
-    // store success and submitting state
-    const [LIsSuccess, fnSetIsSuccess] = useState(false);
     const [LIsSubmitting, fnSetIsSubmitting] = useState(false);
-    // store success message
-    const [LdSuccessMessage, fnSetSuccessMessage] = useState<{
+     // store success message
+     const [LdSuccessMessage, fnSetSuccessMessage] = useState<{
         label: string;
         description: string;
     }>({
@@ -28,266 +33,121 @@ export default function FreeOptIn({idContent}:Record<string, any>){
         description: "",
     })
 
-    // Provides the function to generate a Google reCAPTCHA v3 token.
-    const { executeRecaptcha } = useReCaptcha()
-    // Retrieves the current locale from the route parameters.
-    const LdParams = useParams();
-    // Extract the locale value from the route parameters.
-    const LLocale = LdParams.locale as string;
+    const LDistinctId = posthog.get_distinct_id();
+    // Distinct ID verification states
+    const [LApprovalStatus, fnSetApprovalStatus] = useState<TApprovalStatus>("verifying");
+    const [LIsCustomer, fnSetIsCustomer] = useState(false);
+    const { status, isCustomer, refetch } = useApproval()
+
+    // Setting up correct Flow based on the identifed email
+    // during the mount
+    useEffect(() => {
+        async function fnAutoCheckApproval() {
+          try {
+            fnSetError("");
+           
+            if (status === 'approved') {
+               
+                fnSetIsCustomer(!!isCustomer);
+                fnSetApprovalStatus("approved");
+            } else if (status === 'review_pending') {
+                fnSetApprovalStatus("review_pending");
+            } else {
+                fnSetApprovalStatus("unapproved");
+            }
+          } catch (idError) {
+            console.error('Automated approval check failure:', idError);
+          }
+        }
     
-    // Handles the beta opt-in process, including email validation,
-    // reCAPTCHA verification, PostHog tracking, and launching the Early Access widget.
-    const fnHandleOptIn = async () => {
-        // Clear any previous error/success message.
+        if(LDistinctId){
+          fnSetEmail(LDistinctId?.includes("@")? LDistinctId : "");
+          fnAutoCheckApproval();
+        }
+      }, [LDistinctId]);
+    
+
+    async function fnHandleOptIn() {
+        // Reset previous messages.
         fnSetError("");
         fnSetSuccessMessage({
-          label: "",
-          description:"",
-      })
-        // Normalize the email before processing.
-        const LTrimmedEmail = Email.trim().toLowerCase()
-        // Stop if the email field is empty.
-        if (!LTrimmedEmail) return
+            label: "",
+            description: "",
+        });
+
+        const LTrimmedEmail = Email.trim().toLowerCase();
+
+        // Stop if the email is empty.
+        if (!LTrimmedEmail) return;
 
         fnSetIsSubmitting(true);
-        // Parse a readable name out of the email string
-        // e.g., "jane.doe@example.com" -> "Jane Doe"
-        const LEmailPrefix = LTrimmedEmail.split("@")[0];
-        const LGeneratedName = LEmailPrefix
-          ? LEmailPrefix
-              .split(/[\._\-]/)
-              .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-              .join(" ")
-          : "";
-        // Generate a reCAPTCHA token for bot verification.
-        const LRecaptchaToken = await executeRecaptcha("beta_opt_in")
-        try {
-            // Verify the generated reCAPTCHA token with the backend.
-            const LdResponse = await validateRecaptcha(LRecaptchaToken)
-            // Capture the verification result in PostHog for analytics.
-            posthog.capture("opt-in-recaptcha",{
-                recaptcha_score: String(LdResponse.score),
-                recaptcha_passed: LdResponse.success,
-                $set: {
-                email: LTrimmedEmail,
-        },
-            })
-            // Stop the flow if reCAPTCHA verification fails.
-            if (!LdResponse.success) {
-                //reset the email
-                // fnSetError(LdResponse.message ?? "reCAPTCHA verification failed.");
-                fnSetError(
-                  LdContent.errorMessage || LdResponse.message
-                );
-                fnSetHasConsent(false)
-                // fnSetEmail("")
-                return
-            }
 
-            // Identify the user in PostHog for future analytics.
-            posthog.identify(LTrimmedEmail, {
-                email: LTrimmedEmail,
-            })
-            // Trigger the hidden Site App widget to complete the beta opt-in.
-            // document.getElementById("new-pricing-beta")?.click()
+        // Identify the user.
+        posthog.identify(LTrimmedEmail, {
+        email: LTrimmedEmail,
+        });
 
-            // custom posthog beta early access, instead of default pop up model
-            posthog.updateEarlyAccessFeatureEnrollment("new-pricing-beta", true)
+        await refetch(LTrimmedEmail);
+        
+        // Navigate to login.
+        router.push(`/${LLocale}/login`);
+    
+        // fnSetIsSubmitting(false);
 
-            // Reset the email field after a successful submission.
-            // fnSetEmail("")
-
-            //call the backend to handle creation of
-            // Lead --> opportunity --> email
-
-              if (LdContent.LeadProcess.IsNeeded) {
-                  try {
-                      const LdLeadResult = await fnLeadToOpportunity({
-                          email: LTrimmedEmail,
-                          name: LGeneratedName,
-                          recaptchaToken: LRecaptchaToken,
-                          createOpportunity: true,
-                          sendEmail: true,
-                          emailTemplate: LdContent.LeadProcess.emailTemplate,
-                          humanVerfied: true,
-                          opportType: LdContent.LeadProcess.opportType,
-                          source: LdContent.LeadProcess.source,
-                          campaign: LdContent.campaign,
-                          itemName: LdContent.itemName,
-                      })
-
-                      if (LdLeadResult.message === "success") {
-                        const LIsNewOpportunity =
-                        LdLeadResult.meta?.opportunityCreated === true
-                       
-                        fnSetSuccessMessage(
-                            LIsNewOpportunity
-                                ? {
-                                      label: LdContent.successNewLabel,
-                                      description: LdContent.successNewDescrip,
-                                  }
-                                : {
-                                      label: LdContent.successExistLabel,
-                                      description: LdContent.successExistDescript,
-                                  },
-                        )
-                        // Show success state
-                        fnSetIsSuccess(true)
-
-                      }
-                  } catch (err) {
-                      // Log the synchronization error without breaking
-                      // the user's optimistic success state.
-                      console.error(
-                          "Background Frappe synchronization failed:",
-                          err,
-                      )
-                  }
-              }
-        } catch (error) {
-            console.error(error);
-        }finally {
-        // Always turn off the spinner, even on failures
-        fnSetIsSubmitting(false);
-      }
     }
-    const LCurrentLocale = (LLocale && LLocale in idContent) ? LLocale : 'en';
-    // Fallback to English if the requested locale doesn't exist
-    const LdContent = idContent[LCurrentLocale] || idContent.en;
-
+    // Determine Button Label safely based on PostHog approval status
+    const fnGetButtonLabel = () => {
+        if (LApprovalStatus === "approved") {
+            return isCustomer 
+                ? (LdContent.btnContinueLogin || "Continue to Sign In") 
+                : (LdContent.btnContinueSignUp || "Continue to Sign Up");
+        }
+        return LdContent.btnSecureSpot || "Secure My Spot";
+    };
     return (
-      <>
-        {/* Early Access Opt-In Section */}
         <section className="relative  flex items-center overflow-hidden border-b border-border/40 bg-background py-20 md:py-24">
-          <div className="pointer-events-none absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[140px]" />
-          <div className="pointer-events-none absolute -bottom-40 -left-20 h-[500px] w-[500px] rounded-full bg-primary/5 blur-[120px]" />
+            {/* Background Glow Overlay */}
+            <div className="pointer-events-none absolute -top-40 right-0 h-[600px] w-[600px] rounded-full bg-primary/5 blur-[140px]" />
+            <div className="pointer-events-none absolute -bottom-40 -left-20 h-[500px] w-[500px] rounded-full bg-primary/5 blur-[120px]" />
 
-          <div className="relative w-full px-4 md:px-24 lg:px-8 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 lg:items-center">
-              {/* Left Column */}
-              <div className="space-y-7">
-                <div className="flex w-fit items-center gap-2 rounded-full bg-accent border border-border px-3 py-1 text-sm shadow-sm">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
-                  </span>
-                  <span className="font-medium">{LdContent.earlyAccess}</span>
-                </div>
+            <div className="relative w-full px-4 md:px-8 mx-auto max-w-7xl">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
 
-                <h2 className="text-4xl font-bold tracking-tight text-foreground md:text-5xl lg:text-6xl leading-[1.1]">
-                  {LdContent.titleMain}
-                  <span className="text-primary">{LdContent.titleAccent}</span>
-                </h2>
+                    {/* Left Column - Dynamic Form View */}
+                    <div className="lg:col-span-6 space-y-8">
+                        {/* <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 border border-primary/20 px-3.5 py-1.5 text-xs sm:text-sm font-medium text-primary backdrop-blur-sm shadow-xs">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                            </span>
+                            <span>{LdContent.earlyAccess}</span>
+                        </div> */}
 
-                <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
-                  {LdContent.description}
-                </p>
-
-                <div className="flex flex-wrap gap-x-6 gap-y-3 pt-2">
-                  {LdContent.signals.map((iSignal: string) => (
-                    <div
-                      key={iSignal}
-                      className="flex items-center gap-2 text-sm text-muted-foreground"
-                    >
-                      <CircleCheckBig className="h-4 w-4 shrink-0 text-primary" />
-                      <span>{iSignal}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right Column */}
-              <div className="mx-auto w-full max-w-md">
-                <div className="overflow-hidden rounded-2xl border border-border bg-background shadow-2xl">
-                  <div className="bg-primary py-2.5 text-center">
-                    <span className="text-xs font-semibold uppercase tracking-[0.2em] text-background">
-                      {LdContent.ribbonText}
-                    </span>
-                  </div>
-
-                  <div className="p-8">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <h3 className="text-3xl font-bold text-foreground">
-                          {LdContent.planName}
-                        </h3>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {LdContent.freeForever}
+                        <h2 className="text-4xl font-bold text-foreground md:text-5xl lg:text-5xl leading-1">
+                            {LdContent.titleMain}{" "}
+                            <span className="text-primary">
+                                {LdContent.titleAccent}
+                            </span>
+                        </h2>
+                        <p className="text-lg text-muted-foreground leading-relaxed max-w-xl">
+                            {LdContent.description}
                         </p>
-                      </div>
-                      <div className="text-right leading-none">
-                        <span className="text-5xl font-bold text-foreground">
-                          $0
-                        </span>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {LdContent.perMonth}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="mt-8">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                        {LdContent.whatsIncluded}
-                      </h4>
-                      <ul className="space-y-3 text-sm text-foreground">
-                        <li className="flex items-start gap-3 rounded-xl bg-accent border border-border p-4">
-                          <CircleCheckBig className="h-5 w-5 shrink-0 text-primary mt-0.5" />
-                          <span>
-                            <strong>{LdContent.incInstanceTitle}</strong>
-                            {LdContent.incInstanceDesc}
-                          </span>
-                        </li>
-                        <li className="flex items-start gap-3 rounded-xl bg-accent border border-border p-4">
-                          <CircleCheckBig className="h-5 w-5 shrink-0 text-primary mt-0.5" />
-                          <span>
-                            <strong>{LdContent.incPlatformTitle}</strong>
-                            {LdContent.incPlatformDesc}
-                          </span>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="mt-8">
-                      <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-                        {LdContent.capabilities}
-                      </h4>
-                      <div className="grid grid-cols-2 gap-3 text-sm">
-                        {LdContent.capabilityList.map(
-                          ({
-                            label,
-                            available,
-                          }: {
-                            label: string;
-                            available: boolean;
-                          }) => (
-                            <div
-                              key={label}
-                              className={`flex items-center justify-between gap-2 rounded-lg border px-3 py-2.5 ${
-                                available
-                                  ? "bg-accent border-border"
-                                  : "bg-muted/40 border-border"
-                              }`}
-                            >
-                              <span
-                                className={
-                                  available
-                                    ? "text-foreground"
-                                    : "text-muted-foreground"
-                                }
-                              >
-                                {label}
-                              </span>
-
-                              {available ? (
-                                <CircleCheckBig className="h-4 w-4 shrink-0 text-primary" />
-                              ) : (
-                                <CircleX className="h-4 w-4 shrink-0 text-muted-foreground" />
-                              )}
+                        {/* 2. REVIEW PENDING STATE */}
+                        {LApprovalStatus === "review_pending" && (
+                            <div className="space-y-3 rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 backdrop-blur-xs">
+                                <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-semibold text-sm">
+                                    <Clock className="h-5 w-5 shrink-0" />
+                                    <span>
+                                        {LdContent?.reviewPending?.titlePending || "Access Request Under Review"}
+                                    </span>
+                                </div>
+                                <p className="text-xs text-muted-foreground leading-relaxed">
+                                    {LdContent?.reviewPending?.descriptionPending || 
+                                     "Your request is currently being reviewed. You will receive an email update once approved."}
+                                </p>
                             </div>
-                          )
                         )}
-                      </div>
-                      <div className="max-w-lg space-y-6 mt-8">
-                      {LIsSuccess ? (
+                        {LIsSuccess ? (
                         /* Dedicated Success State Layout - Clears form clutter completely */
                         <div className="relative rounded-xl bg-primary/5 border border-primary/20 p-6 text-center space-y-3 animate-in fade-in zoom-in-95 duration-200">
                           {/* Close Button */}
@@ -347,17 +207,17 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                               className="h-12 rounded-lg border border-primary bg-background px-4 text-base text-foreground transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
                             />
 
-                          <div className="flex items-start gap-2 mt-2 mb-2">
-                              <input
+                          {/* <div className="flex items-start gap-2 mt-2 mb-2"> */}
+                              {/* <input
                                 id="terms-consent"
                                 type="checkbox"
                                 required
                                 checked={LHasConsent}
                                 onChange={(e) => fnSetHasConsent(e.target.checked)}
                                 className="mt-1"
-                              />
+                              /> */}
 
-                              <label
+                              {/* <label
                                 htmlFor="terms-consent"
                                 className="text-sm text-muted-foreground"
                               >
@@ -370,9 +230,8 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                                   { LdContent.policyLabel || "Privacy Policy" }
                                 </Link>
                                 .
-                              </label>
-                            </div>
-
+                              </label> */}
+                            {/* </div> */}
                             <button
                               type="submit"
                               className="h-12 px-4 bg-primary text-primary-foreground font-medium rounded-lg flex items-center justify-center"
@@ -382,31 +241,122 @@ export default function FreeOptIn({idContent}:Record<string, any>){
                                   <Loader2 className="h-4 w-4 animate-spin" />
                                 </>
                               ) : (
-                                <span>{LdContent.btnSecureSpot}</span>
+                                // <span>{LdContent.btnSecureSpot}</span>
+                                <span>{fnGetButtonLabel()}</span>
+                                
                               )}
                               
                             </button>
-                          </div>
+                         </div>
                         </form>
-
-                        {LError && (
-                          <p className="text-sm text-destructive">{LError}</p>
-                        )}
-
-                        <p className="text-sm text-muted-foreground">
-                          {LdContent.noCreditCard}
-                        </p>
                         </>
                       )}
-                      </div>
+                        {/* Signals list */}
+                        <div className="flex flex-wrap items-center gap-x-6 gap-y-3 pt-2">
+                            {LdContent.signals.map((iSignal: string) => (
+                                <div
+                                    key={iSignal}
+                                    className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground font-medium"
+                                >
+                                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" />
+                                    <span>{iSignal}</span>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                  </div>
+
+                    {/* Right Column - Pricing Card */}
+                    <div className="lg:col-span-5 w-full max-w-md mx-auto">
+                        <div className="relative overflow-hidden rounded-3xl border border-border bg-card/80 transition-all duration-300 hover:shadow-primary/5">
+                            <div className="bg-primary py-2.5 text-center">
+                                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-primary-foreground">
+                                    {LdContent.ribbonText}
+                                </span>
+                            </div>
+                            <div className="p-6 sm:p-8 space-y-6">
+                                <div className="flex items-start justify-between border-b border-border/60 pb-6">
+                                    <div>
+                                        <h3 className="text-2xl font-bold text-foreground">
+                                            {LdContent.planName}
+                                        </h3>
+                                        <p className="text-xs text-muted-foreground mt-1">
+                                            {LdContent.freeForever}
+                                        </p>
+                                    </div>
+                                    <div className="text-right leading-none">
+                                        <span className="text-4xl sm:text-5xl font-black text-foreground">
+                                            $0
+                                        </span>
+                                        <p className="text-xs text-muted-foreground mt-1.5 font-medium">
+                                            {LdContent.perMonth}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                                        {LdContent.whatsIncluded}
+                                    </h4>
+                                    <ul className="space-y-2.5 text-xs sm:text-sm">
+                                        <li className="flex items-start gap-3 rounded-2xl bg-accent/50 border border-border/50 p-3.5 transition-colors hover:bg-accent">
+                                            <CircleCheckBig className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                                            <span>
+                                                <strong className="font-semibold text-foreground">{LdContent.incInstanceTitle} </strong>
+                                                <span className="text-muted-foreground">{LdContent.incInstanceDesc}</span>
+                                            </span>
+                                        </li>
+                                        <li className="flex items-start gap-3 rounded-2xl bg-accent/50 border border-border/50 p-3.5 transition-colors hover:bg-accent">
+                                            <CircleCheckBig className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+                                            <span>
+                                                <strong className="font-semibold text-foreground">{LdContent.incPlatformTitle} </strong>
+                                                <span className="text-muted-foreground">{LdContent.incPlatformDesc}</span>
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div className="space-y-3 pt-2">
+                                    <h4 className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
+                                        {LdContent.capabilities}
+                                    </h4>
+                                    <div className="grid grid-cols-2 gap-2">
+                                        {LdContent.capabilityList.map(
+                                            ({
+                                                label,
+                                                available,
+                                            }: {
+                                                label: string;
+                                                available: boolean;
+                                            }) => (
+                                                <div
+                                                    key={label}
+                                                    className={`flex items-center justify-between gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all ${
+                                                        available
+                                                            ? "bg-accent/40 border-border/60 text-foreground"
+                                                            : "bg-muted/30 border-border/30 text-muted-foreground/60"
+                                                    }`}
+                                                >
+                                                    <span className="truncate">{label}</span>
+                                                    {available ? (
+                                                        <CircleCheckBig className="h-3.5 w-3.5 shrink-0 text-primary" />
+                                                    ) : (
+                                                        <CircleX className="h-3.5 w-3.5 shrink-0 text-muted-foreground/40" />
+                                                    )}
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                    <p className="text-center text-xs text-muted-foreground pt-4">
+                                        {LdContent.noCreditCard}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-              </div>
             </div>
-          </div>
-          {/* <button id="new-pricing-beta" className="hidden" type="button" /> */}
         </section>
-      </>
     );
 }
+
