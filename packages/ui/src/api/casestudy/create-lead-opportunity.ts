@@ -353,7 +353,7 @@ async function fnCreateOpportunity(
                 [idDoctype.opportunity.field_name.rate]: 0,
               },
             ],
-            [idDoctype.opportunity.field_name.note]: [
+            [idDoctype.opportunity.field_name.notes]: [
               {
                 note: LComment,
               },
