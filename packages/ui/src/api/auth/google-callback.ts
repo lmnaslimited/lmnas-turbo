@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { setLmnasSession } from "@repo/ui/api/auth/session";
+import { TEnvSource } from "@repo/middleware/types";
 
-export async function googleCallback(request: NextRequest) {
+export async function googleCallback(request: NextRequest, iEnv:TEnvSource) {
   // Read the one-time login code returned by lenscloud after Google authentication.
   const { searchParams } = new URL(request.url);
 
@@ -13,7 +14,7 @@ export async function googleCallback(request: NextRequest) {
     );
   }
 
-  const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
+  const LFrappeUrl = iEnv.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
 
   if (!LFrappeUrl) {
     return NextResponse.redirect(
