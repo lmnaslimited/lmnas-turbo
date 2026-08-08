@@ -1155,11 +1155,15 @@ export type TEnvSource = {
   env: {
     url: string
     token: string
+    platformUrl: string
+    platformToken: string
   }
 }
 export type TEnvTarget = {
   env:  {
     url: string
     token: string
+    platformUrl: string
+    platformToken: string
   }
 }

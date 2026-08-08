@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { setLmnasSession } from './session';
+import { TEnvSource } from '@repo/middleware/types';
 
-function requiredUrl(): string {
-  const LValue = process.env.NEXT_PUBLIC_FRAPPE_URL;
+function requiredUrl(iEnv: TEnvSource): string {
+  const LValue = iEnv.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_URL;
 
   if (!LValue) {
     throw new Error('NEXT_PUBLIC_FRAPPE_URL is not configured');
@@ -18,8 +19,8 @@ function cookieHeader(setCookies: string[]): string {
     .join('; ');
 }
 
-export async function login(request: NextRequest) {
-  const LLensCloudUrl = requiredUrl();
+export async function login(request: NextRequest, iEnv: TEnvSource) {
+  const LLensCloudUrl = requiredUrl(iEnv);
 
   try {
     const { usr, pwd } = await request.json();

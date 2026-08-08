@@ -7,7 +7,6 @@ import Link from 'next/link';
 import { getIconComponent } from '@repo/ui/lib/icon';
 import { useReCaptcha } from "next-recaptcha-v3";
 import { validateRecaptcha } from '@repo/ui/api/newsletter/recaptcha';
-import { fnLeadToOpportunity } from "../api/casestudy/create-lead-opportunity";
 import { Textarea } from "./ui/textarea";
 import posthog from "posthog-js";
 import { useParams } from 'next/navigation';
@@ -228,7 +227,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             campaign: LdContent.campaign,
             itemName: LdContent.itemName,
             doctype: idLogin?.loginAndSignUp?.doctypeDetails
-            }
+            },
+            locale: LLocale
           }),
         });
         const LdLeadResult = await LdLeadResponse.json()

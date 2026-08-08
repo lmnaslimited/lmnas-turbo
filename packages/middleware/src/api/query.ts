@@ -3300,6 +3300,8 @@ export class clQueryEnv extends clQuery<TEnvSource> {
       ${this.contentType}(status: $status) {
         url
         token
+        platformUrl
+        platformToken
       }
     }`;
   }
