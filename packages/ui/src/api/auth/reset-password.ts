@@ -1,6 +1,7 @@
+import { TEnvSource } from '@repo/middleware/types';
 import { NextResponse } from 'next/server';
 
-export async function resetPassword(request: Request) {
+export async function resetPassword(request: Request, iEnv:TEnvSource) {
   try {
     const { email } = await request.json();
 
@@ -9,7 +10,7 @@ export async function resetPassword(request: Request) {
       return NextResponse.json({ error: 'Email field is required.' }, { status: 400 });
     }
 
-    const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_URL;
+    const LFrappeUrl = iEnv.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_URL;
     // Frappe whitelist method for password reset
     const LTargetEndpoint = `${LFrappeUrl}/api/method/frappe.core.doctype.user.user.reset_password`;
 

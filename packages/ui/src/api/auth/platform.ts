@@ -1,9 +1,10 @@
 import { createHmac, randomBytes } from 'node:crypto';
 import { NextRequest, NextResponse } from 'next/server';
 import { getLmnasSession } from './session';
+import { TEnvSource } from '@repo/middleware/types';
 
-function requiredEnv(name: string): string {
-  const LValue = process.env[name];
+function requiredEnv(name: string, iEnv?:TEnvSource): string {
+  const LValue = iEnv?.env.platformUrl || process.env[name];
 
   if (!LValue) {
     throw new Error(`${name} is not configured`);
@@ -12,7 +13,7 @@ function requiredEnv(name: string): string {
   return LValue;
 }
 
-export async function openPlatform(request: NextRequest) {
+export async function openPlatform(request: NextRequest, iEnv:TEnvSource) {
   const LdSession = getLmnasSession(request);
 
   if (!LdSession) {
@@ -21,14 +22,14 @@ export async function openPlatform(request: NextRequest) {
     );
   }
 
-  const LInternalUrl = requiredEnv('NEXT_PUBLIC_FRAPPE_URL')
+  const LInternalUrl = requiredEnv('NEXT_PUBLIC_FRAPPE_URL', iEnv)
     .replace(/\/+$/, '');
 
-  const LPublicUrl = requiredEnv('NEXT_PUBLIC_FRAPPE_DOMAIN')
+  const LPublicUrl = requiredEnv('NEXT_PUBLIC_FRAPPE_DOMAIN', iEnv)
     .replace(/\/+$/, '');
 
   const LSecret = requiredEnv(
-    'LENSCLOUD_TRUSTED_LOGIN_SECRET',
+    'LENSCLOUD_TRUSTED_LOGIN_SECRET', 
   );
 
 

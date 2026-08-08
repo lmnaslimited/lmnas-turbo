@@ -1,6 +1,7 @@
+import { TEnvSource } from '@repo/middleware/types';
 import { NextResponse } from 'next/server';
 
-export async function loginViaGoogle(request:Request) {
+export async function loginViaGoogle(request:Request, iEnv:TEnvSource) {
 
   // Determine the current application url so users can be redirected back after authentication.
   const LProtocol =
@@ -15,7 +16,7 @@ export async function loginViaGoogle(request:Request) {
     const LRedirectToUrl = `${LOrigin}/api/auth/google/callback`;
 
   try {
-    const LFrappeUrl = process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
+    const LFrappeUrl = iEnv.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_DOMAIN;
     // Determine the current application origin so users can be redirected back after authentication.
     // const { origin } = new URL(request.url); 
     
