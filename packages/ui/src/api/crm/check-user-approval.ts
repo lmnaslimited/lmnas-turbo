@@ -169,7 +169,7 @@ export async function fnCheckUserApproval({
       // Return an approved response if the user qualifies.
       if (LIsApproved) {
         return {
-          approved: LIsDomain,
+          approved: true,
           is_customer: lIsCustomer,
           email: LEmailId,
           reason: "APPROVED"
