@@ -10,8 +10,6 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   type TApi = {
     email: string;
     name: string;
-    recaptchaToken: string;
-
     companyName?: string;
     companyDomain?: string;
     companyWebsite?: string;
@@ -21,7 +19,6 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     createOpportunity?: boolean;
     sendEmail?: boolean;
     emailTemplate?: string;
-    humanVerfied?: boolean;
     opportType?: string;
     source?: string;
     campaign?: string;
@@ -31,51 +28,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
 }
 
 
-/**
- * Verify Google reCAPTCHA token.
- */
-async function fnVerifyRecaptchaToken( iRecaptchaToken: string): Promise<{ isHuman: boolean; score: number }> {
-  try {
-    const LRecaptchaSecretKey = process.env.RECAPTCHA_SECRET_KEY
 
-    if (!LRecaptchaSecretKey) {
-      console.error("Missing RECAPTCHA_SECRET_KEY")
-      return { isHuman: false, score: 0 }
-    }
-    // Send the client-generated reCAPTCHA token to Google's verification API.
-    const LdVerificationResponse = await fetch(
-      "https://www.google.com/recaptcha/api/siteverify",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-        body: new URLSearchParams({
-          secret: LRecaptchaSecretKey,
-          response: iRecaptchaToken,
-        }),
-      },
-    )
-    // Treat a non-successful HTTP response as a failed verification.
-    if (!LdVerificationResponse.ok) {
-      console.error("reCAPTCHA API request failed:", LdVerificationResponse.status)
-      return { isHuman: false, score: 0 }
-    }
-    
-    const LdVerificationResult = await LdVerificationResponse.json()
-    // reCAPTCHA v3 returns a score between 0.0 and 1.0.
-    // Use 0 when Google does not return a valid numeric score.
-    const LScore = typeof LdVerificationResult.score === "number" ? LdVerificationResult.score : 0
-
-    return {
-      isHuman: LdVerificationResult.success === true && LScore >= 0.5,
-      score: LScore,
-    }
-  } catch (idError) {
-    console.error("reCAPTCHA verification error:", idError)
-    return { isHuman: false, score: 0 }
-  }
-}
 
 /**
  * Load the configuration required to communicate with the CRM.
@@ -520,27 +473,6 @@ async function fnCreateCommunication(
   return LResult.message
 }
 
-/**
- * Track the result of the reCAPTCHA verification in PostHog.
- *
- * The email is used as the distinct ID so that verification events
- * can be associated with the corresponding Lead journey.
- */
-function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolean) {
-  try {
-    posthog.capture({
-      distinctId: iEmail,
-      event: "lead_recaptcha_verified",
-      properties: {
-        recaptcha_score: String(iScore),
-        recaptcha_passed: iPassed,
-        $set: { email: iEmail },
-      },
-    })
-  } catch (idError) {
-    console.error("PostHog capture failed:", idError)
-  }
-}
 
 /**
  * Main Lead processing workflow.
@@ -558,30 +490,17 @@ function fnCaptureRecaptchaEvent(iEmail: string, iScore: number, iPassed: boolea
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-    const {email, name, recaptchaToken, 
+    const {email, name, 
       companyName,
       companyDomain,
       companyWebsite,
       employeeCount, interestReason,
-      createOpportunity, sendEmail, emailTemplate, humanVerfied, opportType, source,
+      createOpportunity, sendEmail, emailTemplate, opportType, source,
       campaign,
       itemName, env, doctype
     } = idLeadFormData
     
     const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration(env)
-      
-    /**
-     * Verify the user unless the request has already been verified
-     * by a trusted internal process.
-     */
-    if(!humanVerfied){
-        
-        const { isHuman: LIsHumanUser, score: LRecaptchaScore } = await fnVerifyRecaptchaToken(recaptchaToken)
-        fnCaptureRecaptchaEvent(email, LRecaptchaScore, LIsHumanUser)
-        if (!LIsHumanUser) {
-            return { data: null, message: "error", error: "reCAPTCHA verification failed" }
-          }
-    }
 
     /**
      * Find the Lead by email or create a new Lead when no match

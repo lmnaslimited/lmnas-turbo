@@ -196,13 +196,31 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         ? LEmailPrefix.split(/[\._\-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
         : "";
 
+      const LRecaptchaToken = await executeRecaptcha("beta_opt_in");
+      
+      // Verify the generated reCAPTCHA token with the backend.
+      const LdResponse = await validateRecaptcha(LRecaptchaToken)
+      // Capture the verification result in PostHog for analytics.
+      posthog.capture("opt-in-recaptcha",{
+          recaptcha_score: String(LdResponse.score),
+          recaptcha_passed: LdResponse.success,
+          $set: {
+              email: LTrimmedEmail,
+          },
+      })
+      // Stop the flow if reCAPTCHA verification fails.
+      if (!LdResponse.success) {
+          fnSetError(
+              LdContent.errorMessage || LdResponse.message
+          );
+          return
+      }
       // Identify and opt-in to beta access in posthog
       posthog.identify(LTrimmedEmail, { email: LTrimmedEmail });
 
       posthog.updateEarlyAccessFeatureEnrollment("new-pricing-beta", true);
 
       if (LdContent?.LeadProcess?.IsNeeded) {
-        const LRecaptchaToken = await executeRecaptcha("beta_request");
         // creation of Lead-> opportunity->notes -> email
         // the /api/crm is located in braccoli-site
         const LdLeadResponse = await fetch("/api/crm", {
@@ -212,7 +230,6 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             data:{
             email: LTrimmedEmail,
             name: LGeneratedName,
-            recaptchaToken: LRecaptchaToken,
             companyName: LdCompanyDetails.companyName,
             companyDomain: LdCompanyDetails.companyDomain,
             companyWebsite: LdCompanyDetails.companyWebsite,
@@ -221,7 +238,6 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             createOpportunity: true,
             sendEmail: true,
             emailTemplate: LdContent.LeadProcess.emailTemplate,
-            humanVerfied: true,
             opportType: LdContent.LeadProcess.opportType,
             source: LdContent.LeadProcess.source,
             campaign: LdContent.campaign,
