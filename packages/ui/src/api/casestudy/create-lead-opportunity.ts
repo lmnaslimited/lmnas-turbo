@@ -326,37 +326,6 @@ async function fnCreateOpportunity(
   return LdResult.data
 }
 
-async function fnCreateOpportunityComment(
-  iOpportunityName: string,
-  iComment: string,
-  iBaseUrl: string,
-  idHeaders: Record<string, string>,
-  idDoctype: Record<string, any>
-) {
-
-  const LdResponse = await fetch(
-      `${iBaseUrl}/api/resource/${idDoctype.comment.doctype || "Comment"}`,
-      {
-          method: "POST",
-          headers: idHeaders,
-          body: JSON.stringify({
-            [idDoctype.comment.field_name.comment_type]: "Comment",
-            [idDoctype.comment.field_name.reference_doctype]: "Opportunity",
-            [idDoctype.comment.field_name.reference_name]: iOpportunityName,
-            [idDoctype.comment.field_name.content]: iComment,
-          }),
-      }
-  );
-
-  if (!LdResponse.ok) {
-      throw new Error(
-          `Opportunity comment creation failed: ${LdResponse.status}`
-      );
-  }
-
-  return await LdResponse.json();
-}
-
 /**
  * Render and send an email using a Frappe Email Template.
  *

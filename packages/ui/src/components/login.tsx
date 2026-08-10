@@ -377,6 +377,16 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       return val && val.toString().trim().length > 0;
     });
   };
+
+  // Overall progress: Email verification + additional detail steps
+  const LTotalSteps = LTotalSubSteps + 1;
+
+  const LCurrentProgressStep =
+    LPhase === 1 ? 1 : LSubStep + 1;
+
+  const LProgressPercentage =
+    (LCurrentProgressStep / LTotalSteps) * 100;
+
   // Completion / Success Screen
   if (LdSuccessMsg && (Lmode === 'signup' || Lmode === 'forgot' || LAccessStage === 'review_pending')) {
     const LdStepLines = LdSuccessMsg.description.split(/(?<=[.!])\s+/).filter((line) => line.trim().length > 0);
@@ -454,7 +464,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
                <div
                  className="bg-primary h-full transition-all duration-300 ease-in-out"
-                 style={{ width: `${(LSubStep / LTotalSubSteps) * 100}%` }}
+                 style={{ width: `${LProgressPercentage}%` }}
                />
              </div>
              
@@ -637,7 +647,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   required
                   value={LUsername}
                   onChange={fnSetUsername}
-                  placeholder="johndoe"
+                  placeholder="Full Name"
                 />
               )}
 
@@ -779,7 +789,7 @@ function FormInput({
             value={value || ''}
             required={required}
             onChange={(e) => onChange(e.target.value)}
-            className={`h-10 rounded-lg text-sm bg-muted ${className}`}
+            className={`h-10 rounded-lg text-sm bg-muted placeholder:text-muted-foreground/60 ${className}`}
           />
         );
     }
