@@ -7,10 +7,19 @@ export async function googleCallback(request: NextRequest, iEnv:TEnvSource) {
   const { searchParams } = new URL(request.url);
 
   const LCode = searchParams.get("code");
+  const LProtocol =
+      request.headers.get('x-forwarded-proto') ||
+      new URL(request.url).protocol.replace(':', '');
+
+  const LHost =
+      request.headers.get('x-forwarded-host') ||
+      request.headers.get('host');
+
+  const LOrigin = `${LProtocol}://${LHost}`;
 
   if (!LCode) {
     return NextResponse.redirect(
-      new URL("/login?error=missing_code", request.url)
+      new URL("/login?error=missing_code", LOrigin)
     );
   }
 
@@ -18,7 +27,7 @@ export async function googleCallback(request: NextRequest, iEnv:TEnvSource) {
 
   if (!LFrappeUrl) {
     return NextResponse.redirect(
-      new URL("/login?error=config", request.url)
+      new URL("/login?error=config", LOrigin)
     );
   }
    // Exchange the one-time login code for the authenticated user's profile.
@@ -31,7 +40,7 @@ export async function googleCallback(request: NextRequest, iEnv:TEnvSource) {
 
   if (!LdExchangeResponse.ok) {
     return NextResponse.redirect(
-      new URL("/login?error=invalid_code", request.url)
+      new URL("/login?error=invalid_code", LOrigin)
     );
   }
   // Extract the authenticated user's details from the response.
@@ -42,12 +51,12 @@ export async function googleCallback(request: NextRequest, iEnv:TEnvSource) {
 
   if (!LdProfile.email) {
     return NextResponse.redirect(
-      new URL("/login?error=user_not_found", request.url)
+      new URL("/login?error=user_not_found", LOrigin)
     );
   }
   // Redirect the user to the application home page after successful login.
   const LdResponse = NextResponse.redirect(
-    new URL("/", request.url)
+    new URL("/", LOrigin)
   );
     // Create the LMNAS session cookie for the authenticated user.
     setLmnasSession(LdResponse, {
