@@ -15,10 +15,19 @@ function requiredEnv(name: string, iEnv?:TEnvSource): string {
 
 export async function openPlatform(request: NextRequest, iEnv:TEnvSource) {
   const LdSession = getLmnasSession(request);
+  const LProtocol =
+      request.headers.get('x-forwarded-proto') ||
+      new URL(request.url).protocol.replace(':', '');
+
+  const LHost =
+      request.headers.get('x-forwarded-host') ||
+      request.headers.get('host');
+
+  const LOrigin = `${LProtocol}://${LHost}`;
 
   if (!LdSession) {
     return NextResponse.redirect(
-      new URL('/login', request.url),
+      new URL('/login', LOrigin),
     );
   }
 
@@ -83,7 +92,7 @@ export async function openPlatform(request: NextRequest, iEnv:TEnvSource) {
     return NextResponse.redirect(
       new URL(
         '/?platform_error=unavailable',
-        request.url,
+        LOrigin,
       ),
     );
   }
@@ -99,7 +108,7 @@ export async function openPlatform(request: NextRequest, iEnv:TEnvSource) {
     return NextResponse.redirect(
       new URL(
         '/?platform_error=invalid_response',
-        request.url,
+        LOrigin,
       ),
     );
   }

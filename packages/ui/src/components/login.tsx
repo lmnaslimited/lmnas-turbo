@@ -196,13 +196,31 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         ? LEmailPrefix.split(/[\._\-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
         : "";
 
+      const LRecaptchaToken = await executeRecaptcha("beta_opt_in");
+      
+      // Verify the generated reCAPTCHA token with the backend.
+      const LdResponse = await validateRecaptcha(LRecaptchaToken)
+      // Capture the verification result in PostHog for analytics.
+      posthog.capture("opt-in-recaptcha",{
+          recaptcha_score: String(LdResponse.score),
+          recaptcha_passed: LdResponse.success,
+          $set: {
+              email: LTrimmedEmail,
+          },
+      })
+      // Stop the flow if reCAPTCHA verification fails.
+      if (!LdResponse.success) {
+          fnSetError(
+              LdContent.errorMessage || LdResponse.message
+          );
+          return
+      }
       // Identify and opt-in to beta access in posthog
       posthog.identify(LTrimmedEmail, { email: LTrimmedEmail });
 
       posthog.updateEarlyAccessFeatureEnrollment("new-pricing-beta", true);
 
       if (LdContent?.LeadProcess?.IsNeeded) {
-        const LRecaptchaToken = await executeRecaptcha("beta_request");
         // creation of Lead-> opportunity->notes -> email
         // the /api/crm is located in braccoli-site
         const LdLeadResponse = await fetch("/api/crm", {
@@ -212,7 +230,6 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             data:{
             email: LTrimmedEmail,
             name: LGeneratedName,
-            recaptchaToken: LRecaptchaToken,
             companyName: LdCompanyDetails.companyName,
             companyDomain: LdCompanyDetails.companyDomain,
             companyWebsite: LdCompanyDetails.companyWebsite,
@@ -221,7 +238,6 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             createOpportunity: true,
             sendEmail: true,
             emailTemplate: LdContent.LeadProcess.emailTemplate,
-            humanVerfied: true,
             opportType: LdContent.LeadProcess.opportType,
             source: LdContent.LeadProcess.source,
             campaign: LdContent.campaign,
@@ -361,6 +377,16 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       return val && val.toString().trim().length > 0;
     });
   };
+
+  // Overall progress: Email verification + additional detail steps
+  const LTotalSteps = LTotalSubSteps + 1;
+
+  const LCurrentProgressStep =
+    LPhase === 1 ? 1 : LSubStep + 1;
+
+  const LProgressPercentage =
+    (LCurrentProgressStep / LTotalSteps) * 100;
+
   // Completion / Success Screen
   if (LdSuccessMsg && (Lmode === 'signup' || Lmode === 'forgot' || LAccessStage === 'review_pending')) {
     const LdStepLines = LdSuccessMsg.description.split(/(?<=[.!])\s+/).filter((line) => line.trim().length > 0);
@@ -438,7 +464,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
                <div
                  className="bg-primary h-full transition-all duration-300 ease-in-out"
-                 style={{ width: `${(LSubStep / LTotalSubSteps) * 100}%` }}
+                 style={{ width: `${LProgressPercentage}%` }}
                />
              </div>
              
@@ -621,7 +647,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   required
                   value={LUsername}
                   onChange={fnSetUsername}
-                  placeholder="johndoe"
+                  placeholder="Full Name"
                 />
               )}
 
@@ -763,7 +789,7 @@ function FormInput({
             value={value || ''}
             required={required}
             onChange={(e) => onChange(e.target.value)}
-            className={`h-10 rounded-lg text-sm bg-muted ${className}`}
+            className={`h-10 rounded-lg text-sm bg-muted placeholder:text-muted-foreground/60 ${className}`}
           />
         );
     }

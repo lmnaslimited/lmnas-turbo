@@ -20,6 +20,9 @@ export async function fnCheckUserApproval({
   const LBaseUrl = env.env.url || process.env.SUBSCRIBE_URL;
   const LAuthorizationHeader = env.env.token || process.env.AUTH_BASE_64;
 
+  const LPlatformUrl = env.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_URL
+  const LPlatformToken = env.env.platformToken || process.env.PLATFORM_TOKEN
+
   const LLeadDoctype = doctype.lead.doctype || "Lead";
   const LdLeadFields = doctype.lead.field_name;
 
@@ -29,7 +32,10 @@ export async function fnCheckUserApproval({
   const LOpportunityDoctype = doctype.opportunity.doctype || "Opportunity";
   const LdOpportunityFields = doctype.opportunity.field_name;
 
-  if (!LBaseUrl || !LAuthorizationHeader) {
+  const LCustomerMember = doctype.customer_member.doctype || "Customer Member"
+  const LdCustomerMemberFields = doctype.customer_member.field_name
+
+  if (!LBaseUrl || !LAuthorizationHeader || !LPlatformToken || !LPlatformUrl) {
     throw new Error("Missing required CRM environment variables");
   }
 
@@ -39,6 +45,74 @@ export async function fnCheckUserApproval({
   };
 
   try {
+    // check if there is customer with same primary domain in the platform
+    // This check is used for admin / member scenario
+    const LEmailDomain = iDistinctId.split("@")[1]?.trim().toLowerCase();
+
+    let LIsDomain = false;
+
+    if (LEmailDomain) {
+      const LdDomainFilters = JSON.stringify([
+        [
+          "primary_domain",
+          "=",
+          `${LEmailDomain}`,
+        ],
+      ]);
+
+      const LDomainCustomerUrl =
+        `${LPlatformUrl}/api/resource/${LCustomerDoctype}` +
+        `?filters=${encodeURIComponent(LdDomainFilters)}` +
+        `&fields=${encodeURIComponent(
+          JSON.stringify([LdCustomerFields.name])
+        )}` +
+        `&limit_page_length=1`;
+
+      const LdDomainCustomerRes = await fetch(
+        LDomainCustomerUrl,
+        {
+          method: "GET",
+          headers:  {
+            Authorization: LPlatformToken,
+            "Content-Type": "application/json",
+          }
+        }
+      );
+
+      if (LdDomainCustomerRes.ok) {
+        const LdDomainCustomerData =
+          await LdDomainCustomerRes.json();
+
+        LIsDomain =
+          Array.isArray(LdDomainCustomerData.data) &&
+          LdDomainCustomerData.data.length > 0;
+      }
+    }
+
+    // Determine whether the lead is already a customer Member in platform.
+    let lIsCustomer = false;
+  
+    const LdCustomerFilters = JSON.stringify([
+      [LdCustomerMemberFields.email_id, "=", iDistinctId]
+    ]);
+    const LCustomerUrl = `${LPlatformUrl}/api/resource/${LCustomerMember}?filters=${encodeURIComponent(LdCustomerFilters)}&fields=${encodeURIComponent(JSON.stringify([
+      LdCustomerMemberFields.name,
+    ]))}&limit_page_length=1`;
+
+    const LdCustomerRes = await fetch(LCustomerUrl, 
+      { method: "GET", 
+        headers: {
+          Authorization: LPlatformToken,
+          "Content-Type": "application/json",
+        } });
+    // Mark the user as a customer if a matching record exists.
+    if (LdCustomerRes.ok) {
+      const LdCustomerData = await LdCustomerRes.json();
+      if (LdCustomerData.data && LdCustomerData.data.length > 0) {
+        lIsCustomer = true;
+      }
+    }
+
     // Fetch the lead matching the supplied email or identifier.
     const LdLeadFilters = JSON.stringify([[LdLeadFields.email_id, "=", iDistinctId]]);
     const LLeadUrl = `${LBaseUrl}/api/resource/${LLeadDoctype}?filters=${encodeURIComponent(LdLeadFilters)}&fields=${encodeURIComponent(JSON.stringify([
@@ -48,37 +122,17 @@ export async function fnCheckUserApproval({
 
     const LdLeadRes = await fetch(LLeadUrl, { method: "GET", headers: idHeaders });
     // Return immediately if the lead lookup fails.
-    if (!LdLeadRes.ok) return { approved: false, is_customer: false, reason: "LEAD_NOT_FOUND" };
+    if (!LdLeadRes.ok) return { approved: LIsDomain, is_customer: lIsCustomer, reason: "LEAD_CHECK_FAILED" };
 
     const LdLeadData = await LdLeadRes.json();
     const LdLead = LdLeadData.data?.[0];
 
     // Stop if no matching lead exists.
     if (!LdLead) {
-      return { approved: false, is_customer: false, reason: "LEAD_NOT_FOUND" };
+      return { approved: LIsDomain, is_customer: lIsCustomer, reason: "LEAD_NOT_FOUND" };
     }
 
     const LEmailId = LdLead[LdLeadFields.email_id];
-
-     // Determine whether the lead is already a customer.
-    let lIsCustomer = false;
-    if (LEmailId) {
-      const LdCustomerFilters = JSON.stringify([
-        [LdCustomerFields.email_id, "=", LEmailId]
-      ]);
-      const LCustomerUrl = `${LBaseUrl}/api/resource/${LCustomerDoctype}?filters=${encodeURIComponent(LdCustomerFilters)}&fields=${encodeURIComponent(JSON.stringify([
-        LdCustomerFields.name,
-      ]))}&limit_page_length=1`;
-
-      const LdCustomerRes = await fetch(LCustomerUrl, { method: "GET", headers: idHeaders });
-      // Mark the user as a customer if a matching record exists.
-      if (LdCustomerRes.ok) {
-        const LdCustomerData = await LdCustomerRes.json();
-        if (LdCustomerData.data && LdCustomerData.data.length > 0) {
-          lIsCustomer = true;
-        }
-      }
-    }
 
     // Fetch all website opportunities linked to the lead.
     const LdOppFilters = JSON.stringify([
@@ -115,7 +169,7 @@ export async function fnCheckUserApproval({
       // Return an approved response if the user qualifies.
       if (LIsApproved) {
         return {
-          approved: true,
+          approved: LIsDomain,
           is_customer: lIsCustomer,
           email: LEmailId,
           reason: "APPROVED"
@@ -123,14 +177,14 @@ export async function fnCheckUserApproval({
       }
       // Return a pending review response when no qualifying opportunity exists.
       return {
-        approved: false,
+        approved: LIsDomain,
         is_customer: lIsCustomer,
         email: LEmailId,
         reason: "NOT_QUALIFIED"
       };
   }else{
     return {
-      approved: false,
+      approved: LIsDomain,
       is_customer: lIsCustomer,
       email: LEmailId,
       reason: "NO_OPPORTUNITY"
