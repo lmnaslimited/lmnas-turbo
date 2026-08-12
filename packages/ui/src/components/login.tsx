@@ -43,7 +43,58 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
     employeeCount: "",
     interestReason: "",
   });
-  
+
+  const fnGetCompanyNameFromEmail = (iEmail: string) => {
+  const LEmail = iEmail.trim().toLowerCase();
+
+  if (!LEmail.includes("@")) return "";
+
+  const LDomain = LEmail.split("@")[1];
+
+  if (!LDomain) return "";
+
+  // Ignore common personal email providers
+  const LPublicEmailDomains = [
+    "gmail.com",
+    "yahoo.com",
+    "yahoo.co.in",
+    "outlook.com",
+    "hotmail.com",
+    "live.com",
+    "icloud.com",
+    "protonmail.com",
+    "aol.com",
+  ];
+
+  if (LPublicEmailDomains.includes(LDomain)) {
+    return "";
+  }
+
+  // Remove common TLDs
+  const LCompanyName = (LDomain.split(".")[0] || "")
+  .replace(/[-_]/g, " ")
+  .trim();
+  if (!LCompanyName) return "";
+
+  // Convert to title case
+  return LCompanyName
+    .split(" ")
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
+};
+
+  useEffect(() => {
+  const LCompanyName = fnGetCompanyNameFromEmail(LEmail);
+
+  if (LCompanyName) {
+    fnSetCompanyDetails((idPrev) => ({
+      ...idPrev,
+      companyName: LCompanyName,
+    }));
+  }
+}, [LEmail]);
   // Retrieves route parameters and query parameters
   const LdParams = useParams();
   // Extract the locale value from the route parameters.
@@ -304,9 +355,10 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       
       if (!LdResponse.ok) {
         const LdErrData = await LdResponse.json();
-        throw new Error(LdErrData.error || `Invalid request during ${Lmode}`);
-      }
-      
+        fnSetError(LdErrData.error || `Invalid request during ${Lmode}`);
+        // throw new Error(LdErrData.error || `Invalid request during ${Lmode}`);
+        return
+        }
       if (Lmode === 'forgot') {
         fnSetSuccessMsg({
           title: idLogin.loginAndSignUp.resetSuccessTitle || 'Action Required',
@@ -432,15 +484,14 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   return (
     <div className="flex min-h-screen items-center justify-center p-4 bg-background">
       <div className="w-full max-w-lg p-8 bg-card text-card-foreground border border-border rounded-2xl shadow-xl transition-all duration-300 hover:shadow-2xl">
-        
         {/* ========================================================= */}
         {/* AUTOMATED VERIFYING LOADING STATE                         */}
         {/* ========================================================= */}
-        {LAccessStage === 'verifying' && (
+        {LAccessStage === "verifying" && (
           <div className="flex flex-col items-center justify-center py-12 gap-4">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
             <p className="text-sm font-medium text-muted-foreground">
-              {LdContent.loadingLabel ||"Verifying access status..."}
+              {LdContent.loadingLabel || "Verifying access status..."}
             </p>
           </div>
         )}
@@ -448,33 +499,36 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         {/* ========================================================= */}
         {/* REQUEST DETAILS FORM (Combined Email + Company Details)   */}
         {/* ========================================================= */}
-        {LAccessStage === 'request_details' && (
+        {LAccessStage === "request_details" && (
           <div>
-            <div className="border-b border-border pb-3 mb-5 flex flex-col justify-between items-end">
-              <div className='mb-2'>
-                <h3 className="text-lg font-semibold text-foreground">
-                  {LdContent?.additionalDetailsForm?.title || "Verification Required"}
+            <div className="border-b border-border pb-3 mb-5 flex flex-col">
+              <div className="mb-2">
+                <h3 className="text-2xl font-bold tracking-tight text-foreground">
+                  {" "}
+                  {LdContent?.additionalDetailsForm?.title ||
+                    "Verification Required"}
                 </h3>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {LdContent?.additionalDetailsForm?.subtitle || "Please provide your details so we can verify and approve your access request."}
+                <p className="text-sm font-medium text-muted-foreground mt-1.5 mb-1.5">
+                  {" "}
+                  {LdContent?.additionalDetailsForm?.subtitle ||
+                    "Please provide your details so we can verify and approve your access request."}
                 </p>
               </div>
               {/* STEP COUNTER BADGE */}
-            
-               <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
-               <div
-                 className="bg-primary h-full transition-all duration-300 ease-in-out"
-                 style={{ width: `${LProgressPercentage}%` }}
-               />
-             </div>
-             
+
+              <div className="w-full bg-muted h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-primary h-full transition-all duration-300 ease-in-out"
+                  style={{ width: `${LProgressPercentage}%` }}
+                />
+              </div>
             </div>
 
             {/* PHASE 1: EMAIL VERIFICATION */}
             {LPhase === 1 ? (
               <form onSubmit={fnHandleVerifyEmail} className="space-y-4">
                 {LError && <FormMessage variant="error" description={LError} />}
-                
+
                 <FormInput
                   label={idLogin.loginAndSignUp.emailLabel || "Email Address"}
                   type="email"
@@ -489,7 +543,11 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   disabled={LbSubmitting}
                   className="w-full h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
                 >
-                  {LbSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Continue"}
+                  {LbSubmitting ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    "Continue"
+                  )}
                 </Button>
               </form>
             ) : (
@@ -509,7 +567,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                       required={field.required}
                       options={field.options}
                       rows={field.rows}
-                      value={LdCompanyDetails[keyName] || ''}
+                      value={LdCompanyDetails[keyName] || ""}
                       onChange={(val) =>
                         fnSetCompanyDetails((idPrev) => ({
                           ...idPrev,
@@ -521,26 +579,44 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                 })}
 
                 {/* TERMS CONSENT CHECKBOX (FINAL STEP ONLY) */}
-                {LSubStep === LTotalSubSteps && LdContent?.accessVerification?.termsConsent && (
-                  <div className="flex items-center gap-2 mt-1">
-                    <input
-                      type="checkbox"
-                      id="terms-consent"
-                      required
-                      className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
-                    />
-                    <label htmlFor="terms-consent" className="text-xs text-muted-foreground leading-none cursor-pointer">
-                      {LdContent.accessVerification.termsConsent.label}{' '}
-                      <a href={`/${LLocale}/terms-and-conditions`} target="_blank" className="text-primary underline hover:text-primary/80">
-                        {LdContent.accessVerification.termsConsent.termsLinkText}
-                      </a>{' '}
-                      &{' '}
-                      <a href={`/${LLocale}/privacy-policy`} target="_blank" className="text-primary underline hover:text-primary/80">
-                        {LdContent.accessVerification.termsConsent.privacyLinkText}
-                      </a>
-                    </label>
-                  </div>
-                )}
+                {LSubStep === LTotalSubSteps &&
+                  LdContent?.accessVerification?.termsConsent && (
+                    <div className="flex items-center gap-2 mt-1">
+                      <input
+                        type="checkbox"
+                        id="terms-consent"
+                        required
+                        className="h-4 w-4 rounded border-input text-primary focus:ring-primary/30 accent-primary cursor-pointer"
+                      />
+                      <label
+                        htmlFor="terms-consent"
+                        className="text-xs text-muted-foreground leading-none cursor-pointer"
+                      >
+                        {LdContent.accessVerification.termsConsent.label}{" "}
+                        <a
+                          href={`/${LLocale}/terms-and-conditions`}
+                          target="_blank"
+                          className="text-primary underline hover:text-primary/80"
+                        >
+                          {
+                            LdContent.accessVerification.termsConsent
+                              .termsLinkText
+                          }
+                        </a>{" "}
+                        &{" "}
+                        <a
+                          href={`/${LLocale}/privacy-policy`}
+                          target="_blank"
+                          className="text-primary underline hover:text-primary/80"
+                        >
+                          {
+                            LdContent.accessVerification.termsConsent
+                              .privacyLinkText
+                          }
+                        </a>
+                      </label>
+                    </div>
+                  )}
 
                 {/* NAVIGATION BUTTONS */}
                 <div className="flex items-center gap-3 pt-2">
@@ -567,7 +643,9 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                           fnSetError(null);
                           setLSubStep((prev) => prev + 1);
                         } else {
-                          fnSetError("Please fill out all required fields before proceeding.");
+                          fnSetError(
+                            "Please fill out all required fields before proceeding.",
+                          );
                         }
                       }}
                       className="w-2/4 h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 shadow-sm"
@@ -580,7 +658,12 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                       disabled={LbSubmitting}
                       className="w-2/3 h-11 bg-primary text-primary-foreground font-semibold text-sm rounded-lg hover:opacity-90 active:scale-[0.99] transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
                     >
-                      {LbSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : (LdContent?.additionalDetailsForm?.submitButton ?? "Submit Application")}
+                      {LbSubmitting ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        (LdContent?.additionalDetailsForm?.submitButton ??
+                        "Submit Application")
+                      )}
                     </Button>
                   )}
                 </div>
@@ -592,23 +675,27 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
         {/* ========================================================= */}
         {/* APPROVED FORM (Sign In / Register Mode)                   */}
         {/* ========================================================= */}
-        {LAccessStage === 'approved_form' && (
+        {LAccessStage === "approved_form" && (
           <div>
             {LdAccessMsg && (
-              <div className='mb-4'>
-                <FormMessage 
-                  variant="success" 
-                  title={LdAccessMsg.title} 
-                  description={LdAccessMsg.description} 
+              <div className="mb-4">
+                <FormMessage
+                  variant="success"
+                  title={LdAccessMsg.title}
+                  description={LdAccessMsg.description}
                 />
               </div>
             )}
 
             <div className="flex flex-col items-center mb-6">
-              <h2 className="text-2xl font-bold text-foreground tracking-tight">{LdUiConfig.title}</h2>
-              <p className="text-sm text-muted-foreground mt-1 text-center">{LdUiConfig.subtitle}</p>
+              <h2 className="text-2xl font-bold text-foreground tracking-tight">
+                {LdUiConfig.title}
+              </h2>
+              <p className="text-sm text-muted-foreground mt-1 text-center">
+                {LdUiConfig.subtitle}
+              </p>
             </div>
-            
+
             <form onSubmit={fnHandleSubmit} className="flex flex-col gap-5">
               {LError && <FormMessage variant="error" description={LError} />}
 
@@ -622,7 +709,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   <button
                     type="button"
                     onClick={() => {
-                      fnSetAccessStage('request_details');
+                      fnSetAccessStage("request_details");
                       fnSetAccessMsg(null);
                     }}
                     className="text-xs font-medium text-primary hover:underline focus:outline-none"
@@ -640,7 +727,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   className="h-10 rounded-lg text-sm bg-muted"
                 />
               </div>
-              {Lmode === 'signup' && (
+              {Lmode === "signup" && (
                 <FormInput
                   label={idLogin.loginAndSignUp.usernameLabel || "Username"}
                   type="text"
@@ -651,7 +738,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                 />
               )}
 
-              {Lmode === 'login' && (
+              {Lmode === "login" && (
                 <div className="flex flex-col gap-1.5 animate-in fade-in slide-in-from-top-2 duration-200">
                   <div className="flex justify-between items-center">
                     <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
@@ -659,7 +746,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                     </label>
                     <button
                       type="button"
-                      onClick={() => fnSwitchMode('forgot')}
+                      onClick={() => fnSwitchMode("forgot")}
                       className="text-xs font-medium text-primary hover:underline focus:outline-none"
                     >
                       {idLogin.loginAndSignUp.resetLabel || "Forgot Password?"}
@@ -667,7 +754,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   </div>
                   <div className="relative flex items-center">
                     <input
-                      type={LbShowPassword ? 'text' : 'password'}
+                      type={LbShowPassword ? "text" : "password"}
                       required
                       value={LPassword}
                       onChange={(Le) => fnSetPassword(Le.target.value)}
@@ -680,7 +767,11 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                       onClick={() => fnSetShowPassword(!LbShowPassword)}
                       className="absolute right-3 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors focus:outline-none"
                     >
-                      {LbShowPassword ? <EyeOff className="w-4 h-4 stroke-[2]" /> : <Eye className="w-4 h-4 stroke-[2]" />}
+                      {LbShowPassword ? (
+                        <EyeOff className="w-4 h-4 stroke-[2]" />
+                      ) : (
+                        <Eye className="w-4 h-4 stroke-[2]" />
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -696,26 +787,36 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
             </form>
 
             <div className="mt-6 text-center text-sm text-muted-foreground border-t border-border pt-4">
-              {Lmode === 'login' && (
+              {Lmode === "login" && (
                 <p>
-                  {idLogin.loginAndSignUp.loginFooterText}{' '}
-                  <button onClick={() => fnSwitchMode('signup')} className="font-semibold text-primary hover:underline focus:outline-none">
+                  {idLogin.loginAndSignUp.loginFooterText}{" "}
+                  <button
+                    onClick={() => fnSwitchMode("signup")}
+                    className="font-semibold text-primary hover:underline focus:outline-none"
+                  >
                     {idLogin.loginAndSignUp.loginFooterAction}
                   </button>
                 </p>
               )}
-              {Lmode === 'signup' && (
+              {Lmode === "signup" && (
                 <p>
-                  {idLogin.loginAndSignUp.signupFooterText}{' '}
-                  <button onClick={() => fnSwitchMode('login')} className="font-semibold text-primary hover:underline focus:outline-none">
+                  {idLogin.loginAndSignUp.signupFooterText}{" "}
+                  <button
+                    onClick={() => fnSwitchMode("login")}
+                    className="font-semibold text-primary hover:underline focus:outline-none"
+                  >
                     {idLogin.loginAndSignUp.signupFooterAction}
                   </button>
                 </p>
               )}
-              {Lmode === 'forgot' && (
+              {Lmode === "forgot" && (
                 <p>
-                  {idLogin.loginAndSignUp.resetFooterText}{' '}
-                  <button type="button" onClick={() => fnSwitchMode('login')} className="font-semibold text-primary hover:underline focus:outline-none">
+                  {idLogin.loginAndSignUp.resetFooterText}{" "}
+                  <button
+                    type="button"
+                    onClick={() => fnSwitchMode("login")}
+                    className="font-semibold text-primary hover:underline focus:outline-none"
+                  >
                     {idLogin.loginAndSignUp.resetFooterAction}
                   </button>
                 </p>

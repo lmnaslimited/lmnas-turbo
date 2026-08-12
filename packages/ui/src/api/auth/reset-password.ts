@@ -28,6 +28,10 @@ export async function resetPassword(request: Request, iEnv:TEnvSource) {
     // We proceed cleanly regardless of whether user exists to mitigate email enumeration vulnerabilities
     if (!LdResponse.ok) {
       console.error(`Frappe password reset interaction failure status: ${LdResponse.status}`);
+      return NextResponse.json(
+        { error: 'An unexpected backend connection error occurred.' },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({ success: true });
