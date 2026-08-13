@@ -211,6 +211,7 @@ useEffect(() => {
   // sign in, sign up, submit an access request, or wait for approval.
   const fnHandleVerifyEmail = async (e: React.FormEvent) => {
     e.preventDefault();
+      fnSetError(null);
     const LTrimmedEmail = LEmail.trim().toLowerCase();
     if (!LTrimmedEmail) return;
 

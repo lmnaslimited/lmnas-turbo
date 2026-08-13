@@ -56,7 +56,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     if (!LdLoginResponse.ok) {
       return NextResponse.json(
         {
-          error: 'The email or password you entered is incorrect',
+          error: 'The email or password is incorrect',
         },
         {
           status: 401,
