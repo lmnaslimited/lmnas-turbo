@@ -728,6 +728,7 @@ useEffect(() => {
                     onClick={() => {
                       fnSetAccessStage("request_details");
                       fnSetAccessMsg(null);
+                      fnSetError(null);
                     }}
                     className="text-xs font-medium text-primary hover:underline focus:outline-none"
                   >
