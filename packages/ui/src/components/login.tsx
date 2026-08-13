@@ -36,6 +36,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const [LdAccessMsg, fnSetAccessMsg] = useState<{ title: string; description: string } | null>(null);
   const [LbShowPassword, fnSetShowPassword] = useState(false);
 
+  const [LanonymousId, fnSetAnonymousId] = useState<string | null>(null);
+
   const [LdCompanyDetails, fnSetCompanyDetails] = useState<Record<string, string>>({
     companyName: "",
     companyDomain: "",
@@ -191,6 +193,10 @@ useEffect(() => {
       fnSetEmail(LTargetEmail);
     }
 
+    if(!LbPostHogIdentified) {
+      //store the anonymous id in a state, so we can use it in the form submission
+      fnSetAnonymousId(LDistinctId)
+    }
     fnApplyRoute(status, isCustomer);
   }, [LDistinctId, status, isCustomer]);
 
@@ -304,7 +310,8 @@ useEffect(() => {
             source: LdContent.LeadProcess.source,
             campaign: LdContent.campaign,
             itemName: LdContent.itemName,
-            doctype: idLogin?.loginAndSignUp?.doctypeDetails
+            doctype: idLogin?.loginAndSignUp?.doctypeDetails,
+            anonymousId: LanonymousId || null
             },
             locale: LLocale
           }),
