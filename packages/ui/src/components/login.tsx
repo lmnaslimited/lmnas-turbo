@@ -564,7 +564,7 @@ useEffect(() => {
                 >
                   {LbSubmitting ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
-                  ) : LdContent?.accessVerification.submitButton}
+                  ) : LdContent?.accessVerification.submitButton || "Continue"}
                 </Button>
               </form>
             ) : (
@@ -661,7 +661,7 @@ useEffect(() => {
                           setLSubStep((prev) => prev + 1);
                         } else {
                           fnSetError(
-                            LdContent?.errorMessages?.requiredField
+                            LdContent?.errorMessages?.requiredField || "Please fill in all required fields before proceeding."
                           );
                         }
                       }}
