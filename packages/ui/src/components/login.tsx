@@ -44,56 +44,67 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
     interestReason: "",
   });
 
-  const fnGetCompanyNameFromEmail = (iEmail: string) => {
+const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
   const LEmail = iEmail.trim().toLowerCase();
 
-  if (!LEmail.includes("@")) return "";
-
-  const LDomain = LEmail.split("@")[1];
-
-  if (!LDomain) return "";
-
-  // Ignore common personal email providers
-  const LPublicEmailDomains = [
-    "gmail.com",
-    "yahoo.com",
-    "yahoo.co.in",
-    "outlook.com",
-    "hotmail.com",
-    "live.com",
-    "icloud.com",
-    "protonmail.com",
-    "aol.com",
-  ];
-
-  if (LPublicEmailDomains.includes(LDomain)) {
-    return "";
+  if (!LEmail.includes("@")) {
+    return {
+      companyName: "",
+      companyWebsite: "",
+    };
   }
 
-  // Remove common TLDs
-  const LCompanyName = (LDomain.split(".")[0] || "")
-  .replace(/[-_]/g, " ")
-  .trim();
-  if (!LCompanyName) return "";
+  const LDomain = (LEmail.split("@")[1] || "").trim();
 
-  // Convert to title case
-  return LCompanyName
+  if (!LDomain) {
+    return {
+      companyName: "",
+      companyWebsite: "",
+    };
+  }
+
+const LExcludedEmailDomains =
+  LdContent?.accessVerification?.excludedEmailDomains || [];
+
+  if (LExcludedEmailDomains.includes(LDomain)) {
+    return {
+      companyName: "",
+      companyWebsite: "",
+    };
+  }
+
+  const LCompanyName = (LDomain.split(".")[0] || "")
+    .replace(/[-_]/g, " ")
+    .trim();
+
+  if (!LCompanyName) {
+    return {
+      companyName: "",
+      companyWebsite: "",
+    };
+  }
+ // Capitalize each word in the company name
+  const LFormattedCompanyName = LCompanyName
     .split(" ")
     .map(
       (word) => word.charAt(0).toUpperCase() + word.slice(1)
     )
     .join(" ");
+
+  return {
+    companyName: LFormattedCompanyName,
+    companyWebsite: `https://${LDomain}`,
+  };
 };
 
-  useEffect(() => {
-  const LCompanyName = fnGetCompanyNameFromEmail(LEmail);
+useEffect(() => {
+  const LCompanyDetails = fnGetCompanyDetailsFromEmail(LEmail);
 
-  if (LCompanyName) {
-    fnSetCompanyDetails((idPrev) => ({
-      ...idPrev,
-      companyName: LCompanyName,
-    }));
-  }
+  fnSetCompanyDetails((idPrev) => ({
+    ...idPrev,
+    companyName: LCompanyDetails.companyName,
+    companyWebsite: LCompanyDetails.companyWebsite,
+  }));
 }, [LEmail]);
   // Retrieves route parameters and query parameters
   const LdParams = useParams();
@@ -262,7 +273,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
       // Stop the flow if reCAPTCHA verification fails.
       if (!LdResponse.success) {
           fnSetError(
-              LdContent.errorMessage || LdResponse.message
+              LdContent.errorMessage.recaptchaFailed || LdResponse.message
           );
           return
       }
@@ -343,7 +354,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
 
       const LdRecaptcha = await validateRecaptcha(LRecaptchaToken);
       if (!LdRecaptcha.success) {
-        fnSetError("ReCAPTCHA verification failed. Please try again.");
+        fnSetError(LdContent.errorMessage.recaptchaFailed || LdRecaptcha.message);
         return;
       }
 
@@ -535,7 +546,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   required
                   value={LEmail}
                   onChange={fnSetEmail}
-                  placeholder="name@company.com"
+                  placeholder={idLogin.loginAndSignUp.emailPlaceholder || "Enter your company email"}
                 />
 
                 <Button
@@ -734,7 +745,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
                   required
                   value={LUsername}
                   onChange={fnSetUsername}
-                  placeholder="Full Name"
+                  placeholder={idLogin.loginAndSignUp.usernamePlaceholder || "Enter your username"}
                 />
               )}
 
