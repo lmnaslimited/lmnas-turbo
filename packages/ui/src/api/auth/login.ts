@@ -73,7 +73,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     if (!LTemporaryCookies) {
       return NextResponse.json(
         {
-          error: 'We couldn\'t start your session. Please try again.',
+          error: 'Something went wrong. Please try again',
         },
         {
           status: 502,
@@ -106,7 +106,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     ) {
       return NextResponse.json(
         {
-          error: 'We couldn\'t verify your account. Please try again.',
+          error: 'Something went wrong. Please try again',
         },
         {
           status: 502,
@@ -188,7 +188,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
 
     return NextResponse.json(
       {
-        error: 'Something went wrong while signing you in. Please try again in a moment.',
+        error: 'Something went wrong. Please try again',
       },
       {
         status: 500,

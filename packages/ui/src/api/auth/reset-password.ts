@@ -29,7 +29,7 @@ export async function resetPassword(request: Request, iEnv:TEnvSource) {
     if (!LdResponse.ok) {
       console.error(`Frappe password reset interaction failure status: ${LdResponse.status}`);
       return NextResponse.json(
-        { error: 'An unexpected backend connection error occurred.' },
+        { error: 'Something went wrong. Please try again' },
         { status: 500 }
       );
     }
@@ -38,7 +38,7 @@ export async function resetPassword(request: Request, iEnv:TEnvSource) {
   } catch (idError) {
     console.error('Server error during password reset processing:', idError);
     return NextResponse.json(
-      { error: 'An unexpected backend connection error occurred.' },
+      { error: 'Something went wrong. Please try again.' },
       { status: 500 }
     );
   }
