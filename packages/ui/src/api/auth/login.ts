@@ -56,7 +56,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     if (!LdLoginResponse.ok) {
       return NextResponse.json(
         {
-          error: 'Invalid credentials',
+          error: 'The email or password is incorrect',
         },
         {
           status: 401,
@@ -73,7 +73,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     if (!LTemporaryCookies) {
       return NextResponse.json(
         {
-          error: 'LensCloud session missing',
+          error: 'Something went wrong. Please try again',
         },
         {
           status: 502,
@@ -106,7 +106,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
     ) {
       return NextResponse.json(
         {
-          error: 'Unable to verify user',
+          error: 'Something went wrong. Please try again',
         },
         {
           status: 502,
@@ -188,7 +188,7 @@ export async function login(request: NextRequest, iEnv: TEnvSource) {
 
     return NextResponse.json(
       {
-        error: 'Internal authentication error',
+        error: 'Something went wrong. Please try again',
       },
       {
         status: 500,
