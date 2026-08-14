@@ -25,6 +25,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
     itemName?: string;
     env: TEnvSource;
     doctype: Record<string, any>
+    anonymousId?: string | null;
 }
 
 
@@ -262,26 +263,41 @@ async function fnCreateOpportunity(
   iInterestReason: string,
   iCompanyName: string,
   iLeadEmail: string,
-  idDoctype: Record<string, any>
+  idDoctype: Record<string, any>,
+  iAnonymousId?: string | null
 ) {
-  const LComment = `
-              Beta Access Request Details:
-              
-              Company Name:
-              ${iCompanyName || "-"},
-              
-              Company Domain:
-              ${iCompanyDomain || "-"},
-              
-              Company Website:
-              ${iCompanyWebsite || "-"},
-              
-              Employee Count:
-              ${iEmployeeCount || "-"},
-              
-              Why interested:
-              ${iInterestReason || "-"}
-              `;
+const LComment = `
+  <table style="width: 100%; border-collapse: collapse;">
+    <tr>
+      <th style="text-align: left; border: 1px solid #ddd; padding: 8px;">Field</th>
+      <th style="text-align: left; border: 1px solid #ddd; padding: 8px;">Details</th>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Company Name</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iCompanyName || "-"}</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Company Domain</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iCompanyDomain || "-"}</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Company Website</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iCompanyWebsite || "-"}</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Employee Count</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iEmployeeCount || "-"}</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Why Interested</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iInterestReason || "-"}</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ddd; padding: 8px;">Anonymous ID</td>
+      <td style="border: 1px solid #ddd; padding: 8px;">${iAnonymousId || "-"}</td>
+    </tr>
+  </table>
+`;
   const LdResponse = await fetch(
       `${iBaseUrl}/api/resource/${idDoctype.opportunity.doctype}`,
       {
@@ -466,7 +482,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
       employeeCount, interestReason,
       createOpportunity, sendEmail, emailTemplate, opportType, source,
       campaign,
-      itemName, env, doctype
+      itemName, env, doctype,anonymousId
     } = idLeadFormData
     
     const { baseUrl: LBaseUrl, headers: LdCrmRequestHeaders,} = fnGetCrmConfiguration(env)
@@ -493,7 +509,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
           
             LdOpportunity = LExistingOpportunity
         } else {
-            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!, LdLead[doctype.lead.field_name.email_id], doctype)
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!, LdLead[doctype.lead.field_name.email_id], doctype, anonymousId || null)
             LOpportunityCreated = true
         }
     }
