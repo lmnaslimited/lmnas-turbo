@@ -908,6 +908,12 @@ export class clQueryAboutUs extends clQuery<TaboutUsPageSource> {
         label
       }
     }
+      founderNote {
+      badge
+      highlight
+      subtitle
+      title
+    }
     timeLineHeader {
       title
       subtitle

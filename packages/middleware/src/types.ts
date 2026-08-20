@@ -608,6 +608,7 @@ type TaboutUs = {
   heroSection: TheroSection
   valuesSectionHeaderFooter: TcalloutProps
   valuesSection: Theader[]
+  founderNote:Theader
   timeLineHeader: Theader
   previousYears: Titems[]
   currentAndBeyondYears: TheroSection
