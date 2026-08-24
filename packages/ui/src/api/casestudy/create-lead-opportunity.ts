@@ -10,6 +10,7 @@ const posthog = new PostHog(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   type TApi = {
     email: string;
     name: string;
+    phone?: string;
     companyName?: string;
     companyDomain?: string;
     companyWebsite?: string;
@@ -177,6 +178,7 @@ async function fnGetOpportunity(
 async function fnCreateLead(
   iEmail: string,
   iName: string,
+  iPhone: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign: string,
@@ -192,6 +194,7 @@ async function fnCreateLead(
     body: JSON.stringify({
       [idDoctype.lead.field_name.email_id]: iEmail,
       [idDoctype.lead.field_name.first_name]: iName,
+      [idDoctype.lead.field_name.mobile_no]: iPhone,
       [idDoctype.lead.field_name.campaign_name]: iCampaign,
       [idDoctype.lead.field_name.source]: iSource,
       [idDoctype.lead.field_name.company_name]: iCompanyName,
@@ -223,6 +226,7 @@ async function fnCreateLead(
 async function fnGetOrCreateLead(
   iEmail: string,
   iName: string,
+  iPhone: string,
   iBaseUrl: string,
   idHeaders: Record<string, string>,
   iCampaign:string,
@@ -238,7 +242,7 @@ async function fnGetOrCreateLead(
     return { lead: LdExistingLead, created: false }
   }
 
-  const LdNewLead = await fnCreateLead(iEmail,iName, iBaseUrl, idHeaders, iCampaign, iSource, iCompanyName, iCompanyWebsite, iEmployeeCount, idDoctype)
+  const LdNewLead = await fnCreateLead(iEmail,iName,iPhone, iBaseUrl, idHeaders, iCampaign, iSource, iCompanyName, iCompanyWebsite, iEmployeeCount, idDoctype)
   return { lead: LdNewLead, created: true }
 }
 
@@ -257,6 +261,7 @@ async function fnCreateOpportunity(
   iSource: string,
   iCampaign: string,
   iItemName: string,
+  iMobileNo: string,
   iCompanyWebsite: string,
   iEmployeeCount: string,
   iCompanyDomain: string,
@@ -314,6 +319,7 @@ const LComment = `
             [idDoctype.opportunity.field_name.website]: iCompanyWebsite,
             [idDoctype.opportunity.field_name.no_of_employees]: iEmployeeCount,
             [idDoctype.opportunity.field_name.contact_email]: iLeadEmail,
+            [idDoctype.opportunity.field_name.contact_mobile]: iMobileNo,
             [idDoctype.opportunity.field_name.items]: [
               {
                 [idDoctype.opportunity.field_name.item_code]: iItemName,
@@ -475,7 +481,7 @@ async function fnCreateCommunication(
 export async function fnLeadToOpportunity(idLeadFormData: TApi) {
   try {
     // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-    const {email, name, 
+    const {email, name, phone,
       companyName,
       companyDomain,
       companyWebsite,
@@ -491,7 +497,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
      * Find the Lead by email or create a new Lead when no match
      * is found.
      */
-    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, LBaseUrl, LdCrmRequestHeaders, campaign!, source!, companyName!, companyWebsite!, employeeCount!, doctype)
+    const { lead: LdLead, created: LLeadCreated, } = await fnGetOrCreateLead( email, name, phone!, LBaseUrl, LdCrmRequestHeaders, campaign!, source!, companyName!, companyWebsite!, employeeCount!, doctype)
 
     /**
    * Find an existing matching Opportunity or create a new one.
@@ -509,7 +515,7 @@ export async function fnLeadToOpportunity(idLeadFormData: TApi) {
           
             LdOpportunity = LExistingOpportunity
         } else {
-            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,companyWebsite!, employeeCount!, companyDomain!, interestReason!, companyName!, LdLead[doctype.lead.field_name.email_id], doctype, anonymousId || null)
+            LdOpportunity = await fnCreateOpportunity(LdLead.name, LBaseUrl, LdCrmRequestHeaders, opportType!, source!, campaign!, itemName!,phone!, companyWebsite!, employeeCount!, companyDomain!,interestReason!, companyName!, LdLead[doctype.lead.field_name.email_id], doctype, anonymousId || null)
             LOpportunityCreated = true
         }
     }
