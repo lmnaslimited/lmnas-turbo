@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 
 export async function signUp(request: Request, iEnv:TEnvSource) {
 
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
   const LFrappeUrl = iEnv.env.platformUrl || process.env.NEXT_PUBLIC_FRAPPE_URL;
 
   try {

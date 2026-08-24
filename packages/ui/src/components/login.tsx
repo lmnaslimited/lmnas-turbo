@@ -12,12 +12,16 @@ import posthog from "posthog-js";
 import { useParams } from 'next/navigation';
 import { Input } from './ui/input';
 import { TApprovalStatus, useApproval } from './auth/approvalContext';
-
+import { useDetectedRegion } from '../components/contact/useDetectedRegion';
+import { PhoneInput } from "react-international-phone";
+import "react-international-phone/style.css";
 
 type FormMode = 'login' | 'signup' | 'forgot';
 type AccessStage = 'verifying' | 'approved_form' | 'request_details' | 'review_pending';
 
 export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
+
+  const { countryIso: LDetectedCountry } = useDetectedRegion();
   const [LAccessStage, fnSetAccessStage] = useState<AccessStage>('verifying');
   const [Lmode, fnSetMode] = useState<FormMode>('signup');
   
@@ -39,6 +43,8 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const [LanonymousId, fnSetAnonymousId] = useState<string | null>(null);
 
   const [LdCompanyDetails, fnSetCompanyDetails] = useState<Record<string, string>>({
+    mobile_no: "",
+    full_name: "",
     companyName: "",
     companyDomain: "",
     companyWebsite: "",
@@ -51,41 +57,57 @@ const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
 
   if (!LEmail.includes("@")) {
     return {
+      full_name: "",
       companyName: "",
       companyWebsite: "",
     };
   }
 
-  const LDomain = (LEmail.split("@")[1] || "").trim();
+  const [LUsername, LDomain] = LEmail.split("@");
 
   if (!LDomain) {
     return {
+      full_name: "",
       companyName: "",
       companyWebsite: "",
     };
   }
 
-const LExcludedEmailDomains =
-  LdContent?.accessVerification?.excludedEmailDomains || [];
+  const LExcludedEmailDomains =
+    LdContent?.accessVerification?.excludedEmailDomains || [];
 
   if (LExcludedEmailDomains.includes(LDomain)) {
     return {
+      full_name: "",
       companyName: "",
       companyWebsite: "",
     };
   }
 
+  // Extract name from email username
+  const LFormattedFirstName = (LUsername || "")
+    .replace(/[._-]+/g, " ")
+    .trim()
+    .split(" ")
+    .filter(Boolean)
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
+console.log("Formatted first name:", LFormattedFirstName);
+  // Extract company name from domain
   const LCompanyName = (LDomain.split(".")[0] || "")
     .replace(/[-_]/g, " ")
     .trim();
 
   if (!LCompanyName) {
     return {
+      full_name: LFormattedFirstName,
       companyName: "",
       companyWebsite: "",
     };
   }
- // Capitalize each word in the company name
+
   const LFormattedCompanyName = LCompanyName
     .split(" ")
     .map(
@@ -94,16 +116,20 @@ const LExcludedEmailDomains =
     .join(" ");
 
   return {
+    full_name: LFormattedFirstName,
     companyName: LFormattedCompanyName,
     companyWebsite: `https://${LDomain}`,
   };
 };
 
 useEffect(() => {
+  if (!LEmail) return;
+
   const LCompanyDetails = fnGetCompanyDetailsFromEmail(LEmail);
 
   fnSetCompanyDetails((idPrev) => ({
     ...idPrev,
+    full_name: LCompanyDetails.full_name,
     companyName: LCompanyDetails.companyName,
     companyWebsite: LCompanyDetails.companyWebsite,
   }));
@@ -260,11 +286,6 @@ useEffect(() => {
 
     fnSetSubmitting(true);
     try {
-      const LEmailPrefix = LTrimmedEmail.split("@")[0];
-      const LGeneratedName = LEmailPrefix
-        ? LEmailPrefix.split(/[\._\-]/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ")
-        : "";
-
       const LRecaptchaToken = await executeRecaptcha("beta_opt_in");
       
       // Verify the generated reCAPTCHA token with the backend.
@@ -298,7 +319,8 @@ useEffect(() => {
           body: JSON.stringify({
             data:{
             email: LTrimmedEmail,
-            name: LGeneratedName,
+            name: LdCompanyDetails.full_name,
+            phone: LdCompanyDetails.mobile_no,
             companyName: LdCompanyDetails.companyName,
             companyDomain: LdCompanyDetails.companyDomain,
             companyWebsite: LdCompanyDetails.companyWebsite,
@@ -574,7 +596,7 @@ useEffect(() => {
 
                 {/* DYNAMIC FIELDS  */}
                 {LCurrentStepFields.map((field: any) => {
-                  const keyName = field.name || field.key;
+                  const keyName = field.name || field.key || "";
                   return (
                     <FormInput
                       key={keyName}
@@ -585,6 +607,7 @@ useEffect(() => {
                       options={field.options}
                       rows={field.rows}
                       value={LdCompanyDetails[keyName] || ""}
+                      countryIso={LDetectedCountry}
                       onChange={(val) =>
                         fnSetCompanyDetails((idPrev) => ({
                           ...idPrev,
@@ -858,9 +881,10 @@ function FormInput({
   options = [],
   rows = 3,
   className = '',
+  countryIso,
 }: {
   label?: string;
-  type?: 'text' | 'email' | 'url' | 'password' | 'textarea' | 'select' | string;
+  type?: 'text' | 'email' | 'url' | 'password' | 'textarea' | 'select' | 'tel' | string;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
@@ -868,6 +892,7 @@ function FormInput({
   options?: string[];
   rows?: number;
   className?: string;
+  countryIso?: string;
 }) {
   const renderControl = () => {
     switch (type) {
@@ -898,6 +923,21 @@ function FormInput({
             rows={rows}
             onChange={(e) => onChange(e.target.value)}
             className={`rounded-lg text-sm bg-muted resize-y min-h-[80px] ${className}`}
+          />
+        );
+      case "tel":
+        return (
+          <PhoneInput
+            defaultCountry={countryIso?.toLowerCase() || "us"}
+            value={value || ""}
+            onChange={(phone) => {
+              onChange(phone);
+            }}
+            placeholder={placeholder}
+            className="w-full"
+            inputStyle={{
+              width: "100%",
+            }}
           />
         );
       default:
