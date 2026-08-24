@@ -31,7 +31,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const [LPassword, fnSetPassword] = useState('');
 
   // UI State
-  // Phase state for unapproved users: 1 = Email Check, 2 = Extra Details, 3 = Success
+  // Phase state for unapproved users: 1 = Email Check, 2 = Extra Details, 3 = Successs
   const [LPhase, setLPhase] = useState<1 | 2 | 3>(1);
 
   const [LbSubmitting, fnSetSubmitting] = useState(false);
@@ -54,6 +54,17 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
 
 const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
   const LEmail = iEmail.trim().toLowerCase();
+  const LNamePart = (iEmail.split("@")[0] || "")
+  .replace(/[._-]+/g, " ")
+  .trim();
+
+  const LFormattedName = LNamePart
+    .split(" ")
+    .filter(Boolean)
+    .map(
+      (word) => word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join(" ");
 
   if (!LEmail.includes("@")) {
     return {
@@ -67,7 +78,7 @@ const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
 
   if (!LDomain) {
     return {
-      full_name: "",
+      full_name: LFormattedName,
       companyName: "",
       companyWebsite: "",
     };
@@ -78,7 +89,7 @@ const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
 
   if (LExcludedEmailDomains.includes(LDomain)) {
     return {
-      full_name: "",
+      full_name: LFormattedName,
       companyName: "",
       companyWebsite: "",
     };
@@ -94,7 +105,6 @@ const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
       (word) => word.charAt(0).toUpperCase() + word.slice(1)
     )
     .join(" ");
-console.log("Formatted first name:", LFormattedFirstName);
   // Extract company name from domain
   const LCompanyName = (LDomain.split(".")[0] || "")
     .replace(/[-_]/g, " ")
