@@ -20,7 +20,7 @@ type FormMode = 'login' | 'signup' | 'forgot';
 type AccessStage = 'verifying' | 'approved_form' | 'request_details' | 'review_pending';
 
 export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
-
+  // Detect user's country for phone input formatting
   const { countryIso: LDetectedCountry } = useDetectedRegion();
   const [LAccessStage, fnSetAccessStage] = useState<AccessStage>('verifying');
   const [Lmode, fnSetMode] = useState<FormMode>('signup');
@@ -31,7 +31,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   const [LPassword, fnSetPassword] = useState('');
 
   // UI State
-  // Phase state for unapproved users: 1 = Email Check, 2 = Extra Details, 3 = Successs
+  // Phase state for unapproved users: 1 = Email Check, 2 = Extra Details, 3 = Success
   const [LPhase, setLPhase] = useState<1 | 2 | 3>(1);
 
   const [LbSubmitting, fnSetSubmitting] = useState(false);
@@ -53,6 +53,7 @@ export default function LoginForm({ idLogin }: { idLogin: TLoginTarget }) {
   });
 
 const fnGetCompanyDetailsFromEmail = (iEmail: string) => {
+  // Normalize(lowercase, trim space) email extract name and domain
   const LEmail = iEmail.trim().toLowerCase();
   const LNamePart = (iEmail.split("@")[0] || "")
   .replace(/[._-]+/g, " ")
@@ -475,9 +476,9 @@ useEffect(() => {
   const fnCanAdvanceSubStep = () => {
     return LCurrentStepFields.every((field: any) => {
       if (!field.required) return true;
-      const keyName = field.name || field.key;
-      const val = LdCompanyDetails[keyName];
-      return val && val.toString().trim().length > 0;
+      const LKeyName = field.name || field.key;
+      const LVal = LdCompanyDetails[LKeyName];
+      return LVal && LVal.toString().trim().length > 0;
     });
   };
 
@@ -606,22 +607,22 @@ useEffect(() => {
 
                 {/* DYNAMIC FIELDS  */}
                 {LCurrentStepFields.map((field: any) => {
-                  const keyName = field.name || field.key || "";
+                  const LKeyName = field.name || field.key || "";
                   return (
                     <FormInput
-                      key={keyName}
+                      key={LKeyName}
                       label={field.label}
                       type={field.type}
                       placeholder={field.placeholder}
                       required={field.required}
                       options={field.options}
                       rows={field.rows}
-                      value={LdCompanyDetails[keyName] || ""}
+                      value={LdCompanyDetails[LKeyName] || ""}
                       countryIso={LDetectedCountry}
                       onChange={(val) =>
                         fnSetCompanyDetails((idPrev) => ({
                           ...idPrev,
-                          [keyName]: val,
+                          [LKeyName]: val,
                         }))
                       }
                     />
