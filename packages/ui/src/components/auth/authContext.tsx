@@ -1,6 +1,7 @@
 'use client';
 
 import { TAuthContextProps, TUserProfile } from '@repo/middleware/types';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
@@ -11,31 +12,49 @@ const AuthContext = createContext<TAuthContextProps>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+
+  const LdSearchParams = useSearchParams();
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
   // Track the last identified user to avoid sending duplicate identify events to PostHog.
-  const LdLastIdentifiedEmailRef = useRef<string | null>(null);
+  const LdLastIdentifiedIdentityRef = useRef<string | null>(null);
+  const LdEmailIdentifiedRef = useRef<boolean>(false);
 
   // Sync PostHog Identity
   useEffect(() => {
-    if (user && user.email) {
+      // Target attribute in the url when user have not identified yet, for example: /?target=some-unique-identifier
+      const LdTarget = LdSearchParams.get('target');
       // Identify the user only when the authenticated account changes.
-      if (LdLastIdentifiedEmailRef.current !== user.email) {
-        posthog.identify(user.email, {
-          email: user.email,
-          name: user.name,
-          avatar: user.picture || ''
-        });
-        // Remember the current user to prevent repeated identify calls.
-        LdLastIdentifiedEmailRef.current = user.email;
+      if (user?.email) {
+          if (LdEmailIdentifiedRef.current) {
+              return;
       }
-    } 
-    // else {
-      // posthog.reset();
-      // LdLastIdentifiedEmailRef.current = null;
-    // }
-  }, [user]);
+      const LdEmail = user.email;
+      if (LdLastIdentifiedIdentityRef.current !== LdEmail) {
+      posthog.identify(LdEmail, {
+        email: user.email,
+        name: user.name,
+        avatar: user.picture || ''
+      });
 
+      LdLastIdentifiedIdentityRef.current = LdEmail;
+    }
+
+    // Never use target again after email identification.
+    LdEmailIdentifiedRef.current = true;
+    return;
+  }
+  // Before email is available, use target.
+  if (LdTarget && !LdEmailIdentifiedRef.current) {
+    if (LdLastIdentifiedIdentityRef.current !== LdTarget) {
+      posthog.identify(LdTarget, {
+        target: LdTarget
+      });
+
+      LdLastIdentifiedIdentityRef.current = LdTarget;
+    }
+  }
+}, [user, LdSearchParams]);
   // Retrieve the latest signed-in user from the backend.
   async function fnCheckAuthStatus() {
     try {
