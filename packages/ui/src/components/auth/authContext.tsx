@@ -1,6 +1,7 @@
 'use client';
 
 import { TAuthContextProps, TUserProfile } from '@repo/middleware/types';
+import { useSearchParams } from 'next/navigation';
 import posthog from 'posthog-js';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
@@ -11,30 +12,55 @@ const AuthContext = createContext<TAuthContextProps>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+
+  // Access the current URL's search parameters to retrieve the "target" parameter.
+  const LdSearchParams = useSearchParams();
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
-  // Track the last identified user to avoid sending duplicate identify events to PostHog.
+
   const LdLastIdentifiedEmailRef = useRef<string | null>(null);
 
   // Sync PostHog Identity
   useEffect(() => {
-    if (user && user.email) {
-      // Identify the user only when the authenticated account changes.
-      if (LdLastIdentifiedEmailRef.current !== user.email) {
-        posthog.identify(user.email, {
-          email: user.email,
-          name: user.name,
-          avatar: user.picture || ''
+    const LdTarget = LdSearchParams.get('target');
+    if (user?.email) {
+    if (LdLastIdentifiedEmailRef.current !== user.email) {
+      posthog.identify(user.email, {
+        email: user.email,
+        name: user.name,
+        avatar: user.picture || ''
+      });
+
+      // Remember the current email to avoid duplicate identify calls.
+      LdLastIdentifiedEmailRef.current = user.email;
+    }
+
+    // If target exists in the URL, add it to the existing
+    // email-identified person's properties.
+    if (LdTarget) {
+      const LdExistingTarget = posthog.get_property('target');
+
+      if (!LdExistingTarget) {
+        posthog.setPersonProperties({
+          target: LdTarget
         });
-        // Remember the current user to prevent repeated identify calls.
-        LdLastIdentifiedEmailRef.current = user.email;
       }
-    } 
-    // else {
-      // posthog.reset();
-      // LdLastIdentifiedEmailRef.current = null;
-    // }
-  }, [user]);
+    }
+
+    // Do not identify with target.
+    return;
+  }
+  
+  // 2. UNAUTHENTICATED / ANONYMOUS VISITOR
+  // If target exists in the URL, attach it as a person property to the anonymous user.
+  if (LdTarget) {
+    const LdExistingTarget = posthog.get_property('target');
+    if (!LdExistingTarget) {
+      posthog.setPersonProperties({ target: LdTarget });
+    }
+  }
+
+  }, [user, LdSearchParams]);
 
   // Retrieve the latest signed-in user from the backend.
   async function fnCheckAuthStatus() {
