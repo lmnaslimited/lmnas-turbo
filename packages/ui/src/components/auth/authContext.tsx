@@ -34,7 +34,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       posthog.identify(LdEmail, {
         email: user.email,
         name: user.name,
-        avatar: user.picture || ''
+        avatar: user.picture || '',
+        target: LdTarget || '',
       });
 
       LdLastIdentifiedIdentityRef.current = LdEmail;
