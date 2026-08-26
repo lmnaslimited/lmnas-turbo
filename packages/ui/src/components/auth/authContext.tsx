@@ -51,60 +51,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return;
   }
   
-    // Wait until the authentication status is known.
-    // This prevents an already authenticated user from being
-    // temporarily identified with the target during page load.
-    const LdDistinctId = posthog.get_distinct_id();
-
-
-    // EXISTING EMAIL-IDENTIFIED USER
-   
-    // If the current PostHog identity contains "@", we treat it
-    // as an email identity.
-    if (LdDistinctId.includes('@')) {
-
-      // No target in the URL.
-      if (!LdTarget) {
-        return;
-      }
-
-      // Check whether the current PostHog person already has
-      // the target property.
-      const LdExistingTarget = posthog.get_property('target');
-      console.log('Existing target:', LdExistingTarget);
-
-      // Target is already stored on this person.
-      // Do not identify again and do not update it.
-      if (LdExistingTarget) {
-        return;
-      }
-
-      // Add the target to the existing email-identified person.
-      // This does NOT change the person's identity.
-      posthog.setPersonProperties({
-        target: LdTarget,
-      });
-
-      return;
+  // 2. UNAUTHENTICATED / ANONYMOUS VISITOR
+  // If target exists in the URL, attach it as a person property to the anonymous user.
+  if (LdTarget) {
+    const LdExistingTarget = posthog.get_property('target');
+    if (!LdExistingTarget) {
+      posthog.setPersonProperties({ target: LdTarget });
     }
-
-    // NON-EMAIL / ANONYMOUS USER
-
-    // If there is no target, there is nothing to identify.
-    if (!LdTarget) {
-      return;
-    }
-
-    // If the current identity is already the target,
-    // do not call identify again.
-    if (LdDistinctId === LdTarget) {
-      return;
-    }
-
-    // Identify the anonymous visitor using the target.
-    posthog.identify(LdTarget, {
-      target: LdTarget,
-    });
+  }
 
   }, [user, LdSearchParams]);
 
