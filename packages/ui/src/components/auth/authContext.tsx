@@ -16,46 +16,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const LdSearchParams = useSearchParams();
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
-  // Track the last identified user to avoid sending duplicate identify events to PostHog.
-  const LdLastIdentifiedIdentityRef = useRef<string | null>(null);
-  const LdEmailIdentifiedRef = useRef<boolean>(false);
 
   // Sync PostHog Identity
   useEffect(() => {
-      // Target attribute in the url when user have not identified yet, for example: /?target=some-unique-identifier
-      const LdTarget = LdSearchParams.get('target');
-      // Identify the user only when the authenticated account changes.
-      if (user?.email) {
-          if (LdEmailIdentifiedRef.current) {
-              return;
+    // Wait until the authentication status is known.
+    // This prevents an already authenticated user from being
+    // temporarily identified with the target during page load.
+    
+    const LdDistinctId = posthog.get_distinct_id();
+    const LdTarget = LdSearchParams.get('target');
+    console.log('PostHog Distinct ID:', LdDistinctId);
+    console.log('PostHog Target:', LdTarget);
+    // ---------------------------------------------------------
+    // EXISTING EMAIL-IDENTIFIED USER
+    // ---------------------------------------------------------
+    // If the current PostHog identity contains "@", we treat it
+    // as an email identity.
+    if (LdDistinctId.includes('@')) {
+
+      // No target in the URL.
+      if (!LdTarget) {
+        return;
       }
-      const LdEmail = user.email;
-      if (LdLastIdentifiedIdentityRef.current !== LdEmail) {
-      posthog.identify(LdEmail, {
-        email: user.email,
-        name: user.name,
-        avatar: user.picture || '',
-        target: LdTarget || '',
+
+      // Check whether the current PostHog person already has
+      // the target property.
+      const LdExistingTarget = posthog.get_property('target');
+
+      // Target is already stored on this person.
+      // Do not identify again and do not update it.
+      if (LdExistingTarget) {
+        return;
+      }
+
+      // Add the target to the existing email-identified person.
+      // This does NOT change the person's identity.
+      posthog.setPersonProperties({
+        target: LdTarget,
       });
 
-      LdLastIdentifiedIdentityRef.current = LdEmail;
+      return;
     }
 
-    // Never use target again after email identification.
-    LdEmailIdentifiedRef.current = true;
-    return;
-  }
-  // Before email is available, use target.
-  if (LdTarget && !LdEmailIdentifiedRef.current) {
-    if (LdLastIdentifiedIdentityRef.current !== LdTarget) {
-      posthog.identify(LdTarget, {
-        target: LdTarget
-      });
-
-      LdLastIdentifiedIdentityRef.current = LdTarget;
+    // ---------------------------------------------------------
+    // NON-EMAIL / ANONYMOUS USER
+    // ---------------------------------------------------------
+    // If there is no target, there is nothing to identify.
+    if (!LdTarget) {
+      return;
     }
-  }
-}, [user, LdSearchParams]);
+
+    // If the current identity is already the target,
+    // do not call identify again.
+    if (LdDistinctId === LdTarget) {
+      return;
+    }
+
+    // Identify the anonymous visitor using the target.
+    posthog.identify(LdTarget, {
+      target: LdTarget,
+    });
+
+  }, [user, LdSearchParams]);
+
   // Retrieve the latest signed-in user from the backend.
   async function fnCheckAuthStatus() {
     try {
