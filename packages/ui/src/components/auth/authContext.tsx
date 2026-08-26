@@ -13,23 +13,52 @@ const AuthContext = createContext<TAuthContextProps>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
 
+  // Access the current URL's search parameters to retrieve the "target" parameter.
   const LdSearchParams = useSearchParams();
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
 
+  const LdLastIdentifiedEmailRef = useRef<string | null>(null);
+
   // Sync PostHog Identity
   useEffect(() => {
+    const LdTarget = LdSearchParams.get('target');
+    if (user?.email) {
+    if (LdLastIdentifiedEmailRef.current !== user.email) {
+      posthog.identify(user.email, {
+        email: user.email,
+        name: user.name,
+        avatar: user.picture || ''
+      });
+
+      // Remember the current email to avoid duplicate identify calls.
+      LdLastIdentifiedEmailRef.current = user.email;
+    }
+
+    // If target exists in the URL, add it to the existing
+    // email-identified person's properties.
+    if (LdTarget) {
+      const LdExistingTarget = posthog.get_property('target');
+
+      if (!LdExistingTarget) {
+        posthog.setPersonProperties({
+          target: LdTarget
+        });
+      }
+    }
+
+    // Do not identify with target.
+    return;
+  }
+  
     // Wait until the authentication status is known.
     // This prevents an already authenticated user from being
     // temporarily identified with the target during page load.
-    
     const LdDistinctId = posthog.get_distinct_id();
-    const LdTarget = LdSearchParams.get('target');
-    console.log('PostHog Distinct ID:', LdDistinctId);
-    console.log('PostHog Target:', LdTarget);
-    // ---------------------------------------------------------
+
+
     // EXISTING EMAIL-IDENTIFIED USER
-    // ---------------------------------------------------------
+   
     // If the current PostHog identity contains "@", we treat it
     // as an email identity.
     if (LdDistinctId.includes('@')) {
@@ -42,6 +71,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       // Check whether the current PostHog person already has
       // the target property.
       const LdExistingTarget = posthog.get_property('target');
+      console.log('Existing target:', LdExistingTarget);
 
       // Target is already stored on this person.
       // Do not identify again and do not update it.
@@ -58,9 +88,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // ---------------------------------------------------------
     // NON-EMAIL / ANONYMOUS USER
-    // ---------------------------------------------------------
+
     // If there is no target, there is nothing to identify.
     if (!LdTarget) {
       return;
