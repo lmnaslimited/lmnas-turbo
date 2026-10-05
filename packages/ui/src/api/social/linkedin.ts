@@ -41,11 +41,11 @@ type TLinkedInTokenResponse = {
 /**
  * Wraps the native `fetch` API with an execution timeout.
  * Prevents requests from hanging indefinitely if the LinkedIn network stalls.
- *
- * @param iUrl - The target endpoint URL.
- * @param idOptions - Standard fetch configuration options (headers, method, etc.).
- * @param iTimeout - Timeout limit in milliseconds before the request rejects.
- * @returns A Promise resolving to the HTTP Response object.
+ * params :
+ *  iUrl - The target endpoint URL.
+ *  idOptions - Standard fetch configuration options (headers, method, etc.).
+ *  iTimeout - Timeout limit in milliseconds before the request rejects.
+ *  A Promise resolving to the HTTP Response object.
  */
 function fnFetchWithTimeout(
   iUrl: string,
@@ -72,12 +72,12 @@ function fnFetchWithTimeout(
 /**
  * Retries a fetch request multiple times with a backoff delay if failures occur.
  *
- * @param iUrl - The target endpoint URL.
- * @param idOptions - Fetch request options.
- * @param iRetries - Maximum number of attempts allowed (default: 3).
- * @param iDelay - Delay in milliseconds between consecutive retry attempts (default: 3000ms).
- * @returns A Promise resolving to the successful HTTP Response.
- * @throws Error when all retry attempts fail.
+ *  iUrl - The target endpoint URL.
+ *  idOptions - Fetch request options.
+ *  iRetries - Maximum number of attempts allowed (default: 3).
+ *  iDelay - Delay in milliseconds between consecutive retry attempts (default: 3000ms).
+ *  A Promise resolving to the successful HTTP Response.
+ *  Error when all retry attempts fail.
  */
 async function fnRetryFetch(
   iUrl: string,
@@ -119,7 +119,7 @@ async function fnRetryFetch(
  * - LINKEDIN_CLIENT_ID
  * - LINKEDIN_CLIENT_SECRET
  *
- * @returns A valid Bearer access token string.
+ * returns a valid Bearer access token string.
  */
 async function fnGetLinkedInAccessToken(): Promise<string> {
   const LdRefreshToken = process.env.LINKEDIN_REFRESH_TOKEN
@@ -177,8 +177,8 @@ async function fnGetLinkedInAccessToken(): Promise<string> {
 /**
  * Prepares HTTP standard and versioning headers required by LinkedIn REST APIs.
  *
- * @param iAccessToken - The active Bearer token.
- * @returns A configured Headers object.
+ * params iAccessToken - The active Bearer token.
+ * returns A configured Headers object.
  */
 function fnGetLinkedInHeaders(iAccessToken: string): Headers {
   return new Headers({
