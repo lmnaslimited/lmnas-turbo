@@ -19,7 +19,6 @@ jobs:
           RECAPTCHA_SECRET_KEY: ${{ github.ref_name == 'main' && secrets.MAIN_RECAPTCHA_SECRET_KEY || secrets.DEVELOP_RECAPTCHA_SECRET_KEY }}
           YOUTUBE: ${{ secrets.YOUTUBE }}
           TWITTER_BEARER_TOKEN: ${{ secrets.TWITTER_BEARER_TOKEN }}
-          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           TWITTER_USER_NAME: ${{ secrets.TWITTER_USER_NAME }}
           YOUTUBE_CHANNEL_ID: ${{ secrets.YOUTUBE_CHANNEL_ID }}
           NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY: ${{ secrets.NEXT_PUBLIC_RUDDERSTACK_WRITE_KEY }}
@@ -35,6 +34,10 @@ jobs:
           LMNAS_SESSION_SECRET: ${{ secrets.LMNAS_SESSION_SECRET }}
           STRAPI_TOKEN: ${{ secrets.STRAPI_TOKEN }}
           PLATFORM_TOKEN: ${{ secrets.PLATFORM_TOKEN }}
+          LINKEDIN_CLIENT_ID: ${{ secrets.LINKEDIN_CLIENT_ID }}
+          LINKEDIN_CLIENT_SECRET: ${{ secrets.LINKEDIN_CLIENT_SECRET }}
+          LINKEDIN_REFRESH_TOKEN: ${{ secrets.LINKEDIN_REFRESH_TOKEN }}
+
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
