@@ -36,9 +36,7 @@ type TLinkedInTokenResponse = {
   scope?: string
 }
 
-// -----------------------------------------------------------------------------
 // Utility: Fetch with timeout
-// -----------------------------------------------------------------------------
 
 /**
  * Wraps the native `fetch` API with an execution timeout.
@@ -69,9 +67,7 @@ function fnFetchWithTimeout(
   })
 }
 
-// -----------------------------------------------------------------------------
 // Utility: Retry fetch
-// -----------------------------------------------------------------------------
 
 /**
  * Retries a fetch request multiple times with a backoff delay if failures occur.
@@ -114,9 +110,7 @@ async function fnRetryFetch(
   throw new Error("LinkedIn request failed after retries")
 }
 
-// -----------------------------------------------------------------------------
 // Authentication: Fetch fresh access token via OAuth2 Refresh Token
-// -----------------------------------------------------------------------------
 
 /**
  * Exchanges the persistent LinkedIn refresh token for a short-lived access token.
@@ -178,9 +172,7 @@ async function fnGetLinkedInAccessToken(): Promise<string> {
   return LdTokenData.access_token
 }
 
-// -----------------------------------------------------------------------------
 // LinkedIn API Headers Builder
-// -----------------------------------------------------------------------------
 
 /**
  * Prepares HTTP standard and versioning headers required by LinkedIn REST APIs.
@@ -199,9 +191,7 @@ function fnGetLinkedInHeaders(iAccessToken: string): Headers {
   })
 }
 
-// -----------------------------------------------------------------------------
 // Main LinkedIn Fetch & Transform Service
-// -----------------------------------------------------------------------------
 
 /**
  * Main server action to retrieve, filter, and format LinkedIn organization posts.
@@ -210,15 +200,12 @@ function fnGetLinkedInHeaders(iAccessToken: string): Headers {
  */
 export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
   try {
-    // -------------------------------------------------------------------------
     // STEP 1: Authenticate and retrieve fresh access token
-    // -------------------------------------------------------------------------
     const LdAccessToken = await fnGetLinkedInAccessToken()
     const LdHeaders = fnGetLinkedInHeaders(LdAccessToken)
 
-    // -------------------------------------------------------------------------
+    
     // STEP 2: Fetch recent organization posts
-    // -------------------------------------------------------------------------
     // Querying LinkedIn REST Posts endpoint for author URN 67940092
     const LdPostsUrl =
       "https://api.linkedin.com/rest/posts" +
@@ -241,17 +228,13 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
 
     const LdLinkedIn = await LdResponse.json()
 
-    // -------------------------------------------------------------------------
     // STEP 3: Keep image posts only
-    // -------------------------------------------------------------------------
     // Filter elements to discard plain text, document, or non-image media posts
     const LaPostsWithMedia: Tpost[] = (LdLinkedIn.elements || []).filter(
       (post: Tpost) => post.content?.media?.id?.startsWith("urn:li:image:")
     )
 
-    // -------------------------------------------------------------------------
     // STEP 4: Collect media IDs and their corresponding alt text
-    // -------------------------------------------------------------------------
     const LaMediaMap = new Map<string, string>()
     const LaMediaIds: string[] = []
 
@@ -269,9 +252,7 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
       return { data: [] }
     }
 
-    // -------------------------------------------------------------------------
     // STEP 5: Fetch binary image download URLs using batch images endpoint
-    // -------------------------------------------------------------------------
     // Construct the comma-separated List(...) parameter with encoded image URNs
     const LencodedUrns = LaMediaIds.map((LdUrn) => encodeURIComponent(LdUrn))
     const LidsParam = `List(${LencodedUrns.join(",")})`
@@ -291,9 +272,8 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
 
     const LdImageData = await LdImageResponse.json()
 
-    // -------------------------------------------------------------------------
+    
     // STEP 6: Transform and normalize data for TrendCard UI components
-    // -------------------------------------------------------------------------
     const LdFormattedPosts: TtrendCardProps[] =
       LaPostsWithMedia.reduce<TtrendCardProps[]>((LaAcc, LdPost: Tpost) => {
         const LMediaId = LdPost.content?.media?.id
@@ -338,9 +318,7 @@ export async function LinkedInApi(): Promise<TsocialAPIPostIds> {
         return LaAcc
       }, [])
 
-    // -------------------------------------------------------------------------
     // STEP 7: Return final shaped post payload
-    // -------------------------------------------------------------------------
     return {
       data: LdFormattedPosts,
     }
