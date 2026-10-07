@@ -43,12 +43,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Retrieve the lead email from Frappe CRM using the campaign target.
   useEffect(() => {
     if (loading) return;
-
+    // Identify the campaign target from the URL and fetch the associated lead details.
     async function fnIdentifyCampaignTarget() {
       const LdTarget = new URLSearchParams(
         window.location.search
       ).get('target');
 
+      // If no campaign target is provided, skip the identification process.
       if (!LdTarget) return;
 
       try {
@@ -56,21 +57,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await fnGetLeadDetailsForCampaignTarget(LdTarget);
 
         const LdEmail = LdResult?.email;
+        const LdLead = LdResult?.lead;
 
-        if (!LdEmail) {
-          console.log(
-            'No email found for campaign target:',
-            LdTarget
-          );
-          return;
-        }
+      // If neither an email nor a lead ID is found 
+      if (!LdEmail && !LdLead) {
+        console.warn(
+          'No email or lead ID found for campaign target:',
+          LdTarget
+        );
+        return;
+}
 
-        if (LdLastIdentifiedEmailRef.current !== LdEmail) {
-          posthog.identify(LdEmail, {
-            email: LdEmail,
-          });
+        const LdIdentity = LdEmail || LdLead;
 
-          LdLastIdentifiedEmailRef.current = LdEmail;
+        if (LdLastIdentifiedEmailRef.current !== LdIdentity) {
+          if (LdEmail) {
+            posthog.identify(LdEmail, {
+              email: LdEmail,
+            });
+          } else {
+            posthog.identify(LdLead);
+          }
+
+          LdLastIdentifiedEmailRef.current = LdIdentity;
         }
       } catch (error) {
         console.error(

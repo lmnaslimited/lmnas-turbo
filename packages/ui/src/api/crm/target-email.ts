@@ -31,5 +31,6 @@ export async function fnGetLeadDetailsForCampaignTarget(
   const data = await Ldresponse.json();
   return {
     email: data?.message?.email || null,
+    lead: data?.message?.lead || null,
   };
 }
