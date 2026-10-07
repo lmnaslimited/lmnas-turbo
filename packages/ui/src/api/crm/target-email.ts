@@ -7,6 +7,7 @@ export async function fnGetLeadDetailsForCampaignTarget(
     return null;
   }
 
+  // Fetch lead details from Frappe CRM based on the provided campaign target.
   const Ldresponse = await fetch(
     process.env.LENS_CRM_API_URL!,
     {
@@ -21,13 +22,13 @@ export async function fnGetLeadDetailsForCampaignTarget(
       cache: 'no-store',
     }
   );
-
+ // Check if the response is successful; if not, throw an error with the status code.
   if (!Ldresponse.ok) {
     throw new Error(
       `Frappe CRM request failed: ${Ldresponse.status}`
     );
   }
-
+  // Parse the response JSON and extract the email and lead ID, returning them in a structured format.
   const data = await Ldresponse.json();
   return {
     email: data?.message?.email || null,
