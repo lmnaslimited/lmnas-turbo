@@ -18,25 +18,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
   // Track the last identified user to avoid sending duplicate identify events to PostHog.
-  const LdLastIdentifiedEmailRef = useRef<string | null>(null);
+  const LLastIdentifiedEmailRef = useRef<string | null>(null);
 
   // Sync PostHog Identity
   useEffect(() => {
     if (user && user.email) {
       // Identify the user only when the authenticated account changes.
-      if (LdLastIdentifiedEmailRef.current !== user.email) {
+      if (LLastIdentifiedEmailRef.current !== user.email) {
         posthog.identify(user.email, {
           email: user.email,
           name: user.name,
           avatar: user.picture || ''
         });
         // Remember the current user to prevent repeated identify calls.
-        LdLastIdentifiedEmailRef.current = user.email;
+        LLastIdentifiedEmailRef.current = user.email;
       }
     } 
     // else {
       // posthog.reset();
-      // LdLastIdentifiedEmailRef.current = null;
+      // LLastIdentifiedEmailRef.current = null;
     // }
   }, [user]);
 
@@ -56,30 +56,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const LdResult =
           await fnGetLeadDetailsForCampaignTarget(LdTarget);
 
-        const LdEmail = LdResult?.email;
-        const LdLead = LdResult?.lead;
+        const LEmail = LdResult?.email;
+        const LLead = LdResult?.lead;
 
       // If neither an email nor a lead ID is found 
-      if (!LdEmail && !LdLead) {
+      if (!LEmail && !LLead) {
         console.warn(
           'No email or lead ID found for campaign target:',
           LdTarget
         );
         return;
 }
+        // Determine the identity to use for PostHog identification, preferring email over lead ID.
+        const LIdentity = LEmail || LLead;
 
-        const LdIdentity = LdEmail || LdLead;
-
-        if (LdLastIdentifiedEmailRef.current !== LdIdentity) {
-          if (LdEmail) {
-            posthog.identify(LdEmail, {
-              email: LdEmail,
+        if (LLastIdentifiedEmailRef.current !== LIdentity) {
+          if (LEmail) {
+            // Replace posthog distinct_id with the lead email for better tracking and analytics.
+            posthog.identify(LEmail, {
+              // Store the CRM email as the PostHog person property.
+              email: LEmail,
             });
           } else {
-            posthog.identify(LdLead);
+            // If only the lead ID is available, use it for PostHog identification.
+            posthog.identify(LLead);
           }
-
-          LdLastIdentifiedEmailRef.current = LdIdentity;
+          LLastIdentifiedEmailRef.current = LIdentity;
         }
       } catch (error) {
         console.error(
