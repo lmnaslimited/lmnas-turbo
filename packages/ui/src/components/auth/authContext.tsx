@@ -4,6 +4,10 @@ import { TAuthContextProps, TUserProfile } from '@repo/middleware/types';
 import posthog from 'posthog-js';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
+import {
+  fnGetLeadDetailsForCampaignTarget,
+} from '@repo/ui/api/crm/target-email';
+
 const AuthContext = createContext<TAuthContextProps>({
   user: null,
   loading: true,
@@ -36,8 +40,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // }
   }, [user]);
 
+  // Retrieve the lead email from Frappe CRM using the campaign target.
+  useEffect(() => {
+    if (loading) return;
+    // Identify the campaign target from the URL and fetch the associated lead details.
+    async function fnIdentifyCampaignTarget() {
+      const LdTarget = new URLSearchParams(
+        window.location.search
+      ).get('target');
+
+      // If no campaign target is provided, skip the identification process.
+      if (!LdTarget) return;
+
+      try {
+        const LdResult =
+          await fnGetLeadDetailsForCampaignTarget(LdTarget);
+
+        const LdEmail = LdResult?.email;
+        const LdLead = LdResult?.lead;
+
+      // If neither an email nor a lead ID is found 
+      if (!LdEmail && !LdLead) {
+        console.warn(
+          'No email or lead ID found for campaign target:',
+          LdTarget
+        );
+        return;
+}
+
+        const LdIdentity = LdEmail || LdLead;
+
+        if (LdLastIdentifiedEmailRef.current !== LdIdentity) {
+          if (LdEmail) {
+            posthog.identify(LdEmail, {
+              email: LdEmail,
+            });
+          } else {
+            posthog.identify(LdLead);
+          }
+
+          LdLastIdentifiedEmailRef.current = LdIdentity;
+        }
+      } catch (error) {
+        console.error(
+          'Campaign target identification failed:',
+          error
+        );
+      }
+    }
+
+    fnIdentifyCampaignTarget();
+  }, [loading]);
+
   // Retrieve the latest signed-in user from the backend.
-  async function fnCheckAuthStatus() {
+   async function fnCheckAuthStatus() {
     try {
       const LdResult = await fetch('/api/auth/me', { cache: 'no-store' });
       
