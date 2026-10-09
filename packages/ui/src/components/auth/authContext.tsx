@@ -45,16 +45,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (loading) return;
     // Identify the campaign target from the URL and fetch the associated lead details.
     async function fnIdentifyCampaignTarget() {
-      const LdTarget = new URLSearchParams(
+      const LTarget = new URLSearchParams(
         window.location.search
       ).get('target');
 
       // If no campaign target is provided, skip the identification process.
-      if (!LdTarget) return;
+      if (!LTarget) return;
 
       try {
         const LdResult =
-          await fnGetLeadDetailsForCampaignTarget(LdTarget);
+          await fnGetLeadDetailsForCampaignTarget(LTarget);
 
         const LEmail = LdResult?.email;
         const LLead = LdResult?.lead;
@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!LEmail && !LLead) {
         console.warn(
           'No email or lead ID found for campaign target:',
-          LdTarget
+          LTarget
         );
         return;
 }
@@ -79,7 +79,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             });
           } else {
             // If only the lead ID is available, use it for PostHog identification.
-            posthog.identify(LLead);
+            posthog.identify(LLead, {
+              // Store the CRM lead ID as the PostHog person property for tracking purposes.
+              lead: LLead
+            });
           }
           LLastIdentifiedEmailRef.current = LIdentity;
         }
