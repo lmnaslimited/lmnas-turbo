@@ -4,6 +4,10 @@ import { TAuthContextProps, TUserProfile } from '@repo/middleware/types';
 import posthog from 'posthog-js';
 import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 
+import {
+  fnGetLeadDetailsForCampaignTarget,
+} from '@repo/ui/api/crm/target-email';
+
 const AuthContext = createContext<TAuthContextProps>({
   user: null,
   loading: true,
@@ -14,30 +18,87 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, fnSetUser] = useState<TUserProfile | null>(null);
   const [loading, fnSetLoading] = useState<boolean>(true);
   // Track the last identified user to avoid sending duplicate identify events to PostHog.
-  const LdLastIdentifiedEmailRef = useRef<string | null>(null);
+  const LLastIdentifiedEmailRef = useRef<string | null>(null);
 
   // Sync PostHog Identity
   useEffect(() => {
     if (user && user.email) {
       // Identify the user only when the authenticated account changes.
-      if (LdLastIdentifiedEmailRef.current !== user.email) {
+      if (LLastIdentifiedEmailRef.current !== user.email) {
         posthog.identify(user.email, {
           email: user.email,
           name: user.name,
           avatar: user.picture || ''
         });
         // Remember the current user to prevent repeated identify calls.
-        LdLastIdentifiedEmailRef.current = user.email;
+        LLastIdentifiedEmailRef.current = user.email;
       }
     } 
     // else {
       // posthog.reset();
-      // LdLastIdentifiedEmailRef.current = null;
+      // LLastIdentifiedEmailRef.current = null;
     // }
   }, [user]);
 
+  // Retrieve the lead email from Frappe CRM using the campaign target.
+  useEffect(() => {
+    if (loading) return;
+    // Identify the campaign target from the URL and fetch the associated lead details.
+    async function fnIdentifyCampaignTarget() {
+      const LTarget = new URLSearchParams(
+        window.location.search
+      ).get('target');
+
+      // If no campaign target is provided, skip the identification process.
+      if (!LTarget) return;
+
+      try {
+        const LdResult =
+          await fnGetLeadDetailsForCampaignTarget(LTarget);
+
+        const LEmail = LdResult?.email;
+        const LLead = LdResult?.lead;
+
+      // If neither an email nor a lead ID is found 
+      if (!LEmail && !LLead) {
+        console.warn(
+          'No email or lead ID found for campaign target:',
+          LTarget
+        );
+        return;
+}
+        // Determine the identity to use for PostHog identification, preferring email over lead ID.
+        const LIdentity = LEmail || LLead;
+
+        if (LLastIdentifiedEmailRef.current !== LIdentity) {
+          if (LEmail) {
+            // Replace posthog distinct_id with the lead email for better tracking and analytics.
+            posthog.identify(LEmail, {
+              // Store the CRM email as the PostHog person property.
+              email: LEmail,
+            });
+          } else {
+            // If only the lead ID is available, use it for PostHog identification.
+            posthog.identify(LLead, {
+              // Store the CRM lead ID as the PostHog person property for tracking purposes.
+              lead: LLead
+            });
+          }
+          LLastIdentifiedEmailRef.current = LIdentity;
+        }
+      } catch (error) {
+        console.error(
+          'Campaign target identification failed:',
+          error
+        );
+      }
+    }
+
+    fnIdentifyCampaignTarget();
+  }, [loading]);
+
   // Retrieve the latest signed-in user from the backend.
-  async function fnCheckAuthStatus() {
+   async function fnCheckAuthStatus() {
     try {
       const LdResult = await fetch('/api/auth/me', { cache: 'no-store' });
       
