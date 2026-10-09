@@ -1,9 +1,9 @@
 'use server';
 
 export async function fnGetLeadDetailsForCampaignTarget(
-  target: string
+  iTarget: string
 ) {
-  if (!target) {
+  if (!iTarget) {
     return null;
   }
   
@@ -19,7 +19,7 @@ export async function fnGetLeadDetailsForCampaignTarget(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        target,
+        target: iTarget,
       }),
       cache: 'no-store',
     }
