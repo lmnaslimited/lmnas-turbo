@@ -33,12 +33,9 @@ export async function fnGetLeadDetailsForCampaignTarget(
     );
   }
 
-  console.log("Response from LENS CRM API:", LdResponse);
-
   // Parse the response JSON and extract the email and lead ID, returning them in a structured format as expected and needed.
   const LdData = await LdResponse.json();
 
-  console.log("Parsed JSON data from LENS CRM API:", LdData);
   return {
     email: LdData?.message?.email || null,
     lead: LdData?.message?.lead || null,
