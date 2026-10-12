@@ -35,6 +35,8 @@ jobs:
           LMNAS_SESSION_SECRET: ${{ secrets.LMNAS_SESSION_SECRET }}
           STRAPI_TOKEN: ${{ secrets.STRAPI_TOKEN }}
           PLATFORM_TOKEN: ${{ secrets.PLATFORM_TOKEN }}
+          LENS_CRM_AUTH_BASE64: ${{ secrets.LENS_CRM_AUTH_BASE64 }}
+          LENS_CRM_API_URL: ${{ secrets.LENS_CRM_API_URL }}
         run: |
           cp sampleenv build.env
           while IFS='=' read -r key _; do
