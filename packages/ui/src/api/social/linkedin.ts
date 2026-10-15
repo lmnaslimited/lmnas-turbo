@@ -66,7 +66,6 @@ function fnFetchWithTimeout(
       () => reject(new Error("Request timed out")),
       iTimeout
     )
-
     fetch(iUrl, idOptions)
       .then(resolve)
       .catch(reject)
@@ -81,8 +80,7 @@ async function fnRetryFetch(
   iRetries: number = 3,
   iDelay: number = 3000
 ): Promise<Response> {
-  let ldLastError: unknown
-
+  let ldLastError
   for (let lAttempt = 0; lAttempt < iRetries; lAttempt++) {
     try {
       return await fnFetchWithTimeout(iUrl, idOptions, 10000)
@@ -95,10 +93,9 @@ async function fnRetryFetch(
   }
 
   if (ldLastError instanceof Error) {
-    console.error("LinkedIn request failed:", ldLastError.message)
+    console.error("Error during fetch operation:", ldLastError.message)
   }
-
-  throw new Error("LinkedIn request failed after retries")
+  throw new Error("Failed after retries") // If all retries fail
 }
 
 // Clears the cached credentials from memory so a fresh token will be requested
