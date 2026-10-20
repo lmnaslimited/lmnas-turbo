@@ -4,12 +4,12 @@ import { unstable_cache } from "next/cache"
 import { TtrendCardProps } from "@repo/middleware/types"
 
 // Defines the final output structure expected by consumers of this module
-export type TsocialAPIPostIds = {
+export type TSocialAPIPostIds = {
   data: TtrendCardProps[]
 }
 
 // Minimal shape of raw post items returned by the LinkedIn Posts API
-type Tpost = {
+type TPost = {
   id: string
   publishedAt: number
   commentary?: string
@@ -203,7 +203,7 @@ function fnGetLinkedInHeaders(iAccessToken: string): Headers {
 }
 
 // Helper to extract media URN and alt text across single image, multi-image carousel, and article formats
-function fnExtractMediaMetadata(idPost: Tpost): { mediaId: string; altText: string } | null {
+function fnExtractMediaMetadata(idPost: TPost): { mediaId: string; altText: string } | null {
   // 1. Single direct image attachment
   if (idPost.content?.media?.id?.startsWith("urn:li:image:")) {
     return {
@@ -235,7 +235,7 @@ function fnExtractMediaMetadata(idPost: Tpost): { mediaId: string; altText: stri
 }
 
 // Core retrieval function that fetches, filters, and formats organization posts
-async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
+async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
   let lAccessToken = await fnGetLinkedInAccessToken()
   let ldHeaders = fnGetLinkedInHeaders(lAccessToken)
 
@@ -276,16 +276,16 @@ async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
   const LdLinkedIn = await ldResponse.json()
 
   // Guard against non-array payloads in elements property
-  const LaElements: Tpost[] = Array.isArray(LdLinkedIn?.elements) ? LdLinkedIn.elements : []
+  const LaElements: TPost[] = Array.isArray(LdLinkedIn?.elements) ? LdLinkedIn.elements : []
   if (LaElements.length === 0) {
     return { data: [] }
   }
 
   // Parse valid media items across single-image, carousel, and article formats
-  const LaPostsWithExtractedMedia: Array<{ post: Tpost; mediaId: string; altText: string }> = []
+  const LaPostsWithExtractedMedia: Array<{ post: TPost; mediaId: string; altText: string }> = []
   const LaRawMediaIds: string[] = []
 
-  LaElements.forEach((ldPost: Tpost) => {
+  LaElements.forEach((ldPost: TPost) => {
     const LdExtracted = fnExtractMediaMetadata(ldPost)
     if (LdExtracted) {
       LaPostsWithExtractedMedia.push({
