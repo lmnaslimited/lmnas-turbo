@@ -62,7 +62,7 @@ function fnFetchWithTimeout(
   iTimeout: number
 ): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const lTimer = setTimeout(
+    const LTimer = setTimeout(
       () => reject(new Error("Request timed out")),
       iTimeout
     )
@@ -70,7 +70,7 @@ function fnFetchWithTimeout(
     fetch(iUrl, idOptions)
       .then(resolve)
       .catch(reject)
-      .finally(() => clearTimeout(lTimer))
+      .finally(() => clearTimeout(LTimer))
   })
 }
 
@@ -120,14 +120,14 @@ function fnChunkArray<T>(iaItems: T[], iChunkSize: number): T[][] {
 
 // Retrieves a valid access token using elapsed time calculation and concurrency locking
 async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise<string> {
-  const lNow = Date.now()
+  const LNow = Date.now()
   const LBufferMs = 5 * 60 * 1000
 
-  const lTimeElapsedMs = lNow - lTokenCreatedAt
-  const lMaxAllowedLifespanMs = (lTokenLifespanSeconds * 1000) - LBufferMs
+  const LTimeElapsedMs = LNow - lTokenCreatedAt
+  const LMaxAllowedLifespanMs = (lTokenLifespanSeconds * 1000) - LBufferMs
 
-  if (!iForceRefresh && lCachedAccessToken && lTimeElapsedMs < lMaxAllowedLifespanMs) {
-    const lRemainingSeconds = Math.round((lMaxAllowedLifespanMs - lTimeElapsedMs) / 1000)
+  if (!iForceRefresh && lCachedAccessToken && LTimeElapsedMs < LMaxAllowedLifespanMs) {
+    const LRemainingSeconds = Math.round((LMaxAllowedLifespanMs - LTimeElapsedMs) / 1000)
     return lCachedAccessToken
   }
 
@@ -138,51 +138,51 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
 
   lTokenRefreshPromise = (async () => {
     try {
-      const lRefreshToken = lDynamicRefreshToken || process.env.LINKEDIN_REFRESH_TOKEN
-      const lClientId = process.env.LINKEDIN_CLIENT_ID
-      const lClientSecret = process.env.LINKEDIN_CLIENT_SECRET
+      const LRefreshToken = lDynamicRefreshToken || process.env.LINKEDIN_REFRESH_TOKEN
+      const LClientId = process.env.LINKEDIN_CLIENT_ID
+      const LClientSecret = process.env.LINKEDIN_CLIENT_SECRET
 
-      if (!lRefreshToken) throw new Error("LINKEDIN_REFRESH_TOKEN is not configured")
-      if (!lClientId) throw new Error("LINKEDIN_CLIENT_ID is not configured")
-      if (!lClientSecret) throw new Error("LINKEDIN_CLIENT_SECRET is not configured")
+      if (!LRefreshToken) throw new Error("LINKEDIN_REFRESH_TOKEN is not configured")
+      if (!LClientId) throw new Error("LINKEDIN_CLIENT_ID is not configured")
+      if (!LClientSecret) throw new Error("LINKEDIN_CLIENT_SECRET is not configured")
 
-      const ldBody = new URLSearchParams({
+      const LdBody = new URLSearchParams({
         grant_type: "refresh_token",
-        refresh_token: lRefreshToken,
-        client_id: lClientId,
-        client_secret: lClientSecret,
+        refresh_token: LRefreshToken,
+        client_id: LClientId,
+        client_secret: LClientSecret,
       })
 
-      const ldResponse = await fnRetryFetch(
+      const LdResponse = await fnRetryFetch(
         "https://www.linkedin.com/oauth/v2/accessToken",
         {
           method: "POST",
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: ldBody.toString(),
+          body: LdBody.toString(),
         }
       )
 
-      if (!ldResponse.ok) {
-        const lErrorText = await ldResponse.text()
-        console.error("LinkedIn token refresh failed:", ldResponse.status, lErrorText)
-        throw new Error(`LinkedIn token refresh failed: ${ldResponse.status}`)
+      if (!LdResponse.ok) {
+        const LErrorText = await LdResponse.text()
+        console.error("LinkedIn token refresh failed:", LdResponse.status, LErrorText)
+        throw new Error(`LinkedIn token refresh failed: ${LdResponse.status}`)
       }
 
-      const ldTokenData = (await ldResponse.json()) as TLinkedInTokenResponse
+      const LdTokenData = (await LdResponse.json()) as TLinkedInTokenResponse
 
-      if (!ldTokenData.access_token) {
+      if (!LdTokenData.access_token) {
         throw new Error("LinkedIn did not return an access token")
       }
 
-      if (ldTokenData.refresh_token) {
-        lDynamicRefreshToken = ldTokenData.refresh_token
+      if (LdTokenData.refresh_token) {
+        lDynamicRefreshToken = LdTokenData.refresh_token
       }
 
-      lCachedAccessToken = ldTokenData.access_token
+      lCachedAccessToken = LdTokenData.access_token
       lTokenCreatedAt = Date.now()
-      lTokenLifespanSeconds = ldTokenData.expires_in ?? 5184000
+      lTokenLifespanSeconds = LdTokenData.expires_in ?? 5184000
       return lCachedAccessToken
     } finally {
       lTokenRefreshPromise = null
@@ -194,9 +194,9 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
 
 // Constructs standard headers required for LinkedIn Restli versioned API requests
 function fnGetLinkedInHeaders(iAccessToken: string): Headers {
-  const lApiVersion = process.env.LINKEDIN_API_VERSION || "202603"
+  const LApiVersion = process.env.LINKEDIN_API_VERSION || "202603"
   return new Headers({
-    "LinkedIn-Version": lApiVersion,
+    "LinkedIn-Version": LApiVersion,
     "X-Restli-Protocol-Version": "2.0.0",
     Authorization: `Bearer ${iAccessToken}`,
   })
@@ -213,13 +213,13 @@ function fnExtractMediaMetadata(idPost: Tpost): { mediaId: string; altText: stri
   }
 
   // 2. Multi-image carousel attachment (use first image)
-  const ldCarouselImage = idPost.content?.multiImage?.images?.find((idImg) =>
+  const LdCarouselImage = idPost.content?.multiImage?.images?.find((idImg) =>
     idImg.id?.startsWith("urn:li:image:")
   )
-  if (ldCarouselImage?.id) {
+  if (LdCarouselImage?.id) {
     return {
-      mediaId: ldCarouselImage.id,
-      altText: ldCarouselImage.altText || "LinkedIn Post Image",
+      mediaId: LdCarouselImage.id,
+      altText: LdCarouselImage.altText || "LinkedIn Post Image",
     }
   }
 
@@ -268,50 +268,50 @@ async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
   }
 
   if (!ldResponse.ok) {
-    const lErrorText = await ldResponse.text()
-    console.error("LinkedIn posts API failed:", ldResponse.status, lErrorText)
+    const LErrorText = await ldResponse.text()
+    console.error("LinkedIn posts API failed:", ldResponse.status, LErrorText)
     throw new Error(`LinkedIn posts API failed: ${ldResponse.status}`)
   }
 
-  const ldLinkedIn = await ldResponse.json()
+  const LdLinkedIn = await ldResponse.json()
 
   // Guard against non-array payloads in elements property
-  const laElements: Tpost[] = Array.isArray(ldLinkedIn?.elements) ? ldLinkedIn.elements : []
-  if (laElements.length === 0) {
+  const LaElements: Tpost[] = Array.isArray(LdLinkedIn?.elements) ? LdLinkedIn.elements : []
+  if (LaElements.length === 0) {
     return { data: [] }
   }
 
   // Parse valid media items across single-image, carousel, and article formats
-  const laPostsWithExtractedMedia: Array<{ post: Tpost; mediaId: string; altText: string }> = []
-  const laRawMediaIds: string[] = []
+  const LaPostsWithExtractedMedia: Array<{ post: Tpost; mediaId: string; altText: string }> = []
+  const LaRawMediaIds: string[] = []
 
-  laElements.forEach((ldPost: Tpost) => {
-    const ldExtracted = fnExtractMediaMetadata(ldPost)
-    if (ldExtracted) {
-      laPostsWithExtractedMedia.push({
+  LaElements.forEach((ldPost: Tpost) => {
+    const LdExtracted = fnExtractMediaMetadata(ldPost)
+    if (LdExtracted) {
+      LaPostsWithExtractedMedia.push({
         post: ldPost,
-        mediaId: ldExtracted.mediaId,
-        altText: ldExtracted.altText,
+        mediaId: LdExtracted.mediaId,
+        altText: LdExtracted.altText,
       })
-      laRawMediaIds.push(ldExtracted.mediaId)
+      LaRawMediaIds.push(LdExtracted.mediaId)
     }
   })
 
-  if (laRawMediaIds.length === 0) {
+  if (LaRawMediaIds.length === 0) {
     return { data: [] }
   }
 
   // Remove duplicate media IDs
-  const laUniqueMediaIds = Array.from(new Set(laRawMediaIds))
+  const LaUniqueMediaIds = Array.from(new Set(LaRawMediaIds))
 
   // Chunk image IDs into groups of 10 to prevent URL length overflow
-  const laImageIdChunks = fnChunkArray(laUniqueMediaIds, 10)
-  const ldResolvedImagesMap: Record<string, { downloadUrl?: string }> = {}
+  const LaImageIdChunks = fnChunkArray(LaUniqueMediaIds, 10)
+  const LdResolvedImagesMap: Record<string, { downloadUrl?: string }> = {}
 
-  for (const laChunk of laImageIdChunks) {
-    const laEncodedUrns = laChunk.map((lUrn) => encodeURIComponent(lUrn))
-    const lIdsParam = `List(${laEncodedUrns.join(",")})`
-    const LImageUrl = `https://api.linkedin.com/rest/images?ids=${lIdsParam}`
+  for (const LaChunk of LaImageIdChunks) {
+    const LaEncodedUrns = LaChunk.map((lUrn) => encodeURIComponent(lUrn))
+    const LIdsParam = `List(${LaEncodedUrns.join(",")})`
+    const LImageUrl = `https://api.linkedin.com/rest/images?ids=${LIdsParam}`
 
     let ldImageResponse = await fnRetryFetch(LImageUrl, {
       method: "GET",
@@ -331,34 +331,34 @@ async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
     }
 
     if (!ldImageResponse.ok) {
-      const lErrorText = await ldImageResponse.text()
-      console.error("LinkedIn image batch failed:", ldImageResponse.status, lErrorText)
+      const LErrorText = await ldImageResponse.text()
+      console.error("LinkedIn image batch failed:", ldImageResponse.status, LErrorText)
       throw new Error(`LinkedIn image batch API failed: ${ldImageResponse.status}`)
     }
 
-    const ldImageData = await ldImageResponse.json()
-    if (ldImageData?.results) {
-      Object.assign(ldResolvedImagesMap, ldImageData.results)
+    const LdImageData = await ldImageResponse.json()
+    if (LdImageData?.results) {
+      Object.assign(LdResolvedImagesMap, LdImageData.results)
     }
   }
 
   // Format valid posts into standard UI card structures
-  const laFormattedPosts: TtrendCardProps[] = laPostsWithExtractedMedia.reduce<TtrendCardProps[]>(
+  const LaFormattedPosts: TtrendCardProps[] = LaPostsWithExtractedMedia.reduce<TtrendCardProps[]>(
     (laAcc, { post, mediaId, altText }) => {
-      const ldImage = ldResolvedImagesMap[mediaId]
-      const lImageUrl = ldImage?.downloadUrl || null
-      const lCommentary = post.commentary?.trim() || ""
+      const LdImage = LdResolvedImagesMap[mediaId]
+      const LImageUrl = LdImage?.downloadUrl || null
+      const LCommentary = post.commentary?.trim() || ""
 
       // Skip cards where the image download URL could not be resolved
-      if (!lImageUrl) return laAcc
+      if (!LImageUrl) return laAcc
 
       laAcc.push({
         id: post.id,
         title: "",
         publishedAt: new Date(post.publishedAt).toISOString(),
-        description: lCommentary,
+        description: LCommentary,
         media: {
-          url: lImageUrl,
+          url: LImageUrl,
           alt: altText,
         },
         source: "LinkedIn",
@@ -371,7 +371,7 @@ async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
   )
 
   return {
-    data: laFormattedPosts,
+    data: LaFormattedPosts,
   }
 }
 
