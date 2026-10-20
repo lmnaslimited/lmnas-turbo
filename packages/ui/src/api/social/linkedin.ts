@@ -4,12 +4,12 @@ import { unstable_cache } from "next/cache"
 import { TtrendCardProps } from "@repo/middleware/types"
 
 // Defines the final output structure expected by consumers of this module
-export interface ISocialApiPostIds {
+export type TsocialAPIPostIds = {
   data: TtrendCardProps[]
 }
 
 // Minimal shape of raw post items returned by the LinkedIn Posts API
-interface IPost {
+type Tpost = {
   id: string
   publishedAt: number
   commentary?: string
@@ -32,7 +32,7 @@ interface IPost {
 }
 
 // Structure of the response received when requesting a refreshed OAuth token
-interface ILinkedInTokenResponse {
+type TLinkedInTokenResponse = {
   access_token: string
   expires_in: number
   refresh_token?: string
@@ -52,8 +52,8 @@ let lTokenLifespanSeconds: number = 5184000
 // Holds any updated refresh token returned dynamically during token exchange
 let lDynamicRefreshToken: string | null = null
 
-// Concurrency lock to prevent duplicate parallel token refresh requests (Object/Promise instance)
-let ldTokenRefreshPromise: Promise<string> | null = null
+// Concurrency lock to prevent duplicate parallel token refresh requests
+let lTokenRefreshPromise: Promise<string> | null = null
 
 // Wraps native fetch with an explicit timeout to prevent hanging connections
 function fnFetchWithTimeout(
@@ -62,7 +62,7 @@ function fnFetchWithTimeout(
   iTimeout: number
 ): Promise<Response> {
   return new Promise((resolve, reject) => {
-    const ldTimer = setTimeout(
+    const lTimer = setTimeout(
       () => reject(new Error("Request timed out")),
       iTimeout
     )
@@ -70,7 +70,7 @@ function fnFetchWithTimeout(
     fetch(iUrl, idOptions)
       .then(resolve)
       .catch(reject)
-      .finally(() => clearTimeout(ldTimer))
+      .finally(() => clearTimeout(lTimer))
   })
 }
 
@@ -86,8 +86,8 @@ async function fnRetryFetch(
   for (let lAttempt = 0; lAttempt < iRetries; lAttempt++) {
     try {
       return await fnFetchWithTimeout(iUrl, idOptions, 10000)
-    } catch (ldError) {
-      ldLastError = ldError
+    } catch (error) {
+      ldLastError = error
       if (lAttempt < iRetries - 1) {
         await new Promise((resolve) => setTimeout(resolve, iDelay))
       }
@@ -127,15 +127,16 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
   const lMaxAllowedLifespanMs = (lTokenLifespanSeconds * 1000) - LBufferMs
 
   if (!iForceRefresh && lCachedAccessToken && lTimeElapsedMs < lMaxAllowedLifespanMs) {
+    const lRemainingSeconds = Math.round((lMaxAllowedLifespanMs - lTimeElapsedMs) / 1000)
     return lCachedAccessToken
   }
 
   // Reuse existing in-flight token refresh promise if one is already running
-  if (ldTokenRefreshPromise) {
-    return ldTokenRefreshPromise
+  if (lTokenRefreshPromise) {
+    return lTokenRefreshPromise
   }
 
-  ldTokenRefreshPromise = (async () => {
+  lTokenRefreshPromise = (async () => {
     try {
       const lRefreshToken = lDynamicRefreshToken || process.env.LINKEDIN_REFRESH_TOKEN
       const lClientId = process.env.LINKEDIN_CLIENT_ID
@@ -169,7 +170,7 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
         throw new Error(`LinkedIn token refresh failed: ${ldResponse.status}`)
       }
 
-      const ldTokenData = (await ldResponse.json()) as ILinkedInTokenResponse
+      const ldTokenData = (await ldResponse.json()) as TLinkedInTokenResponse
 
       if (!ldTokenData.access_token) {
         throw new Error("LinkedIn did not return an access token")
@@ -184,11 +185,11 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
       lTokenLifespanSeconds = ldTokenData.expires_in ?? 5184000
       return lCachedAccessToken
     } finally {
-      ldTokenRefreshPromise = null
+      lTokenRefreshPromise = null
     }
   })()
 
-  return ldTokenRefreshPromise
+  return lTokenRefreshPromise
 }
 
 // Constructs standard headers required for LinkedIn Restli versioned API requests
@@ -202,7 +203,7 @@ function fnGetLinkedInHeaders(iAccessToken: string): Headers {
 }
 
 // Helper to extract media URN and alt text across single image, multi-image carousel, and article formats
-function fnExtractMediaMetadata(idPost: IPost): { mediaId: string; altText: string } | null {
+function fnExtractMediaMetadata(idPost: Tpost): { mediaId: string; altText: string } | null {
   // 1. Single direct image attachment
   if (idPost.content?.media?.id?.startsWith("urn:li:image:")) {
     return {
@@ -212,8 +213,8 @@ function fnExtractMediaMetadata(idPost: IPost): { mediaId: string; altText: stri
   }
 
   // 2. Multi-image carousel attachment (use first image)
-  const ldCarouselImage = idPost.content?.multiImage?.images?.find((ldImg) =>
-    ldImg.id?.startsWith("urn:li:image:")
+  const ldCarouselImage = idPost.content?.multiImage?.images?.find((idImg) =>
+    idImg.id?.startsWith("urn:li:image:")
   )
   if (ldCarouselImage?.id) {
     return {
@@ -234,7 +235,7 @@ function fnExtractMediaMetadata(idPost: IPost): { mediaId: string; altText: stri
 }
 
 // Core retrieval function that fetches, filters, and formats organization posts
-async function fnFetchLinkedInPostsInternal(): Promise<ISocialApiPostIds> {
+async function fnFetchLinkedInPostsInternal(): Promise<TsocialAPIPostIds> {
   let lAccessToken = await fnGetLinkedInAccessToken()
   let ldHeaders = fnGetLinkedInHeaders(lAccessToken)
 
@@ -259,15 +260,11 @@ async function fnFetchLinkedInPostsInternal(): Promise<ISocialApiPostIds> {
     lAccessToken = await fnGetLinkedInAccessToken(true)
     ldHeaders = fnGetLinkedInHeaders(lAccessToken)
 
-    ldResponse = await fnFetchWithTimeout(
-      LPostsUrl,
-      {
-        method: "GET",
-        headers: ldHeaders,
-        redirect: "follow",
-      },
-      10000
-    )
+    ldResponse = await fnFetchWithTimeout(LPostsUrl, {
+      method: "GET",
+      headers: ldHeaders,
+      redirect: "follow",
+    }, 10000)
   }
 
   if (!ldResponse.ok) {
@@ -279,16 +276,16 @@ async function fnFetchLinkedInPostsInternal(): Promise<ISocialApiPostIds> {
   const ldLinkedIn = await ldResponse.json()
 
   // Guard against non-array payloads in elements property
-  const laElements: IPost[] = Array.isArray(ldLinkedIn?.elements) ? ldLinkedIn.elements : []
+  const laElements: Tpost[] = Array.isArray(ldLinkedIn?.elements) ? ldLinkedIn.elements : []
   if (laElements.length === 0) {
     return { data: [] }
   }
 
   // Parse valid media items across single-image, carousel, and article formats
-  const laPostsWithExtractedMedia: Array<{ post: IPost; mediaId: string; altText: string }> = []
+  const laPostsWithExtractedMedia: Array<{ post: Tpost; mediaId: string; altText: string }> = []
   const laRawMediaIds: string[] = []
 
-  laElements.forEach((ldPost: IPost) => {
+  laElements.forEach((ldPost: Tpost) => {
     const ldExtracted = fnExtractMediaMetadata(ldPost)
     if (ldExtracted) {
       laPostsWithExtractedMedia.push({
@@ -326,15 +323,11 @@ async function fnFetchLinkedInPostsInternal(): Promise<ISocialApiPostIds> {
       fnInvalidateTokenCache()
       lAccessToken = await fnGetLinkedInAccessToken(true)
       ldHeaders = fnGetLinkedInHeaders(lAccessToken)
-      ldImageResponse = await fnFetchWithTimeout(
-        LImageUrl,
-        {
-          method: "GET",
-          headers: ldHeaders,
-          redirect: "follow",
-        },
-        10000
-      )
+      ldImageResponse = await fnFetchWithTimeout(LImageUrl, {
+        method: "GET",
+        headers: ldHeaders,
+        redirect: "follow",
+      }, 10000)
     }
 
     if (!ldImageResponse.ok) {
@@ -383,7 +376,7 @@ async function fnFetchLinkedInPostsInternal(): Promise<ISocialApiPostIds> {
 }
 
 // Caches the formatted posts array using Next.js cache and revalidates once every hour
-export const LLinkedInApi = unstable_cache(
+export const LinkedInApi = unstable_cache(
   async () => {
     return await fnFetchLinkedInPostsInternal()
   },
