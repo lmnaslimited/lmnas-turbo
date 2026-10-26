@@ -70,12 +70,15 @@ export default function CustomCard({
           idCardProps.namePosition === "right" ||
           idCardProps.namePosition === "top" ||
           idCardProps.namePosition === "bottom") && (
-          <Avatar>
+          <Avatar className="h-16 w-16 shrink-0">
             <AvatarImage
               src={idCardProps.avatar.source}
               alt={idCardProps.avatar.alternate}
+              className="h-full w-full rounded-full object-cover"
             />
-            <AvatarFallback>{idCardProps.avatar.alternate}</AvatarFallback>
+            <AvatarFallback className="rounded-full">
+              {idCardProps.avatar.alternate}
+            </AvatarFallback>
           </Avatar>
         )}
       <div
@@ -295,7 +298,7 @@ export default function CustomCard({
                     <span className="mr-2">{renderIcon(idBtn.icon)}</span>
                   )}
                   {idBtn.label}
-                  {/* If iconPosition is 'after', render icon after */}
+                  {/* If iconPosition is 'after', render icon fter */}
                   {idBtn.icon && idBtn.iconPosition === "after" && (
                     <span className="ml-2">{renderIcon(idBtn.icon)}</span>
                   )}

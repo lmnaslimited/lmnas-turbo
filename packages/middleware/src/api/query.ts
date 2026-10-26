@@ -423,6 +423,33 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         icon
       }
     }
+    problemSolutionHeader {
+      title
+      subtitle
+      highlight
+      badge
+    }
+
+    problemSolutionSection {
+      label: lable
+      category
+      problemTitle
+      solutionDescription
+      solutionImage {
+        source
+        alternate
+        svg
+        sourceId
+      }
+      button {
+        label
+        href
+        icon
+        formMode
+        description
+        variant
+      }
+    }
     trendingNowSection {
       header {
         title

@@ -100,21 +100,25 @@ export default function TestimonialSlider({
                 style={{ flexBasis: "100%" }}
                 aria-hidden={index !== activeIndex}
               >
-            <CustomCard
-            idCardProps={{
-                header: {
-                ...testimonial.header,
-                descripClass:
-                    "text-lg md:text-xl text-primary/80 mb-8 leading-relaxed line-clamp-none",
-                headingClass: "m-0",
-                },
-                className: "w-full max-w-none h-full",
-                avatar: testimonial.avatar,
-                avatarDetails: testimonial.avatarDetails,
-                namePosition: "bottom",
-                footerClassName: "items-start",
-            }}
-            />
+                <CustomCard
+                idCardProps={{
+                    header: {
+                    ...testimonial.header,
+                    descripClass:
+                        "text-base md:text-lg text-primary/80 mb-6 leading-relaxed line-clamp-none",
+                    headingClass: "m-0",
+                    },
+
+                    className:
+                    "w-full max-w-none h-full rounded-xl border border-border shadow-md",
+
+                    avatar: testimonial.avatar,
+                    avatarDetails: testimonial.avatarDetails,
+
+                    namePosition: "bottom",
+                    footerClassName: "items-start px-6 pb-6 pt-3",
+                }}
+                />
               </div>
             ))}
           </div>

@@ -549,9 +549,21 @@ export type Thome = {
   trendingNowSection: TcalloutProps
   testimonials: TcardProps[]
   successClients: Timage[]
+  // Home page Problem & Solution Section
+  problemSolutionHeader: Theader
+  problemSolutionSection: TproblemSolutionSection[]
   metaData: TpageMetadata
 }
 
+// Home page Problem & Solution Section
+export type TproblemSolutionSection = {
+  label: string
+  category?: string
+  problemTitle: string
+  solutionDescription: string
+  solutionImage?: Timage
+  button?: Tbutton
+}
 // trending now
 export type TtrendsPageSource = {
   trend: Ttrend
