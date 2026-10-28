@@ -1,8 +1,8 @@
 "use client";
 
 type TyouTubePlayerProps = {
-  url?: string | null;
-  title?: string;
+  iUrl?: string | null;
+  iTitle?: string;
 };
 
 function fnGetYouTubeVideoId(iUrl?: string | null): string | null {
@@ -40,11 +40,11 @@ function fnGetYouTubeVideoId(iUrl?: string | null): string | null {
 }
 
 export default function YouTubePlayer({
-  url,
-  title = "YouTube video",
+  iUrl,
+  iTitle = "YouTube video",
 }: TyouTubePlayerProps) {
 
-  const LVideoId = fnGetYouTubeVideoId(url);
+  const LVideoId = fnGetYouTubeVideoId(iUrl);
 
   if (!LVideoId) return null;
 
@@ -53,9 +53,9 @@ export default function YouTubePlayer({
       <div className="aspect-video w-full">
         <iframe
           className="h-full w-full"
-          src={`https://www.youtube-nocookie.com/embed/${LVideoId}`}
-          title={title}
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          src={`https://www.youtube-nocookie.com/embed/${LVideoId}?rel=0`}
+          title={iTitle}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen
         />
