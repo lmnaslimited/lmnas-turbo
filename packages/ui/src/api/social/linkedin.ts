@@ -1,6 +1,7 @@
 "use server"
-
+// Next.js server-side caching utility to cache full function results across user visits
 import { unstable_cache } from "next/cache"
+// TypeScript interface defining the exact object shape required by our frontend UI card
 import { TtrendCardProps } from "@repo/middleware/types"
 
 // Defines the final output structure expected by consumers of this module
@@ -14,16 +15,19 @@ type TPost = {
   publishedAt: number
   commentary?: string
   content?: {
+// Structure when the post has a single direct image    
     media?: {
       id?: string
       altText?: string
     }
+// Structure when the post has a carousel / multiple images    
     multiImage?: {
       images?: Array<{
         id?: string
         altText?: string
       }>
     }
+//Structure when the post shares an external article with a thumbnail   
     article?: {
       thumbnail?: string
       title?: string
@@ -119,12 +123,23 @@ function fnChunkArray<T>(iaItems: T[], iChunkSize: number): T[][] {
 }
 
 // Retrieves a valid access token using elapsed time calculation and concurrency locking
+// Handles cache checks, 60-day expiry math, parallel request deduplication, and rolling refreshes.
 async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise<string> {
+// Capture current timestamp in milliseconds  
   const LNow = Date.now()
+// 5-minute safety window in milliseconds (5 min * 60 sec * 1000 ms = 300,000 ms).
   const LBufferMs = 5 * 60 * 1000
-
+// How long has the current token been alive in memory (in ms):
   const LTimeElapsedMs = LNow - lTokenCreatedAt
+
+// Maximum safe operational lifetime in ms:
+// Converts lifespan seconds to ms and subtracts the 5-minute safety window.
   const LMaxAllowedLifespanMs = (lTokenLifespanSeconds * 1000) - LBufferMs
+
+// Return cached token if:
+// 1. Force refresh was not explicitly requested (!iForceRefresh)
+// 2. A cached token actually exists in memory (lCachedAccessToken)
+// 3. Current token has not exceeded safe operational lifetime
 
   if (!iForceRefresh && lCachedAccessToken && LTimeElapsedMs < LMaxAllowedLifespanMs) {
     const LRemainingSeconds = Math.round((LMaxAllowedLifespanMs - LTimeElapsedMs) / 1000)
@@ -132,27 +147,29 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
   }
 
   // Reuse existing in-flight token refresh promise if one is already running
+  // If an OAuth network request is already running, return the active Promise.
   if (lTokenRefreshPromise) {
     return lTokenRefreshPromise
   }
 
   lTokenRefreshPromise = (async () => {
     try {
+// Prefer dynamic rolling refresh token received from previous call; fallback to .env
       const LRefreshToken = lDynamicRefreshToken || process.env.LINKEDIN_REFRESH_TOKEN
       const LClientId = process.env.LINKEDIN_CLIENT_ID
       const LClientSecret = process.env.LINKEDIN_CLIENT_SECRET
-
+// Pre-flight check: ensure required environment credentials are present
       if (!LRefreshToken) throw new Error("LINKEDIN_REFRESH_TOKEN is not configured")
       if (!LClientId) throw new Error("LINKEDIN_CLIENT_ID is not configured")
       if (!LClientSecret) throw new Error("LINKEDIN_CLIENT_SECRET is not configured")
-
+// Encode parameters into application
       const LdBody = new URLSearchParams({
         grant_type: "refresh_token",
         refresh_token: LRefreshToken,
         client_id: LClientId,
         client_secret: LClientSecret,
       })
-
+// Send POST request to LinkedIn OAuth token endpoint with retry/timeout protection
       const LdResponse = await fnRetryFetch(
         "https://www.linkedin.com/oauth/v2/accessToken",
         {
@@ -163,28 +180,30 @@ async function fnGetLinkedInAccessToken(iForceRefresh: boolean = false): Promise
           body: LdBody.toString(),
         }
       )
-
+// Validate HTTP status code (200-299)
       if (!LdResponse.ok) {
         const LErrorText = await LdResponse.text()
         console.error("LinkedIn token refresh failed:", LdResponse.status, LErrorText)
         throw new Error(`LinkedIn token refresh failed: ${LdResponse.status}`)
       }
-
+// Parse JSON response payload
       const LdTokenData = (await LdResponse.json()) as TLinkedInTokenResponse
 
       if (!LdTokenData.access_token) {
         throw new Error("LinkedIn did not return an access token")
       }
-
+// Refresh Token Rotation (RTR):
+// If LinkedIn rotated the refresh token, store the new one in memory for future renewals
       if (LdTokenData.refresh_token) {
         lDynamicRefreshToken = LdTokenData.refresh_token
       }
-
+// Update in-memory state: save token, reset issuance time to now, set validity lifespan
       lCachedAccessToken = LdTokenData.access_token
       lTokenCreatedAt = Date.now()
       lTokenLifespanSeconds = LdTokenData.expires_in ?? 5184000
       return lCachedAccessToken
     } finally {
+// Clear the lock so subsequent token renewals can initiate a fresh request      
       lTokenRefreshPromise = null
     }
   })()
@@ -307,7 +326,7 @@ async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
   // Chunk image IDs into groups of 10 to prevent URL length overflow
   const LaImageIdChunks = fnChunkArray(LaUniqueMediaIds, 10)
   const LdResolvedImagesMap: Record<string, { downloadUrl?: string }> = {}
-
+// Query LinkedIn Images API in batches to resolve image IDs into CDN download URLs
   for (const LaChunk of LaImageIdChunks) {
     const LaEncodedUrns = LaChunk.map((lUrn) => encodeURIComponent(lUrn))
     const LIdsParam = `List(${LaEncodedUrns.join(",")})`
@@ -318,7 +337,7 @@ async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
       headers: ldHeaders,
       redirect: "follow",
     })
-
+// Handle 401 during image batching as well
     if (ldImageResponse.status === 401) {
       fnInvalidateTokenCache()
       lAccessToken = await fnGetLinkedInAccessToken(true)
@@ -337,6 +356,7 @@ async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
     }
 
     const LdImageData = await ldImageResponse.json()
+  // Merge batch results into our central lookup map  
     if (LdImageData?.results) {
       Object.assign(LdResolvedImagesMap, LdImageData.results)
     }
@@ -348,10 +368,9 @@ async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
       const LdImage = LdResolvedImagesMap[mediaId]
       const LImageUrl = LdImage?.downloadUrl || null
       const LCommentary = post.commentary?.trim() || ""
-
-      // Skip cards where the image download URL could not be resolved
+// Discard posts whose download URL failed to resolve (prevents broken image boxes on UI)
       if (!LImageUrl) return laAcc
-
+// Push normalized card object  
       laAcc.push({
         id: post.id,
         title: "",
@@ -374,7 +393,8 @@ async function fnFetchLinkedInPostsInternal(): Promise<TSocialAPIPostIds> {
     data: LaFormattedPosts,
   }
 }
-
+// Wraps the entire pipeline in Next.js's data cache:
+// Revalidates every 3600s (1 hour) in background
 // Caches the formatted posts array using Next.js cache and revalidates once every hour
 export const LinkedInApi = unstable_cache(
   async () => {
