@@ -431,23 +431,25 @@ export class clQueryHome extends clQuery<ThomePageSource> {
     }
 
     problemSolutionSection {
-      label: lable
-      category
-      problemTitle
-      solutionDescription
-      solutionImage {
-        source
-        alternate
-        svg
-        sourceId
-      }
-      button {
-        label
-        href
-        icon
-        formMode
-        description
-        variant
+      mainProblems {
+        title
+        subtitle
+        highlight
+        badge
+        subProblems {
+          title
+          description
+          solutionTitle
+          solutionDescription
+          button {
+            label
+            href
+            icon
+            formMode
+            description
+            variant
+          }
+        }
       }
     }
     trendingNowSection {

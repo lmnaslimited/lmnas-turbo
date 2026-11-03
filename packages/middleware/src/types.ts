@@ -551,19 +551,33 @@ export type Thome = {
   successClients: Timage[]
   // Home page Problem & Solution Section
   problemSolutionHeader: Theader
-  problemSolutionSection: TproblemSolutionSection[]
+  problemSolutionSection: TproblemSolutionSection;
   metaData: TpageMetadata
 }
 
 // Home page Problem & Solution Section
 export type TproblemSolutionSection = {
-  label: string
-  category?: string
-  problemTitle: string
-  solutionDescription: string
-  solutionImage?: Timage
-  button?: Tbutton
-}
+  mainProblems: TmainProblem[];
+};
+
+export type TmainProblem = {
+  title: string;
+  subtitle?: string;
+  highlight?: string;
+  badge?: string;
+  subProblems: TsubProblem[];
+};
+
+export type TsubProblem = {
+  title: string;
+  description: string;
+  solutionTitle: string;
+  solutionDescription: string;
+  button: TproblemSolutionButton;
+};
+
+export type TproblemSolutionButton = Tbutton;
+
 // trending now
 export type TtrendsPageSource = {
   trend: Ttrend
@@ -1072,6 +1086,7 @@ export type TContactFormValues = {
     message: string;
     newsletter: boolean;
 };
+
 /**
  * A step in the multi-step contact form. Steps are derived at runtime from the
  * Strapi field configuration (chunked into groups), so nothing here is hardcoded.
