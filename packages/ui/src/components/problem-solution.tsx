@@ -12,6 +12,8 @@ import type {
   TproblemSolutionSection,
 } from "@repo/middleware/types";
 
+import styles from "./problem-solution.module.css";
+
 type ProblemSolutionProps = {
   data: TproblemSolutionSection;
   onFormButtonClick: (mode: TformMode, label: string) => void;
@@ -40,11 +42,11 @@ export default function ProblemSolution({
   const activeMainProblem = mainProblems[activeProblemIndex];
 
   return (
-    <section className="py-16 md:py-24">
+    <section className={styles.section}>
       <div className="container mx-auto px-4">
 
         {/* Main Problems */}
-        <div className="mb-10 flex flex-wrap justify-center gap-3">
+        <div className={styles.mainProblems}>
           {mainProblems.map((problem, index) => (
             <button
               key={index}
@@ -65,7 +67,7 @@ export default function ProblemSolution({
         </div>
 
         {/* Sub Problems */}
-        <div className="mx-auto max-w-4xl space-y-4">
+        <div className={styles.subProblems}>
           {activeMainProblem?.subProblems?.map((subProblem, index) => {
             const isExpanded = expandedSubProblem === index;
 
