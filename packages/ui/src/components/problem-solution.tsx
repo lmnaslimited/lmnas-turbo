@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-
+import styles from "./problem-solution.module.css";
 import { Button } from "@repo/ui/components/ui/button";
 import { getIconComponent } from "@repo/ui/lib/icon";
 
@@ -12,9 +12,8 @@ import type {
   TproblemSolutionSection,
 } from "@repo/middleware/types";
 
-import styles from "./problem-solution.module.css";
 
-type ProblemSolutionProps = {
+type TproblemSolutionProps = {
   data: TproblemSolutionSection;
   onFormButtonClick: (mode: TformMode, label: string) => void;
 };
@@ -22,13 +21,13 @@ type ProblemSolutionProps = {
 export default function ProblemSolution({
   data,
   onFormButtonClick,
-}: ProblemSolutionProps) {
+}: TproblemSolutionProps) {
   const [activeProblemIndex, setActiveProblemIndex] = useState(0);
   const [expandedSubProblem, setExpandedSubProblem] = useState<number | null>(
     null
   );
 
-  const mainProblems = data?.mainProblems ?? [];
+  const LMainProblems = data?.mainProblems ?? [];
 
   const renderIcon = (icon: Tbutton["icon"]) => {
     const iconName = typeof icon === "string" ? icon : "HelpCircle";
@@ -37,17 +36,17 @@ export default function ProblemSolution({
     return <IconComponent className="w-5 h-5" />;
   };
 
-  if (!mainProblems.length) return null;
+  if (!LMainProblems.length) return null;
 
-  const activeMainProblem = mainProblems[activeProblemIndex];
+  const activeMainProblem = LMainProblems[activeProblemIndex];
 
   return (
     <section className={styles.section}>
       <div className="container mx-auto px-4">
 
         {/* Main Problems */}
-        <div className={styles.mainProblems}>
-          {mainProblems.map((problem, index) => (
+        <div className={styles.LMainProblems}>
+          {LMainProblems.map((problem, index) => (
             <button
               key={index}
               type="button"

@@ -552,9 +552,18 @@ export type Thome = {
   // Home page Problem & Solution Section
   problemSolutionHeader: Theader
   problemSolutionSection: TproblemSolutionSection;
+  productArchitectureHeader: Theader;
+  productArchitectureSection: TproductArchitectureSection[];
   metaData: TpageMetadata
 }
+// Home page Product Architecture Section
 
+export type TproductArchitectureSection = {
+  category: string;
+  products: TproductArchitectureProduct[];
+};
+
+export type TproductArchitectureProduct = Theader
 // Home page Problem & Solution Section
 export type TproblemSolutionSection = {
   mainProblems: TmainProblem[];

@@ -452,6 +452,21 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         }
       }
     }
+    productArchitectureHeader {
+      title
+      subtitle
+      highlight
+      badge
+    }
+    productArchitectureSection {
+    category
+    products {
+      title
+      subtitle
+      highlight
+      badge
+      }
+    }
     trendingNowSection {
       header {
         title
