@@ -560,10 +560,21 @@ export type Thome = {
 
 export type TproductArchitectureSection = {
   category: string;
+  title: string;
+  subtitle: string;
   products: TproductArchitectureProduct[];
 };
 
-export type TproductArchitectureProduct = Theader
+
+export type TproductArchitectureProduct = {
+  title: string;
+  subtitle: string;
+  highlight?: string;
+  badge?: string;
+  href?: string;
+  buttons: Tbutton[];
+};
+
 // Home page Problem & Solution Section
 export type TproblemSolutionSection = {
   mainProblems: TmainProblem[];

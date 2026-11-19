@@ -459,14 +459,25 @@ export class clQueryHome extends clQuery<ThomePageSource> {
       badge
     }
     productArchitectureSection {
-    category
-    products {
+      category
       title
       subtitle
-      highlight
-      badge
+      products {
+        title
+        subtitle
+        highlight
+        badge
+        href
+          buttons {
+            icon
+            formMode
+            description
+            label
+            href
+            variant
+          }
+        }
       }
-    }
     trendingNowSection {
       header {
         title

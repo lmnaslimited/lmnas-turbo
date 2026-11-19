@@ -12,33 +12,32 @@ import type {
   TproblemSolutionSection,
 } from "@repo/middleware/types";
 
-
 type TproblemSolutionProps = {
-  data: TproblemSolutionSection;
+  iData: TproblemSolutionSection;
   onFormButtonClick: (mode: TformMode, label: string) => void;
 };
 
 export default function ProblemSolution({
-  data,
+  iData,
   onFormButtonClick,
 }: TproblemSolutionProps) {
-  const [activeProblemIndex, setActiveProblemIndex] = useState(0);
-  const [expandedSubProblem, setExpandedSubProblem] = useState<number | null>(
+  const [lActiveProblemIndex, setActiveProblemIndex] = useState(0);
+  const [lExpandedSubProblem, setExpandedSubProblem] = useState<number | null>(
     null
   );
 
-  const LMainProblems = data?.mainProblems ?? [];
+  const LaMainProblems = iData?.mainProblems ?? [];
 
-  const renderIcon = (icon: Tbutton["icon"]) => {
-    const iconName = typeof icon === "string" ? icon : "HelpCircle";
-    const IconComponent = getIconComponent(iconName);
+  const fnRenderIcon = (iIcon: Tbutton["icon"]) => {
+    const LIconName = typeof iIcon === "string" ? iIcon : "HelpCircle";
+    const IconComponent = getIconComponent(LIconName);
 
-    return <IconComponent className="w-5 h-5" />;
+    return <IconComponent className="h-5 w-5" />;
   };
 
-  if (!LMainProblems.length) return null;
+  if (!LaMainProblems.length) return null;
 
-  const activeMainProblem = LMainProblems[activeProblemIndex];
+  const LdActiveMainProblem = LaMainProblems[lActiveProblemIndex];
 
   return (
     <section className={styles.section}>
@@ -46,56 +45,60 @@ export default function ProblemSolution({
 
         {/* Main Problems */}
         <div className={styles.LMainProblems}>
-          {LMainProblems.map((problem, index) => (
+          {LaMainProblems.map((iProblem, iIndex) => (
             <button
-              key={index}
+              key={iIndex}
               type="button"
               onClick={() => {
-                setActiveProblemIndex(index);
+                setActiveProblemIndex(iIndex);
                 setExpandedSubProblem(null);
               }}
               className={`rounded-full border px-5 py-3 text-sm font-medium transition-colors md:text-base ${
-                activeProblemIndex === index
+                lActiveProblemIndex === iIndex
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background hover:border-primary"
               }`}
             >
-              {problem.title}
+              {iProblem.title}
             </button>
           ))}
         </div>
 
         {/* Sub Problems */}
         <div className={styles.subProblems}>
-          {activeMainProblem?.subProblems?.map((subProblem, index) => {
-            const isExpanded = expandedSubProblem === index;
+          {LdActiveMainProblem?.subProblems?.map((iSubProblem, iIndex) => {
+            const lIsExpanded = lExpandedSubProblem === iIndex;
 
             return (
               <div
-                key={index}
-                className="overflow-hidden rounded-xl border border-border"
+                key={iIndex}
+                className={`${styles.accordionItem} ${
+                  lIsExpanded ? styles.accordionItemActive : ""
+                }`}
               >
+                {/* Problem Header */}
                 <button
                   type="button"
-                  aria-expanded={isExpanded}
+                  aria-expanded={lIsExpanded}
+                  aria-controls={`solution-${lActiveProblemIndex}-${iIndex}`}
                   onClick={() =>
-                    setExpandedSubProblem(isExpanded ? null : index)
+                    setExpandedSubProblem(lIsExpanded ? null : iIndex)
                   }
-                  className="flex w-full items-center justify-between gap-4 p-5 text-left md:p-6"
+                  className={styles.accordionTrigger}
                 >
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      {subProblem.title}
+                  <div className={styles.problemInfo}>
+                    <h3 className={styles.problemTitle}>
+                      {iSubProblem.title}
                     </h3>
 
-                    <p className="mt-2 text-sm text-muted-foreground">
-                      {subProblem.description}
+                    <p className={styles.problemDescription}>
+                      {iSubProblem.description}
                     </p>
                   </div>
 
                   <span
-                    className={`shrink-0 text-2xl transition-transform ${
-                      isExpanded ? "rotate-45" : ""
+                    className={`${styles.expandIcon} ${
+                      lIsExpanded ? styles.expandIconActive : ""
                     }`}
                     aria-hidden="true"
                   >
@@ -103,55 +106,59 @@ export default function ProblemSolution({
                   </span>
                 </button>
 
-                {/* Solution */}
-                {isExpanded && (
-                  <div className="border-t border-border bg-muted/30 p-5 md:p-6">
-                    <h4 className="text-xl font-semibold">
-                      {subProblem.solutionTitle}
-                    </h4>
+                {/* Solution Panel */}
+                <div
+                  id={`solution-${lActiveProblemIndex}-${iIndex}`}
+                  className={`${styles.solutionPanel} ${
+                    lIsExpanded ? styles.solutionPanelOpen : ""
+                  }`}
+                  aria-hidden={!lIsExpanded}
+                >
+                  <div className={styles.solutionInner}>
+                    <div className={styles.solutionContent}>
+                      <h4 className={styles.solutionTitle}>
+                        {iSubProblem.solutionTitle}
+                      </h4>
 
-                    <p className="mt-3 leading-relaxed text-muted-foreground">
-                      {subProblem.solutionDescription}
-                    </p>
+                      <p className={styles.solutionDescription}>
+                        {iSubProblem.solutionDescription}
+                      </p>
 
-                    <div className="mt-5">
-                      {subProblem.button.href ? (
-                        <Button
-                          asChild
-                          size="lg"
-                          className="gap-4"
-                          variant={
-                            subProblem.button.variant ?? "default"
-                          }
-                        >
-                          <Link href={subProblem.button.href}>
-                            {subProblem.button.label}
-                            {renderIcon(subProblem.button.icon)}
-                          </Link>
-                        </Button>
-                      ) : (
-                        <Button
-                          size="lg"
-                          className="gap-4"
-                          variant={
-                            subProblem.button.variant ?? "default"
-                          }
-                          onClick={() => {
-                            if (subProblem.button.formMode) {
-                              onFormButtonClick(
-                                subProblem.button.formMode,
-                                subProblem.button.label ?? "Learn More"
-                              );
-                            }
-                          }}
-                        >
-                          {subProblem.button.label}
-                          {renderIcon(subProblem.button.icon)}
-                        </Button>
-                      )}
+                      <div className={styles.solutionAction}>
+                        {iSubProblem.button.href ? (
+                          <Button
+                            asChild
+                            size="lg"
+                            className="gap-3"
+                            variant={iSubProblem.button.variant ?? "default"}
+                          >
+                            <Link href={iSubProblem.button.href}>
+                              {iSubProblem.button.label}
+                              {fnRenderIcon(iSubProblem.button.icon)}
+                            </Link>
+                          </Button>
+                        ) : (
+                          <Button
+                            size="lg"
+                            className="gap-3"
+                            variant={iSubProblem.button.variant ?? "default"}
+                            onClick={() => {
+                              if (iSubProblem.button.formMode) {
+                                onFormButtonClick(
+                                  iSubProblem.button.formMode,
+                                  iSubProblem.button.label ?? "Learn More"
+                                );
+                              }
+                            }}
+                          >
+                            {iSubProblem.button.label}
+                            {fnRenderIcon(iSubProblem.button.icon)}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
