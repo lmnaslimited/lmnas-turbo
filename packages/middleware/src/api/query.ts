@@ -493,27 +493,30 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         variant
       }
     }
-    testimonials {
-      header {
-        title
-        subtitle
+      testimonials {
+        header {
+          title
+          subtitle
+          }
+        avatar {
+          svg
+          alternate
+          source
+        }
+        avatarDetails {
+          icon
+          label
+          description
+          type
+        }
+        image {
+          svg
+          alternate
+          source
+        }
+        tag
+        category
       }
-      avatar {
-        svg
-        alternate
-        source
-      }
-      avatarDetails {
-        icon
-        label
-        description
-      }
-      image {
-        svg
-        alternate
-        source
-      }
-    }
     successClients {
       svg
       source

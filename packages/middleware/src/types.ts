@@ -237,6 +237,7 @@ export type TcardProps = {
   avatarDetails?: {
     label: string
     description?: string
+    type?: string;
   }
   nameAndPlace?: {
     label: string

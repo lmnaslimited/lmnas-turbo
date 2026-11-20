@@ -16,8 +16,6 @@ export default function TestimonialSlider({
 
   const total = testimonials?.length ?? 0;
 
- console.log("All testimonials:", testimonials);
-
   // Automatically advance to the next testimonial.
   useEffect(() => {
     if (isPaused || total <= 1) return;
@@ -114,6 +112,9 @@ export default function TestimonialSlider({
 
                     avatar: testimonial.avatar,
                     avatarDetails: testimonial.avatarDetails,
+
+                    tag: testimonial.tag,
+                    category: testimonial.category,
 
                     namePosition: "bottom",
                     footerClassName: "items-start px-6 pb-6 pt-3",
