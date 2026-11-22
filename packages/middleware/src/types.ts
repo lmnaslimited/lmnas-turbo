@@ -846,6 +846,8 @@ export type Tproducts = {
   solutionsCard: TcalloutProps[]
   guideSectionHeaderFooter: TcalloutProps
   guideFeature: TheroSection[]
+  youtubeVideoHeader?: Theader | null;
+  youtubeVideoSection?: Timage | null;
   successStoryHeaderFooter: TcalloutProps
   successStoryCard: TcardProps[]
   successStoryHighlight: Titems[]

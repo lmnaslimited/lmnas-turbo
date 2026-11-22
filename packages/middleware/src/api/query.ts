@@ -2188,6 +2188,19 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
         sourceId
       }
     }
+    youtubeVideoHeader {
+        title
+        subtitle
+        highlight
+        badge
+    }
+
+    youtubeVideoSection {
+        source
+        alternate
+        svg
+        sourceId
+    }
     successStoryHeaderFooter {
       header {
         title
