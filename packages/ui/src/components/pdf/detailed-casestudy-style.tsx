@@ -4,31 +4,32 @@ import { StyleSheet, Svg, Path } from "@react-pdf/renderer";
 export const styles = StyleSheet.create({
   page: {
     padding: 40,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
+    color: "#1A1A1A",
   },
   brandHeader: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 16,
   },
-  
+
   logoWrapper: {
     width: 34,
     height: 34,
     justifyContent: "center",
     alignItems: "center",
   },
-  
+
   logo: {
     width: 28,
     height: 28,
     objectFit: "contain",
   },
-  
+
   brandText: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#0a2e57",
+    color: "#000000",
     lineHeight: 1,
     marginLeft: 8,
   },
@@ -38,13 +39,13 @@ export const styles = StyleSheet.create({
     position: "relative",
     overflow: "hidden",
   },
-  
+
   headerAccent: {
-    height: 6,
-    backgroundColor: "#0f4c81",
+    height: 4,
+    backgroundColor: "#000000",
     width: "100%",
   },
-  
+
   headerCircle: {
     position: "absolute",
     top: -30,
@@ -52,19 +53,20 @@ export const styles = StyleSheet.create({
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: "#0f4c81",
-    opacity: 0.15,
+    backgroundColor: "#000000",
+    opacity: 0.08,
   },
 
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#0a2e57",
+    color: "#000000",
   },
 
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
+    color: "#000000",
     marginBottom: 10,
     marginTop: 20,
   },
@@ -72,67 +74,71 @@ export const styles = StyleSheet.create({
   paragraph: {
     fontSize: 11,
     lineHeight: 1.6,
+    color: "#1A1A1A",
     marginBottom: 8,
   },
 
   tableHeaderRow: {
     flexDirection: "row",
-    backgroundColor: "#0f4c81",
+    backgroundColor: "#000000",
   },
-  
+
   tableHeaderCell: {
     flex: 1,
     padding: 8,
     borderWidth: 1,
-    borderColor: "#d0d7e2",
+    borderColor: "#000000",
+    color: "#FFFFFF",
   },
-  
+
   tableBodyRow: {
     flexDirection: "row",
   },
-  
+
   tableCell: {
     flex: 1,
     padding: 8,
     borderWidth: 1,
-    borderColor: "#d0d7e2",
+    borderColor: "#E4E4E7",
   },
   cellTitle: {
     fontSize: 12,
     fontWeight: "bold",
+    color: "#FFFFFF",
     marginBottom: 8,
   },
 
   cellText: {
     fontSize: 10,
     lineHeight: 1.4,
+    color: "#1A1A1A",
   },
   ctaBox: {
     marginTop: 20,
     padding: 15,
-    backgroundColor: "#f2f6ff",
+    backgroundColor: "#F4F4F5",
     borderLeftWidth: 3,
-    borderLeftColor: "#0f4c81",
+    borderLeftColor: "#000000",
   },
-  
+
   ctaText: {
     fontSize: 11,
     marginBottom: 10,
-    color: "#333",
+    color: "#1A1A1A",
     lineHeight: 1.4,
   },
-  
+
   ctaButton: {
     alignSelf: "flex-start",
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: "#0f4c81",
+    backgroundColor: "#000000",
     borderRadius: 4,
     textDecoration: "none",
   },
-  
+
   ctaButtonText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 10,
     fontWeight: "bold",
   },
@@ -146,7 +152,7 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 6,
   },
-  
+
   iconBox: {
     width: 20,
     height: 20,
@@ -154,38 +160,38 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     marginRight: 6,
   },
-  
+
   contactText: {
     fontSize: 11,
     lineHeight: 1.4,
     textDecoration: "none",
-    color: "#0f4c81",
+    color: "#000000",
   },
   metaContainer: {
     flexDirection: "row",
     marginTop: 8,
     marginBottom: 15,
     borderBottomWidth: 1,
-    borderBottomColor: "#e2e8f0",
+    borderBottomColor: "#E4E4E7",
     paddingBottom: 10,
     gap: 15,
   },
-})
+});
 
 // svg used in pdf
 export const PhoneIcon = () => (
   <Svg viewBox="0 0 24 24" width="14" height="14">
     <Path
-      fill="#000"
+      fill="#000000"
       d="M6.6 10.8a15 15 0 006.6 6.6l2.2-2.2a1 1 0 011-.3c1.2.4 2.5.6 3.8.6a1 1 0 011 1V20a1 1 0 01-1 1C10.6 21 3 13.4 3 4a1 1 0 011-1h3.5a1 1 0 011 1c0 1.3.2 2.6.6 3.8a1 1 0 01-.3 1l-2.2 2z"
     />
   </Svg>
-)
+);
 
 export const MailIcon = () => (
   <Svg viewBox="0 0 24 24" width="14" height="14">
     <Path
-      fill="#000"
+      fill="#000000"
       d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2zm0 4l-8 5L4 8V6l8 5 8-5v2z"
     />
   </Svg>
@@ -194,17 +200,16 @@ export const MailIcon = () => (
 export const LocationIcon = () => (
   <Svg viewBox="0 0 24 24" width="14" height="14">
     <Path
-      fill="#000"
+      fill="#000000"
       d="M12 2C8.1 2 5 5.1 5 9c0 5.2 7 13 7 13s7-7.8 7-13c0-3.9-3.1-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z"
     />
   </Svg>
 );
 
-
 export const GlobeIcon = () => (
   <Svg viewBox="0 0 24 24" width="14" height="14">
     <Path
-      fill="#000"
+      fill="#000000"
       d="M12 2a10 10 0 100 20 10 10 0 000-20zm7.9 9h-3.2a15.7 15.7 0 00-1.4-6A8 8 0 0119.9 11zM12 4c1.1 1.5 2 3.8 2.4 7H9.6C10 7.8 10.9 5.5 12 4zM4.1 13H7.3c.2 2.2.7 4.2 1.4 6A8 8 0 014.1 13zm3.2-2H4.1A8 8 0 018.7 5c-.7 1.8-1.2 3.8-1.4 6zM12 20c-1.1-1.5-2-3.8-2.4-7h4.8C14 16.2 13.1 18.5 12 20zm3.3-.9c.7-1.8 1.2-3.8 1.4-6h3.2a8 8 0 01-4.6 6z"
     />
   </Svg>
@@ -213,7 +218,7 @@ export const GlobeIcon = () => (
 export const CallIcon = () => (
   <Svg viewBox="0 0 24 24" style={styles.icon}>
     <Path
-      fill="white" // Tailwind blue-600
+      fill="#FFFFFF"
       d="M6.62 10.79a15.05 15.05 0 006.59 6.59l2.2-2.2a1 
          1 0 011.05-.24 11.36 11.36 0 003.55.57 1 
          1 0 011 1V20a1 1 0 01-1 1A16 16 0 014 
@@ -226,7 +231,7 @@ export const CallIcon = () => (
 export const LinkedInIcon = () => (
   <Svg viewBox="0 0 24 24" width="16" height="16">
     <Path
-      fill="#2563EB"
+      fill="#000000"
       d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 
          0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zM7.1 20.5H3.6V9h3.5v11.5zM5.4 
          7.4c-1.1 0-1.9-.9-1.9-2s.9-2 1.9-2c1.1 0 1.9.9 
@@ -240,7 +245,7 @@ export const LinkedInIcon = () => (
 export const YouTubeIcon = () => (
   <Svg viewBox="0 0 24 24" width="16" height="16">
     <Path
-      fill="#FF0000"
+      fill="#000000"
       d="M23.5 6.2c-.3-1.2-1.2-2.1-2.4-2.4C18.8 
          3.3 12 3.3 12 3.3s-6.8 0-9.1.5c-1.2.3-2.1 1.2-2.4 
          2.4C0 8.5 0 12 0 12s0 3.5.5 5.8c.3 1.2 1.2 2.1 2.4 
@@ -261,42 +266,42 @@ export const TwitterIcon = () => (
 );
 
 export const CalendarIcon = () => (
-    <Svg viewBox="0 0 24 24" style={styles.icon}>
-      <Path
-        fill="white"
-        d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 
+  <Svg viewBox="0 0 24 24" style={styles.icon}>
+    <Path
+      fill="#FFFFFF"
+      d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 
         .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 
         2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11zm0-13H5V6h14v1z"
-      />
-    </Svg>
-  );
+    />
+  </Svg>
+);
 
 // Author / Profile Icon
 export const AuthorIcon = () => (
   <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
-  <Path
-    fill="#64748b"
-    d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"
-  />
-</Svg>
+    <Path
+      fill="#52525B"
+      d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5-4-8-4z"
+    />
+  </Svg>
 );
 
 // Date Icon
 export const DateIcon = () => (
   <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
     <Path
-      fill="#64748b"
+      fill="#52525B"
       d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"
     />
-    </Svg>
+  </Svg>
 );
 
 // Download / User Accountability Icon
 export const UserDownloadIcon = () => (
   <Svg viewBox="0 0 24 24" style={{ width: 10, height: 10 }}>
-  <Path
-    fill="#64748b"
-    d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"
-  />
-</Svg>
+    <Path
+      fill="#52525B"
+      d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM17 13l-5 5-5-5h3V9h4v4h3z"
+    />
+  </Svg>
 );

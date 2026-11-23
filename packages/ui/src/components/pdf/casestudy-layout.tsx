@@ -8,14 +8,25 @@ import {
   Link,
 } from "@react-pdf/renderer";
 import { TcaseStudies } from "@repo/middleware/types";
-import { CallIcon, CalendarIcon, LinkedInIcon, YouTubeIcon, TwitterIcon } from "./detailed-casestudy-style"
-//custom styles for react-pdf/renderer
+import {
+  CallIcon,
+  CalendarIcon,
+  LinkedInIcon,
+  YouTubeIcon,
+  TwitterIcon,
+} from "./detailed-casestudy-style";
+
+// custom styles for react-pdf/renderer
+
+//checking branch changes 
 const LdStyles = StyleSheet.create({
   page: {
     flexDirection: "row",
     padding: 40,
     fontSize: 10,
     fontFamily: "Helvetica",
+    backgroundColor: "#FFFFFF",
+    color: "#1A1A1A",
   },
   leftColumn: {
     width: "50%",
@@ -34,6 +45,7 @@ const LdStyles = StyleSheet.create({
   sectionTitle: {
     fontSize: 24,
     fontWeight: "bold",
+    color: "#000000",
     marginVertical: 6,
     marginBottom: 16,
   },
@@ -41,17 +53,18 @@ const LdStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     marginBottom: 16,
-    color: "#444",
+    color: "#000000",
   },
   subheading: {
     fontSize: 12,
     fontWeight: "bold",
     marginBottom: 4,
-    color: "#444",
+    color: "#1A1A1A",
   },
   paragraph: {
     marginBottom: 6,
     lineHeight: 0.75,
+    color: "#1A1A1A",
   },
   bulletList: {
     marginLeft: 10,
@@ -63,15 +76,16 @@ const LdStyles = StyleSheet.create({
   },
   bulletPoint: {
     marginRight: 6,
+    color: "#000000",
   },
   divider: {
     marginVertical: 6,
     height: 1,
     width: 60,
-    backgroundColor: "#B88C5A",
+    backgroundColor: "#000000",
   },
   link: {
-    color: "#1a73e8",
+    color: "#000000",
     marginBottom: 6,
   },
   icon: {
@@ -85,7 +99,7 @@ const LdStyles = StyleSheet.create({
   },
   contactLink: {
     textDecoration: "none",
-    color: "#2563EB",
+    color: "#000000",
     marginBottom: 4,
     fontSize: 10,
   },
@@ -103,20 +117,22 @@ const LdStyles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 16,
     padding: 12,
-    backgroundColor: "#EAEAEA",
-    borderRadius: 6,
+    backgroundColor: "#F4F4F5",
+    borderLeftWidth: 3,
+    borderLeftColor: "#000000",
+    borderRadius: 4,
   },
   ctaHeading: {
     fontSize: 14,
     fontWeight: "bold",
-    color: "#212121",
+    color: "#000000",
     marginBottom: 6,
   },
   cta: {
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "black",
+    backgroundColor: "#000000",
     paddingVertical: 4,
     paddingHorizontal: 12,
     borderRadius: 4,
@@ -133,10 +149,12 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
   <Document>
     <Page size="A4" style={LdStyles.page}>
       {/* Left Column */}
-
       <View style={LdStyles.leftColumn}>
         {/* image */}
-        <Image style={LdStyles.image} src={idData.caseStudies[0]?.heroSection.image?.source} />
+        <Image
+          style={LdStyles.image}
+          src={idData.caseStudies[0]?.heroSection.image?.source}
+        />
 
         {/* title */}
         <Text style={LdStyles.sectionTitle}>
@@ -153,14 +171,12 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
           </View>
         )}
         <View style={LdStyles.bulletList}>
-          {idData.caseStudies[0]?.problemSection.list.map(
-            (idItem, iIdx) => (
-              <View style={LdStyles.bulletItem} key={iIdx}>
-                <Text style={LdStyles.bulletPoint}>•</Text>
-                <Text>{idItem.label}</Text>
-              </View>
-            )
-          )}
+          {idData.caseStudies[0]?.problemSection.list.map((idItem, iIdx) => (
+            <View style={LdStyles.bulletItem} key={iIdx}>
+              <Text style={LdStyles.bulletPoint}>•</Text>
+              <Text>{idItem.label}</Text>
+            </View>
+          ))}
         </View>
 
         {/* CTA */}
@@ -171,20 +187,27 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
             </Text>
 
             {(() => {
-              const Subtitle = idData.caseStudies[0]?.ctaSection[0]?.header?.subtitle || "";
-              const Badge = idData.caseStudies[0]?.ctaSection[0]?.header?.badge || "";
+              const Subtitle =
+                idData.caseStudies[0]?.ctaSection[0]?.header?.subtitle || "";
+              const Badge =
+                idData.caseStudies[0]?.ctaSection[0]?.header?.badge || "";
               const [before, after] = Subtitle.split("{badge}");
 
               return (
-                <Text style={{ fontSize: 12, color: "#444", marginBottom: 12 }}>
+                <Text style={{ fontSize: 12, color: "#1A1A1A", marginBottom: 12 }}>
                   {before}
-                  <Text style={{ fontWeight: "bold" }}>{Badge}</Text>
+                  <Text style={{ fontWeight: "bold", color: "#000000" }}>
+                    {Badge}
+                  </Text>
                   {after}
                 </Text>
               );
             })()}
 
-            <Link src={idData.caseStudies[0]?.ctaSection[0]?.buttons[0]?.href} style={LdStyles.cta}>
+            <Link
+              src={idData.caseStudies[0]?.ctaSection[0]?.buttons[0]?.href}
+              style={LdStyles.cta}
+            >
               <CalendarIcon />
               <Text style={LdStyles.ctaButtonText}>
                 {idData.caseStudies[0]?.ctaSection[0]?.buttons[0]?.label}
@@ -193,6 +216,7 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
           </View>
         )}
       </View>
+
       {/* Right Column */}
       <View style={LdStyles.rightColumn}>
         {/* objective */}
@@ -205,82 +229,85 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         ))}
 
         {/* CTA + Discount Code Section */}
-        {idData.caseStudies[0]?.ctaSection?.[1] && (<View
-          style={LdStyles.ctaSection}
-        >
-          <Text
-            style={LdStyles.ctaHeading}
-          >
-            {idData.caseStudies[0]?.ctaSection[1].header?.title}
-          </Text>
-
-          <Link
-            src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
-            style={LdStyles.cta}
-          >
-            <CallIcon />
-            <Text style={LdStyles.ctaButtonText}>
-              {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
+        {idData.caseStudies[0]?.ctaSection?.[1] && (
+          <View style={LdStyles.ctaSection}>
+            <Text style={LdStyles.ctaHeading}>
+              {idData.caseStudies[0]?.ctaSection[1].header?.title}
             </Text>
-          </Link>
-        </View>)}
+
+            <Link
+              src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
+              style={LdStyles.cta}
+            >
+              <CallIcon />
+              <Text style={LdStyles.ctaButtonText}>
+                {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
+              </Text>
+            </Link>
+          </View>
+        )}
 
         <View style={LdStyles.divider} />
 
         {/* result */}
         <Text style={LdStyles.heading}>RESULT AND BENEFITS</Text>
         <View style={LdStyles.bulletList}>
-          {idData.caseStudies[0]?.solutionSection.results.map((idItem, iIdx) => (
-            <View style={LdStyles.bulletItem} key={iIdx}>
-              <Text style={LdStyles.bulletPoint}>•</Text>
-              <Text>
-                {idItem.title}, {idItem.subtitle}
-              </Text>
-            </View>
-          ))}
+          {idData.caseStudies[0]?.solutionSection.results.map(
+            (idItem, iIdx) => (
+              <View style={LdStyles.bulletItem} key={iIdx}>
+                <Text style={LdStyles.bulletPoint}>•</Text>
+                <Text>
+                  {idItem.title}, {idItem.subtitle}
+                </Text>
+              </View>
+            )
+          )}
         </View>
 
         {/* cta */}
-        {idData.caseStudies[0]?.ctaSection?.[0] && (<View
-          style={LdStyles.ctaSection}
-        >
-          <Text
-            style={LdStyles.ctaHeading}
-          >
-            {idData.caseStudies[0]?.ctaSection[0].title}
-          </Text>
-
-          {(() => {
-            const Subtitle = idData.caseStudies[0]?.ctaSection[0].header?.subtitle || "";
-            const Badge = idData.caseStudies[0]?.ctaSection[0].header?.badge || "";
-            const [before, after] = Subtitle.split("{badge}");
-
-            return (
-              <Text style={{ fontSize: 12, color: "#444", marginBottom: 12 }}>
-                {before}
-                <Text style={{ fontWeight: "bold" }}>{Badge}</Text>
-                {after}
-              </Text>
-            );
-          })()}
-
-
-          <Link
-            src={idData.caseStudies[0]?.ctaSection[0].buttons[0]?.href}
-            style={LdStyles.cta}
-          >
-            <CalendarIcon />
-            <Text style={LdStyles.ctaButtonText}>
-              {idData.caseStudies[0]?.ctaSection[0].buttons[0]?.label}
+        {idData.caseStudies[0]?.ctaSection?.[0] && (
+          <View style={LdStyles.ctaSection}>
+            <Text style={LdStyles.ctaHeading}>
+              {idData.caseStudies[0]?.ctaSection[0].title}
             </Text>
-          </Link>
-        </View>)}
+
+            {(() => {
+              const Subtitle =
+                idData.caseStudies[0]?.ctaSection[0].header?.subtitle || "";
+              const Badge =
+                idData.caseStudies[0]?.ctaSection[0].header?.badge || "";
+              const [before, after] = Subtitle.split("{badge}");
+
+              return (
+                <Text style={{ fontSize: 12, color: "#1A1A1A", marginBottom: 12 }}>
+                  {before}
+                  <Text style={{ fontWeight: "bold", color: "#000000" }}>
+                    {Badge}
+                  </Text>
+                  {after}
+                </Text>
+              );
+            })()}
+
+            <Link
+              src={idData.caseStudies[0]?.ctaSection[0].buttons[0]?.href}
+              style={LdStyles.cta}
+            >
+              <CalendarIcon />
+              <Text style={LdStyles.ctaButtonText}>
+                {idData.caseStudies[0]?.ctaSection[0].buttons[0]?.label}
+              </Text>
+            </Link>
+          </View>
+        )}
 
         <View style={LdStyles.divider} />
 
         {/* conclusion */}
         <Text style={LdStyles.heading}>CONCLUSION</Text>
-        <Text style={LdStyles.paragraph}>{idData.caseStudies[0]?.conclusion?.subtitle}</Text>
+        <Text style={LdStyles.paragraph}>
+          {idData.caseStudies[0]?.conclusion?.subtitle}
+        </Text>
       </View>
     </Page>
 
@@ -290,17 +317,25 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
         {/* contact */}
         <Text style={LdStyles.heading}>CONTACT</Text>
         <View style={LdStyles.contact}>
-
-          <Link src={`tel:${idData.footer.contact.phoneHref}`} style={LdStyles.contactLink}>
+          <Link
+            src={`tel:${idData.footer.contact.phoneHref}`}
+            style={LdStyles.contactLink}
+          >
             {idData.footer.contact.phoneHref}
           </Link>
           <Link src={idData.footer.contact.address} style={LdStyles.contactLink}>
             {idData.footer.contact.address}
           </Link>
-          <Link src={`mailto:${idData.footer.contact.emailHref}`} style={LdStyles.contactLink}>
+          <Link
+            src={`mailto:${idData.footer.contact.emailHref}`}
+            style={LdStyles.contactLink}
+          >
             {idData.footer.contact.emailHref}
           </Link>
-          <Link src={idData.footer.contact.websiteHref} style={LdStyles.contactLink}>
+          <Link
+            src={idData.footer.contact.websiteHref}
+            style={LdStyles.contactLink}
+          >
             {idData.footer.contact.websiteHref}
           </Link>
 
@@ -321,10 +356,16 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
                   break;
               }
 
-              return IconComponent && (
-                <Link key={iIndex} src={idItem.href} style={LdStyles.iconLink}>
-                  {IconComponent}
-                </Link>
+              return (
+                IconComponent && (
+                  <Link
+                    key={iIndex}
+                    src={idItem.href}
+                    style={LdStyles.iconLink}
+                  >
+                    {IconComponent}
+                  </Link>
+                )
               );
             })}
           </View>
@@ -332,21 +373,23 @@ export const PdfDocument = ({ idData }: { idData: TcaseStudies }) => (
       </View>
 
       <View style={LdStyles.rightColumn}>
-        {idData.caseStudies[0]?.ctaSection?.[1] && (<View style={LdStyles.ctaSection}>
-          <Text style={LdStyles.ctaHeading}>
-            {idData.caseStudies[0]?.ctaSection[1].title}
-          </Text>
-
-          <Link
-            src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
-            style={LdStyles.cta}
-          >
-            <CallIcon />
-            <Text style={LdStyles.ctaButtonText}>
-              {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
+        {idData.caseStudies[0]?.ctaSection?.[1] && (
+          <View style={LdStyles.ctaSection}>
+            <Text style={LdStyles.ctaHeading}>
+              {idData.caseStudies[0]?.ctaSection[1].title}
             </Text>
-          </Link>
-        </View>)}
+
+            <Link
+              src={idData.caseStudies[0]?.ctaSection[1].buttons[0]?.href}
+              style={LdStyles.cta}
+            >
+              <CallIcon />
+              <Text style={LdStyles.ctaButtonText}>
+                {idData.caseStudies[0]?.ctaSection[1].buttons[0]?.label}
+              </Text>
+            </Link>
+          </View>
+        )}
       </View>
     </Page>
   </Document>

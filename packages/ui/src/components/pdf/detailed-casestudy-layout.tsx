@@ -1,5 +1,17 @@
 import { Document, Page, Text, View, Link, Image } from "@react-pdf/renderer";
-import { styles, PhoneIcon, MailIcon, LocationIcon, GlobeIcon, LinkedInIcon, YouTubeIcon, TwitterIcon, DateIcon, AuthorIcon, UserDownloadIcon } from "./detailed-casestudy-style"
+import {
+  styles,
+  PhoneIcon,
+  MailIcon,
+  LocationIcon,
+  GlobeIcon,
+  LinkedInIcon,
+  YouTubeIcon,
+  TwitterIcon,
+  DateIcon,
+  AuthorIcon,
+  UserDownloadIcon,
+} from "./detailed-casestudy-style";
 
 /**
  * Contract for all block renderers.
@@ -7,7 +19,12 @@ import { styles, PhoneIcon, MailIcon, LocationIcon, GlobeIcon, LinkedInIcon, You
  * that converts a data block into React nodes.
  */
 interface IBlockRenderer {
-  render(idBlock: any, iIndex: number, email?: string, pdfName?: string): React.ReactNode;
+  render(
+    idBlock: any,
+    iIndex: number,
+    email?: string,
+    pdfName?: string
+  ): React.ReactNode;
 }
 
 /**
@@ -15,11 +32,16 @@ interface IBlockRenderer {
  * Provides shared helper utilities (like safe text handling).
  */
 abstract class clBaseBlockRenderer implements IBlockRenderer {
-   /**
+  /**
    * Each concrete renderer must implement this method
    * to return the React element for the given block.
    */
-  abstract render(idBlock: any, iIndex: number, email?: string, pdfName?: string): React.ReactNode;
+  abstract render(
+    idBlock: any,
+    iIndex: number,
+    email?: string,
+    pdfName?: string
+  ): React.ReactNode;
 
   /**
    * Safely returns text value or empty string
@@ -35,28 +57,35 @@ abstract class clBaseBlockRenderer implements IBlockRenderer {
  * Displays description text and a clickable link button.
  */
 class clCtaRenderer extends clBaseBlockRenderer {
-  render(idBlock: any, iIndex: number, email: string = "", pdfName: string = "CaseStudy") {
+  render(
+    idBlock: any,
+    iIndex: number,
+    email: string = "",
+    pdfName: string = "CaseStudy"
+  ) {
     const LBaseUrl = idBlock.Button.href;
     const LHasQuery = LBaseUrl.includes("?");
 
     // Clean up variables for URL safety (replace spaces with underscores)
-    const LPdfName = encodeURIComponent(pdfName.toLowerCase().replace(/\s+/g, "_"));
+    const LPdfName = encodeURIComponent(
+      pdfName.toLowerCase().replace(/\s+/g, "_")
+    );
     const LEmail = encodeURIComponent(email);
 
     // Build unified dynamic UTM query string
     const LUtmParams = `utm_source=pdf&utm_medium=document&utm_campaign=${LPdfName}&utm_term=${LEmail}`;
-    const LTrackedUrl = LHasQuery ? `${LBaseUrl}&${LUtmParams}` : `${LBaseUrl}?${LUtmParams}`;
+    const LTrackedUrl = LHasQuery
+      ? `${LBaseUrl}&${LUtmParams}`
+      : `${LBaseUrl}?${LUtmParams}`;
     return (
       <View key={iIndex} style={styles.ctaBox} wrap={false}>
-         {/* CTA description text */}
+        {/* CTA description text */}
         <Text style={styles.ctaText}>
           {this.text(idBlock.Button.description)}
         </Text>
-         {/* CTA button link */}
+        {/* CTA button link */}
         <Link src={LTrackedUrl} style={styles.ctaButton}>
-          <Text style={styles.ctaButtonText}>
-            {idBlock.Button.label}
-          </Text>
+          <Text style={styles.ctaButtonText}>{idBlock.Button.label}</Text>
         </Link>
       </View>
     );
@@ -65,7 +94,7 @@ class clCtaRenderer extends clBaseBlockRenderer {
 
 /**
  * Renders tabular data into a structured table format.
- * Includes header row and multiple body rows.
+ * Includes header row and multiple body rows with alternating monochrome shading.
  */
 class clTableRenderer extends clBaseBlockRenderer {
   render(idBlock: any, iIndex: number) {
@@ -74,9 +103,17 @@ class clTableRenderer extends clBaseBlockRenderer {
     return (
       <View key={iIndex} style={{ marginTop: 10, marginBottom: 20 }}>
         <View style={styles.tableHeaderRow}>
-          {LdTable.columns.map((idCol: any, iIndex: number) => (
-            <View key={iIndex} style={styles.tableHeaderCell}>
-              <Text style={{ color: "#fff", fontSize: 11, fontWeight: "bold" }}>
+          {LdTable.columns.map((idCol: any, iColIndex: number) => (
+            <View key={iColIndex} style={styles.tableHeaderCell}>
+              <Text
+                style={{
+                  color: "#FFFFFF",
+                  fontSize: 10,
+                  fontWeight: "bold",
+                  textTransform: "uppercase",
+                  letterSpacing: 0.5,
+                }}
+              >
                 {idCol.label}
               </Text>
             </View>
@@ -85,10 +122,24 @@ class clTableRenderer extends clBaseBlockRenderer {
 
         {/* Table Body Rows */}
         {LdTable.rows.map((idRow: any, iRowIndex: number) => (
-          <View key={iRowIndex} style={styles.tableBodyRow} wrap={false}>
+          <View
+            key={iRowIndex}
+            style={[
+              styles.tableBodyRow,
+              {
+                backgroundColor: iRowIndex % 2 === 0 ? "#FFFFFF" : "#F4F4F5",
+              },
+            ]}
+            wrap={false}
+          >
             {LdTable.columns.map((idCol: any, iColIndex: number) => (
               <View key={iColIndex} style={styles.tableCell}>
-                <Text style={styles.cellText}>
+                <Text
+                  style={[
+                    styles.cellText,
+                    iColIndex === 0 ? { fontWeight: "bold", color: "#000000" } : {},
+                  ]}
+                >
                   {idRow[idCol.key]}
                 </Text>
               </View>
@@ -122,22 +173,23 @@ export class clChartRenderer extends clBaseBlockRenderer {
     );
   }
 }
+
 /**
  * Renders paragraph blocks with support for inline structured nodes.
  * Delegates rendering of each node to InlineRendererFactory.
  */
 class clParagraphRenderer extends clBaseBlockRenderer {
   render(idBlock: any, iIndex: number) {
-    const LdBlock = idBlock.paragraph
-    return(
-    <View key={iIndex}>
-      {LdBlock?.map((idNode: any, iEleIndex: number) => (
-        <View key={iEleIndex}>
-          {clInlineRendererFactory.get(idNode.type).render(idNode, iEleIndex)}
-        </View>
-      ))}
-    </View>
-    )
+    const LdBlock = idBlock.paragraph;
+    return (
+      <View key={iIndex}>
+        {LdBlock?.map((idNode: any, iEleIndex: number) => (
+          <View key={iEleIndex}>
+            {clInlineRendererFactory.get(idNode.type).render(idNode, iEleIndex)}
+          </View>
+        ))}
+      </View>
+    );
   }
 }
 
@@ -148,7 +200,14 @@ class clParagraphRenderer extends clBaseBlockRenderer {
 class clTextInLine extends clBaseBlockRenderer {
   render(idBlock: any, iIndex: number) {
     return (
-      <Text key={iIndex} style={idBlock.bold ? { fontWeight: "bold" } : undefined}>
+      <Text
+        key={iIndex}
+        style={
+          idBlock.bold
+            ? { fontWeight: "bold", color: "#000000" }
+            : { color: "#1A1A1A" }
+        }
+      >
         {this.text(idBlock.text)}
       </Text>
     );
@@ -192,28 +251,46 @@ class clListItemInLIne extends clBaseBlockRenderer {
  * Renders contact section (footer block).
  * Includes phone, address, email, website, and social links.
  */
-class clContactRenderer extends clBaseBlockRenderer{
-  render(idData:any, iIndex:number, email: string = "", pdfName: string = "CaseStudy") {
+class clContactRenderer extends clBaseBlockRenderer {
+  render(
+    idData: any,
+    iIndex: number,
+    email: string = "",
+    pdfName: string = "CaseStudy"
+  ) {
     const LdContact = idData.footer.contact;
     const LdSocial = idData.footer.social;
-    const LPdfName = encodeURIComponent(pdfName.toLowerCase().replace(/\s+/g, "_"));
+    const LPdfName = encodeURIComponent(
+      pdfName.toLowerCase().replace(/\s+/g, "_")
+    );
     const LEmail = encodeURIComponent(email);
     const LGlobalUtm = `utm_source=pdf&utm_medium=document&utm_campaign=${LPdfName}&utm_term=${LEmail}`;
-    // A small helper utility inside the function to append the tracker safely
+
     const LAppendUtm = (iUrl: string) => {
-      return iUrl.includes("?") ? `${iUrl}&${LGlobalUtm}` : `${iUrl}?${LGlobalUtm}`;
+      return iUrl.includes("?")
+        ? `${iUrl}&${LGlobalUtm}`
+        : `${iUrl}?${LGlobalUtm}`;
     };
+
     return (
       <View
         style={{
           marginTop: 30,
           paddingTop: 15,
           borderTopWidth: 1,
-          borderColor: "#ddd",
+          borderColor: "#E4E4E7",
         }}
-        wrap={false} // Prevent footer from splitting across pages
+        wrap={false}
       >
-        <Text style={{ fontSize: 14, fontWeight: "bold", marginBottom: 8 }}>
+        <Text
+          style={{
+            fontSize: 12,
+            fontWeight: "bold",
+            color: "#000000",
+            letterSpacing: 1,
+            marginBottom: 8,
+          }}
+        >
           CONTACT
         </Text>
 
@@ -234,9 +311,7 @@ class clContactRenderer extends clBaseBlockRenderer{
             <LocationIcon />
           </View>
 
-          <Text style={styles.contactText}>
-            {LdContact.address}
-          </Text>
+          <Text style={styles.contactText}>{LdContact.address}</Text>
         </View>
 
         {/* EMAIL */}
@@ -256,7 +331,10 @@ class clContactRenderer extends clBaseBlockRenderer{
             <GlobeIcon />
           </View>
 
-          <Link src={LAppendUtm(LdContact.websiteHref)} style={styles.contactText}>
+          <Link
+            src={LAppendUtm(LdContact.websiteHref)}
+            style={styles.contactText}
+          >
             {LdContact.websiteHref}
           </Link>
         </View>
@@ -282,7 +360,7 @@ class clContactRenderer extends clBaseBlockRenderer{
 
 /**
  * Factory for rendering social media icons.
- * Maps icon type string → React icon component.
+ * Maps icon type string -> React icon component.
  */
 class clSocialIconFactory {
   private static registry: Record<string, React.ReactNode> = {
@@ -322,7 +400,7 @@ class clBlockRendererFactory {
     table: new clTableRenderer(),
     chart: new clChartRenderer(),
     paragraph: new clParagraphRenderer(),
-    contact: new clContactRenderer()
+    contact: new clContactRenderer(),
   };
 
   static get(type: string): IBlockRenderer {
@@ -338,59 +416,152 @@ class clBlockRendererFactory {
 export const DetailedPdf = ({ idData }: { idData: any }) => {
   const LEmail = idData?.email || "";
   const LPdfName = idData?.caseStudies?.[0]?.pdfName || "CaseStudy";
-  const LGlobalUtm = `utm_source=pdf&utm_medium=document&utm_campaign=${encodeURIComponent(LPdfName.toLowerCase().replace(/\s+/g, "_"))}&utm_term=${encodeURIComponent(LEmail)}`;
+  const LGlobalUtm = `utm_source=pdf&utm_medium=document&utm_campaign=${encodeURIComponent(
+    LPdfName.toLowerCase().replace(/\s+/g, "_")
+  )}&utm_term=${encodeURIComponent(LEmail)}`;
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-      <Link src={`https://lmnas.com?${LGlobalUtm}`} style={{textDecoration: "none", display: "flex"}}>
-      <View style={styles.brandHeader}>
-         {/* BRAND HEADER */}
-        <View style={styles.logoWrapper}>
-          <Image
-            src="https://raw.githubusercontent.com/lmnaslimited/lmnas-website-images/refs/heads/main/Logo/LMNAS-White-Black-plain-rounded.png"
-            style={styles.logo}
-          />
+        <Link
+          src={`https://lmnas.com?${LGlobalUtm}`}
+          style={{ textDecoration: "none", display: "flex" }}
+        >
+          <View style={styles.brandHeader}>
+            {/* BRAND HEADER */}
+            <View style={styles.logoWrapper}>
+              <Image
+                src="https://raw.githubusercontent.com/lmnaslimited/lmnas-website-images/refs/heads/main/Logo/LMNAS-White-Black-plain-rounded.png"
+                style={styles.logo}
+              />
+            </View>
+
+            <Text style={styles.brandText}>LMNAs Cloud Solutions</Text>
+          </View>
+        </Link>
+
+        {/* METADATA SECTION */}
+        <View style={styles.metaContainer}>
+          <View style={{ flexDirection: "row", fontSize: 9 }}>
+            <View
+              style={{
+                marginRight: 4,
+                width: 10,
+                height: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <AuthorIcon />
+            </View>
+            <Text style={{ color: "#52525B" }}>
+              {idData?.heroSection?.avatarDetails?.label || "LMNAs"}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", fontSize: 9 }}>
+            <View
+              style={{
+                marginRight: 4,
+                width: 10,
+                height: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <DateIcon />
+            </View>
+            <Text style={{ color: "#52525B" }}>
+              {new Date().toLocaleDateString()}
+            </Text>
+          </View>
+          <View style={{ flexDirection: "row", fontSize: 9 }}>
+            <View
+              style={{
+                marginRight: 4,
+                width: 10,
+                height: 10,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <UserDownloadIcon />
+            </View>
+            <Text style={{ color: "#52525B" }}>{idData?.email || ""}</Text>
+          </View>
         </View>
 
-        <Text style={styles.brandText}>
-          LMNAs Cloud Solutions
-        </Text>
-      </View>
-      </Link>
-      {/* 3. NEW METADATA SECTION */}
-      <View style={styles.metaContainer}>
-          <View style={{flexDirection: "row", fontSize: 9}}>
-          <View style={{marginRight: 4, width: 10, height: 10, justifyContent: "center", alignItems: "center",}}><AuthorIcon /></View>
-            <Text style={{color: "#334155",}}>{idData?.heroSection?.avatarDetails?.label || "LMNAs"}</Text>
-          </View>
-          <View style={{flexDirection: "row", fontSize: 9}}>
-          <View style={{marginRight: 4, width: 10, height: 10, justifyContent: "center", alignItems: "center",}}><DateIcon/></View>
-            <Text style={{color: "#334155",}}>{new Date().toLocaleDateString()}</Text>
-          </View>
-          <View style={{flexDirection: "row", fontSize: 9}}>
-          <View style={{marginRight: 4, width: 10, height: 10, justifyContent: "center", alignItems: "center",}}><UserDownloadIcon /></View>
-            <Text style={{color: "#334155",}}>{idData?.email || ""}</Text>
+        {/* HEADER DECORATION & CASE STUDY PILL */}
+        <View style={styles.header}>
+          <View style={styles.headerAccent} />
+          <View style={styles.headerCircle} />
+          <View
+            style={{
+              alignSelf: "flex-start",
+              backgroundColor: "#000000",
+              paddingVertical: 3,
+              paddingHorizontal: 10,
+              borderRadius: 999,
+              marginTop: 14,
+            }}
+          >
+            <Text
+              style={{
+                color: "#FFFFFF",
+                fontSize: 8,
+                fontWeight: "bold",
+                letterSpacing: 1.2,
+              }}
+            >
+              CASE STUDY
+            </Text>
           </View>
         </View>
-       {/* HEADER DECORATION */}
-      <View style={styles.header}>
-        <View style={styles.headerAccent} />
-        <View style={styles.headerCircle} />
-      </View>
+
         <Text style={styles.title}>
           {idData?.caseStudies[0]?.name || "Case Study"}
         </Text>
 
         {idData?.caseStudies[0]?.pdfDownloadContent?.map(
           (idSection: any, iIndex: number) => {
-            const renderer = clBlockRendererFactory.get( idSection.type?idSection.type : idSection.cta );
+            const renderer = clBlockRendererFactory.get(
+              idSection.type ? idSection.type : idSection.cta
+            );
 
             return (
               <View key={iIndex}>
                 {idSection.sectionName && (
-                  <Text style={styles.sectionTitle}>
-                    {idSection.sectionName}
-                  </Text>
+                  <View style={{ marginTop: 20, marginBottom: 10 }}>
+                    <View
+                      style={{
+                        alignSelf: "flex-start",
+                        backgroundColor: "#000000",
+                        paddingVertical: 2.5,
+                        paddingHorizontal: 8,
+                        borderRadius: 999,
+                        marginBottom: 6,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "#FFFFFF",
+                          fontSize: 7.5,
+                          fontWeight: "bold",
+                          letterSpacing: 1,
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {idSection.sectionName}
+                      </Text>
+                    </View>
+                    <Text
+                      style={[
+                        styles.sectionTitle,
+                        { marginTop: 0, marginBottom: 0 },
+                      ]}
+                    >
+                      {idSection.sectionName}
+                    </Text>
+                  </View>
                 )}
                 {/* image */}
                 {idSection.image && (
@@ -399,7 +570,7 @@ export const DetailedPdf = ({ idData }: { idData: any }) => {
                     style={{
                       width: "100%",
                       aspectRatio: 16 / 9,
-                      marginBottom: 10
+                      marginBottom: 10,
                     }}
                   />
                 )}
@@ -408,8 +579,11 @@ export const DetailedPdf = ({ idData }: { idData: any }) => {
             );
           }
         )}
-         {/* FOOTER CONTACT SECTION (ALWAYS LAST) */}
-        {clBlockRendererFactory.get("contact").render(idData, 0, LEmail, LPdfName)}
+
+        {/* FOOTER CONTACT SECTION (ALWAYS LAST) */}
+        {clBlockRendererFactory
+          .get("contact")
+          .render(idData, 0, LEmail, LPdfName)}
       </Page>
     </Document>
   );
