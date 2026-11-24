@@ -2033,7 +2033,8 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
   getVersionQuery(): string {
     return `  query Products($locale: I18NLocaleCode, $filters: ProductFiltersInput, $status: PublicationStatus) {
   ${this.contentType}(locale: $locale, filters: $filters, status: $status) {
-    slug
+    slug  
+    sector
     heroSection {
       heading {
         title
@@ -2050,6 +2051,10 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       image {
         source
         alternate
+      }
+      sectorDropdown {
+        label
+        href
       }
     }
     problemsHeader {

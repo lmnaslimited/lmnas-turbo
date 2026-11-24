@@ -191,6 +191,11 @@ export type Tbutton = {
   description?: string
 }
 
+export type TsectorOption = {
+  label: string
+  href: string
+}
+
 export type Tsubtitle = {
   startTime: string
   endTime: string
@@ -220,6 +225,7 @@ export type TheroSection = {
   description?: string
   buttons: Tbutton[]
   image?: Timage
+  sectorDropdown?: TsectorOption[]
 }
 
 type TtechStack = {
@@ -792,6 +798,7 @@ export type TproductsPageTarget = {
 }
 export type Tproducts = {
   slug: string
+  sector: "generic" | "transformers" | "food-processing"
   heroSection: TheroSection
   problemsHeader: Theader
   problemsSection: TcalloutProps

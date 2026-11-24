@@ -11,19 +11,21 @@ import { TformMode, Titems, Tbutton, TheroSection } from "@repo/middleware/types
 type THeroProps = {
   idHero: TheroSection;
   onButtonClick?: (mode: TformMode, formTitle?: string) => void;
-}
+};
 
-const renderIcon = (icon: Tbutton['icon']) => {
+const renderIcon = (icon: Tbutton["icon"]) => {
   const iconName = typeof icon === "string" ? icon : "HelpCircle";
   const IconComponent = getIconComponent(iconName);
   return <IconComponent className="w-5 h-5" />;
 };
 
-export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
+export default function Hero({
+  idHero,
+  onButtonClick,
+}: THeroProps): ReactElement {
   /**
-  * Renders a badge with an icon and text.
-  * Typically used for highlighting a special feature or status.
-  */
+   * Renders a badge with an icon and text.
+   */
   const Badge = ({ iText }: { iText: string }): ReactElement => (
     <div className="inline-flex w-fit items-center rounded-full border bg-accent px-3 py-1 text-sm text-primary/70">
       <Zap className="mr-1 h-3.5 w-3.5" />
@@ -32,28 +34,35 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
   );
 
   /**
-  * Displays a list of features, each represented by an icon and text.
-  * This section helps in showcasing key benefits or highlights of the hero section.
-  */
-
-  const FeatureList = ({ iaItems }: { iaItems?: Titems[] }): ReactElement => (
+   * Displays a list of features.
+   */
+  const FeatureList = ({
+    iaItems,
+  }: {
+    iaItems?: Titems[];
+  }): ReactElement => (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-      {iaItems?.map((idItem, iIndex) => {
-        return (
-          <div className={cn("flex items-center gap-2 text-primary/80")} key={iIndex}>
-            {renderIcon(idItem?.icon)}
-            <span>{idItem?.label}</span>
-          </div>
-        );
-      })}
+      {iaItems?.map((idItem, iIndex) => (
+        <div
+          className={cn("flex items-center gap-2 text-primary/80")}
+          key={iIndex}
+        >
+          {renderIcon(idItem?.icon)}
+          <span>{idItem?.label}</span>
+        </div>
+      ))}
     </div>
   );
 
   /**
-  * Renders a list of call-to-action (CTA) buttons.
-  * Supports both internal navigation (via Link) and functional actions.
-  */
-  const CTAButtons = ({ iaButtons }: { iaButtons: Tbutton[] }): ReactElement => (
+   * Renders CTA buttons.
+   * Existing button behavior is preserved.
+   */
+  const CTAButtons = ({
+    iaButtons,
+  }: {
+    iaButtons: Tbutton[];
+  }): ReactElement => (
     <div className="flex flex-col gap-4 sm:flex-row">
       {iaButtons.map((idButton, iIndex) => {
         const iconElement = (
@@ -61,6 +70,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             {renderIcon(idButton.icon)}
           </span>
         );
+
         const buttonContent = (
           <span className="flex items-center justify-center gap-2">
             {idButton.iconPosition === "before" && iconElement}
@@ -68,6 +78,7 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             {idButton.iconPosition === "after" && iconElement}
           </span>
         );
+
         return (
           <Button
             key={iIndex}
@@ -75,37 +86,84 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
             variant={idButton.variant || "default"}
             className={cn("sm:w-auto sm:flex-1", idButton.className)}
             asChild={!!idButton.href}
-            onClick={!idButton.href ? () => onButtonClick?.(idButton.formMode, idButton.label) : undefined}
+            onClick={
+              !idButton.href
+                ? () => onButtonClick?.(idButton.formMode, idButton.label)
+                : undefined
+            }
           >
-            {idButton.href ? <Link href={idButton.href}>{buttonContent}</Link> : <span>{buttonContent}</span>}
+            {idButton.href ? (
+              <Link href={idButton.href}>{buttonContent}</Link>
+            ) : (
+              <span>{buttonContent}</span>
+            )}
           </Button>
         );
       })}
     </div>
   );
 
+  /**
+   * Renders sector navigation options.
+   */
+  const SectorDropdown = (): ReactElement | null => {
+  const laSectors = idHero.sectorDropdown ?? [];
+  const idFirstSector = laSectors.at(0);
+
+  if (!idFirstSector) return null;
+
+  return (
+    <details className="relative w-fit">
+      <summary className="cursor-pointer list-none rounded-md border border-border bg-background px-4 py-3 text-sm font-medium">
+        {idFirstSector.label}
+      </summary>
+
+      <div className="absolute left-0 top-full z-50 mt-2 min-w-full overflow-hidden rounded-md border border-border bg-background shadow-lg">
+        {laSectors.map((idSector, iIndex) => (
+          <Link
+            key={iIndex}
+            href={idSector.href}
+            className="block whitespace-nowrap px-4 py-3 text-sm hover:bg-accent"
+          >
+            {idSector.label}
+          </Link>
+        ))}
+      </div>
+    </details>
+  );
+};
+
   return idHero.image?.source ? (
     /**
-    * Hero section variant with an image.
-    * Displays content alongside a visual representation for better engagement.
-    */
-    <div className={cn("container grid gap-12 lg:grid-cols-2 lg:gap-8 xl:gap-16 items-center py-16 lg:py-24")}>
+     * Hero layout with image.
+     */
+    <div
+      className={cn(
+        "container grid items-center gap-12 py-16 lg:grid-cols-2 lg:gap-8 lg:py-24 xl:gap-16"
+      )}
+    >
       <div className={cn("flex flex-col justify-center space-y-8")}>
         {idHero.heading.badge && <Badge iText={idHero.heading.badge} />}
-        <TitleSubtitle idTitle={{
-          ...idHero.heading,
-          className: "m-0",
-          headingClass: "md:text-5xl lg:text-6xl tracking-tight",
-          descripClass: "max-w-xl md:text-xl"
-        }} />
+
+        <TitleSubtitle
+          idTitle={{
+            ...idHero.heading,
+            className: "m-0",
+            headingClass: "md:text-5xl lg:text-6xl tracking-tight",
+            descripClass: "max-w-xl md:text-xl",
+          }}
+        />
+
         {idHero.highlight && <FeatureList iaItems={idHero.highlight} />}
+
         <CTAButtons iaButtons={idHero.buttons} />
+        <SectorDropdown />
       </div>
-      {/* Image part */}
+
       <div className="w-full overflow-hidden rounded-xl">
         <Image
-          src={idHero.image?.source || "/placeholder.svg"}
-          alt={idHero?.image?.alternate}
+          src={idHero.image.source}
+          alt={idHero.image.alternate}
           className="aspect-[4/3] h-auto w-full object-cover"
           height={1000}
           width={1000}
@@ -114,24 +172,37 @@ export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElemen
     </div>
   ) : (
     /**
-    * Hero section variant without an image.
-    * This version focuses entirely on the textual content and call-to-action elements.
-    */
-    <section className={cn("relative overflow-hidden py-16 md:py-24 lg:py-32")}>
+     * Hero layout without image.
+     */
+    <section
+      className={cn("relative overflow-hidden py-16 md:py-24 lg:py-32")}
+    >
       <div className={cn("container relative z-10 mx-auto px-4 md:px-6")}>
         <div
-          className={cn("mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center")}
+          className={cn(
+            "mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center"
+          )}
         >
-          <TitleSubtitle idTitle={{
-            ...idHero.heading,
-            className: "mx-auto flex max-w-[58rem] flex-col items-center justify-center mb-4 text-center m-0",
-            headingClass: "sm:text-4xl md:text-5xl lg:text-6xl",
-            descripClass: "max-w-[85%] md:text-xl/relaxed mx-auto"
-          }} />
-          <p className={cn("max-w-[85%] text-muted-foreground md:text-xl/relaxed mx-auto mb-2")}>
+          <TitleSubtitle
+            idTitle={{
+              ...idHero.heading,
+              className:
+                "mx-auto flex max-w-[58rem] flex-col items-center justify-center mb-4 text-center m-0",
+              headingClass: "sm:text-4xl md:text-5xl lg:text-6xl",
+              descripClass: "max-w-[85%] md:text-xl/relaxed mx-auto",
+            }}
+          />
+
+          <p
+            className={cn(
+              "mx-auto mb-2 max-w-[85%] text-muted-foreground md:text-xl/relaxed"
+            )}
+          >
             {idHero.description}
           </p>
+
           <CTAButtons iaButtons={idHero.buttons} />
+          <SectorDropdown />
         </div>
       </div>
     </section>
