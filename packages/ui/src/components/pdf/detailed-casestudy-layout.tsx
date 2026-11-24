@@ -529,30 +529,15 @@ export const DetailedPdf = ({ idData }: { idData: any }) => {
 
             return (
               <View key={iIndex}>
-                {idSection.sectionName && (
-                  <View style={{ marginTop: 20, marginBottom: 10 }}>
-                    <View
-                      style={{
-                        alignSelf: "flex-start",
-                        backgroundColor: "#000000",
-                        paddingVertical: 2.5,
-                        paddingHorizontal: 8,
-                        borderRadius: 999,
-                        marginBottom: 6,
-                      }}
-                    >
-                      <Text
-                        style={{
-                          color: "#FFFFFF",
-                          fontSize: 7.5,
-                          fontWeight: "bold",
-                          letterSpacing: 1,
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {idSection.sectionName}
-                      </Text>
-                    </View>
+                {idSection.sectionName && (<View
+                    style={{
+                      marginTop: 22,
+                      marginBottom: 10,
+                      paddingBottom: 6,
+                      borderBottomWidth: 1.5,
+                      borderBottomColor: "#000000",
+                    }}
+                  >
                     <Text
                       style={[
                         styles.sectionTitle,
@@ -561,8 +546,7 @@ export const DetailedPdf = ({ idData }: { idData: any }) => {
                     >
                       {idSection.sectionName}
                     </Text>
-                  </View>
-                )}
+                  </View>)}
                 {/* image */}
                 {idSection.image && (
                   <Image
