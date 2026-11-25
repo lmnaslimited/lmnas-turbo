@@ -4,39 +4,37 @@ import { useEffect, useState } from "react";
 import CustomCard from "@repo/ui/components/custom-card";
 import { TcardProps } from "@repo/middleware/types";
 
-interface TestimonialSliderProps {
-  testimonials: TcardProps[];
+interface TtestimonialSliderProps {
+  idTestimonials: TcardProps[];
 }
 
 export default function TestimonialSlider({
-  testimonials,
-}: TestimonialSliderProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
+  idTestimonials,
+}: TtestimonialSliderProps) {
+  const [lActiveIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
-  const total = testimonials?.length ?? 0;
+  const LTotal = idTestimonials?.length ?? 0;
 
   // Automatically advance to the next testimonial.
   useEffect(() => {
-    if (isPaused || total <= 1) return;
-
-    const interval = window.setInterval(() => {
-      setActiveIndex((current) => (current + 1) % total);
+    if (isPaused || LTotal <= 1) return;
+    const LInterval = window.setInterval(() => {
+      setActiveIndex((current) => (current + 1) % LTotal);
     }, 3000);
 
-    return () => window.clearInterval(interval);
-  }, [isPaused, total]);
-
-  if (total === 0) return null;
+    return () => window.clearInterval(LInterval);
+  }, [isPaused, LTotal]);
+  if (LTotal === 0) return null;
 
   // Navigate to the previous testimonial.
-  const goToPrevious = () => {
-    setActiveIndex((current) => (current - 1 + total) % total);
+  const fnGoToPrevious = () => {
+    setActiveIndex((current) => (current - 1 + LTotal) % LTotal);
   };
 
   // Navigate to the next testimonial.
-  const goToNext = () => {
-    setActiveIndex((current) => (current + 1) % total);
+  const fnGoToNext = () => {
+    setActiveIndex((current) => (current + 1) % LTotal);
   };
 
   return (
@@ -60,8 +58,8 @@ export default function TestimonialSlider({
         {/* Previous navigation */}
         <button
           type="button"
-          onClick={goToPrevious}
-          disabled={total <= 1}
+          onClick={fnGoToPrevious}
+          disabled={LTotal <= 1}
           aria-label="Previous testimonial"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-accent disabled:opacity-40 md:h-12 md:w-12"
         >
@@ -86,17 +84,17 @@ export default function TestimonialSlider({
           <div
             className="flex items-stretch transition-transform duration-500 ease-in-out"
             style={{
-              transform: `translateX(-${activeIndex * 100}%)`,
+              transform: `translateX(-${lActiveIndex * 100}%)`,
             }}
           >
-            {testimonials.map((testimonial, index) => 
+            {idTestimonials.map((testimonial, index) => 
             (
                 
               <div
                 key={index}
                 className="w-full min-w-0 shrink-0 self-stretch"
                 style={{ flexBasis: "100%" }}
-                aria-hidden={index !== activeIndex}
+                aria-hidden={index !== lActiveIndex}
               >
                 <CustomCard
                 idCardProps={{
@@ -128,8 +126,8 @@ export default function TestimonialSlider({
         {/* Next navigation */}
         <button
           type="button"
-          onClick={goToNext}
-          disabled={total <= 1}
+          onClick={fnGoToNext}
+          disabled={LTotal <= 1}
           aria-label="Next testimonial"
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-border text-primary transition-colors hover:bg-accent disabled:opacity-40 md:h-12 md:w-12"
         >
