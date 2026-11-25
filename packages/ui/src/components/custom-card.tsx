@@ -54,6 +54,18 @@ export default function CustomCard({
    * Renders profile details including an avatar, name, and location.
    * Adjusts the layout dynamically based on `namePosition` (left, right, top, or bottom).
    */
+
+  const isValidExternalUrl = (value?: string): boolean => {
+    if (!value) return false;
+
+    try {
+      const url = new URL(value);
+      return url.protocol === "https:" || url.protocol === "http:";
+    } catch {
+      return false;
+    }
+  }
+
   const ProfileDetail = idCardProps.avatarDetails && (
     <div
       className={cn(
@@ -62,7 +74,7 @@ export default function CustomCard({
           "bottom" ||
           idCardProps.namePosition === "right"
           ? "flex-row"
-          : "flex-col"
+          : "flex-col",
       )}
     >
       {idCardProps.avatar &&
@@ -70,12 +82,15 @@ export default function CustomCard({
           idCardProps.namePosition === "right" ||
           idCardProps.namePosition === "top" ||
           idCardProps.namePosition === "bottom") && (
-          <Avatar>
+          <Avatar className="h-16 w-16 shrink-0">
             <AvatarImage
               src={idCardProps.avatar.source}
               alt={idCardProps.avatar.alternate}
+              className="h-full w-full rounded-full object-cover"
             />
-            <AvatarFallback>{idCardProps.avatar.alternate}</AvatarFallback>
+            <AvatarFallback className="rounded-full">
+              {idCardProps.avatar.alternate}
+            </AvatarFallback>
           </Avatar>
         )}
       <div
@@ -84,10 +99,22 @@ export default function CustomCard({
             ? "text-left"
             : idCardProps.namePosition === "right"
               ? "text-right"
-              : "text-left"
+              : "text-left",
         )}
       >
-        <p className="font-medium">{idCardProps.avatarDetails.label}</p>
+        {isValidExternalUrl(idCardProps.avatarDetails.type) ? (
+          <a
+            href={idCardProps.avatarDetails.type}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
+            className="font-medium underline underline-offset-4 hover:text-primary transition-colors"
+          >
+            {idCardProps.avatarDetails.label}
+          </a>
+        ) : (
+          <p className="font-medium">{idCardProps.avatarDetails.label}</p>
+        )}
         {idCardProps.avatarDetails.description && (
           <p className="text-sm text-muted-foreground">
             {idCardProps.avatarDetails.description}
@@ -105,14 +132,14 @@ export default function CustomCard({
           ? "md:flex md:flex-row"
           : "flex flex-col",
         idCardProps.onClick && "cursor-pointer",
-        idCardProps.className
+        idCardProps.className,
       )}
       onClick={idCardProps.onClick}
     >
       <div
         className={cn(
           "flex flex-col justify-between h-full",
-          idCardProps.layout === "horizontal" && "md:flex-1"
+          idCardProps.layout === "horizontal" && "md:flex-1",
         )}
       >
         {/* Renders image or SVG if available, with an optional tag badge */}
@@ -120,7 +147,7 @@ export default function CustomCard({
           <div
             className={cn(
               "w-full overflow-hidden relative",
-              fnGetAspectRatioClass()
+              fnGetAspectRatioClass(),
             )}
           >
             {idCardProps.image?.svg ? (
@@ -128,9 +155,9 @@ export default function CustomCard({
                 {""}
                 {typeof idCardProps.image?.svg === "string"
                   ? renderIcon(
-                    idCardProps.image.svg,
-                    idCardProps.image.className
-                  )
+                      idCardProps.image.svg,
+                      idCardProps.image.className,
+                    )
                   : idCardProps.image?.svg}
                 {""}
               </div>
@@ -160,7 +187,7 @@ export default function CustomCard({
             <div
               className={cn(
                 "md:w-48 overflow-hidden",
-                fnGetAspectRatioClass() || "h-full"
+                fnGetAspectRatioClass() || "h-full",
               )}
             >
               {idCardProps.image?.svg ? (
@@ -191,20 +218,12 @@ export default function CustomCard({
 
         {/* Card Header: Displays title, subtitle, and optional tag if no image is present */}
         <CardHeader className="flex-grow">
-          {idCardProps.tag && !idCardProps.image && (
-            <Badge
-              variant="default"
-              className="rounded-full px-2 py-1 w-fit mb-2"
-            >
-              {idCardProps.tag}
-            </Badge>
-          )}
           {idCardProps.header && (
             <>
               <h2
                 className={cn(
                   "text-xl mb-3 font-semibold",
-                  idCardProps.header.headingClass
+                  idCardProps.header.headingClass,
                 )}
               >
                 {idCardProps.header.title}
@@ -212,7 +231,7 @@ export default function CustomCard({
               <p
                 className={cn(
                   "max-w-[700px] text-muted-foreground line-clamp-3",
-                  idCardProps.header.descripClass
+                  idCardProps.header.descripClass,
                 )}
               >
                 {idCardProps.header.subtitle}
@@ -249,7 +268,7 @@ export default function CustomCard({
           className={cn(
             "flex mt-auto",
             idCardProps.namePosition === "bottom" ? "flex-col" : "flex-row",
-            idCardProps.footerClassName
+            idCardProps.footerClassName,
           )}
         >
           <div
@@ -259,7 +278,7 @@ export default function CustomCard({
                 idCardProps.link?.length === 1
                 ? ""
                 : "md:justify-center flex-col md:flex-row",
-              idCardProps.buttonPosition
+              idCardProps.buttonPosition,
             )}
           >
             {idCardProps.buttons?.map((idBtn, iIndex) =>
@@ -270,15 +289,16 @@ export default function CustomCard({
                   variant={idBtn.variant || "default"}
                   size={idBtn.size || "default"}
                 >
-                  <Link
-                    href={idBtn.href}
-                    className="flex items-center gap-2"
-                  >
+                  <Link href={idBtn.href} className="flex items-center gap-2">
                     {/* If iconPosition is 'before', render icon first */}
-                    {idBtn.icon && idBtn.iconPosition === "before" && renderIcon(idBtn.icon)}
+                    {idBtn.icon &&
+                      idBtn.iconPosition === "before" &&
+                      renderIcon(idBtn.icon)}
                     {idBtn.label}
                     {/* If iconPosition is 'after', render icon after */}
-                    {idBtn.icon && idBtn.iconPosition === "after" && renderIcon(idBtn.icon)}
+                    {idBtn.icon &&
+                      idBtn.iconPosition === "after" &&
+                      renderIcon(idBtn.icon)}
                   </Link>
                 </Button>
               ) : (
@@ -295,12 +315,12 @@ export default function CustomCard({
                     <span className="mr-2">{renderIcon(idBtn.icon)}</span>
                   )}
                   {idBtn.label}
-                  {/* If iconPosition is 'after', render icon after */}
+                  {/* If iconPosition is 'after', render icon fter */}
                   {idBtn.icon && idBtn.iconPosition === "after" && (
                     <span className="ml-2">{renderIcon(idBtn.icon)}</span>
                   )}
                 </Button>
-              )
+              ),
             )}
             {idCardProps.link?.map((idLnk, iIndex) => (
               <Button
@@ -328,10 +348,33 @@ export default function CustomCard({
             ))}
           </div>
 
-          {/* Name and place positioned at the bottom if specified */}
+          {/* Profile details and testimonial metadata */}
           {idCardProps.avatarDetails &&
             idCardProps.namePosition === "bottom" &&
-            ProfileDetail}
+            (idCardProps.tag ||
+            idCardProps.category ? (
+              <div className="flex w-full items-center justify-between gap-4">
+                {/* Customer details */}
+                <div className="min-w-0">{ProfileDetail}</div>
+
+                {/* Product and industry */}
+                <div className="flex shrink-0 flex-col items-end gap-1 text-right">
+                  {idCardProps.tag && (
+                    <span className="text-md font-semibold text-primary">
+                      {idCardProps.tag}
+                    </span>
+                  )}
+
+                  {idCardProps.category && (
+                    <span className="text-sm text-muted-foreground">
+                      {idCardProps.category}
+                    </span>
+                  )}
+                </div>
+              </div>
+            ) : (
+              ProfileDetail
+            ))}
         </CardFooter>
       </div>
     </Card>

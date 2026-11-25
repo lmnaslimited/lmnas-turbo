@@ -237,6 +237,7 @@ export type TcardProps = {
   avatarDetails?: {
     label: string
     description?: string
+    type?: string;
   }
   nameAndPlace?: {
     label: string
@@ -549,8 +550,54 @@ export type Thome = {
   trendingNowSection: TcalloutProps
   testimonials: TcardProps[]
   successClients: Timage[]
+  // Home page Problem & Solution Section
+  problemSolutionHeader: Theader
+  problemSolutionSection: TproblemSolutionSection;
+  productArchitectureHeader: Theader;
+  productArchitectureSection: TproductArchitectureSection[];
   metaData: TpageMetadata
 }
+// Home page Product Architecture Section
+
+export type TproductArchitectureSection = {
+  category: string;
+  title: string;
+  subtitle: string;
+  products: TproductArchitectureProduct[];
+};
+
+
+export type TproductArchitectureProduct = {
+  title: string;
+  subtitle: string;
+  highlight?: string;
+  badge?: string;
+  href?: string;
+  buttons: Tbutton[];
+};
+
+// Home page Problem & Solution Section
+export type TproblemSolutionSection = {
+  mainProblems: TmainProblem[];
+};
+
+export type TmainProblem = {
+  title: string;
+  subtitle?: string;
+  highlight?: string;
+  badge?: string;
+  subProblems: TsubProblem[];
+};
+
+export type TsubProblem = {
+  title: string;
+  description: string;
+  solutionTitle: string;
+  solutionDescription: string;
+  button: TproblemSolutionButton;
+};
+
+export type TproblemSolutionButton = Tbutton;
 
 // trending now
 export type TtrendsPageSource = {
@@ -1062,6 +1109,7 @@ export type TContactFormValues = {
     message: string;
     newsletter: boolean;
 };
+
 /**
  * A step in the multi-step contact form. Steps are derived at runtime from the
  * Strapi field configuration (chunked into groups), so nothing here is hardcoded.
