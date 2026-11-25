@@ -12,7 +12,7 @@ import type {
 } from "@repo/middleware/types";
 
 type TproductArchitectureProps = {
-  data: TproductArchitectureSection[];
+  idData: TproductArchitectureSection[];
   activeFormSection: string | null;
   onFormButtonClick: (
     mode: TformMode,
@@ -23,7 +23,7 @@ renderFormBelowSection: (sectionId: string) => ReactNode;  onFormClose: () => vo
 };
 
 export default function ProductArchitecture({
-  data,
+  idData,
   activeFormSection,
   onFormButtonClick,
   renderFormBelowSection,
@@ -65,7 +65,7 @@ export default function ProductArchitecture({
     <section className={styles.section}>
       <div className="container mx-auto px-4">
         <div className={styles.content}>
-          {data?.map((category, categoryIndex) => {
+          {idData?.map((category, categoryIndex) => {
             const sectionId = `productArchitecture-${categoryIndex}`;
 
             return (

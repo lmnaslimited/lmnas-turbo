@@ -13,12 +13,12 @@ import type {
 } from "@repo/middleware/types";
 
 type TproblemSolutionProps = {
-  iData: TproblemSolutionSection;
+  idData: TproblemSolutionSection;
   onFormButtonClick: (mode: TformMode, label: string) => void;
 };
 
 export default function ProblemSolution({
-  iData,
+  idData,
   onFormButtonClick,
 }: TproblemSolutionProps) {
   const [lActiveProblemIndex, setActiveProblemIndex] = useState(0);
@@ -26,8 +26,7 @@ export default function ProblemSolution({
     null
   );
 
-  const LaMainProblems = iData?.mainProblems ?? [];
-
+  const LaMainProblems = idData?.mainProblems ?? [];
   const fnRenderIcon = (iIcon: Tbutton["icon"]) => {
     const LIconName = typeof iIcon === "string" ? iIcon : "HelpCircle";
     const IconComponent = getIconComponent(LIconName);

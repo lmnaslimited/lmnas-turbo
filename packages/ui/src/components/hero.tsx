@@ -14,9 +14,9 @@ type THeroProps = {
 }
 
 const renderIcon = (icon: Tbutton['icon']) => {
-  const iconName = typeof icon === "string" ? icon : "HelpCircle";
-  const IconComponent = getIconComponent(iconName);
-  return <IconComponent className="w-5 h-5" />;
+  const LIconName = typeof icon === "string" ? icon : "HelpCircle";
+  const LIconComponent = getIconComponent(LIconName);
+  return <LIconComponent className="w-5 h-5" />;
 };
 
 export default function Hero({ idHero, onButtonClick }: THeroProps): ReactElement {
