@@ -423,6 +423,61 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         icon
       }
     }
+    problemSolutionHeader {
+      title
+      subtitle
+      highlight
+      badge
+    }
+
+    problemSolutionSection {
+      mainProblems {
+        title
+        subtitle
+        highlight
+        badge
+        subProblems {
+          title
+          description
+          solutionTitle
+          solutionDescription
+          button {
+            label
+            href
+            icon
+            formMode
+            description
+            variant
+          }
+        }
+      }
+    }
+    productArchitectureHeader {
+      title
+      subtitle
+      highlight
+      badge
+    }
+    productArchitectureSection {
+      category
+      title
+      subtitle
+      products {
+        title
+        subtitle
+        highlight
+        badge
+        href
+          buttons {
+            icon
+            formMode
+            description
+            label
+            href
+            variant
+          }
+        }
+      }
     trendingNowSection {
       header {
         title
@@ -438,27 +493,30 @@ export class clQueryHome extends clQuery<ThomePageSource> {
         variant
       }
     }
-    testimonials {
-      header {
-        title
-        subtitle
+      testimonials {
+        header {
+          title
+          subtitle
+          }
+        avatar {
+          svg
+          alternate
+          source
+        }
+        avatarDetails {
+          icon
+          label
+          description
+          type
+        }
+        image {
+          svg
+          alternate
+          source
+        }
+        tag
+        category
       }
-      avatar {
-        svg
-        alternate
-        source
-      }
-      avatarDetails {
-        icon
-        label
-        description
-      }
-      image {
-        svg
-        alternate
-        source
-      }
-    }
     successClients {
       svg
       source
