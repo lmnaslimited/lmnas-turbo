@@ -117,16 +117,27 @@ export abstract class clQuery<DynamicSourceType> implements IQuery<DynamicSource
 
 // The clQueryTrends class extends the clQuery class and provides a specific implementation for the "Trends" query.
 export class clQuerySlug extends clQuery<TslugsSource> {
-  constructor(iContentType: string) {
+  includeSector: boolean;
+
+  constructor(iContentType: string, includeSector = false) {
     super(iContentType);
+
+    this.includeSector = includeSector;
+
+    // Regenerate queries after includeSector is initialized
+    this.query = this.getQuery();
+    this.versionQuery = this.getVersionQuery();
   }
+
   getQuery(): string {
     return `
-    query Slugs {
-      ${this.contentType} {
-        slug
+      query Slugs {
+        ${this.contentType} {
+          slug
+          ${this.includeSector ? "sector" : ""}
+        }
       }
-    }`;
+    `;
   }
 }
 
@@ -2055,7 +2066,9 @@ export class clQueryProducts extends clQuery<TproductsPageSource> {
       sectorDropdown {
         label
         href
+        sector
       }
+      sectorLabel
     }
     problemsHeader {
       title

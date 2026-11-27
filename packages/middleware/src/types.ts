@@ -38,15 +38,17 @@ export interface ItargetType {}
 
 export type TslugsSource = {
   [key: string]: {
-    slug: string
-  }[]
-}
+    slug: string;
+    sector?: "generic" | "transformers" | "food-processing";
+  }[];
+};
 
 export type TslugsTarget = Tslug[]
 
 export type Tslug = {
-  slug: string
-}
+  slug: string;
+  sector?: "generic" | "transformers" | "food-processing";
+};
 
 export type Tcontext = {
   blogsLocale2?: string
@@ -194,6 +196,7 @@ export type Tbutton = {
 export type TsectorOption = {
   label: string
   href: string
+  sector: string
 }
 
 export type Tsubtitle = {
@@ -226,6 +229,7 @@ export type TheroSection = {
   buttons: Tbutton[]
   image?: Timage
   sectorDropdown?: TsectorOption[]
+  sectorLabel?: string;
 }
 
 type TtechStack = {
